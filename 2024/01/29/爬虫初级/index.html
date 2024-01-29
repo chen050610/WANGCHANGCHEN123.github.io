@@ -1,0 +1,421 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <meta charset="utf-8" />
+    <title>爬虫 | 哈哈哈哈哈哈哈重生之我是兵王</title>
+    <meta name="author" content="chenw" />
+    <meta name="description" content="description" />
+    <meta name="keywords" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <link rel="icon" href="/images/1.jpg" />
+	<canvas id="fireworks" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 32767"></canvas>
+	<script src="https://cdn.staticfile.org/animejs/3.2.1/anime.min.js"></script>
+	<script src="/js/fireworks.min.js"></script>
+	<canvas id="background" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: -1"></canvas>
+	<script src="/js/background.min.js"></script>
+	<div id="cursor"></div>
+	<link rel="stylesheet" href="/css/cursor.min.css">
+	<script src="/js/cursor.min.js"></script>
+    <link rel="preconnect" href="https://cdn.staticfile.org" />
+<script src="https://cdn.staticfile.org/vue/3.3.7/vue.global.prod.min.js"></script>
+<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/6.4.2/css/all.min.css" />
+<link rel="preconnect" href="https://fonts.loli.net" />
+<link rel="preconnect" href="https://gstatic.loli.net" crossorigin />
+<link rel="stylesheet" href="https://fonts.loli.net/css2?family=Fira+Code:wght@400;500;600;700&family=Lexend:wght@400;500;600;700;800;900&family=Noto+Sans+SC:wght@400;500;600;700;800;900&display=swap" />
+<script> const mixins = {}; </script>
+
+<script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+
+
+<script src="https://cdn.staticfile.org/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdn.staticfile.org/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></script>
+<link
+    rel="stylesheet"
+    href="https://cdn.staticfile.org/highlight.js/11.9.0/styles/github.min.css"
+/>
+<script src="/js/lib/highlight.js"></script>
+
+
+
+<script src="/js/lib/preview.js"></script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/main.css" />
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+    <div id="layout">
+        <transition name="fade">
+            <div id="loading" v-show="loading">
+                <div id="loading-circle">
+                    <h2>LOADING</h2>
+                    <p>加载过慢请开启缓存 浏览器默认开启</p>
+                    <img src="/images/loading.gif" />
+                </div>
+            </div>
+        </transition>
+        <div id="menu" :class="{ hidden: hiddenMenu, 'menu-color': menuColor}">
+    <nav id="desktop-menu">
+        <a class="title" href="/">
+            <span>哈哈哈哈哈哈哈重生之我是兵王</span>
+        </a>
+        
+        <a href="/">
+            <i class="fa-solid fa-house fa-fw"></i>
+            <span>&ensp;Home</span>
+        </a>
+        
+        <a href="/about">
+            <i class="fa-solid fa-id-card fa-fw"></i>
+            <span>&ensp;About</span>
+        </a>
+        
+        <a href="/archives">
+            <i class="fa-solid fa-box-archive fa-fw"></i>
+            <span>&ensp;Archives</span>
+        </a>
+        
+        <a href="/categories">
+            <i class="fa-solid fa-bookmark fa-fw"></i>
+            <span>&ensp;Categories</span>
+        </a>
+        
+        <a href="/tags">
+            <i class="fa-solid fa-tags fa-fw"></i>
+            <span>&ensp;Tags</span>
+        </a>
+        
+    </nav>
+    <nav id="mobile-menu">
+        <div class="title" @click="showMenuItems = !showMenuItems">
+            <i class="fa-solid fa-bars fa-fw"></i>
+            <span>&emsp;哈哈哈哈哈哈哈重生之我是兵王</span>
+        </div>
+        <transition name="slide">
+            <div class="items" v-show="showMenuItems">
+                
+                <a href="/">
+                    <div class="item">
+                        <div style="min-width: 20px; max-width: 50px; width: 10%">
+                            <i class="fa-solid fa-house fa-fw"></i>
+                        </div>
+                        <div style="min-width: 100px; max-width: 150%; width: 20%">Home</div>
+                    </div>
+                </a>
+                
+                <a href="/about">
+                    <div class="item">
+                        <div style="min-width: 20px; max-width: 50px; width: 10%">
+                            <i class="fa-solid fa-id-card fa-fw"></i>
+                        </div>
+                        <div style="min-width: 100px; max-width: 150%; width: 20%">About</div>
+                    </div>
+                </a>
+                
+                <a href="/archives">
+                    <div class="item">
+                        <div style="min-width: 20px; max-width: 50px; width: 10%">
+                            <i class="fa-solid fa-box-archive fa-fw"></i>
+                        </div>
+                        <div style="min-width: 100px; max-width: 150%; width: 20%">Archives</div>
+                    </div>
+                </a>
+                
+                <a href="/categories">
+                    <div class="item">
+                        <div style="min-width: 20px; max-width: 50px; width: 10%">
+                            <i class="fa-solid fa-bookmark fa-fw"></i>
+                        </div>
+                        <div style="min-width: 100px; max-width: 150%; width: 20%">Categories</div>
+                    </div>
+                </a>
+                
+                <a href="/tags">
+                    <div class="item">
+                        <div style="min-width: 20px; max-width: 50px; width: 10%">
+                            <i class="fa-solid fa-tags fa-fw"></i>
+                        </div>
+                        <div style="min-width: 100px; max-width: 150%; width: 20%">Tags</div>
+                    </div>
+                </a>
+                
+            </div>
+        </transition>
+    </nav>
+</div>
+<transition name="fade">
+    <div id="menu-curtain" @click="showMenuItems = !showMenuItems" v-show="showMenuItems"></div>
+</transition>
+
+        <div id="main" :class="loading ? 'into-enter-from': 'into-enter-active'">
+            <div class="article">
+    <div>
+        <h1>爬虫</h1>
+    </div>
+    <div class="info">
+        <span class="date">
+            <span class="icon">
+                <i class="fa-solid fa-calendar fa-fw"></i>
+            </span>
+            2024/1/29
+        </span>
+        
+        <span class="category">
+            <a href="/categories/Chen/">
+                <span class="icon">
+                    <i class="fa-solid fa-bookmark fa-fw"></i>
+                </span>
+                Chen
+            </a>
+        </span>
+        
+        
+        <span class="tags">
+            <span class="icon">
+                <i class="fa-solid fa-tags fa-fw"></i>
+            </span>
+            
+            
+            <span class="tag">
+                
+                <a href="/tags/PS3/" style="color: #ff7d73">PS3</a>
+            </span>
+            
+            <span class="tag">
+                
+                <a href="/tags/Games/" style="color: #03a9f4">Games</a>
+            </span>
+            
+        </span>
+        
+    </div>
+    
+    <div class="content" v-pre>
+        <p>摘要</p>
+<span id="more"></span>
+<p>正文</p>
+<p>爬虫初级</p>
+<p>作者：饭桶晨</p>
+<p>QQ：3445883193</p>
+<p>csdn：翻斗花园突破手胡图图122</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20231230200215985.png" alt="image-20231230200215985"></p>
+<h6 id="什么是爬虫？"><a href="#什么是爬虫？" class="headerlink" title="什么是爬虫？"></a>什么是爬虫？</h6><p>通过编写程序，模拟浏览器上网，然后让其去互联网抓取数据的过程。</p>
+<h6 id="爬虫的价值："><a href="#爬虫的价值：" class="headerlink" title="爬虫的价值："></a>爬虫的价值：</h6><p>当然是为了提升自己的物质生活或者精神生活。现在经常听到<a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=%E5%A4%A7%E6%95%B0%E6%8D%AE&spm=1001.2101.3001.7020">大数据</a>时代，哎，数据就是 Money 哦，很少存在数据共享的，这个时候，那我们就得自己靠本事找数据啦。搜寻数据这个过程其实并不想象中的难，每个领域的人都可以利用该技术得到自己想要的</p>
+<h6 id="爬虫的合法性？"><a href="#爬虫的合法性？" class="headerlink" title="爬虫的合法性？"></a>爬虫的合法性？</h6><p>1.具有违法风险</p>
+<p>2.在法律中是不被禁止</p>
+<p>3.窃取后台数据就会违法</p>
+<p>4.善意爬虫</p>
+<p>5.恶意爬虫：干扰了被访问网站的正常运行，抓去了收到法律保护的特定类型的数据和信息</p>
+<h6 id="如何避免？"><a href="#如何避免？" class="headerlink" title="如何避免？"></a>如何避免？</h6><p>1.时常优化程序</p>
+<p>2在使用，传播爬到的数据，审查内容</p>
+<p>3商业机密等敏感需要及时停止爬取</p>
+<h6 id="爬虫的分类"><a href="#爬虫的分类" class="headerlink" title="爬虫的分类"></a>爬虫的分类</h6><p>1.通用爬虫：抓取系统重要组成部分,抓取的是整张页面</p>
+<p>2.聚集爬虫：指定的局部内容</p>
+<p>3.增量式爬虫：检测网站数据更新的情况。只会抓取更新最新的数据</p>
+<h6 id="反爬机制"><a href="#反爬机制" class="headerlink" title="反爬机制"></a>反爬机制</h6><p> 门户网站，可以通过指定相应的技术和策略</p>
+<h6 id="反反爬机制"><a href="#反反爬机制" class="headerlink" title="反反爬机制"></a>反反爬机制</h6><p>破解门户网站的反爬机制，从而获取门户网站的信息</p>
+<h6 id="robots-txt协议（反反爬机制，君子协议）"><a href="#robots-txt协议（反反爬机制，君子协议）" class="headerlink" title="robots.txt协议（反反爬机制，君子协议）"></a>robots.txt协议（反反爬机制，君子协议）</h6><p>规定那些可以被爬，那些不可以被爬</p>
+<p>可以遵从，可以不遵从；</p>
+<p>列如</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20231230202651322.png" alt="image-20231230202651322"></p>
+<p>不遵从可能会有法律问题</p>
+<h4 id="http协议"><a href="#http协议" class="headerlink" title="http协议"></a>http协议</h4><p>概念：服务器和客户端进行数据交互的一种方式。（就比如威虎山里面的黑话）</p>
+<h6 id="常用请求头信息"><a href="#常用请求头信息" class="headerlink" title="常用请求头信息"></a>常用请求头信息</h6><p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20231230203119605.png" alt="image-20231230203119605"></p>
+<p>这就是请求头（不详解了）</p>
+<p>connect是请求完毕以后是保持连接还是断开</p>
+<h6 id="响应头信息"><a href="#响应头信息" class="headerlink" title="响应头信息"></a>响应头信息</h6><p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20231230203344976.png" alt="image-20231230203344976"></p>
+<p>content-type：服务器返回客户端的数据类型</p>
+<h6 id="https协议"><a href="#https协议" class="headerlink" title="https协议"></a>https协议</h6><p>传续的数据进行加密</p>
+<h6 id="加密方式"><a href="#加密方式" class="headerlink" title="加密方式"></a>加密方式</h6><p>1：对称加密</p>
+<p>加密的钥匙和密文都传过去</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20231230203648592.png" alt="image-20231230203648592"></p>
+<p>2：非对称加密</p>
+<p>有私钥和公钥，无法保证客户端拿到的公钥是服务器发来的，有可能人篡改</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20231231083933191.png" alt="image-20231231083933191"></p>
+<p>3：证书密钥加密</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20231231084340066.png" alt="image-20231231084340066"></p>
+<p>保证了客户端的拿到的是服务器端发来的</p>
+<h2 id="requests模块"><a href="#requests模块" class="headerlink" title="requests模块"></a>requests模块</h2><h6 id="网络请求的模块"><a href="#网络请求的模块" class="headerlink" title="网络请求的模块"></a>网络请求的模块</h6><p>1.urllib模块</p>
+<p>2.requests模块</p>
+<p>主要第二个</p>
+<p>概念：基于python原生的一款网络请求的模块</p>
+<p>作用：模拟浏览器发送请求</p>
+<p>如何使用？</p>
+<p>需要遵从浏览器发送请求的方式；（编码流程）</p>
+<p>1.指定url</p>
+<p>2.发送请求（request既能get也能post）</p>
+<p>3.获取响应数据</p>
+<p>4.持久化存储（响应数据）</p>
+<p>环境配置</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20231231085243539.png" alt="image-20231231085243539"></p>
+<h6 id="实战编码"><a href="#实战编码" class="headerlink" title="实战编码"></a>实战编码</h6><p>需求：搜狗搜首页的页面数据</p>
+<p>源码</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20231231091438401.png" alt="image-20231231091438401"></p>
+<p>结果</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20231231091501983.png" alt="image-20231231091501983"></p>
+<p>爬取的就是页面源码</p>
+<p>我们可以打开去看一眼</p>
+<p>源码在本地打开</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20231231091910930.png" alt="image-20231231091910930"></p>
+<p> 继续实战</p>
+<p>需求：爬取搜狗指定词条对应的搜索结果页面（简易网页采集器）指定一个关键字，搜索关键字的页面进行爬取</p>
+<p>需求：破解百度翻译</p>
+<p>需求：爬取豆瓣电影分来排行榜</p>
+<p>需求：肯德基餐厅查询</p>
+<p>需求：爬取国家药检局监督管理总局基于中华人民共和国化妆品生产许可相关数据</p>
+<h6 id="1-第一个案例"><a href="#1-第一个案例" class="headerlink" title="1.第一个案例"></a>1.第一个案例</h6><p>后面无用的url可以删掉</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20231231092848333.png" alt="image-20231231092848333"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20231231092859480.png" alt="image-20231231092859480"></p>
+<p>UA伪装</p>
+<p>user-agent:请求载体，如果只用爬虫爬的话，门户网站的服务器会检测载体身份表示</p>
+<p>如果是浏览器，说明是正常的请求，不会拒绝，如果不是基于浏览器，就会认为是不正常的的数据，服务器可能就会拒绝</p>
+<p><img src="E:\blog\source_posts\爬虫初级.assets\image-20231231094400431.png" alt="image-20231231094400431"></p>
+<p>为了我们爬取的成功一定要进行ua伪装</p>
+<p>源码</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20231231094925510.png" alt="image-20231231094925510"></p>
+<p>结果</p>
+<p><img src="E:\blog\source_posts\爬虫初级.assets\image-20231231094946730.png" alt="image-20231231094946730"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20231231095001957.png" alt="image-20231231095001957"></p>
+<p>成功爬取到了</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20231231095239915.png" alt="image-20231231095239915"></p>
+<p>2.百度翻译</p>
+<p>我们这次的目标不是爬取页面的源码类的</p>
+<p>而是想要翻译以后的结果</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20231231095542467.png" alt="image-20231231095542467"></p>
+<p>爬到下面的词条(爬取局部的数据)</p>
+<p> 我们在尝试的时候发现页面是局部刷新的应该利用的ajax</p>
+<p>我们可以去抓取ajax的包</p>
+<p>输入dog一个一个抓包发现</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20231231100601556.png" alt="image-20231231100601556"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20231231100620815.png" alt="image-20231231100620815"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20231231100633377.png" alt="image-20231231100633377"></p>
+<p>最后一个是我们想要捕获的数据包</p>
+<p>就可以找到url<img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20231231100924908.png" alt="image-20231231100924908"></p>
+<p>fanyi.baidu.com&#x2F;sug</p>
+<p>响应头信息</p>
+<p> <img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20231231101115687.png" alt="image-20231231101115687"></p>
+<p>分析出</p>
+<p>post请求（携带参数）</p>
+<p>响应回来数据是json字符串</p>
+<p>部分源码</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20231231103045458.png" alt="image-20231231103045458"></p>
+<p>如果直接无脑保存会发现文件直接保存不了字典</p>
+<p>所以我们这时就可以导入json模块</p>
+<p>把字符串存在json的文本文件中</p>
+<p>最后查看源码</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20231231103955374.png" alt="image-20231231103955374"></p>
+<p>执行结果</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20231231104048403.png" alt="image-20231231104048403"></p>
+<p>上面的dog的参数可以设置为一个动态的</p>
+<p>总结：</p>
+<p>1.注意观察包的数据（User-Agent，响应头 的content-type，请求的url地址，如果还是post的方法需要注意data部分的数据然后使用字典来写入，如果是get的方法要注意参数param 的这个部分）</p>
+<p>2.字典直接写入不了文件，我们可以导入json，把字典写入json文件中</p>
+<p>3.记得要伪造ua头</p>
+<p>4.如果有页面部分刷新，类型看应该是ajax，我们应该筛选ajax的包，选择XHR即可</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20231231105035108.png" alt="image-20231231105035108"></p>
+<h6 id="over"><a href="#over" class="headerlink" title="over"></a>over</h6><h6 id="3-爬取豆瓣电影的排行数据"><a href="#3-爬取豆瓣电影的排行数据" class="headerlink" title="3.爬取豆瓣电影的排行数据"></a>3.爬取豆瓣电影的排行数据</h6><p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20231231105250254.png" alt="image-20231231105250254"></p>
+<p>我们要爬取豆瓣电影的名称，导演，还有一些信息</p>
+<p>这些人是局部信息，那是否用到你数据解析呢？</p>
+<p>ok，不用数据解析也可以</p>
+<p>我们发现当我们拖动滚轮的时候，每次拖动到底部，会自动加载，并且地址栏没变，局部刷新，并且看边上的滚轮会回到上面,我们怀疑和上面 的百度翻译使用的ajax</p>
+<p>思路：</p>
+<p>我们观察包</p>
+<p>请求是get</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20231231110036578.png" alt="image-20231231110036578"></p>
+<p>返回的数据</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20231231110104763.png" alt="image-20231231110104763"></p>
+<p>get的几个参数</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20231231110130366.png" alt="image-20231231110130366"></p>
+<p>相应的json数据</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20231231110257319.png" alt="image-20231231110257319"></p>
+<p>源码</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20231231112721083.png" alt="image-20231231112721083"></p>
+<p>写的没问题，不知道为什么报错</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20231231112824746.png" alt="image-20231231112824746"></p>
+<p>总结</p>
+<p>1.和上面的总结差不多，</p>
+<p>over……</p>
+<h6 id="4查询肯德基餐厅位置查询"><a href="#4查询肯德基餐厅位置查询" class="headerlink" title="4查询肯德基餐厅位置查询"></a>4查询肯德基餐厅位置查询</h6><h6 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h6><p>当我们查询的时候地址栏并没有改变</p>
+<p>并且页面局部刷新</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20231231113500648.png" alt="image-20231231113500648"></p>
+<p>捕获数据包</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20231231113601497.png" alt="image-20231231113601497"></p>
+<p>post请求</p>
+<p>post请求数据</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20231231113712384.png" alt="image-20231231113712384"></p>
+<p>我们可以分析可以改变可以改变keyword来获取不同的城市</p>
+<p>但是这次不同 的是，响应回来的数据是文本了</p>
+<p><img src="E:\blog\source_posts\爬虫初级.assets\image-20231231113952798.png" alt="image-20231231113952798"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20231231114127999.png" alt="image-20231231114127999"></p>
+<p>但是我们可以用json的dump转成对象的形式</p>
+<p>源码奉上自己编写的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20231231115301944.png" alt="image-20231231115301944"></p>
+<p>结果</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20231231115323438.png" alt="image-20231231115323438"></p>
+<p>再去json工具里面</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20231231115524933.png" alt="image-20231231115524933"></p>
+<h6 id="6-国家药监总局"><a href="#6-国家药监总局" class="headerlink" title="6.国家药监总局"></a>6.国家药监总局</h6><p>没有找到网站</p>
+<p>没有网站，先给出解析吧</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20231231134537539.png" alt="image-20231231134537539"></p>
+<p>我们观察网站，尝试对首页进行爬取，或者看包，发现并没有企业的数据</p>
+<p>怀疑shiajax的动态数据。随后我们抓取ajax的包发现里面还有id，并且进入一个企业中插查看和上部一样的操作，发现详情数据在ajax的相应包里面</p>
+<p>解题思路：</p>
+<p>1对首页的ajax的包进行爬取，爬取到id值，批量获取id值</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20231231134518861.png" alt="image-20231231134518861"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20231231135128661.png" alt="image-20231231135128661"></p>
+<h6 id="request的模块的结束了"><a href="#request的模块的结束了" class="headerlink" title="request的模块的结束了"></a>request的模块的结束了</h6>
+    </div>
+    
+    
+    
+    
+    
+    
+    
+</div>
+
+            <footer id="footer">
+    <div id="footer-wrap">
+        <div>
+            &copy;
+            2022 - 2024 哈哈哈哈哈哈哈重生之我是兵王
+            <span id="footer-icon">
+                <i class="fa-solid fa-font-awesome fa-fw"></i>
+            </span>
+            &commat;chenw
+        </div>
+        <div>
+            Based on the <a target="_blank" rel="noopener" href="https://hexo.io">Hexo Engine</a> &amp;
+            <a target="_blank" rel="noopener" href="https://github.com/theme-particlex/hexo-theme-particlex">ParticleX Theme</a>
+        </div>
+        
+    </div>
+</footer>
+
+        </div>
+        
+        <transition name="fade">
+            <div id="preview" ref="preview" v-show="previewShow">
+                <img id="preview-content" ref="previewContent" />
+            </div>
+        </transition>
+        
+    </div>
+    <script src="/js/main.js"></script>
+    
+    
+
+
+
+
+    
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
