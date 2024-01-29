@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="协程+asyncio+异步​	-异步非堵塞，asyncio ​	-tornado,fastapi,django 3.x asgi,aiohttp都在异步-&gt;提高性能 部分： 1.协程 2.asyncio模块进行异步异步编程 1、协程不是计算机提供的，而是程序员人为创造出来的  用一个线程实现看代码块相互切换执行 1234567891011def fu():   print(1)      p">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/2024/01/29/1/%E5%8D%8F%E7%A8%8B+asyncio+%E5%BC%82%E6%AD%A5/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="协程+asyncio+异步​	-异步非堵塞，asyncio ​	-tornado,fastapi,django 3.x asgi,aiohttp都在异步-&gt;提高性能 部分： 1.协程 2.asyncio模块进行异步异步编程 1、协程不是计算机提供的，而是程序员人为创造出来的  用一个线程实现看代码块相互切换执行 1234567891011def fu():   print(1)      p">
+<meta property="og:locale">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240102172553823.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240102173417773.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240102173701792.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240102174145350.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240102181107001.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240102181636988.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240102181745898.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240102205341736.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240102205504764.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240102205752641.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240102205947814.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240102210743586.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240102211056590.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240102211229451.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240102212018687.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240103102341838.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240103102734865.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240103103008267.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240103103142288.png">
+<meta property="article:published_time" content="2024-01-29T08:15:30.312Z">
+<meta property="article:modified_time" content="2024-01-03T02:31:44.173Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240102172553823.png">
+
+<link rel="canonical" href="http://example.com/2024/01/29/1/%E5%8D%8F%E7%A8%8B+asyncio+%E5%BC%82%E6%AD%A5/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title> | Hexo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Hexo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/01/29/1/%E5%8D%8F%E7%A8%8B+asyncio+%E5%BC%82%E6%AD%A5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-01-29 16:15:30" itemprop="dateCreated datePublished" datetime="2024-01-29T16:15:30+08:00">2024-01-29</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-01-03 10:31:44" itemprop="dateModified" datetime="2024-01-03T10:31:44+08:00">2024-01-03</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="协程-asyncio-异步"><a href="#协程-asyncio-异步" class="headerlink" title="协程+asyncio+异步"></a>协程+asyncio+异步</h1><p>​	-异步非堵塞，asyncio</p>
+<p>​	-tornado,fastapi,django 3.x asgi,aiohttp都在异步-&gt;提高性能</p>
+<p>部分：</p>
+<p>1.协程</p>
+<p>2.asyncio模块进行异步异步编程</p>
+<h4 id="1、协程"><a href="#1、协程" class="headerlink" title="1、协程"></a>1、协程</h4><p>不是计算机提供的，而是程序员人为创造出来的</p>
+<p> 用一个线程实现看代码块相互切换执行</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">fu</span>():</span><br><span class="line">   <span class="built_in">print</span>(<span class="number">1</span>)</span><br><span class="line">   </span><br><span class="line">   <span class="built_in">print</span>(<span class="number">2</span>)</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">fu2</span>():</span><br><span class="line">	pritn(<span class="number">3</span>)</span><br><span class="line">	</span><br><span class="line">	<span class="built_in">print</span>(<span class="number">4</span>)</span><br><span class="line">fu()</span><br><span class="line">fu2()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>上述的代码正常就会按照顺序执行</p>
+<p>如果协程的话可能就会 一会执行fu里面的代码一会fu2里面的代码</p>
+<p>实现协程的方法：</p>
+<p>1：greenlet，第三方模块，早期的模块</p>
+<p>2：yield关键字</p>
+<p>3：asyncio装饰器（py3.4）</p>
+<p>4:async，await关键字（py3.5)</p>
+<h4 id="1-1greenlet实现协程："><a href="#1-1greenlet实现协程：" class="headerlink" title="1.1greenlet实现协程："></a>1.1greenlet实现协程：</h4><p>需要安装模块</p>
+<p>下载即可</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240102172553823.png" alt="image-20240102172553823"></p>
+<p>例子</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240102173417773.png" alt="image-20240102173417773"></p>
+<p>输出结果</p>
+<p>1324</p>
+<h4 id="1-2-通过yield关键字"><a href="#1-2-通过yield关键字" class="headerlink" title="1.2.通过yield关键字"></a>1.2.通过yield关键字</h4><p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240102173701792.png" alt="image-20240102173701792"></p>
+<p>先进入f1</p>
+<p>然后yield关键字进入f2</p>
+<p>然后输出34</p>
+<p>然后返回输出2</p>
+<h4 id="1-3asyncio"><a href="#1-3asyncio" class="headerlink" title="1.3asyncio"></a>1.3asyncio</h4><p>在python3.4以后的版本</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240102174145350.png" alt="image-20240102174145350"></p>
+<p>俗话说就是：</p>
+<p>这个函数随机执行里面碰到阻碍的话再去换一个</p>
+<p>注意：遇到IO耗时操作的时候，会自动化切换tasks里面的其他操作</p>
+<p>​	如果里面换成网络的Io请求：下载一个视频</p>
+<p>他会先给网络发送请求</p>
+<p>然后在切换到其他的任务</p>
+<p>这样的下载图片的任务两秒中就可以完成了</p>
+<p>下载两张花费了一张的时间</p>
+<h4 id="1-4：async-await关键字"><a href="#1-4：async-await关键字" class="headerlink" title="1.4：async &amp;await关键字"></a>1.4：async &amp;await关键字</h4><p>和上免得操作一样就是简化代码了</p>
+<p>更改的地方</p>
+<p>不需要 用到熏染器了</p>
+<p>把yield from可以换成await</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240102181107001.png" alt="image-20240102181107001"></p>
+<p>也能能完成协程</p>
+<p>一般使用greenlet和async&amp;await关键字</p>
+<h4 id="意义："><a href="#意义：" class="headerlink" title="意义："></a>意义：</h4><p>利用一个线程，如果遇到IO等待的时间，线程不会傻等，利用空闲的时间再去干点其他的事情</p>
+<p>普通的方法下载图片：</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240102181636988.png" alt="image-20240102181636988"></p>
+<p>及优化后 的代码</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240102181745898.png" alt="image-20240102181745898"></p>
+<h4 id="3-异步编程"><a href="#3-异步编程" class="headerlink" title="3.异步编程"></a>3.异步编程</h4><h5 id="3-1时间循环"><a href="#3-1时间循环" class="headerlink" title="3.1时间循环"></a>3.1时间循环</h5><p>理解成一个死循环，去检测并且执行某些代码</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240102205341736.png" alt="image-20240102205341736"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240102205504764.png" alt="image-20240102205504764"></p>
+<p>上手</p>
+<p>协程函数，定义函数的时候async def函数名</p>
+<p>协程对象，执行协程函数</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240102205752641.png" alt="image-20240102205752641"></p>
+<p>如果想要运行的话</p>
+<p>或者直接</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240102205947814.png" alt="image-20240102205947814"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">fp</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;666&quot;</span>)</span><br><span class="line">result=fp()</span><br><span class="line"><span class="comment"># loop=asyncio.get_event_loop()#创建循</span></span><br><span class="line"><span class="comment"># loop.run_until_complete(result)</span></span><br><span class="line"><span class="comment"># asyncio.run(result)</span></span><br></pre></td></tr></table></figure>
+
+<p>直接运行协程函数四运行不了的</p>
+<p>后面的两种方法都可以执行</p>
+<h4 id="3-3await关键字"><a href="#3-3await关键字" class="headerlink" title="3.3await关键字"></a>3.3await关键字</h4><p>await+可等待的对象（协程对象	，future，task对象-&gt;io对象）</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240102210743586.png" alt="image-20240102210743586"></p>
+<p>遇到io等待两秒钟此时会进行其他的任务</p>
+<p>等待结束以后会进行</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240102211056590.png" alt="image-20240102211056590"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240102211229451.png" alt="image-20240102211229451"></p>
+<p>await会继续等，等到结束玩有返回值了才继续往下走</p>
+<p>上面的代码，等待对象的得到结果才继续往下走</p>
+<p>为什么要await？性能也不提高</p>
+<p>因为如果下一步需要依赖这一步await的结果就需要await，依然也会切到其他的任务去执行（其他的任务指的是task对象的其他任务），上面就相当于一i个任务，需要等待response执行完才进行下一个</p>
+<h6 id="3-4Task对象3-5"><a href="#3-4Task对象3-5" class="headerlink" title="3.4Task对象3.5"></a>3.4Task对象3.5</h6><p>​	在事件循环中添加多个任务</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240102212018687.png" alt="image-20240102212018687"></p>
+<p>示例一</p>
+<h6 id="3-5asyncioFuture对象"><a href="#3-5asyncioFuture对象" class="headerlink" title="3.5asyncioFuture对象"></a>3.5asyncioFuture对象</h6><p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240103102341838.png" alt="image-20240103102341838"></p>
+<h6 id="3-6concurrent，futures-Future对象"><a href="#3-6concurrent，futures-Future对象" class="headerlink" title="3.6concurrent，futures.Future对象"></a>3.6concurrent，futures.Future对象</h6><p>使用线程池。进程池实现异步时的操作</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240103102734865.png" alt="image-20240103102734865"></p>
+<p>最后的会以下全执行完</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240103103008267.png" alt="image-20240103103008267"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240103103142288.png" alt="image-20240103103142288"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/01/29/1/%E5%8D%8F%E7%A8%8B/" rel="prev" title="">
+      <i class="fa fa-chevron-left"></i> 
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2024/01/29/1/%E5%A2%9E%E9%87%8F%E5%BC%8F%E7%88%AC%E8%99%AB/" rel="next" title="">
+       <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8D%8F%E7%A8%8B-asyncio-%E5%BC%82%E6%AD%A5"><span class="nav-number">1.</span> <span class="nav-text">协程+asyncio+异步</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1%E3%80%81%E5%8D%8F%E7%A8%8B"><span class="nav-number">1.0.0.1.</span> <span class="nav-text">1、协程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1greenlet%E5%AE%9E%E7%8E%B0%E5%8D%8F%E7%A8%8B%EF%BC%9A"><span class="nav-number">1.0.0.2.</span> <span class="nav-text">1.1greenlet实现协程：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-%E9%80%9A%E8%BF%87yield%E5%85%B3%E9%94%AE%E5%AD%97"><span class="nav-number">1.0.0.3.</span> <span class="nav-text">1.2.通过yield关键字</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3asyncio"><span class="nav-number">1.0.0.4.</span> <span class="nav-text">1.3asyncio</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-4%EF%BC%9Aasync-await%E5%85%B3%E9%94%AE%E5%AD%97"><span class="nav-number">1.0.0.5.</span> <span class="nav-text">1.4：async &amp;await关键字</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%84%8F%E4%B9%89%EF%BC%9A"><span class="nav-number">1.0.0.6.</span> <span class="nav-text">意义：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B"><span class="nav-number">1.0.0.7.</span> <span class="nav-text">3.异步编程</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#3-1%E6%97%B6%E9%97%B4%E5%BE%AA%E7%8E%AF"><span class="nav-number">1.0.0.7.1.</span> <span class="nav-text">3.1时间循环</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3await%E5%85%B3%E9%94%AE%E5%AD%97"><span class="nav-number">1.0.0.8.</span> <span class="nav-text">3.3await关键字</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#3-4Task%E5%AF%B9%E8%B1%A13-5"><span class="nav-number">1.0.0.8.0.1.</span> <span class="nav-text">3.4Task对象3.5</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3-5asyncioFuture%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.0.0.8.0.2.</span> <span class="nav-text">3.5asyncioFuture对象</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3-6concurrent%EF%BC%8Cfutures-Future%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.0.0.8.0.3.</span> <span class="nav-text">3.6concurrent，futures.Future对象</span></a></li></ol></li></ol></li></ol></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="John Doe"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/WANGCHANGCHEN123/WANGCHANGCHEN123.github.io" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;WANGCHANGCHEN123&#x2F;WANGCHANGCHEN123.github.io" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

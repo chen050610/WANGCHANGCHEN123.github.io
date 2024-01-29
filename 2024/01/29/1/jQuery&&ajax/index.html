@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="jQuery&amp;&amp;ajax补充还有一中方法获取全局变量   js和html的交互   一般不会直接  绑定事件在htnl里面 而是在 js里面绑定如上面的click事件 上面写的不对应该写在后面 这种解决方案不好 这种方法 等页面加载完以后在执行这个动作   然后查看代码 只有短短的几句话  elements是经过js加工以后的 但是页面的源代码是没有经过加工以后的  所以js事件可">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/2024/01/29/1/jQuery&&ajax/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="jQuery&amp;&amp;ajax补充还有一中方法获取全局变量   js和html的交互   一般不会直接  绑定事件在htnl里面 而是在 js里面绑定如上面的click事件 上面写的不对应该写在后面 这种解决方案不好 这种方法 等页面加载完以后在执行这个动作   然后查看代码 只有短短的几句话  elements是经过js加工以后的 但是页面的源代码是没有经过加工以后的  所以js事件可">
+<meta property="og:locale">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109133026932.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109133103578.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109133349526.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109133805116.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109134227794.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109135323623.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109135626260.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109135636620.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109135738942.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109135901544.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109140017863.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109140239811.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109140418062.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109140607222.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109140707812.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109140812834.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109141021271.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109141720293.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109141828439.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109141946908.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109142508630.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109142805305.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109143406965.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109143502205.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109143515180.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109143704450.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109143917083.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109145140239.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109145156555.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109150158255.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109150455249.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109150546098.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109150745013.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109150827722.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109150907282.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109151025597.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109151110643.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109151420870.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109151539263.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109151621918.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109151702280.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109151741624.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109152314429.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109152710426.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109152913325.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109153005316.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109153022898.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110091611932.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110091611932-17048493813001.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110091639499.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110091707937.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110092011886.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110092206208.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110092227150.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110092412861.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110092609142.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110092954292.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110093147217.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110093536621.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110093931353.png">
+<meta property="article:published_time" content="2024-01-29T08:15:30.305Z">
+<meta property="article:modified_time" content="2024-01-10T01:40:01.214Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109133026932.png">
+
+<link rel="canonical" href="http://example.com/2024/01/29/1/jQuery&&ajax/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title> | Hexo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Hexo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/01/29/1/jQuery&&ajax/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-01-29 16:15:30" itemprop="dateCreated datePublished" datetime="2024-01-29T16:15:30+08:00">2024-01-29</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-01-10 09:40:01" itemprop="dateModified" datetime="2024-01-10T09:40:01+08:00">2024-01-10</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="jQuery-ajax"><a href="#jQuery-ajax" class="headerlink" title="jQuery&amp;&amp;ajax"></a>jQuery&amp;&amp;ajax</h1><p>补充还有一中方法获取全局变量</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109133026932.png" alt="image-20240109133026932"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109133103578.png" alt="image-20240109133103578"></p>
+<p>js和html的交互</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109133349526.png" alt="image-20240109133349526"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109133805116.png" alt="image-20240109133805116"></p>
+<p>一般不会直接</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109134227794.png" alt="image-20240109134227794"></p>
+<p>绑定事件在htnl里面</p>
+<p>而是在</p>
+<p>js里面绑定如上面的click事件</p>
+<p>上面写的不对应该写在后面</p>
+<p>这种解决方案不好</p>
+<p>这种方法<img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109135323623.png" alt="image-20240109135323623"></p>
+<p>等页面加载完以后在执行这个动作</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109135626260.png" alt="image-20240109135626260"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109135636620.png" alt="image-20240109135636620"></p>
+<p>然后查看代码</p>
+<p>只有短短的几句话</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109135738942.png" alt="image-20240109135738942"></p>
+<p>elements是经过js加工以后的</p>
+<p>但是页面的源代码是没有经过加工以后的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109135901544.png" alt="image-20240109135901544"></p>
+<p>所以js事件可以改变html代码里面的东西</p>
+<p>​	form</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109140017863.png" alt="image-20240109140017863"></p>
+<p>把form整体的东西都提交到服务器</p>
+<p>绑定事件的第三种方法</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109140239811.png" alt="image-20240109140239811"></p>
+<p>对用户名字和密码进行非空校验</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109140418062.png" alt="image-20240109140418062"></p>
+<p>直接通过id搜索也行或者直接第二种方法很少用了</p>
+<p>第三种</p>
+<p>通过css选择器</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109140607222.png" alt="image-20240109140607222"></p>
+<p>通过value获取输入的内容</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109140707812.png" alt="image-20240109140707812"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109140812834.png" alt="image-20240109140812834"></p>
+<p>.是类选择器</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109141021271.png" alt="image-20240109141021271"></p>
+<p>以上都是补充的</p>
+<p>原生的js</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109141720293.png" alt="image-20240109141720293"></p>
+<p>很复杂</p>
+<p>所以jQuery让写代码很清爽</p>
+<p>是一个js的库</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109141828439.png" alt="image-20240109141828439"></p>
+<p>下载</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109141946908.png" alt="image-20240109141946908"></p>
+<p>这个包第二个把空格和换行没有而且变量的名字缩短了</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109142508630.png" alt="image-20240109142508630"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109142805305.png" alt="image-20240109142805305"></p>
+<p>绑定的事件</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109143406965.png" alt="image-20240109143406965"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109143502205.png" alt="image-20240109143502205"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109143515180.png" alt="image-20240109143515180"></p>
+<p>选择以后就有checked的属性</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109143704450.png" alt="image-20240109143704450"></p>
+<p>标签的交互</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109143917083.png" alt="image-20240109143917083"></p>
+<p>向标签中加入东西</p>
+<p>如果text里面没有都关系就会向外面取参数</p>
+<p>val也是</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109145140239.png" alt="image-20240109145140239"></p>
+<p>这样的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109145156555.png" alt="image-20240109145156555"></p>
+<p>一些简单你的操作</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109150158255.png" alt="image-20240109150158255"></p>
+<p>如果想要在text里换行</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109150455249.png" alt="image-20240109150455249"></p>
+<p>是不行的</p>
+<p>在里面是默认是输出的文本所以需要使用html</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109150546098.png" alt="image-20240109150546098"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109150745013.png" alt="image-20240109150745013"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109150827722.png" alt="image-20240109150827722"></p>
+<p>属性设置</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109150907282.png" alt="image-20240109150907282"></p>
+<p>和上面的css的用法是一样的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109151025597.png" alt="image-20240109151025597"></p>
+<p>属性控制</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109151110643.png" alt="image-20240109151110643"></p>
+<p>遍历器</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109151420870.png" alt="image-20240109151420870"></p>
+<p>这样就全弄出来了</p>
+<p>既可以用each</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109151539263.png" alt="image-20240109151539263"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109151621918.png" alt="image-20240109151621918"></p>
+<p>这样就可以拿到li下的每一个了</p>
+<p>一项一项的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109151702280.png" alt="image-20240109151702280"></p>
+<p>可以有参数</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109151741624.png" alt="image-20240109151741624"></p>
+<p>参数的data就是this</p>
+<p>参数的i就是索引</p>
+<h1 id="Ajax"><a href="#Ajax" class="headerlink" title="Ajax"></a>Ajax</h1><p>同步刷新：全页面刷新：当进入页面一次性把全部的页面都扑出来</p>
+<p>异步刷新：局部刷新：把局部的东西请求服务器返回的内容进行数据更新</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109152314429.png" alt="image-20240109152314429"></p>
+<p>整个页面没有只有这个东西再加载</p>
+<p>这样就可以</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109152710426.png" alt="image-20240109152710426"></p>
+<p>还要有处理请求的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109152913325.png" alt="image-20240109152913325"></p>
+<p>&#x2F;就相当于根目录</p>
+<p>访问127.0.0.1：5000&#x2F;就会进入这个函数‘</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109153005316.png" alt="image-20240109153005316"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240109153022898.png" alt="image-20240109153022898"></p>
+<p>渲染的意思</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110091611932.png" alt="image-20240110091611932"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110091611932-17048493813001.png"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110091639499.png" alt="image-20240110091639499"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110091707937.png" alt="image-20240110091707937"></p>
+<p>利用jQery实现ajax</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110092011886.png" alt="image-20240110092011886"></p>
+<p>服务器端</p>
+<p><em><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110092206208.png" alt="image-20240110092206208"></em>*</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110092227150.png" alt="image-20240110092227150"></p>
+<p>ajax接收参数</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110092412861.png" alt="image-20240110092412861"></p>
+<p>需要导入AJAx的的request</p>
+<p>成功以后</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110092609142.png" alt="image-20240110092609142"></p>
+<p>fuction的参数 里面会接受</p>
+<p>return的值</p>
+<p>添加请求头的几种方式</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110092954292.png" alt="image-20240110092935874"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110093147217.png" alt="image-20240110093147217"></p>
+<p>过期时间30天</p>
+<p>这样的作用</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110093536621.png" alt="image-20240110093536621"></p>
+<p>让a标签的超链接失效</p>
+<p>绑定事件做其他的事情</p>
+<p>默认的route只支持get请求</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110093931353.png" alt="image-20240110093931353"></p>
+<p>payload</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/01/29/1/javascript%E5%85%A5%E9%97%A8/" rel="prev" title="">
+      <i class="fa fa-chevron-left"></i> 
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2024/01/29/1/python%E9%AB%98%E7%BA%A7%E8%BF%9B%E9%98%B6/" rel="next" title="">
+       <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#jQuery-ajax"><span class="nav-number">1.</span> <span class="nav-text">jQuery&amp;&amp;ajax</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Ajax"><span class="nav-number">2.</span> <span class="nav-text">Ajax</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="John Doe"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/WANGCHANGCHEN123/WANGCHANGCHEN123.github.io" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;WANGCHANGCHEN123&#x2F;WANGCHANGCHEN123.github.io" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

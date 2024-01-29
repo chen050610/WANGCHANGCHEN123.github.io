@@ -20,15 +20,24 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta property="og:type" content="website">
+  <meta name="description" content="java 基础java的规则 ​	静态方法static无法通过对象名进行调用需要使用类名进行调用  上面类里面有一个和类名重名的方法Person这个相当于python面向对象中__init__的方法 static  void\daibiao没有返回值 如果要返回  参数 写参数需要需要指定类型">
+<meta property="og:type" content="article">
 <meta property="og:title" content="Hexo">
-<meta property="og:url" content="http://example.com/categories/Chen/index.html">
+<meta property="og:url" content="http://example.com/2024/01/29/1/java%20%E5%9F%BA%E7%A1%80/index.html">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="java 基础java的规则 ​	静态方法static无法通过对象名进行调用需要使用类名进行调用  上面类里面有一个和类名重名的方法Person这个相当于python面向对象中__init__的方法 static  void\daibiao没有返回值 如果要返回  参数 写参数需要需要指定类型">
 <meta property="og:locale">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240118124147938.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240118151054597.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240118151350316.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240118151434700.png">
+<meta property="article:published_time" content="2024-01-29T08:15:30.304Z">
+<meta property="article:modified_time" content="2024-01-18T07:15:48.848Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240118124147938.png">
 
-<link rel="canonical" href="http://example.com/categories/Chen/">
+<link rel="canonical" href="http://example.com/2024/01/29/1/java%20%E5%9F%BA%E7%A1%80/">
 
 
 <script id="page-configurations">
@@ -36,12 +45,12 @@
   CONFIG.page = {
     sidebar: "",
     isHome : false,
-    isPost : false,
+    isPost : true,
     lang   : 'zh-Hans'
   };
 </script>
 
-  <title>分类: Chen | Hexo</title>
+  <title> | Hexo</title>
   
 
 
@@ -149,51 +158,96 @@
         <div class="content-wrap">
           
 
-          <div class="content category">
+          <div class="content post posts-expand">
             
 
+    
   
   
-  
-  <div class="post-block">
-    <div class="posts-collapse">
-      <div class="collection-title">
-        <h2 class="collection-header">Chen
-          <small>分类</small>
-        </h2>
-      </div>
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/01/29/1/java%20%E5%9F%BA%E7%A1%80/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-01-29 16:15:30" itemprop="dateCreated datePublished" datetime="2024-01-29T16:15:30+08:00">2024-01-29</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-01-18 15:15:48" itemprop="dateModified" datetime="2024-01-18T15:15:48+08:00">2024-01-18</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-    <div class="collection-year">
-      <span class="collection-header">2024</span>
+        <h1 id="java-基础"><a href="#java-基础" class="headerlink" title="java 基础"></a>java 基础</h1><h2 id="java的规则"><a href="#java的规则" class="headerlink" title="java的规则"></a>java的规则</h2><p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240118124147938.png" alt="image-20240118124147938"></p>
+<p>​	静态方法static无法通过对象名进行调用需要使用类名进行调用</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240118151054597.png" alt="image-20240118151054597"></p>
+<p>上面类里面有一个和类名重名的方法Person这个相当于python面向对象中__init__的方法</p>
+<p>static</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240118151350316.png" alt="image-20240118151350316"></p>
+<p>void\daibiao没有返回值</p>
+<p>如果要返回</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240118151434700.png" alt="image-20240118151434700"></p>
+<p>参数</p>
+<p>写参数需要需要指定类型</p>
+
     </div>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+    
+    
+    
 
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2024-01-29T15:39:33+08:00"
-              content="2024-01-29">
-          01-29
-        </time>
-      </div>
+      <footer class="post-footer">
 
-      <div class="post-title">
-          <a class="post-title-link" href="/2024/01/29/vue%E5%AD%A6%E4%B9%A0vue2+vue3/" itemprop="url">
-            <span itemprop="name">vue2&vue</span>
-          </a>
-      </div>
+        
 
-    </header>
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/01/29/1/css/" rel="prev" title="">
+      <i class="fa fa-chevron-left"></i> 
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2024/01/29/1/HTML%E7%9A%84%E5%AD%A6%E4%B9%A0/" rel="next" title="">
+       <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
   </article>
-
-    </div>
-  </div>
   
   
-  
-
   
 
 
@@ -246,6 +300,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#java-%E5%9F%BA%E7%A1%80"><span class="nav-number">1.</span> <span class="nav-text">java 基础</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#java%E7%9A%84%E8%A7%84%E5%88%99"><span class="nav-number">1.1.</span> <span class="nav-text">java的规则</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 

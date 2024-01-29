@@ -20,15 +20,27 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta property="og:type" content="website">
+  <meta name="description" content="多线程&amp;对进程&amp;异步IO   bound就是受限的意思">
+<meta property="og:type" content="article">
 <meta property="og:title" content="Hexo">
-<meta property="og:url" content="http://example.com/categories/Chen/index.html">
+<meta property="og:url" content="http://example.com/2024/01/29/1/%E5%A4%9A%E7%BA%BF%E7%A8%8B&%E5%AF%B9%E8%BF%9B%E7%A8%8B&%E5%BC%82%E6%AD%A5IO/index.html">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="多线程&amp;对进程&amp;异步IO   bound就是受限的意思">
 <meta property="og:locale">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240103175827289.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240103175915904.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240103180001817.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240103180108441.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240103180518988.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240103180538082.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240103180635053.png">
+<meta property="article:published_time" content="2024-01-29T08:15:30.314Z">
+<meta property="article:modified_time" content="2024-01-03T10:06:36.933Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240103175827289.png">
 
-<link rel="canonical" href="http://example.com/categories/Chen/">
+<link rel="canonical" href="http://example.com/2024/01/29/1/%E5%A4%9A%E7%BA%BF%E7%A8%8B&%E5%AF%B9%E8%BF%9B%E7%A8%8B&%E5%BC%82%E6%AD%A5IO/">
 
 
 <script id="page-configurations">
@@ -36,12 +48,12 @@
   CONFIG.page = {
     sidebar: "",
     isHome : false,
-    isPost : false,
+    isPost : true,
     lang   : 'zh-Hans'
   };
 </script>
 
-  <title>分类: Chen | Hexo</title>
+  <title> | Hexo</title>
   
 
 
@@ -149,51 +161,93 @@
         <div class="content-wrap">
           
 
-          <div class="content category">
+          <div class="content post posts-expand">
             
 
+    
   
   
-  
-  <div class="post-block">
-    <div class="posts-collapse">
-      <div class="collection-title">
-        <h2 class="collection-header">Chen
-          <small>分类</small>
-        </h2>
-      </div>
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/01/29/1/%E5%A4%9A%E7%BA%BF%E7%A8%8B&%E5%AF%B9%E8%BF%9B%E7%A8%8B&%E5%BC%82%E6%AD%A5IO/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-01-29 16:15:30" itemprop="dateCreated datePublished" datetime="2024-01-29T16:15:30+08:00">2024-01-29</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-01-03 18:06:36" itemprop="dateModified" datetime="2024-01-03T18:06:36+08:00">2024-01-03</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-    <div class="collection-year">
-      <span class="collection-header">2024</span>
+        <h1 id="多线程-对进程-异步IO"><a href="#多线程-对进程-异步IO" class="headerlink" title="多线程&amp;对进程&amp;异步IO"></a>多线程&amp;对进程&amp;异步IO</h1><p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240103175827289.png" alt="image-20240103175827289"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240103175915904.png" alt="image-20240103175915904"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240103180001817.png" alt="image-20240103180001817"></p>
+<p>bound就是受限的意思</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240103180108441.png" alt="image-20240103180108441"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240103180518988.png" alt="image-20240103180518988"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240103180538082.png" alt="image-20240103180538082"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240103180635053.png" alt="image-20240103180635053"></p>
+
     </div>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+    
+    
+    
 
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2024-01-29T15:39:33+08:00"
-              content="2024-01-29">
-          01-29
-        </time>
-      </div>
+      <footer class="post-footer">
 
-      <div class="post-title">
-          <a class="post-title-link" href="/2024/01/29/vue%E5%AD%A6%E4%B9%A0vue2+vue3/" itemprop="url">
-            <span itemprop="name">vue2&vue</span>
-          </a>
-      </div>
+        
 
-    </header>
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/01/29/1/%E6%8A%93%E5%8C%85%E5%B7%A5%E5%85%B7%E5%92%8CPyExeJs/" rel="prev" title="">
+      <i class="fa fa-chevron-left"></i> 
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2024/01/29/1/%E6%95%B0%E6%8D%AE%E8%A7%A3%E6%9E%902/" rel="next" title="">
+       <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
   </article>
-
-    </div>
-  </div>
   
   
-  
-
   
 
 
@@ -246,6 +300,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A4%9A%E7%BA%BF%E7%A8%8B-%E5%AF%B9%E8%BF%9B%E7%A8%8B-%E5%BC%82%E6%AD%A5IO"><span class="nav-number">1.</span> <span class="nav-text">多线程&amp;对进程&amp;异步IO</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

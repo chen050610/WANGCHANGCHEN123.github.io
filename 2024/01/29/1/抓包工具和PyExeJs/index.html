@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="抓包工具和PyExeJs有的网站开启了抓包就进行无限的debug模式 打开开发者模式无限开启缓存 所以就需要使用抓包工具 或者打开开发者工具就页面进行返回上一页了   思路 抓包后  找到限制不让用F12的代码修改后在发包  devtool就是 F12 去除主页面但是其他的也没面也会不让F12 所以最有效的解决方法 就是找到加载的js文件 然后使用工具进行绑定  给他 绑定成空的文件 然后返回浏览">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/2024/01/29/1/%E6%8A%93%E5%8C%85%E5%B7%A5%E5%85%B7%E5%92%8CPyExeJs/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="抓包工具和PyExeJs有的网站开启了抓包就进行无限的debug模式 打开开发者模式无限开启缓存 所以就需要使用抓包工具 或者打开开发者工具就页面进行返回上一页了   思路 抓包后  找到限制不让用F12的代码修改后在发包  devtool就是 F12 去除主页面但是其他的也没面也会不让F12 所以最有效的解决方法 就是找到加载的js文件 然后使用工具进行绑定  给他 绑定成空的文件 然后返回浏览">
+<meta property="og:locale">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110095443314.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110095426527.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110101640946.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110101813223.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110102717299.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110103259748.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110103310080.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110103656156.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110103932912.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110104348269.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110104520352.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110110025660.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110113220174.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110113445129.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110113535880.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110113719122.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110113959796.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110114046277.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110114820986.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110114839178.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110115055414.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110115138781.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110115329330.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110115445965.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110115658167.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110120646034.png">
+<meta property="og:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110120808817.png">
+<meta property="article:published_time" content="2024-01-29T08:15:30.314Z">
+<meta property="article:modified_time" content="2024-01-10T04:08:20.273Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110095443314.png">
+
+<link rel="canonical" href="http://example.com/2024/01/29/1/%E6%8A%93%E5%8C%85%E5%B7%A5%E5%85%B7%E5%92%8CPyExeJs/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title> | Hexo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Hexo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/01/29/1/%E6%8A%93%E5%8C%85%E5%B7%A5%E5%85%B7%E5%92%8CPyExeJs/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-01-29 16:15:30" itemprop="dateCreated datePublished" datetime="2024-01-29T16:15:30+08:00">2024-01-29</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-01-10 12:08:20" itemprop="dateModified" datetime="2024-01-10T12:08:20+08:00">2024-01-10</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="抓包工具和PyExeJs"><a href="#抓包工具和PyExeJs" class="headerlink" title="抓包工具和PyExeJs"></a>抓包工具和PyExeJs</h1><p>有的网站开启了抓包就进行无限的debug模式</p>
+<p>打开开发者模式无限开启缓存</p>
+<p>所以就需要使用抓包工具</p>
+<p>或者打开开发者工具就页面进行返回上一页了</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110095443314.png" alt="image-20240110095443314"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110095426527.png" alt="image-20240110095426527"></p>
+<p>思路</p>
+<p>抓包后</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110101640946.png" alt="image-20240110101640946"></p>
+<p>找到限制不让用F12的代码修改后在发包</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110101813223.png" alt="image-20240110101813223"></p>
+<p>devtool就是 F12</p>
+<p>去除主页面但是其他的也没面也会不让F12</p>
+<p>所以最有效的解决方法</p>
+<p>就是找到加载的js文件</p>
+<p>然后使用工具进行绑定</p>
+<p><strong><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110102717299.png" alt="image-20240110102717299"></strong></p>
+<p>给他 绑定成空的文件</p>
+<p>然后返回浏览器切记</p>
+<p>用c+s+r进行刷新</p>
+<p>还是不行就要清楚浏览器缓存</p>
+<h1 id="PyExecjs"><a href="#PyExecjs" class="headerlink" title="PyExecjs"></a>PyExecjs</h1><p>他就pyhon的一个模块</p>
+<p>解决js运行的问题</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110103259748.png" alt="image-20240110103259748"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110103310080.png" alt="image-20240110103310080"></p>
+<p>很难理解</p>
+<p>不涉及包全是算法基本全是原生的</p>
+<p>没有第三方的js出现例如Jquery类似的</p>
+<p>需要使用nodejs做运行环境</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110103656156.png" alt="image-20240110103656156"></p>
+<p>安装</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110103932912.png" alt="image-20240110103932912"></p>
+<p>安装<img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110104348269.png" alt="image-20240110104348269"></p>
+<p>配置环境</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110104520352.png" alt="image-20240110104520352"></p>
+<p>代表成功了</p>
+<p>这个模块主要帮助注我们完成js代码的运行</p>
+<p>eval：执行js代码并且返回结果</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110110025660.png" alt="image-20240110110025660"></p>
+<p>案列的实现</p>
+<p>还是老朋友百度翻译</p>
+<p>当我们改变参数查询的时候</p>
+<p>发生了错误</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110113220174.png" alt="image-20240110113220174"></p>
+<p>来回尝试和sign有关</p>
+<p>只有找到了fn的运算的过程就可以破解了</p>
+<p>发现应该是ajaxa所以去这里查找</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110113445129.png" alt="image-20240110113445129"></p>
+<p>直接找太麻烦</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110113535880.png" alt="image-20240110113535880"></p>
+<p>在栈这里找</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110113719122.png" alt="image-20240110113719122"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110113959796.png" alt="image-20240110113959796"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110114046277.png" alt="image-20240110114046277"></p>
+<p>控制台调试的用法</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110114820986.png" alt="image-20240110114820986"></p>
+<p>在右边进行标记</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110114839178.png" alt="image-20240110114839178"></p>
+<p>然后在重新加载</p>
+<p>就会停在这里</p>
+<p>这里的getcur什么的责骂找都找不到</p>
+<p>怀疑是闭包</p>
+<p>内部再返回这个函数，然后有一个变量接受</p>
+<p>然后在调用</p>
+<p>然后右上角</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110115055414.png" alt="image-20240110115055414"></p>
+<p>第三个是进一层</p>
+<p>可以看见是怎么工作的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110115138781.png" alt="image-20240110115138781"></p>
+<p>发现就是这个东西</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110115329330.png" alt="image-20240110115329330"></p>
+<p>找到了</p>
+<p>所以这个M是定死的</p>
+<p>为甚么用getcur什么什么的进入到d了呢因为</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110115445965.png" alt="image-20240110115445965"></p>
+<p>在外面调用getCurdomain实际上就是调用闭包中的d的函数</p>
+<p>然后再看sign的那个进行调试什么的以后进入这个函数‘</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110115658167.png" alt="image-20240110115658167"></p>
+<p>直接看是非常的复杂</p>
+<p>一个一个高没有必要</p>
+<p>没有第三方的js的东西</p>
+<p>不属于原生js的东西</p>
+<p>所以就看可以使用pyyexecjs实现这个过程</p>
+<p>把算法和主要用到的函数复制下来</p>
+<p>感觉这才是入门</p>
+<p>逆向很难</p>
+<p>总结</p>
+<p>找函数要设置断点</p>
+<p>找变量去搜</p>
+<p>运行出现window没有被定义</p>
+<p>nodejs是后台运行js的环境没有window的对象</p>
+<p>window对象是浏览器的</p>
+<p>所以找到window</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110120646034.png" alt="image-20240110120646034"></p>
+<p>直接把l复制到控制台运行</p>
+<p>是gtk</p>
+<p>那么window.gtk在哪里定义呢</p>
+<p>再页面的源代码里面发现</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240110120808817.png" alt="image-20240110120808817"></p>
+<p>所以这个就解决了</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/01/29/1/%E5%90%84%E7%A7%8D%E5%8A%A0%E5%AF%86%E7%9A%84%E9%80%BB%E8%BE%91/" rel="prev" title="">
+      <i class="fa fa-chevron-left"></i> 
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2024/01/29/1/%E5%A4%9A%E7%BA%BF%E7%A8%8B&%E5%AF%B9%E8%BF%9B%E7%A8%8B&%E5%BC%82%E6%AD%A5IO/" rel="next" title="">
+       <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%8A%93%E5%8C%85%E5%B7%A5%E5%85%B7%E5%92%8CPyExeJs"><span class="nav-number">1.</span> <span class="nav-text">抓包工具和PyExeJs</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#PyExecjs"><span class="nav-number">2.</span> <span class="nav-text">PyExecjs</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="John Doe"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/WANGCHANGCHEN123/WANGCHANGCHEN123.github.io" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;WANGCHANGCHEN123&#x2F;WANGCHANGCHEN123.github.io" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
