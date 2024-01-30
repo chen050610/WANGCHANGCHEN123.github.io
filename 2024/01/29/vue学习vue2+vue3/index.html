@@ -186,12 +186,12 @@
             
             <span class="tag">
                 
-                <a href="/tags/PS3/" style="color: #ff7d73">PS3</a>
+                <a href="/tags/PS3/" style="color: #ffa2c4">PS3</a>
             </span>
             
             <span class="tag">
                 
-                <a href="/tags/Games/" style="color: #03a9f4">Games</a>
+                <a href="/tags/Games/" style="color: #00a596">Games</a>
             </span>
             
         </span>
@@ -2850,6 +2850,694 @@ export default &#123;
 <p>第三个login就是登陆的用户名字</p>
 <h2 id="发送请求的方法"><a href="#发送请求的方法" class="headerlink" title="发送请求的方法"></a>发送请求的方法</h2><p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240129145712824.png" alt="image-20240129145712824"></p>
 <p>这是vue—resource是对xml的封装</p>
+<p>发送ajax的请求的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130101546269.png" alt="image-20240130101546269"></p>
+<p>方法vue里的插件</p>
+<p>应用插件以后</p>
+<p>vm和vc身上就会有个</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130110604854.png" alt="image-20240130110604854"></p>
+<p>就可以不用axios发送请求了</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130110855280.png" alt="image-20240130110855280"></p>
+<p>用法一摸一样</p>
+<h2 id="插槽"><a href="#插槽" class="headerlink" title="插槽"></a>插槽</h2><p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130113802764.png" alt="image-20240130113802764"></p>
+<p>实现</p>
+<p>app</p>
+<pre><code class="html">&lt;script&gt;
+import Category from &#39;./components/Category.vue&#39;
+
+export default &#123;
+  name: &quot;App&quot;,
+  data()&#123;
+    return&#123;
+      foods:[&#39;火锅&#39;,&#39;烧烤&#39;,&#39;小龙虾&#39;,&#39;牛排&#39;],
+      games:[&#39;红色警戒&#39;,&#39;王者荣耀&#39;,&#39;穿越火线&#39;,&#39;和平精英&#39;],
+      films:[&#39;教父&#39;,&#39;美人鱼&#39;,&#39;和平&#39;,&#39;一闪一闪亮晶晶&#39;]
+    &#125;
+  &#125;,
+  components:&#123;Category&#125;
+  &#125;
+
+&lt;/script&gt;
+
+&lt;template&gt;
+&lt;div class=&quot;container&quot;&gt;
+  &lt;Category title=&#39;美食&#39; :listData=&quot;foods&quot;&gt;&lt;/Category&gt;
+  &lt;Category title=&#39;游戏&#39; :listData=&quot;games&quot;&gt;&lt;/Category&gt;
+  &lt;Category title=&#39;电影&#39; :listData=&quot;films&quot;&gt;&lt;/Category&gt;
+&lt;/div&gt;
+&lt;/template&gt;
+
+&lt;style&gt;
+.container&#123;
+  display: flex;
+  justify-content: space-around;
+&#125;
+h3&#123;
+  text-align: center;
+  background-color: orange;
+&#125;
+&lt;/style&gt;
+</code></pre>
+<pre><code class="html">&lt;script&gt;
+export default &#123;
+  name: &quot;CategorY&quot;,
+  props:[&#39;listData&#39;,&#39;title&#39;]
+&#125;
+&lt;/script&gt;
+
+&lt;template&gt;
+&lt;div class=&quot;category&quot;&gt;
+  &lt;h3&gt;&#123;&#123;title&#125;&#125;的分类&lt;/h3&gt;
+  &lt;ul  &gt;
+    &lt;li v-for=&quot;(item,index) in listData&quot; :key=&quot;index&quot;&gt;
+      &#123;&#123;item&#125;&#125;
+    &lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;
+&lt;/template&gt;
+
+&lt;style scoped&gt;
+.category&#123;
+  background-color: skyblue;
+  width: 200px;
+  height: 300px;
+&#125;
+&lt;/style&gt;
+</code></pre>
+<p>更改一下</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130143604435.png" alt="image-20240130143604435"></p>
+<p>如果用条件熏染就会变得麻烦了</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130143820277.png" alt="image-20240130143820277"></p>
+<p>在app里面</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130144128370.png" alt="image-20240130144128370"></p>
+<p>然后再category里面</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130144217901.png" alt="image-20240130144217901"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130144252617.png" alt="image-20240130144252617"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130144303150.png" alt="image-20240130144303150"></p>
+<p>slot里面还饿可以加东西</p>
+<p>如果没有传递的话</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130144400015.png" alt="image-20240130144400015"></p>
+<p>这研样就可以实现了</p>
+<pre><code class="html">&lt;script&gt;
+import Category from &#39;./components/Category.vue&#39;
+
+export default &#123;
+  name: &quot;App&quot;,
+  data()&#123;
+    return&#123;
+      foods:[&#39;火锅&#39;,&#39;烧烤&#39;,&#39;小龙虾&#39;,&#39;牛排&#39;],
+      games:[&#39;红色警戒&#39;,&#39;王者荣耀&#39;,&#39;穿越火线&#39;,&#39;和平精英&#39;],
+      films:[&#39;教父&#39;,&#39;美人鱼&#39;,&#39;和平&#39;,&#39;一闪一闪亮晶晶&#39;]
+    &#125;
+  &#125;,
+  components:&#123;Category&#125;
+&#125;
+
+&lt;/script&gt;
+
+&lt;template&gt;
+  &lt;div class=&quot;container&quot;&gt;
+    &lt;Category title=&#39;美食&#39; :listData=&quot;foods&quot;&gt;
+      &lt;img src=&quot;http://8.130.168.251/1.jpg&quot; alt=&quot;&quot;&gt;
+    &lt;/Category&gt;
+    &lt;Category title=&#39;游戏&#39; :listData=&quot;games&quot;&gt;
+      &lt;li v-for=&quot;(item,index) in games&quot; :key=&quot;index&quot;&gt;
+        &#123;&#123;item&#125;&#125;
+      &lt;/li&gt;
+    &lt;/Category&gt;
+    &lt;Category title=&#39;电影&#39; :listData=&quot;films&quot;&gt;
+      &lt;img src=&quot;http://8.130.168.251/1.jpg&quot; alt=&quot;&quot;&gt;
+    &lt;/Category&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;style&gt;
+.container&#123;
+  display: flex;
+  justify-content: space-around;
+&#125;
+h3&#123;
+  text-align: center;
+  background-color: orange;
+&#125;
+img&#123;
+  width: 160px;
+  height: 100px;
+&#125;
+&lt;/style&gt;
+</code></pre>
+<pre><code class="vue">&lt;script&gt;
+export default &#123;
+  name: &quot;CategorY&quot;,
+  props:[&#39;title&#39;]
+&#125;
+&lt;/script&gt;
+
+&lt;template&gt;
+&lt;div class=&quot;category&quot;&gt;
+  &lt;h3&gt;&#123;&#123;title&#125;&#125;的分类&lt;/h3&gt;
+  &lt;ul  &gt;
+      &lt;slot&gt;&lt;/slot&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;
+&lt;/template&gt;
+
+&lt;style scoped&gt;
+.category&#123;
+  background-color: skyblue;
+  width: 200px;
+  height: 300px;
+&#125;
+
+&lt;/style&gt;
+</code></pre>
+<h2 id="具名插槽"><a href="#具名插槽" class="headerlink" title="具名插槽"></a>具名插槽</h2><p>有名字的插槽</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130145200970.png" alt="image-20240130145200970"></p>
+<p>实现定义两个插槽</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130145306201.png" alt="image-20240130145306201"></p>
+<p>然后在告诉人家往哪个插槽里面放</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130145806531.png" alt="image-20240130145806531"></p>
+<p>两个一样的不会产生覆盖会继续 追加</p>
+<p>一旦使用</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130150116003.png" alt="image-20240130150116003"></p>
+<p>template包裹的话</p>
+<p>就会有第二种的写法</p>
+<p>用v-slot：</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130150222023.png" alt="image-20240130150222023"></p>
+<p>只能用于template</p>
+<h2 id="作用域插槽"><a href="#作用域插槽" class="headerlink" title="作用域插槽"></a>作用域插槽</h2><p>我们在换一下情况</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130151105144.png" alt="image-20240130151105144"></p>
+<p>如果我们需要数据的地方在app中但是我的数据在category里面</p>
+<p>我们就可以传递过去</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130151225338.png" alt="image-20240130151225338"></p>
+<p>之前的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130151312574.png" alt="image-20240130151312574"></p>
+<p>如果你想接受到template额话就需要</p>
+<p>用template进行包裹 </p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130151444369.png" alt="image-20240130151444369"></p>
+<p>还需要</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130151455640.png" alt="image-20240130151455640"></p>
+<p>scope</p>
+<p>然后就可以了</p>
+<p>或者使用slot-scope</p>
+<p>新的简写的方法</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130151741255.png" alt="image-20240130151741255"></p>
+<p>结构赋值</p>
+<p>​	</p>
+<pre><code>  &lt;div class=&quot;container&quot;&gt;
+    &lt;Category title=&#39;美食&#39; &gt;
+      &lt;template slot-scope=&quot;hahaha&quot;&gt;
+        &#123;&#123;hahaha&#125;&#125;
+&lt;!--        &lt;ul&gt;--&gt;
+&lt;!--          &lt;li v-for=&quot; (item,index) in hahaha.foods&quot; :key=&quot;index&quot;&gt;--&gt;
+&lt;!--            &#123;&#123;item&#125;&#125;--&gt;
+&lt;!--          &lt;/li&gt;--&gt;
+&lt;!--        &lt;/ul&gt;--&gt;
+      &lt;/template&gt;
+&lt;!--      &lt;a slot=&quot;footer&quot; href=&quot;https://chenw.love&quot;&gt;博客网站&lt;/a&gt;--&gt;
+    &lt;/Category&gt;
+&lt;!--    &lt;Category title=&#39;游戏&#39; :listData=&quot;games&quot;&gt;--&gt;
+&lt;!--      &lt;li v-for=&quot;(item,index) in games&quot; :key=&quot;index&quot;&gt;--&gt;
+&lt;!--        &#123;&#123;item&#125;&#125;--&gt;
+&lt;!--      &lt;/li&gt;--&gt;
+&lt;!--    &lt;/Category&gt;--&gt;
+&lt;!--    &lt;Category title=&#39;电影&#39; :listData=&quot;films&quot;&gt;--&gt;
+&lt;!--      &lt;img src=&quot;http://8.130.168.251/1.jpg&quot; alt=&quot;&quot;&gt;--&gt;
+&lt;!--    &lt;/Category&gt;--&gt;
+  &lt;/div&gt;
+</code></pre>
+<h2 id="vuex"><a href="#vuex" class="headerlink" title="vuex"></a>vuex</h2><p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130153452130.png" alt="image-20240130153452130"></p>
+<p>是vue的一个插件</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130153950485.png" alt="image-20240130153950485"></p>
+<p>也是组件通讯的工具</p>
+<p>全局事件总线的方法实现</p>
+<p>数据之间的的通信</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130154144745.png" alt="image-20240130154144745"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130154249952.png" alt="image-20240130154249952"></p>
+<p>这样才能实现所有组件之间进行任意的读取还修改非组件之间的值</p>
+<p>这样的非常的麻烦</p>
+<p>vuex的实现方法</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130154631328.png" alt="image-20240130154631328"></p>
+<p>把多个组件休要使用的数据拿出来</p>
+<p>然后再</p>
+<p>进行任意组件之间的读取和修改 </p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130154723382.png" alt="image-20240130154723382"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130154815999.png" alt="image-20240130154815999"></p>
+<p>工作的原理的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130161847982.png" alt="image-20240130161847982"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130162201657.png" alt="image-20240130162201657"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130162949603.png" alt="image-20240130162949603"></p>
+<p>use完以后就会有一个store的配置项了</p>
+<p>只有use完以后才有这个配置项</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130163157161.png" alt="image-20240130163157161"></p>
+<p>这次以后vm和vc里面都有$store</p>
+<p>​	</p>
+<p>切记main。js要先vue.use(vuex)</p>
+<p>然后再引入store</p>
+<p>不行换顺序是不行的</p>
+<p><img src="E:\blog\source_posts\vue学习vue2+vue3.assets\image-20240130165342612.png" alt="image-20240130165342612"></p>
+<p>这样的也会先执行导包的操作</p>
+<p>这样的错误的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130165450259.png" alt="image-20240130165450259"></p>
+<p>所以我们可以在index.js</p>
+<p>里面进行use</p>
+<p>这样store就成了</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130165726390.png" alt="image-20240130165726390"></p>
+<p>笔记</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130170017792.png" alt="image-20240130170017792"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130173211887.png" alt="image-20240130173211887"></p>
+<p>一些延时的操作可以在actions里面执行</p>
+<p>如果不需要在actions做什么事情就可以</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130174605632.png" alt="image-20240130174605632"></p>
+<p>直接commit</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130174627315.png" alt="image-20240130174627315"></p>
+<h2 id="vuex开发者工具的使用"><a href="#vuex开发者工具的使用" class="headerlink" title="vuex开发者工具的使用"></a>vuex开发者工具的使用</h2><p>都是一家做的</p>
+<p>所以vue插件里面包括这</p>
+<p>第二个</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130174745322.png" alt="image-20240130174745322"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130174756574.png" alt="image-20240130174756574"></p>
+<p>base</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130174810755.png" alt="image-20240130174810755"></p>
+<p>这里就能看出</p>
+<p>devtools一直在和mutations对话</p>
+<p>时间线</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130175012139.png" alt="image-20240130175012139"></p>
+<p>穿梭回去</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130175037395.png" alt="image-20240130175037395"></p>
+<p>不要这个动作了</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130175135777.png" alt="image-20240130175135777"></p>
+<p>点下载类似的按钮就会合并前几项</p>
+<p>为什么actions的content的参顺有这么多的实行和方法</p>
+<p>因为</p>
+<p>如果你的action里的事情比较复杂</p>
+<p>你就可以继续</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130175646282.png" alt="image-20240130175646282"></p>
+<p>在demo1继续你的代码逻辑 </p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130175717107.png" alt="image-20240130175717107"></p>
+<p>如果我们绕过mutations的话</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130175844912.png" alt="image-20240130175844912"></p>
+<p>这样不报错但是开发者工具失效了</p>
+<h2 id="getters的配置项"><a href="#getters的配置项" class="headerlink" title="getters的配置项"></a>getters的配置项</h2><p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130180901115.png" alt="image-20240130180901115"></p>
+<p>getters不是必须 的</p>
+<p>可以用于对state里的数据进行加工</p>
+<p>例如讲求出的和变大十倍</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130184249997.png" alt="image-20240130184249997"></p>
+<p>在getter里面添加</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130184311383.png" alt="image-20240130184311383"></p>
+<p>感觉相当于计算属性computer</p>
+<p>这样一遍一遍的写真的很复杂</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130184940334.png" alt="image-20240130184940334"></p>
+<p>有没有什么办法可以简单一点</p>
+<p>​	</p>
+<p>就可以用计算属性‘</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130185041024.png" alt="image-20240130185041024"></p>
+<p>妙啊</p>
+<p>这样的</p>
+<pre><code class="html">&lt;script&gt;
+export default &#123;
+  name: &quot;CounT&quot;,
+  data()&#123;
+    return &#123;
+      num:1
+    &#125;
+  &#125;,
+  mounted() &#123;
+    console.log(this)
+  &#125;,
+  methods:&#123;
+    add()&#123;
+      this.$store.dispatch(&#39;jia&#39;,this.num)
+    &#125;,
+    ded()&#123;
+      this.$store.dispatch(&#39;ded&#39;,this.num)
+    &#125;,
+    jiAdd()&#123;
+    &#125;,
+    waitAdd()&#123;
+      setTimeout(()=&gt;&#123;
+
+      &#125;,500)
+    &#125;,
+  &#125;,
+  computed:&#123;
+    sum()&#123;
+      return this.$store.state.sum
+    &#125;,
+    bigSum()&#123;
+      return this.$store.getters.bigSum
+    &#125;,
+    school()&#123;
+      return this.$store.state.school
+    &#125;,
+    subject()&#123;
+      return this.$store.state.subject
+    &#125;,
+  &#125;
+&#125;
+&lt;/script&gt;
+
+&lt;template&gt;
+  &lt;div&gt;
+    &lt;h1&gt;当前求和为:&#123;&#123;sum&#125;&#125;&lt;/h1&gt;
+    &lt;h1&gt;当前求和为:&#123;&#123;bigSum&#125;&#125;&lt;/h1&gt;
+    &lt;h2&gt;我在&#123;&#123;school&#125;&#125;学习&#123;&#123;subject&#125;&#125;&lt;/h2&gt;
+    &lt;select v-model.number=&quot;num&quot;&gt;
+      &lt;option value=&quot;1&quot;&gt;1&lt;/option&gt;
+      &lt;option value=&quot;2&quot;&gt;2&lt;/option&gt;
+      &lt;option value=&quot;3&quot;&gt;3&lt;/option&gt;
+    &lt;/select&gt;
+    &lt;button @click=&quot;add&quot;&gt;+&lt;/button&gt;
+    &lt;button @click=&quot;ded&quot;&gt;-&lt;/button&gt;
+    &lt;button @click=&quot;jiAdd&quot;&gt;当前求和为奇数的时候再加&lt;/button&gt;
+    &lt;button @click=&quot;waitAdd&quot;&gt;等一等再加&lt;/button&gt;
+
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;style scoped&gt;
+&lt;/style&gt;
+</code></pre>
+<p>这些<img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130185452596.png" alt="image-20240130185452596"></p>
+<p>也有点形式有些固定</p>
+<p>有没有函数可以生成</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130185541481.png" alt="image-20240130185541481"></p>
+<p>用一个函数生成这个代码</p>
+<p>把变化的东西给他</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130185731349.png" alt="image-20240130185731349"></p>
+<p>需要引入</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130185758895.png" alt="image-20240130185758895"></p>
+<p>使用都是从state里面取数据</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130190700550.png" alt="image-20240130190700550"></p>
+<p>代码如下</p>
+<pre><code class="html">&lt;script&gt;
+import &#123;mapState&#125; from  &#39;vuex&#39;
+export default &#123;
+  name: &quot;CounT&quot;,
+  data()&#123;
+    return &#123;
+      num:1
+    &#125;
+  &#125;,
+  methods:&#123;
+    add()&#123;
+      this.$store.dispatch(&#39;jia&#39;,this.num)
+    &#125;,
+    ded()&#123;
+      this.$store.dispatch(&#39;ded&#39;,this.num)
+    &#125;,
+    jiAdd()&#123;
+    &#125;,
+    waitAdd()&#123;
+      setTimeout(()=&gt;&#123;
+
+      &#125;,500)
+    &#125;,
+  &#125;,
+  computed:&#123;
+    // sum()&#123;
+    //   return this.$store.state.sum
+    // &#125;,
+    // school()&#123;
+    //   return this.$store.state.school
+    // &#125;,
+    // subject()&#123;
+    //   return this.$store.state.subject
+    // &#125;,
+    ...mapState(&#123;sum:&#39;sum&#39;,school:&#39;school&#39;,subject:&#39;subject&#39;&#125;),
+    bigSum()&#123;
+      return this.$store.getters.bigSum
+    &#125;,
+  &#125;,
+  mounted() &#123;
+    const x=mapState(&#123;sum:&#39;sum&#39;,school:&#39;school&#39;,subject:&#39;subject&#39;&#125;)
+    console.log(x)//x是一个对象对象里每个东西都是一个函数
+  &#125;,
+
+&#125;
+&lt;/script&gt;
+
+&lt;template&gt;
+  &lt;div&gt;
+    &lt;h1&gt;当前求和为:&#123;&#123;sum&#125;&#125;&lt;/h1&gt;
+    &lt;h1&gt;当前求和为:&#123;&#123;bigSum&#125;&#125;&lt;/h1&gt;
+    &lt;h2&gt;我在&#123;&#123;school&#125;&#125;学习&#123;&#123;subject&#125;&#125;&lt;/h2&gt;
+    &lt;select v-model.number=&quot;num&quot;&gt;
+      &lt;option value=&quot;1&quot;&gt;1&lt;/option&gt;
+      &lt;option value=&quot;2&quot;&gt;2&lt;/option&gt;
+      &lt;option value=&quot;3&quot;&gt;3&lt;/option&gt;
+    &lt;/select&gt;
+    &lt;button @click=&quot;add&quot;&gt;+&lt;/button&gt;
+    &lt;button @click=&quot;ded&quot;&gt;-&lt;/button&gt;
+    &lt;button @click=&quot;jiAdd&quot;&gt;当前求和为奇数的时候再加&lt;/button&gt;
+    &lt;button @click=&quot;waitAdd&quot;&gt;等一等再加&lt;/button&gt;
+
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;style scoped&gt;
+&lt;/style&gt;
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130191359590.png" alt="image-20240130191359590"></p>
+<p>这是 第一种的写法</p>
+<p>下面是第二种</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130191532496.png" alt="image-20240130191532496"></p>
+<p>如果名字和变量的名字相同的话可以写成数组的形势</p>
+<p>这样也是ok的 </p>
+<pre><code class="html">&lt;script&gt;
+import &#123;mapState&#125; from  &#39;vuex&#39;
+export default &#123;
+  name: &quot;CounT&quot;,
+  data()&#123;
+    return &#123;
+      num:1
+    &#125;
+  &#125;,
+  methods:&#123;
+    add()&#123;
+      this.$store.dispatch(&#39;jia&#39;,this.num)
+    &#125;,
+    ded()&#123;
+      this.$store.dispatch(&#39;ded&#39;,this.num)
+    &#125;,
+    jiAdd()&#123;
+    &#125;,
+    waitAdd()&#123;
+      setTimeout(()=&gt;&#123;
+
+      &#125;,500)
+    &#125;,
+  &#125;,
+  computed:&#123;
+    // sum()&#123;
+    //   return this.$store.state.sum
+    // &#125;,
+    // school()&#123;
+    //   return this.$store.state.school
+    // &#125;,
+    // subject()&#123;
+    //   return this.$store.state.subject
+    // &#125;,
+    // ...mapState(&#123;sum:&#39;sum&#39;,school:&#39;school&#39;,subject:&#39;subject&#39;&#125;),\
+    ...mapState([&#39;sum&#39;,&#39;school&#39;,&#39;subject&#39;]),
+    bigSum()&#123;
+      return this.$store.getters.bigSum
+    &#125;,
+  &#125;,
+  mounted() &#123;
+    const x=mapState(&#123;sum:&#39;sum&#39;,school:&#39;school&#39;,subject:&#39;subject&#39;&#125;)
+    console.log(x)//x是一个对象对象里每个东西都是一个函数
+  &#125;,
+
+&#125;
+&lt;/script&gt;
+
+&lt;template&gt;
+  &lt;div&gt;
+    &lt;h1&gt;当前求和为:&#123;&#123;sum&#125;&#125;&lt;/h1&gt;
+    &lt;h1&gt;当前求和为:&#123;&#123;bigSum&#125;&#125;&lt;/h1&gt;
+    &lt;h2&gt;我在&#123;&#123;school&#125;&#125;学习&#123;&#123;subject&#125;&#125;&lt;/h2&gt;
+    &lt;select v-model.number=&quot;num&quot;&gt;
+      &lt;option value=&quot;1&quot;&gt;1&lt;/option&gt;
+      &lt;option value=&quot;2&quot;&gt;2&lt;/option&gt;
+      &lt;option value=&quot;3&quot;&gt;3&lt;/option&gt;
+    &lt;/select&gt;
+    &lt;button @click=&quot;add&quot;&gt;+&lt;/button&gt;
+    &lt;button @click=&quot;ded&quot;&gt;-&lt;/button&gt;
+    &lt;button @click=&quot;jiAdd&quot;&gt;当前求和为奇数的时候再加&lt;/button&gt;
+    &lt;button @click=&quot;waitAdd&quot;&gt;等一等再加&lt;/button&gt;
+
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;style scoped&gt;
+&lt;/style&gt;
+</code></pre>
+<p>还有mapGetters是从getters读取数据</p>
+<p>还是一样的</p>
+<pre><code class="html">&lt;script&gt;
+import &#123;mapState,mapGetters&#125; from  &#39;vuex&#39;
+export default &#123;
+  name: &quot;CounT&quot;,
+  data()&#123;
+    return &#123;
+      num:1
+    &#125;
+  &#125;,
+  methods:&#123;
+    add()&#123;
+      this.$store.dispatch(&#39;jia&#39;,this.num)
+    &#125;,
+    ded()&#123;
+      this.$store.dispatch(&#39;ded&#39;,this.num)
+    &#125;,
+    jiAdd()&#123;
+    &#125;,
+    waitAdd()&#123;
+      setTimeout(()=&gt;&#123;
+
+      &#125;,500)
+    &#125;,
+  &#125;,
+  computed:&#123;
+    // sum()&#123;
+    //   return this.$store.state.sum
+    // &#125;,
+    // school()&#123;
+    //   return this.$store.state.school
+    // &#125;,
+    // subject()&#123;
+    //   return this.$store.state.subject
+    // &#125;,
+    // ...mapState(&#123;sum:&#39;sum&#39;,school:&#39;school&#39;,subject:&#39;subject&#39;&#125;),\
+    ...mapState([&#39;sum&#39;,&#39;school&#39;,&#39;subject&#39;]),
+    ...mapGetters([&#39;bigSum&#39;])
+    // bigSum()&#123;
+    //   return this.$store.getters.bigSum
+    // &#125;,
+  &#125;,
+  mounted() &#123;
+    const x=mapState(&#123;sum:&#39;sum&#39;,school:&#39;school&#39;,subject:&#39;subject&#39;&#125;)
+    console.log(x)//x是一个对象对象里每个东西都是一个函数
+  &#125;,
+
+&#125;
+&lt;/script&gt;
+
+&lt;template&gt;
+  &lt;div&gt;
+    &lt;h1&gt;当前求和为:&#123;&#123;sum&#125;&#125;&lt;/h1&gt;
+    &lt;h1&gt;当前求和为:&#123;&#123;bigSum&#125;&#125;&lt;/h1&gt;
+    &lt;h2&gt;我在&#123;&#123;school&#125;&#125;学习&#123;&#123;subject&#125;&#125;&lt;/h2&gt;
+    &lt;select v-model.number=&quot;num&quot;&gt;
+      &lt;option value=&quot;1&quot;&gt;1&lt;/option&gt;
+      &lt;option value=&quot;2&quot;&gt;2&lt;/option&gt;
+      &lt;option value=&quot;3&quot;&gt;3&lt;/option&gt;
+    &lt;/select&gt;
+    &lt;button @click=&quot;add&quot;&gt;+&lt;/button&gt;
+    &lt;button @click=&quot;ded&quot;&gt;-&lt;/button&gt;
+    &lt;button @click=&quot;jiAdd&quot;&gt;当前求和为奇数的时候再加&lt;/button&gt;
+    &lt;button @click=&quot;waitAdd&quot;&gt;等一等再加&lt;/button&gt;
+
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;style scoped&gt;
+&lt;/style&gt;
+</code></pre>
+<p>继续使用map优化daima </p>
+<p>使用commit或者dispatch的时候</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130192441004.png" alt="image-20240130192441004"></p>
+<p>commit的是mapMutation</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130192759036.png" alt="image-20240130192759036"></p>
+<p>这样的</p>
+<p>等下还上面的有些不一样的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130193008978.png" alt="image-20240130193008978"></p>
+<p>生成是这样的</p>
+<p>所以还得在调用它的地方传递参数</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130193250689.png" alt="image-20240130193250689"></p>
+<p>如果不传的话</p>
+<p>函数Moore你会传递event的那个</p>
+<p>还有更复杂的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130193453900.png" alt="image-20240130193453900"></p>
+<p>用两个函数实现</p>
+<p>数组的方法是一样的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130204508621.png" alt="image-20240130204508621"></p>
+<p>简写使用数组的的形式</p>
+<p>如果是dispatch的话</p>
+<p>就是mapAction</p>
+<p>mapActions和mapMutations都差不多的</p>
+<pre><code class="html">&lt;script&gt;
+import &#123;mapState,mapGetters,mapActions&#125; from  &#39;vuex&#39;
+export default &#123;
+  name: &quot;CounT&quot;,
+  data()&#123;
+    return &#123;
+      num:1
+    &#125;
+  &#125;,
+  methods:&#123;
+    // add()&#123;
+    //   this.$store.dispatch(&#39;jia&#39;,this.num)
+    // &#125;,
+    // ded()&#123;
+    //   this.$store.dispatch(&#39;ded&#39;,this.num)
+    // &#125;,
+    ...mapActions(&#123;add:&#39;jia&#39;,ded:&#39;ded&#39;&#125;),
+    jiAdd()&#123;
+    &#125;,
+    waitAdd()&#123;
+      setTimeout(()=&gt;&#123;
+
+      &#125;,500)
+    &#125;,
+  &#125;,
+  computed:&#123;
+    // sum()&#123;
+    //   return this.$store.state.sum
+    // &#125;,
+    // school()&#123;
+    //   return this.$store.state.school
+    // &#125;,
+    // subject()&#123;
+    //   return this.$store.state.subject
+    // &#125;,
+    // ...mapState(&#123;sum:&#39;sum&#39;,school:&#39;school&#39;,subject:&#39;subject&#39;&#125;),\
+    ...mapState([&#39;sum&#39;,&#39;school&#39;,&#39;subject&#39;]),
+    ...mapGetters([&#39;bigSum&#39;])
+    // bigSum()&#123;
+    //   return this.$store.getters.bigSum
+    // &#125;,
+  &#125;,
+  mounted() &#123;
+    const x=mapState(&#123;sum:&#39;sum&#39;,school:&#39;school&#39;,subject:&#39;subject&#39;&#125;)
+    console.log(x)//x是一个对象对象里每个东西都是一个函数
+  &#125;,
+
+&#125;
+&lt;/script&gt;
+
+&lt;template&gt;
+  &lt;div&gt;
+    &lt;h1&gt;当前求和为:&#123;&#123;sum&#125;&#125;&lt;/h1&gt;
+    &lt;h1&gt;当前求和为:&#123;&#123;bigSum&#125;&#125;&lt;/h1&gt;
+    &lt;h2&gt;我在&#123;&#123;school&#125;&#125;学习&#123;&#123;subject&#125;&#125;&lt;/h2&gt;
+    &lt;select v-model.number=&quot;num&quot;&gt;
+      &lt;option value=&quot;1&quot;&gt;1&lt;/option&gt;
+      &lt;option value=&quot;2&quot;&gt;2&lt;/option&gt;
+      &lt;option value=&quot;3&quot;&gt;3&lt;/option&gt;
+    &lt;/select&gt;
+    &lt;button @click=&quot;add(num)&quot;&gt;+&lt;/button&gt;
+    &lt;button @click=&quot;ded(num)&quot;&gt;-&lt;/button&gt;
+    &lt;button @click=&quot;jiAdd&quot;&gt;当前求和为奇数的时候再加&lt;/button&gt;
+    &lt;button @click=&quot;waitAdd&quot;&gt;等一等再加&lt;/button&gt;
+
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;style scoped&gt;
+&lt;/style&gt;
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240130205649046.png" alt="image-20240130205649046"></p>
 
     </div>
     
