@@ -186,12 +186,12 @@
             
             <span class="tag">
                 
-                <a href="/tags/PS3/" style="color: #03a9f4">PS3</a>
+                <a href="/tags/PS3/" style="color: #ff7d73">PS3</a>
             </span>
             
             <span class="tag">
                 
-                <a href="/tags/Games/" style="color: #ff7d73">Games</a>
+                <a href="/tags/Games/" style="color: #00bcd4">Games</a>
             </span>
             
         </span>
@@ -5080,6 +5080,256 @@ export default &#123;
 </code></pre>
 <p>执行结果</p>
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240202124159069.png" alt="image-20240202124159069"></p>
+<h2 id="vue3的生命周期"><a href="#vue3的生命周期" class="headerlink" title="vue3的生命周期"></a>vue3的生命周期</h2><p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240202144738157.png" alt="image-20240202144738157"></p>
+<p>之前的钩子的名字都是一样的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240202144922347.png" alt="image-20240202144922347"></p>
+<p>可以直接写在setup外面</p>
+<p>还可以写在setup里面不过api的名字需要改下</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240202145601145.png" alt="image-20240202145601145"></p>
+<p>这里的beforectreate和create不用往setup里面写了</p>
+<p>setup就相当于这个了</p>
+<p>其他的前面需要加on而且需要引入</p>
+<p>然后在写回调函数</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240202145926743.png" alt="image-20240202145926743"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240202150028275.png" alt="image-20240202150028275"></p>
+<p>组合式api要比配置项的钩子要快一点</p>
+<h2 id="自定义hook函数"><a href="#自定义hook函数" class="headerlink" title="自定义hook函数"></a>自定义hook函数</h2><p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240202150116358.png" alt="image-20240202150116358"></p>
+<p>相当于mixin</p>
+<p>目录结构</p>
+<p>usepoint</p>
+<pre><code class="js">import &#123;onBeforeUnmount, onMounted, reactive&#125; from &quot;vue&quot;;
+export default function ()&#123;
+    let point = reactive(&#123;
+        x:0,
+        y:0
+    &#125;)
+    function del(event)&#123;
+        console.log(event.pageX,event.pageY)
+        point.x=event.pageX
+        point.y=event.pageY
+    &#125;
+    onMounted(()=&gt;&#123;
+        window.addEventListener(&#39;click&#39;,del)
+    &#125;)
+    onBeforeUnmount(()=&gt;&#123;
+        window.removeEventListener(&#39;click&#39;,del)
+    &#125;)
+    return point
+&#125;
+</code></pre>
+<p>demo</p>
+<pre><code class="vue">&lt;script&gt;
+import usePoint from &quot;@/hooks/usePoint&quot;;
+import &#123;ref&#125; from &quot;vue&quot;;
+
+export default &#123;
+  name: &quot;DemO&quot;,
+  setup()&#123;
+    console.log(&#39;--set--&#39;)
+    let num = ref(0)
+    const point=usePoint()
+    return &#123;
+      num,
+      point
+    &#125;
+  &#125;
+&#125;
+&lt;/script&gt;
+
+&lt;template&gt;
+  &lt;h2&gt;&#123;&#123;num&#125;&#125;&lt;/h2&gt;
+  &lt;button @click=&quot;num+=1&quot;&gt;点我加一&lt;/button&gt;
+  &lt;hr&gt;
+  &lt;h2&gt;当前点击时鼠标的坐标为:x:&#123;&#123;point.x&#125;&#125;,y:&#123;&#123;point.y&#125;&#125;&lt;/h2&gt;
+&lt;/template&gt;
+&lt;style scoped&gt;
+
+&lt;/style&gt;
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240202153030255.png" alt="image-20240202153030255"></p>
+<p>在setup里面的api都可以写在hooks里面</p>
+<p>然后外部在引入</p>
+<h2 id="重要的api-toref"><a href="#重要的api-toref" class="headerlink" title="重要的api   toref"></a>重要的api   toref</h2><p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240202153613760.png" alt="image-20240202153613760"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240202154651378.png" alt="image-20240202154651378"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240202154806872.png" alt="image-20240202154806872"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240202154903809.png" alt="image-20240202154903809"></p>
+<p>如果修改name的值不会有响应式</p>
+<p>就像与</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240202154953033.png" alt="image-20240202154953033"></p>
+<p>所以</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240202155006021.png" alt="image-20240202155006021"></p>
+<p>就知道为什么这里不好用</p>
+<p>就相当于返回一个字符串</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240202155114071.png" alt="image-20240202155114071"></p>
+<p>所以在模板修改实现不了响应式</p>
+<p>那怎么解决</p>
+<p>toref</p>
+<p>就是把</p>
+<p>非ref’对象转为ref对象</p>
+<p>如果</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240202155507154.png" alt="image-20240202155507154"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240202155516665.png" alt="image-20240202155516665"></p>
+<p>这样就把张三</p>
+<p>就相当于中间人</p>
+<p>在模板中修改了name2的话</p>
+<p>数据name也会发生改变</p>
+<p>所以可以这么写</p>
+<p>代码如下</p>
+<pre><code class="vue">&lt;script&gt;
+import &#123;reactive, toRef&#125; from &quot;vue&quot;;
+
+export default &#123;
+  name: &quot;DemO&quot;,
+  setup()&#123;
+    let person = reactive(&#123;
+      name:&#39;linus&#39;,
+      age:55,
+      job:&#123;
+        j1:&#123;
+          salary:&#39;2&#39;
+        &#125;
+      &#125;
+    &#125;)
+    return &#123;
+      name : toRef(person,&#39;name&#39;),
+      age : toRef(person,&#39;age&#39;),
+      salary : toRef(person.job.j1,&#39;salary&#39;)
+    &#125;
+  &#125;
+
+&#125;
+&lt;/script&gt;
+
+&lt;template&gt;
+  &lt;h2&gt;name:&#123;&#123;name&#125;&#125;&lt;/h2&gt;
+  &lt;h2&gt;age:&#123;&#123;age&#125;&#125;&lt;/h2&gt;
+  &lt;h2&gt;salary:&#123;&#123;salary&#125;&#125;K&lt;/h2&gt;
+  &lt;button @click=&quot;name+=&#39;je&#39;&quot;&gt;change name&lt;/button&gt;
+  &lt;button @click=&quot;age++&quot;&gt;change age&lt;/button&gt;
+  &lt;button @click=&quot;salary++&quot;&gt;change salary&lt;/button&gt;
+&lt;/template&gt;
+&lt;style scoped&gt;
+
+&lt;/style&gt;
+</code></pre>
+<p>这样的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240202160250478.png" alt="image-20240202160250478"></p>
+<p>这也可以实现</p>
+<p>其实数据已经分家了</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240202160439456.png" alt="image-20240202160439456"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240202160449260.png" alt="image-20240202160449260"></p>
+<p>因为传过去的确是时ref对象</p>
+<p>但是传过去不是person的ref而是创建一个新的ref给他</p>
+<p>再解释一下</p>
+<p>就是person.name是一个字符串</p>
+<p>在使用ref包装字符串就变成了ref对象</p>
+<p>这个新的ref和person的ref没有任何的 关系</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240202160816341.png" alt="image-20240202160816341"></p>
+<p>toref是引用一个</p>
+<p>还有 一个更好的torefs</p>
+<h2 id="torefs"><a href="#torefs" class="headerlink" title="torefs"></a>torefs</h2><p>处理一个对象中多个的</p>
+<p>torefs</p>
+<p>代码如下</p>
+<pre><code class="vue">&lt;script&gt;
+import &#123;reactive,  toRefs&#125; from &quot;vue&quot;;
+
+export default &#123;
+  name: &quot;DemO&quot;,
+  setup()&#123;
+    let person = reactive(&#123;
+      name:&#39;linus&#39;,
+      age:55,
+      job:&#123;
+        j1:&#123;
+          salary:&#39;2&#39;
+        &#125;
+      &#125;
+    &#125;)
+    return &#123;
+      // name : toRef(person,&#39;name&#39;),
+      // age : toRef(person,&#39;age&#39;),
+      // salary : toRef(person.job.j1,&#39;salary&#39;)
+      ...toRefs(person)
+    &#125;
+  &#125;
+
+&#125;
+&lt;/script&gt;
+
+&lt;template&gt;
+  &lt;h2&gt;name:&#123;&#123;name&#125;&#125;&lt;/h2&gt;
+  &lt;h2&gt;age:&#123;&#123;age&#125;&#125;&lt;/h2&gt;
+  &lt;h2&gt;salary:&#123;&#123;job.j1&#125;&#125;K&lt;/h2&gt;
+  &lt;button @click=&quot;name+=&#39;je&#39;&quot;&gt;change name&lt;/button&gt;
+  &lt;button @click=&quot;age++&quot;&gt;change age&lt;/button&gt;
+  &lt;button @click=&quot;job.j1.salary++&quot;&gt;change salary&lt;/button&gt;
+&lt;/template&gt;
+&lt;style scoped&gt;
+
+&lt;/style&gt;
+</code></pre>
+<p>总结</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240202161353161.png" alt="image-20240202161353161"></p>
+<p>现在就明白了</p>
+<h2 id="其他的api-shallowreactive和shallowRef"><a href="#其他的api-shallowreactive和shallowRef" class="headerlink" title="其他的api shallowreactive和shallowRef"></a>其他的api shallowreactive和shallowRef</h2><p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240202161518225.png" alt="image-20240202161518225"></p>
+<p>这么定义</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240202161647576.png" alt="image-20240202161647576"></p>
+<p>这里的name，age能改</p>
+<p>salary不能更改</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240202161755466.png" alt="image-20240202161755466"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240202161831883.png" alt="image-20240202161831883"></p>
+<p>基本数据类型还是能够更改的</p>
+<p>如果是对象类型的话</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240202161947674.png" alt="image-20240202161947674"></p>
+<p>在修改y的值</p>
+<p>就会时失败的</p>
+<p>shallowref不处理对象类型的数据</p>
+<p>不用shalloeref的x</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240202162111003.png" alt="image-20240202162111003"></p>
+<p>如果</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240202162137545.png" alt="image-20240202162137545"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240202162145610.png" alt="image-20240202162145610"></p>
+<p>就不求助reactive变成proxy了</p>
+<p>总结</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240202162353902.png" alt="image-20240202162353902"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240202162511595.png" alt="image-20240202162511595"></p>
+<p>这样体寒是可以的</p>
+<h2 id="readony和shallowreadonly"><a href="#readony和shallowreadonly" class="headerlink" title="readony和shallowreadonly"></a>readony和shallowreadonly</h2><p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240202164551724.png" alt="image-20240202164551724"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240202164716966.png" alt="image-20240202164716966"></p>
+<p>这样就剋保护person</p>
+<p>数据就不会更改 了</p>
+<p>shallowreadonly</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240202164837399.png" alt="image-20240202164837399"></p>
+<p>浅层次的不可以更改</p>
+<p>但是person里的salary可以更改</p>
+<p>深层次的依旧可以更改</p>
+<p>什么时候需要被应用呢？</p>
+<p>当你引入别人的组件的数据</p>
+<p>但是别人不希望你更改他的数据</p>
+<p>此时你导入他的组件然后再把数据使用readonly</p>
+<h2 id="toRaw和markRaw"><a href="#toRaw和markRaw" class="headerlink" title="toRaw和markRaw"></a>toRaw和markRaw</h2><p>toRaw感觉和toref是相反的</p>
+<p>是把ref对象变成原始的</p>
+<p>markRaw</p>
+<p>每一个的作用</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240202165437248.png" alt="image-20240202165437248"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240202165509430.png" alt="image-20240202165509430"></p>
+<p>第二条线</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240202165523504.png" alt="image-20240202165523504"></p>
+<p>就是用toRaw</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240202165605728.png" alt="image-20240202165605728"></p>
+<p>toRaw</p>
+<p>只能用于reactive缔造的对象</p>
+<p>ref的是不可以的</p>
+<p>markRaw</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240202170146770.png" alt="image-20240202170146770"></p>
+<p>car永远不会成为响应式的数据</p>
+<p><strong>更改的时候数据在变但不是响应式的了</strong></p>
+<p>readRaw是定死的不可以更改的，<strong>更改会报错</strong></p>
+<p>使用场景</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240202170717347.png" alt="image-20240202170717347"></p>
+<p>就是当引入第三方库的时候，</p>
+<h2 id="customRef"><a href="#customRef" class="headerlink" title="customRef"></a>customRef</h2><p>自定义一个ref</p>
+<p>f</p>
 
     </div>
     
