@@ -186,12 +186,12 @@
             
             <span class="tag">
                 
-                <a href="/tags/PS3/" style="color: #00a596">PS3</a>
+                <a href="/tags/PS3/" style="color: #ff7d73">PS3</a>
             </span>
             
             <span class="tag">
                 
-                <a href="/tags/Games/" style="color: #ffa2c4">Games</a>
+                <a href="/tags/Games/" style="color: #00a596">Games</a>
             </span>
             
         </span>
@@ -5329,7 +5329,334 @@ export default &#123;
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240202170717347.png" alt="image-20240202170717347"></p>
 <p>就是当引入第三方库的时候，</p>
 <h2 id="customRef"><a href="#customRef" class="headerlink" title="customRef"></a>customRef</h2><p>自定义一个ref</p>
-<p>f</p>
+<p>作用</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240203094218826.png" alt="image-20240203094218826"></p>
+<p>实践：实现延时显示</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240203095443743.png" alt="image-20240203095443743"></p>
+<p>当有人使用keyword就会调用myref函数有人 读取调取get修改调用set</p>
+<p>更改数据实现响应式的原理</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240203100115606.png" alt="image-20240203100115606"></p>
+<p>先更改value然后重新解析模板调用get方法返回新的value</p>
+<p>这样还是修改不了的</p>
+<p>因为还没有追踪</p>
+<p>需要在get之前进行</p>
+<p>track</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240203100357820.png" alt="image-20240203100357820"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240203100433941.png" alt="image-20240203100433941"></p>
+<pre><code class="vue">&lt;template&gt;
+  &lt;input type=&quot;text&quot; v-model=&quot;keyword&quot;&gt;
+  &lt;h3&gt;&#123;&#123;keyword&#125;&#125;&lt;/h3&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+
+
+import &#123;customRef&#125; from &quot;vue&quot;;
+
+export default &#123;
+  name: &#39;App&#39;,
+  setup()&#123;
+    function myRef(value)&#123;
+      // console.log(value)
+      return  customRef((track, trigger)=&gt;&#123;//函数里面返回一个对象,这里的参数
+        return &#123;
+          // get:function ()&#123;&#125;,
+          // set:function ()&#123;&#125;,简写
+          get()&#123;
+            console.log(&#39;&#39;)
+            track()//
+            return value
+          &#125;,
+          set(newvalue)&#123;
+            console.log(&#39;有人iu该数据&#39;)
+            value=newvalue
+            setTimeout(()=&gt;&#123;
+              trigger()//通知vue重新解析模板 
+            &#125;,3000)
+          &#125;,
+        &#125;
+      &#125;)
+    &#125;
+    // let keyword = ref(&#39;hello&#39;)vue内置的ref
+    let keyword = myRef(&#39;hello&#39;)//程序源自己定义的ref
+    return &#123;
+      keyword
+    &#125;
+  &#125;
+
+
+&#125;
+&lt;/script&gt;
+
+&lt;style&gt;
+&lt;/style&gt;
+</code></pre>
+<p>这样即实现了</p>
+<p>在完善一下</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240203101425784.png" alt="image-20240203101425784"></p>
+<h2 id="provide和inject"><a href="#provide和inject" class="headerlink" title="provide和inject"></a>provide和inject</h2><p>实现通讯的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240203101612512.png" alt="image-20240203101612512"></p>
+<p>provide传送数据</p>
+<p>inject接收数据</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240203102933872.png" alt="image-20240203102933872"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240203102933872-17069273807421.png"></p>
+<p>后代组件都能够得到</p>
+<p>app组件</p>
+<pre><code class="vue">&lt;template&gt;
+  &lt;div class=&quot;app&quot;&gt;
+    &lt;h3&gt;我是app组件&#123;&#123;car.price&#125;&#125;&#123;&#123;car.type&#125;&#125;&lt;/h3&gt;
+    &lt;Child&gt;&lt;/Child&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+import Child from &quot;@/components/Child.vue&quot;;
+import &#123;reactive, toRefs,provide&#125; from &quot;vue&quot;;
+export default &#123;
+  name: &#39;App&#39;,
+  components:&#123;Child&#125;,
+  setup()&#123;
+    let car = reactive(&#123;
+      type : &#39;奥迪&#39;,
+      price : 188
+    &#125;)
+    provide(&#39;car&#39;,car)
+    return &#123;
+      car,
+      ...toRefs(car)
+    &#125;
+  &#125;,
+&#125;
+&lt;/script&gt;
+
+&lt;style&gt;
+.app&#123;
+  background-color: gray;
+  padding: 10px;
+&#125;
+&lt;/style&gt;
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240203103745299.png" alt="image-20240203103745299"></p>
+<pre><code class="vue">&lt;script&gt;
+import Son from &quot;@/components/Son.vue&quot;;
+import &#123;inject&#125; from &quot;vue&quot;;
+export default &#123;
+  name: &quot;ChilD&quot;,
+  components:&#123;Son&#125;,
+  setup: function () &#123;
+    let car = inject(&#39;car&#39;)
+    console.log(car)
+  &#125;
+&#125;
+&lt;/script&gt;
+
+&lt;template&gt;
+  &lt;div class=&quot;child&quot;&gt;
+    &lt;h3&gt;我是child组件&lt;/h3&gt;
+    &lt;Son&gt;&lt;/Son&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;style scoped&gt;
+.child&#123;
+  background-color: skyblue;
+  padding: 10px;
+&#125;
+&lt;/style&gt;
+</code></pre>
+<p>返回是个响应式的数据</p>
+<h2 id="响应式数据的判断"><a href="#响应式数据的判断" class="headerlink" title="响应式数据的判断"></a>响应式数据的判断</h2><p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240203104310620.png" alt="image-20240203104310620"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240203104453869.png" alt="image-20240203104453869"></p>
+<p>都是true</p>
+<h2 id="组合式api的优势"><a href="#组合式api的优势" class="headerlink" title="组合式api的优势"></a>组合式api的优势</h2><p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240203104657758.png" alt="image-20240203104657758"></p>
+<p>传统的数据和使用数据的方法不在一个地方</p>
+<p>特别乱</p>
+<p>组合时的api</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240203104907176.png" alt="image-20240203104907176"></p>
+<p>就可以把相关的放在一起</p>
+<p>把</p>
+<p>把</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240203104941238.png" alt="image-20240203104941238"></p>
+<p>每个功能变成hooks函数</p>
+<p>修改代码找到某个板块就可以</p>
+<h1 id="新的组件"><a href="#新的组件" class="headerlink" title="新的组件"></a>新的组件</h1><h2 id="Fragment"><a href="#Fragment" class="headerlink" title="Fragment"></a>Fragment</h2><p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240203105222480.png" alt="image-20240203105222480"></p>
+<p>非常的简单</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240203105311592.png" alt="image-20240203105311592"></p>
+<h2 id="Teleport"><a href="#Teleport" class="headerlink" title="Teleport"></a>Teleport</h2><p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240203115524823.png" alt="image-20240203115524823"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240203115533297.png" alt="image-20240203115533297"></p>
+<p>这样一打开把其他的组件都给撑开了</p>
+<p>就可以使用传送到指定 的位置‘</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240203115827092.png" alt="image-20240203115827092"></p>
+<p>这样</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240203115959703.png" alt="image-20240203115959703"></p>
+<p>就可以控制在哪里显示</p>
+<pre><code class="vue">&lt;script&gt;
+import &#123;ref&#125; from &quot;vue&quot;;
+
+export default &#123;
+  name: &quot;DialoG&quot;,
+  setup()&#123;
+    let isshow = ref(false)
+    return &#123;
+      isshow
+    &#125;
+  &#125;
+&#125;
+&lt;/script&gt;
+
+&lt;template&gt;
+  &lt;div&gt;
+    &lt;button @click=&quot;isshow=true&quot;&gt;点我弹窗&lt;/button&gt;
+    &lt;teleport to=&quot;body&quot;&gt;
+      &lt;div  v-if=&quot;isshow&quot; class=&quot;mask&quot;&gt;
+        &lt;div  class=&quot;dailog&quot;&gt;
+          &lt;h3&gt;我是一些弹窗&lt;/h3&gt;
+          &lt;h4&gt;一些内容&lt;/h4&gt;
+          &lt;h4&gt;一些内容&lt;/h4&gt;
+          &lt;h4&gt;一些内容&lt;/h4&gt;
+          &lt;button @click=&quot;isshow=false&quot;&gt;关闭弹窗&lt;/button&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/teleport&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;style scoped&gt;
+.dailog&#123;
+  width: 300px;
+  height: 300px;
+  background-color: green;
+&#125;
+.mask&#123;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0,0,0,0.5);
+&#125;
+&lt;/style&gt;
+</code></pre>
+<h2 id="suspense组件"><a href="#suspense组件" class="headerlink" title="suspense组件"></a>suspense组件</h2><p>异步组件</p>
+<p>正常的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240203122426953.png" alt="image-20240203122426953"></p>
+<p>这两个是一起出来的</p>
+<p>这就是静态组件</p>
+<p>因为是同步的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240203122525390.png" alt="image-20240203122525390"></p>
+<p>定义异步组件</p>
+<p>这样app先出来然后child</p>
+<pre><code class="vue">&lt;template&gt;
+  &lt;div class=&quot;app&quot;&gt;
+    &lt;h3&gt;我是app组件&lt;/h3&gt;
+    &lt;Child&gt;&lt;/Child&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+// import Child from &quot;@/components/Child.vue&quot;;
+import &#123;defineAsyncComponent, reactive, toRefs&#125; from &quot;vue&quot;;
+const Child = defineAsyncComponent(()=&gt;import(&#39;./components/Child.vue&#39;))//d动态引入
+export default &#123;
+  name: &#39;App&#39;,
+  components:&#123;Child&#125;,
+  setup()&#123;
+    let car = reactive(&#123;
+      type : &#39;奥迪&#39;,
+      price : 188
+    &#125;)
+    return &#123;
+      ...toRefs(car)
+    &#125;
+  &#125;,
+&#125;
+&lt;/script&gt;
+
+&lt;style&gt;
+.app&#123;
+  background-color: gray;
+  padding: 10px;
+&#125;
+&lt;/style&gt;
+</code></pre>
+<p>当这样以后app先出来</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240203123011907.png" alt="image-20240203123011907"></p>
+<p>然后突然出来</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240203123028121.png" alt="image-20240203123028121"></p>
+<p>怎么解决？</p>
+<p>此时就可以引入suspense</p>
+<p>相当于插槽</p>
+<p>当</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240203123248130.png" alt="image-20240203123248130"></p>
+<p>没加载出来展现fallback的内容</p>
+<p>加载出来在在展现default</p>
+<p>代码如下</p>
+<pre><code class="vue">&lt;template&gt;
+  &lt;div class=&quot;app&quot;&gt;
+    &lt;h3&gt;我是app组件&lt;/h3&gt;
+    &lt;Suspense&gt;
+      &lt;template v-slot:default&gt;
+        &lt;Child/&gt;
+      &lt;/template&gt;
+      &lt;template v-slot:fallback&gt;
+        &lt;h3&gt;加载中&lt;/h3&gt;
+      &lt;/template&gt;
+    &lt;/Suspense&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+// import Child from &quot;@/components/Child.vue&quot;;
+import &#123;defineAsyncComponent, reactive, toRefs&#125; from &quot;vue&quot;;
+const Child = defineAsyncComponent(()=&gt;import(&#39;./components/Child.vue&#39;))//d动态引入
+export default &#123;
+  name: &#39;App&#39;,
+  components:&#123;Child&#125;,
+  setup()&#123;
+    let car = reactive(&#123;
+      type : &#39;奥迪&#39;,
+      price : 188
+    &#125;)
+    return &#123;
+      ...toRefs(car)
+    &#125;
+  &#125;,
+&#125;
+&lt;/script&gt;
+
+&lt;style&gt;
+.app&#123;
+  background-color: gray;
+  padding: 10px;
+&#125;
+&lt;/style&gt;
+</code></pre>
+<h2 id="vue3的其他的变化"><a href="#vue3的其他的变化" class="headerlink" title="vue3的	其他的变化"></a>vue3的	其他的变化</h2><p><strong>最后一刻加油</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240203123810217.png" alt="image-20240203123810217"></p>
+<p>之前 的这些都放在了app里面</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240203123918055.png" alt="image-20240203123918055"></p>
+<p>这回是</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240203123944436.png" alt="image-20240203123944436"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240203124037672.png" alt="image-20240203124037672"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240203124057068.png" alt="image-20240203124057068"></p>
+<p>动画</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240203124126699.png" alt="image-20240203124126699"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240203124137134.png" alt="image-20240203124137134"></p>
+<p>不能通过摁键编码了</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240203124156610.png" alt="image-20240203124156610"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240203124224134.png" alt="image-20240203124224134"></p>
+<p>这个</p>
+<p>移除了native</p>
+<p>就是绑定事件</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240203124351298.png" alt="image-20240203124351298"></p>
+<p>加native加让他为系统自带的绑定事件</p>
+<p>现在可以这样</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240203124516599.png" alt="image-20240203124516599"></p>
+<p>如果你没有在子组件中使用emit绑定的话</p>
+<p>那么就会默认是自定义事件了</p>
+<p>还有一个改变</p>
+<p>移除了过滤器</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240203124637795.png" alt="image-20240203124637795"></p>
 
     </div>
     
