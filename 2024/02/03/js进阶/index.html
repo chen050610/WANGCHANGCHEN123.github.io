@@ -322,7 +322,7 @@
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240203201630188.png" alt="image-20240203201630188"></p>
 <h2 id="解构赋值"><a href="#解构赋值" class="headerlink" title="解构赋值"></a>解构赋值</h2><p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240203202416180.png" alt="image-20240203202416180"></p>
 <p>两种</p>
-<h2 id="数组结构"><a href="#数组结构" class="headerlink" title="数组结构"></a>数组结构</h2><p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240203202610290.png" alt="image-20240203202610290"></p>
+<h2 id="数组解构"><a href="#数组解构" class="headerlink" title="数组解构"></a>数组解构</h2><p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240203202610290.png" alt="image-20240203202610290"></p>
 <p>代码</p>
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240203203139402.png" alt="image-20240203203139402"></p>
 <p>快速批量</p>
@@ -411,6 +411,52 @@
 <p>然后还可以改名字</p>
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240203222924233.png" alt="image-20240203222924233"></p>
 <p>只能说太牛了</p>
+<h2 id="foreach方法"><a href="#foreach方法" class="headerlink" title="foreach方法"></a>foreach方法</h2><p> <img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240204150624305.png" alt="image-20240204150624305"></p>
+<p>只是遍历不返回值</p>
+<p>map遍历是返回值的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240204150847069.png" alt="image-20240204150847069"></p>
+<p>可以使用箭头函数</p>
+<p>还有一个参数是索引</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240204150932770.png" alt="image-20240204150932770"></p>
+<p>利用循环熏染</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240204151802562.png" alt="image-20240204151802562"></p>
+<p>解构出来更加的简单、</p>
+<p>里面还有用到模板字符串</p>
+<h2 id="筛选数组的方法filter"><a href="#筛选数组的方法filter" class="headerlink" title="筛选数组的方法filter"></a>筛选数组的方法filter</h2><p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240204152639474.png" alt="image-20240204152639474"></p>
+<p>返回一个筛选以后的新数组</p>
+<p>参数和foreach是一样的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240204152804455.png" alt="image-20240204152804455"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240204153008972.png" alt="image-20240204153008972"></p>
+<p>直接这样就可以筛选</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240204153126827.png" alt="image-20240204153126827"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240204153255799.png" alt="image-20240204153255799"></p>
+<p>这里写加号是没有用的</p>
+<p>这样的只能在map里面执行</p>
+<p>然后我可以更简单的写法</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240204153512420.png" alt="image-20240204153512420"></p>
+<p>返回的是一个新的数组</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240204153734584.png" alt="image-20240204153734584"></p>
+<p>筛选的逻辑</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240204155548027.png" alt="image-20240204155548027"></p>
+<h1 id="深入对象"><a href="#深入对象" class="headerlink" title="深入对象"></a>深入对象</h1><p>创建对象的三种方式</p>
+<p>集中的方法</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240204160800419.png" alt="image-20240204160800419"></p>
+<p>还有可以使用构造函数、</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240204160913306.png" alt="image-20240204160913306"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240204161000278.png" alt="image-20240204161000278"></p>
+<p>我们发现这几个对象有几个公共的属性</p>
+<p>就是值不一样</p>
+<p>我们可以把这几个属性封装到函数中</p>
+<p>有了构造函数</p>
+<p>我们可以快速产生这几个对象</p>
+<p>就可以写成这样的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240204161303247.png" alt="image-20240204161303247"></p>
+<p>构造函数的约定 </p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240204161418494.png" alt="image-20240204161418494"></p>
+<p>这样的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240204161957549.png" alt="image-20240204161957549"></p>
+<p>很快能创建</p>
+<p><img src="/js%E8%BF%9B%E9%98%B6.assets/image-20240204162653809.png" alt="image-20240204162653809"></p>
 
     </div>
     
