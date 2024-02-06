@@ -1,0 +1,467 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <meta charset="utf-8" />
+    <title>ES6~ES11 | 哈哈哈哈哈哈哈重生之我是兵王</title>
+    <meta name="author" content="chenw" />
+    <meta name="description" content="description" />
+    <meta name="keywords" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+	<canvas id="fireworks" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 32767"></canvas>
+	<script src="https://cdn.staticfile.org/animejs/3.2.1/anime.min.js"></script>
+	<script src="/js/fireworks.min.js"></script>
+	<canvas id="background" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: -1"></canvas>
+	<script src="/js/background.min.js"></script>
+	<div id="cursor"></div>
+	<link rel="stylesheet" href="/css/cursor.min.css">
+	<script src="/js/cursor.min.js"></script>
+    <link rel="icon" href="/images/avatar.jpg" />
+    <link rel="preconnect" href="https://cdn.staticfile.org" />
+<script src="https://cdn.staticfile.org/vue/3.3.7/vue.global.prod.min.js"></script>
+<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/6.4.2/css/all.min.css" />
+<link rel="preconnect" href="https://fonts.loli.net" />
+<link rel="preconnect" href="https://gstatic.loli.net" crossorigin />
+<link rel="stylesheet" href="https://fonts.loli.net/css2?family=Fira+Code:wght@400;500;600;700&family=Lexend:wght@400;500;600;700;800;900&family=Noto+Sans+SC:wght@400;500;600;700;800;900&display=swap" />
+<script> const mixins = {}; </script>
+
+<script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+
+
+<script src="https://cdn.staticfile.org/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdn.staticfile.org/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></script>
+<link
+    rel="stylesheet"
+    href="https://cdn.staticfile.org/highlight.js/11.9.0/styles/github.min.css"
+/>
+<script src="/js/lib/highlight.js"></script>
+
+
+
+<script src="/js/lib/preview.js"></script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/main.css" />
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+    <div id="layout">
+        <transition name="fade">
+            <div id="loading" v-show="loading">
+                <div id="loading-circle">
+                    <h2>LOADING</h2>
+                    <p>加载过慢请开启缓存 浏览器默认开启</p>
+                    <img src="/images/loading.gif" />
+                </div>
+            </div>
+        </transition>
+        <div id="menu" :class="{ hidden: hiddenMenu, 'menu-color': menuColor}">
+    <nav id="desktop-menu">
+        <a class="title" href="/">
+            <span>哈哈哈哈哈哈哈重生之我是兵王</span>
+        </a>
+        
+        <a href="/">
+            <i class="fa-solid fa-house fa-fw"></i>
+            <span>&ensp;Home</span>
+        </a>
+        
+        <a href="/about">
+            <i class="fa-solid fa-id-card fa-fw"></i>
+            <span>&ensp;About</span>
+        </a>
+        
+        <a href="/archives">
+            <i class="fa-solid fa-box-archive fa-fw"></i>
+            <span>&ensp;Archives</span>
+        </a>
+        
+        <a href="/categories">
+            <i class="fa-solid fa-bookmark fa-fw"></i>
+            <span>&ensp;Categories</span>
+        </a>
+        
+        <a href="/tags">
+            <i class="fa-solid fa-tags fa-fw"></i>
+            <span>&ensp;Tags</span>
+        </a>
+        
+    </nav>
+    <nav id="mobile-menu">
+        <div class="title" @click="showMenuItems = !showMenuItems">
+            <i class="fa-solid fa-bars fa-fw"></i>
+            <span>&emsp;哈哈哈哈哈哈哈重生之我是兵王</span>
+        </div>
+        <transition name="slide">
+            <div class="items" v-show="showMenuItems">
+                
+                <a href="/">
+                    <div class="item">
+                        <div style="min-width: 20px; max-width: 50px; width: 10%">
+                            <i class="fa-solid fa-house fa-fw"></i>
+                        </div>
+                        <div style="min-width: 100px; max-width: 150%; width: 20%">Home</div>
+                    </div>
+                </a>
+                
+                <a href="/about">
+                    <div class="item">
+                        <div style="min-width: 20px; max-width: 50px; width: 10%">
+                            <i class="fa-solid fa-id-card fa-fw"></i>
+                        </div>
+                        <div style="min-width: 100px; max-width: 150%; width: 20%">About</div>
+                    </div>
+                </a>
+                
+                <a href="/archives">
+                    <div class="item">
+                        <div style="min-width: 20px; max-width: 50px; width: 10%">
+                            <i class="fa-solid fa-box-archive fa-fw"></i>
+                        </div>
+                        <div style="min-width: 100px; max-width: 150%; width: 20%">Archives</div>
+                    </div>
+                </a>
+                
+                <a href="/categories">
+                    <div class="item">
+                        <div style="min-width: 20px; max-width: 50px; width: 10%">
+                            <i class="fa-solid fa-bookmark fa-fw"></i>
+                        </div>
+                        <div style="min-width: 100px; max-width: 150%; width: 20%">Categories</div>
+                    </div>
+                </a>
+                
+                <a href="/tags">
+                    <div class="item">
+                        <div style="min-width: 20px; max-width: 50px; width: 10%">
+                            <i class="fa-solid fa-tags fa-fw"></i>
+                        </div>
+                        <div style="min-width: 100px; max-width: 150%; width: 20%">Tags</div>
+                    </div>
+                </a>
+                
+            </div>
+        </transition>
+    </nav>
+</div>
+<transition name="fade">
+    <div id="menu-curtain" @click="showMenuItems = !showMenuItems" v-show="showMenuItems"></div>
+</transition>
+
+        <div id="main" :class="loading ? 'into-enter-from': 'into-enter-active'">
+            <div class="article">
+    <div>
+        <h1>ES6~ES11</h1>
+    </div>
+    <div class="info">
+        <span class="date">
+            <span class="icon">
+                <i class="fa-solid fa-calendar fa-fw"></i>
+            </span>
+            2024/2/6
+        </span>
+        
+        
+    </div>
+    
+    <div class="content" v-pre>
+        <p>​	摘要</p>
+<span id="more"></span>
+
+<p>正文</p>
+<h2 id="let"><a href="#let" class="headerlink" title="let"></a>let</h2><p>声明变量</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206101254534.png" alt="image-20240206101254534"></p>
+<p><strong>特性</strong></p>
+<p>1.变量不可以重复声明</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206101322323.png" alt="image-20240206101322323"></p>
+<p>2.块级作用域</p>
+<p>只在代码块中有效</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206101412018.png" alt="image-20240206101412018"></p>
+<p>但是let声明的不行</p>
+<p>在这些</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206101442908.png" alt="image-20240206101442908"></p>
+<p>都有大括号</p>
+<p>4.没有变量提升</p>
+<p>5.不影响作用域链</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206101555679.png" alt="image-20240206101555679"></p>
+<p>问题</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206102042359.png" alt="image-20240206102042359"></p>
+<p>这么写就出问题</p>
+<p>这样定义的var定义的是全局作用域</p>
+<p>最后执行玩i&#x3D;3</p>
+<p>之后点击就会调用上面的回调函数</p>
+<p>然后i是全局的&#x3D;3</p>
+<p>所以报错了</p>
+<h2 id="const"><a href="#const" class="headerlink" title="const"></a>const</h2><p>规则</p>
+<p>1.一定要赋值初始的值</p>
+<p>2.一般常量使用大写</p>
+<p>3.常量的值不允许修改</p>
+<p>4.也是块级作用域</p>
+<p>5.对于数组或对象中的元素修改，不算对常量进行修改，因为地址没有修改</p>
+<h2 id="解构赋值"><a href="#解构赋值" class="headerlink" title="解构赋值"></a>解构赋值</h2><p>进阶的时候说过</p>
+<h2 id="模板字符串"><a href="#模板字符串" class="headerlink" title="模板字符串"></a>模板字符串</h2><p>符号&#96;&#96;</p>
+<p>特性</p>
+<p>1.内容可以出现换行符</p>
+<p>单引号的就会报错</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206103239189.png" alt="image-20240206103239189"></p>
+<p>只能使用+进行拼接、</p>
+<p>2.变量的拼接</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206103342783.png" alt="image-20240206103342783"></p>
+<h2 id="简化对象"><a href="#简化对象" class="headerlink" title="简化对象"></a>简化对象</h2><p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206103429672.png" alt="image-20240206103429672"></p>
+<p>就可以简写成这样的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206103448916.png" alt="image-20240206103448916"></p>
+<p>函数中的方法</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206103524777.png" alt="image-20240206103524777"></p>
+<p>可以省略冒号和function</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206103606541.png" alt="image-20240206103606541"></p>
+<h2 id="箭头函数"><a href="#箭头函数" class="headerlink" title="箭头函数"></a>箭头函数</h2><p>特性</p>
+<p>1.this是静态的</p>
+<p>2.箭头函数的this不会因为使用call，apply和bind改变指向</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206104104392.png" alt="image-20240206104104392"></p>
+<p>3.不能作为构造函数</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206104145785.png" alt="image-20240206104145785"></p>
+<p>4.不能使用arguments变量</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206104223094.png" alt="image-20240206104223094"></p>
+<p>5.箭头函数的简写</p>
+<p>当形参只有一个可以省略</p>
+<p>当代码只有一行可以省略大括号，此时的return也必须省略</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206104353904.png" alt="image-20240206104353904"></p>
+<p>之前筛选偶数</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206104830757.png" alt="image-20240206104830757"></p>
+<p>使用箭头函数</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206104909709.png" alt="image-20240206104909709"></p>
+<p>更加的简洁</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206104936070.png" alt="image-20240206104936070"></p>
+<p>不适合用于dom对象的回调，还有对象的方法</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206105025067.png" alt="image-20240206105025067"></p>
+<p>这里的this就不会指向对象了 </p>
+<h2 id="形参初始值"><a href="#形参初始值" class="headerlink" title="形参初始值"></a>形参初始值</h2><p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206105142156.png" alt="image-20240206105142156"></p>
+<p>具有默认值的形参放在后面</p>
+<p>放在前面也行但是没意义</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206105256608.png" alt="image-20240206105256608"></p>
+<p>可以解构赋值结合使用</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206105856779.png" alt="image-20240206105856779"></p>
+<p>在参数传过来的时候就已经解构</p>
+<p>然后下面直接使用就可以了 </p>
+<p>也可以使用初始值</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206110005448.png" alt="image-20240206110005448"></p>
+<h2 id="rest参数"><a href="#rest参数" class="headerlink" title="rest参数"></a>rest参数</h2><p>用来代替arguments</p>
+<p>这个</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206110150495.png" alt="image-20240206110150495"></p>
+<p>是一个对象</p>
+<p>但是rest参数得到的数组</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206110228118.png" alt="image-20240206110228118"></p>
+<p>而且得到的是真数组，可以使用数组的方法</p>
+<p>rest<strong>参数要放在参数的后面</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206110318406.png" alt="image-20240206110318406"></p>
+<p>不能放在前面</p>
+<h2 id="扩展运算符"><a href="#扩展运算符" class="headerlink" title="扩展运算符"></a>扩展运算符</h2><p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206110422750.png" alt="image-20240206110422750"></p>
+<p>应用</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206110548733.png" alt="image-20240206110548733"></p>
+<p>之前使用concat</p>
+<p>2.数组的克隆</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206110619583.png" alt="image-20240206110619583"></p>
+<p>如果里面有数组类型 的数组那么这个也是浅拷贝</p>
+<p>3.将为数组转为真数组</p>
+<p>这样</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206111308800.png" alt="image-20240206111308800"></p>
+<p>就把伪数组转为真数组</p>
+<h2 id="数据类型symbol"><a href="#数据类型symbol" class="headerlink" title="数据类型symbol"></a>数据类型symbol</h2><p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206111424682.png" alt="image-20240206111424682"></p>
+<p>特点</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206111436714.png" alt="image-20240206111436714"></p>
+<p>创建symbol</p>
+<p>symbol的三种创建方法</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206111736591.png" alt="image-20240206111736591"></p>
+<p>s2和s3作比较是false</p>
+<p>s4和s5作比较是true</p>
+<p>数据类型</p>
+<p>USONB</p>
+<p>U：undefined</p>
+<p>S：String</p>
+<p>O：object</p>
+<p>N：null，number</p>
+<p>B：bool</p>
+<p> 使用场景</p>
+<p>给对象添加属性和方法，表示独一无二的</p>
+<p><code>Symbol</code></p>
+<p> 是 ECMAScript 6 中新增的一种基本数据类型，它是一种原始值，表示独一无二的标识符。<code>Symbol</code> 的主要作用是在对象属性名的定义中起到唯一标识符的作用，避免命名冲突。</p>
+<p>具体来说，<code>Symbol</code> 可以通过 <code>Symbol()</code> 函数创建，每个 <code>Symbol</code> 都是唯一的，即使它们具有相同的名称。</p>
+<p><code>Symbol</code> 主要有以下几个应用：</p>
+<ol>
+<li>对象属性名：可以通过 <code>Symbol</code> 创建一个唯一的属性名，并且这个属性名不会出现在 <code>for...in</code>、<code>Object.keys()</code> 等方法的遍历中。</li>
+</ol>
+<pre><code>javascriptCopy Codelet obj = &#123;&#125;;
+let s1 = Symbol();
+let s2 = Symbol(&#39;symbol2&#39;);
+
+obj[s1] = &#39;symbol1&#39;;
+obj[s2] = &#39;symbol2&#39;;
+
+console.log(obj[s1]); // &quot;symbol1&quot;
+console.log(obj[s2]); // &quot;symbol2&quot;
+console.log(obj);     // &#123; Symbol(): &quot;symbol1&quot;, Symbol(symbol2): &quot;symbol2&quot; &#125;
+
+for(let key in obj) &#123;
+  console.log(key);  // 无输出，因为 Symbol 类型的属性不会被遍历出来
+&#125;
+
+console.log(Object.getOwnPropertySymbols(obj)); // [Symbol(), Symbol(symbol2)]
+</code></pre>
+<ol>
+<li>定义常量：可以使用 <code>Symbol</code> 定义一个全局唯一的常量，用于替代字符串或数字类型的常量。</li>
+</ol>
+<pre><code>javascriptCopy Codeconst RED = Symbol(&#39;red&#39;);
+const BLUE = Symbol(&#39;blue&#39;);
+const GREEN = Symbol(&#39;green&#39;);
+
+console.log(RED === BLUE); // false
+
+let color = RED;
+if (color === RED) &#123;
+  console.log(&#39;Color is red.&#39;);
+&#125;
+</code></pre>
+<ol>
+<li>防止属性名冲突：可以使用 <code>Symbol</code> 作为对象属性名，避免属性名冲突。</li>
+</ol>
+<pre><code>javascriptCopy Codeconst COLOR_RED = Symbol();
+const COLOR_BLUE = Symbol();
+
+function getComplement(color) &#123;
+  switch (color) &#123;
+    case COLOR_RED:
+      return COLOR_BLUE;
+    case COLOR_BLUE:
+      return COLOR_RED;
+    default:
+      throw new Error(&#39;Undefined color&#39;);
+  &#125;
+&#125;
+
+console.log(getComplement(COLOR_RED)); // Symbol()
+</code></pre>
+<p>需要注意的是，<code>Symbol</code> 是一种特殊类型的值，不可改变、不可枚举，也不支持与其他类型的值进行自动类型转换。因此在使用 <code>Symbol</code> 时需要格外小心，避免出现意外的错误。</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206113209006.png" alt="image-20240206113209006"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206120244419.png" alt="image-20240206120244419"></p>
+<p>这个时候就会存在变量覆盖的情况</p>
+<p>这样就可以</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206120408308.png" alt="image-20240206120408308"></p>
+<h2 id="迭代器"><a href="#迭代器" class="headerlink" title="迭代器"></a>迭代器</h2><p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206120611265.png" alt="image-20240206120611265"></p>
+<p>for in获取的是键名</p>
+<p>for of’获取的是键值</p>
+<p>用symbol声明的变量，取值的时候一定要使用.</p>
+<p> 例子</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206163856705.png" alt="image-20240206163856705"></p>
+<p>symbol定义的值没有办法进行遍历</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206164041953.png" alt="image-20240206164041953"></p>
+<p>用静态方法查看keys</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206164128856.png" alt="image-20240206164128856"></p>
+<p>发现是undefined</p>
+<p>这样的可以获取</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206164232568.png" alt="image-20240206164232568"></p>
+<h2 id="先跳过迭代器和生成器有些困难"><a href="#先跳过迭代器和生成器有些困难" class="headerlink" title="先跳过迭代器和生成器有些困难"></a><strong>先跳过迭代器和生成器有些困难</strong></h2><h2 id="promise"><a href="#promise" class="headerlink" title="promise"></a>promise</h2><p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206163017558.png" alt="image-20240206163017558"></p>
+<p>解释</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206163234988.png" alt="image-20240206163234988"></p>
+<p>settimeout当作io操作</p>
+<p>如果成功调用</p>
+<h2 id="map和set"><a href="#map和set" class="headerlink" title="map和set"></a>map和set</h2><p>表示无重复值的有序列表</p>
+<p>集合的增加和删除</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206164619035.png" alt="image-20240206164619035"></p>
+<p>判断集合里面有没有哪些值</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206164702097.png" alt="image-20240206164702097"></p>
+<p>返回false和true</p>
+<p>集合的长度</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206164731963.png" alt="image-20240206164731963"></p>
+<p>遍历</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206164956355.png" alt="image-20240206164956355"></p>
+<p>这里的值和键是相等的</p>
+<p>将set转为数组</p>
+<p>这样的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206165110785.png" alt="image-20240206165110785"></p>
+<p>使用扩展运算符</p>
+<p>1.set中的对象的引用无法被释放</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206165245829.png" alt="image-20240206165245829"></p>
+<p>解决</p>
+<p>使用弱引用</p>
+<p>使用weakset<img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206165323366.png" alt="image-20240206165323366"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206165334653.png" alt="image-20240206165334653"></p>
+<p>weakset的注意事项</p>
+<p>1.不能传入非对象类型的参数</p>
+<p>2.不可以迭代，就是遍历不出</p>
+<p>3.没有foreeach的方法</p>
+<p>4.没有size属性</p>
+<h3 id="map"><a href="#map" class="headerlink" title="map"></a>map</h3><p>键值对的有序列表</p>
+<p>键和值是任意的类型</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206165620071.png" alt="image-20240206165620071"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206165631575.png" alt="image-20240206165631575"></p>
+<p>获取值map.get</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206165720272.png" alt="image-20240206165720272"></p>
+<p>还是哪些的方法</p>
+<p>或者这么初始化</p>
+<p>map</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206165900000.png" alt="image-20240206165900000"></p>
+<p>还是缺点就是引用 的对象没有办法被释放</p>
+<p>需要使用weakmap</p>
+<h2 id="数组的扩展用法"><a href="#数组的扩展用法" class="headerlink" title="数组的扩展用法"></a>数组的扩展用法</h2><h3 id="from（）"><a href="#from（）" class="headerlink" title="from（）"></a>from（）</h3><p>将伪数组转为真数组</p>
+<p>其实更简单的方法是使用扩展运算符</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206170219724.png" alt="image-20240206170219724"></p>
+<p>from还有第二个参数</p>
+<p>用来对数组每一个值进行</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206170335456.png" alt="image-20240206170335456"></p>
+<h3 id="of（）"><a href="#of（）" class="headerlink" title="of（）"></a>of（）</h3><p>将一组值转为数组</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206170442470.png" alt="image-20240206170442470"></p>
+
+    </div>
+    
+    
+    
+    
+    
+    
+    
+</div>
+
+            <footer id="footer">
+    <div id="footer-wrap">
+        <div>
+            &copy;
+            2022 - 2024 哈哈哈哈哈哈哈重生之我是兵王
+            <span id="footer-icon">
+                <i class="fa-solid fa-font-awesome fa-fw"></i>
+            </span>
+            &commat;chenw
+        </div>
+        <div>
+            Based on the <a target="_blank" rel="noopener" href="https://hexo.io">Hexo Engine</a> &amp;
+            <a target="_blank" rel="noopener" href="https://github.com/theme-particlex/hexo-theme-particlex">ParticleX Theme</a>
+        </div>
+        
+    </div>
+</footer>
+
+        </div>
+        
+        <transition name="fade">
+            <div id="preview" ref="preview" v-show="previewShow">
+                <img id="preview-content" ref="previewContent" />
+            </div>
+        </transition>
+        
+    </div>
+    <script src="/js/main.js"></script>
+    
+    
+
+
+
+
+    
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

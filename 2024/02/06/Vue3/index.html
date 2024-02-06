@@ -1,0 +1,363 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <meta charset="utf-8" />
+    <title>Vue3补充 | 哈哈哈哈哈哈哈重生之我是兵王</title>
+    <meta name="author" content="chenw" />
+    <meta name="description" content="description" />
+    <meta name="keywords" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+	<canvas id="fireworks" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 32767"></canvas>
+	<script src="https://cdn.staticfile.org/animejs/3.2.1/anime.min.js"></script>
+	<script src="/js/fireworks.min.js"></script>
+	<canvas id="background" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: -1"></canvas>
+	<script src="/js/background.min.js"></script>
+	<div id="cursor"></div>
+	<link rel="stylesheet" href="/css/cursor.min.css">
+	<script src="/js/cursor.min.js"></script>
+    <link rel="icon" href="/images/avatar.jpg" />
+    <link rel="preconnect" href="https://cdn.staticfile.org" />
+<script src="https://cdn.staticfile.org/vue/3.3.7/vue.global.prod.min.js"></script>
+<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/6.4.2/css/all.min.css" />
+<link rel="preconnect" href="https://fonts.loli.net" />
+<link rel="preconnect" href="https://gstatic.loli.net" crossorigin />
+<link rel="stylesheet" href="https://fonts.loli.net/css2?family=Fira+Code:wght@400;500;600;700&family=Lexend:wght@400;500;600;700;800;900&family=Noto+Sans+SC:wght@400;500;600;700;800;900&display=swap" />
+<script> const mixins = {}; </script>
+
+<script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+
+
+<script src="https://cdn.staticfile.org/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdn.staticfile.org/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></script>
+<link
+    rel="stylesheet"
+    href="https://cdn.staticfile.org/highlight.js/11.9.0/styles/github.min.css"
+/>
+<script src="/js/lib/highlight.js"></script>
+
+
+
+<script src="/js/lib/preview.js"></script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/main.css" />
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+    <div id="layout">
+        <transition name="fade">
+            <div id="loading" v-show="loading">
+                <div id="loading-circle">
+                    <h2>LOADING</h2>
+                    <p>加载过慢请开启缓存 浏览器默认开启</p>
+                    <img src="/images/loading.gif" />
+                </div>
+            </div>
+        </transition>
+        <div id="menu" :class="{ hidden: hiddenMenu, 'menu-color': menuColor}">
+    <nav id="desktop-menu">
+        <a class="title" href="/">
+            <span>哈哈哈哈哈哈哈重生之我是兵王</span>
+        </a>
+        
+        <a href="/">
+            <i class="fa-solid fa-house fa-fw"></i>
+            <span>&ensp;Home</span>
+        </a>
+        
+        <a href="/about">
+            <i class="fa-solid fa-id-card fa-fw"></i>
+            <span>&ensp;About</span>
+        </a>
+        
+        <a href="/archives">
+            <i class="fa-solid fa-box-archive fa-fw"></i>
+            <span>&ensp;Archives</span>
+        </a>
+        
+        <a href="/categories">
+            <i class="fa-solid fa-bookmark fa-fw"></i>
+            <span>&ensp;Categories</span>
+        </a>
+        
+        <a href="/tags">
+            <i class="fa-solid fa-tags fa-fw"></i>
+            <span>&ensp;Tags</span>
+        </a>
+        
+    </nav>
+    <nav id="mobile-menu">
+        <div class="title" @click="showMenuItems = !showMenuItems">
+            <i class="fa-solid fa-bars fa-fw"></i>
+            <span>&emsp;哈哈哈哈哈哈哈重生之我是兵王</span>
+        </div>
+        <transition name="slide">
+            <div class="items" v-show="showMenuItems">
+                
+                <a href="/">
+                    <div class="item">
+                        <div style="min-width: 20px; max-width: 50px; width: 10%">
+                            <i class="fa-solid fa-house fa-fw"></i>
+                        </div>
+                        <div style="min-width: 100px; max-width: 150%; width: 20%">Home</div>
+                    </div>
+                </a>
+                
+                <a href="/about">
+                    <div class="item">
+                        <div style="min-width: 20px; max-width: 50px; width: 10%">
+                            <i class="fa-solid fa-id-card fa-fw"></i>
+                        </div>
+                        <div style="min-width: 100px; max-width: 150%; width: 20%">About</div>
+                    </div>
+                </a>
+                
+                <a href="/archives">
+                    <div class="item">
+                        <div style="min-width: 20px; max-width: 50px; width: 10%">
+                            <i class="fa-solid fa-box-archive fa-fw"></i>
+                        </div>
+                        <div style="min-width: 100px; max-width: 150%; width: 20%">Archives</div>
+                    </div>
+                </a>
+                
+                <a href="/categories">
+                    <div class="item">
+                        <div style="min-width: 20px; max-width: 50px; width: 10%">
+                            <i class="fa-solid fa-bookmark fa-fw"></i>
+                        </div>
+                        <div style="min-width: 100px; max-width: 150%; width: 20%">Categories</div>
+                    </div>
+                </a>
+                
+                <a href="/tags">
+                    <div class="item">
+                        <div style="min-width: 20px; max-width: 50px; width: 10%">
+                            <i class="fa-solid fa-tags fa-fw"></i>
+                        </div>
+                        <div style="min-width: 100px; max-width: 150%; width: 20%">Tags</div>
+                    </div>
+                </a>
+                
+            </div>
+        </transition>
+    </nav>
+</div>
+<transition name="fade">
+    <div id="menu-curtain" @click="showMenuItems = !showMenuItems" v-show="showMenuItems"></div>
+</transition>
+
+        <div id="main" :class="loading ? 'into-enter-from': 'into-enter-active'">
+            <div class="article">
+    <div>
+        <h1>Vue3补充</h1>
+    </div>
+    <div class="info">
+        <span class="date">
+            <span class="icon">
+                <i class="fa-solid fa-calendar fa-fw"></i>
+            </span>
+            2024/2/6
+        </span>
+        
+        
+    </div>
+    
+    <div class="content" v-pre>
+        <p>摘要</p>
+<span id="more"></span>
+<p>正文</p>
+<h1 id="Vue3"><a href="#Vue3" class="headerlink" title="Vue3"></a>Vue3</h1><h2 id="使用vite创建工程"><a href="#使用vite创建工程" class="headerlink" title="使用vite创建工程"></a>使用vite创建工程</h2><p>选择一个目录创建，使用管理员打开</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206185500797.png" alt="image-20240206185500797"></p>
+<p>​	<img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206185854228.png" alt="image-20240206185854228"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206185958672.png" alt="image-20240206185958672"></p>
+<p>暂时先不开语法检查</p>
+<p>在使用</p>
+<pre><code>npm install 
+</code></pre>
+<p>打开文件目录</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206191044840.png" alt="image-20240206191044840"></p>
+<p>这里的入口文件是</p>
+<p>index.html</p>
+<p> 不再是<strong>main.js</strong></p>
+<p>src文件的main.js</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206191623463.png" alt="image-20240206191623463"></p>
+<p><strong>在setup里面没有this</strong></p>
+<p>语法糖</p>
+<p>之前setup里面要返回‘</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206200120029.png" alt="image-20240206200120029"></p>
+<p>特别麻烦</p>
+<p>这次</p>
+<p>写成这样的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206200221341.png" alt="image-20240206200221341"></p>
+<p>代码</p>
+<pre><code class="vue">&lt;script setup lang=&quot;ts&quot;&gt;
+    import &#123;ref&#125; from &quot;vue&quot;;
+
+    let name = ref(&#39;lina&#39;)
+    let age = ref(18)
+    function showMsg()&#123;
+      alert(name.value)
+    &#125;
+&lt;/script&gt;
+
+&lt;template&gt;
+&lt;div class=&quot;person&quot;&gt;
+  &lt;h2&gt;&#123;&#123;name&#125;&#125;&lt;/h2&gt;
+  &lt;h2&gt;&#123;&#123;age&#125;&#125;&lt;/h2&gt;
+  &lt;button @click=&quot;showMsg&quot;&gt;点我发送信息&lt;/button&gt;
+&lt;/div&gt;
+&lt;/template&gt;
+
+&lt;style scoped&gt;
+.person&#123;
+  background-color: skyblue;
+  box-shadow: 0 0 10px;
+  border-radius: 10px;
+  padding: 20px;
+&#125;
+&lt;/style&gt;
+</code></pre>
+<p>但是这样开发者工具的就是组件文件的名字</p>
+<p>如果需要更改还需要再写一个script标签</p>
+<p>也可以这么写</p>
+<p>不过需要使用插件</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206201034008.png" alt="image-20240206201034008"></p>
+<p>然后在修改配置</p>
+<p>先引入在使用</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206201107237.png" alt="image-20240206201107237"></p>
+<p>在vite.config 的文件里面</p>
+<p>如果你不想总是.value的话</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206204834749.png" alt="image-20240206204834749"></p>
+<p>可以使用插件</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206204902044.png" alt="image-20240206204902044"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206205025870.png" alt="image-20240206205025870"></p>
+<h3 id="reactive的局限"><a href="#reactive的局限" class="headerlink" title="reactive的局限"></a>reactive的局限</h3><p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206205059912.png" alt="image-20240206205059912"></p>
+<p>如果直接把对象的内容整个都换了</p>
+<p>就会导致失去响应式</p>
+<p>借助一个api</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206205527054.png" alt="image-20240206205527054"></p>
+<p>这样就可以实现整体的替换</p>
+<p>或者还有一种方法</p>
+<p>那就是定义成ref的对象</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206205829885.png" alt="image-20240206205829885"></p>
+<p>setup语法糖里的toref和torefs</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206210220759.png" alt="image-20240206210220759"></p>
+<p>这样的页面是不会有响应式的哦</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206210328226.png" alt="image-20240206210328226"></p>
+<p>因为你这样传过去的数据是纯纯字符串</p>
+<p>不是ref对象或者reactive的proxy</p>
+<p>这样就可以把</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206211052131.png" alt="image-20240206211052131"></p>
+<p>toref适用于一个的属性的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206211951006.png" alt="image-20240206211951006"></p>
+<p>怎么让计算属性既有可读的属性又有更改的属性</p>
+<p>computed的简写</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206212622912.png" alt="image-20240206212622912"></p>
+<p>只会有读的属性</p>
+<p>如果<img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206213001483.png" alt="image-20240206213001483"></p>
+<p>这么写sum的值是改不了的</p>
+<p>watch监视值的范围</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206215422761.png" alt="image-20240206215422761"></p>
+<p>函数返回的一个结果gette函数</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206215503557.png" alt="image-20240206215503557"></p>
+<p>watch调用的时候会有响应值的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206215932119.png" alt="image-20240206215932119"></p>
+<p>是一个函数</p>
+<p>调用它就会停止监视</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206220034801.png" alt="image-20240206220034801"></p>
+<p>所以可以这样</p>
+<p>当&gt;10的时候停止监视</p>
+<p>watch的监视</p>
+<p>监视ref定义的对象类型</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206220412191.png" alt="image-20240206220412191"></p>
+<p>修改person’里面的值不会监视的到</p>
+<p>但是整个修改会引起地址的变化</p>
+<p>会监视的到</p>
+<p>如果想要监视对象内部的变化的话</p>
+<p>需要使用加上</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206220637246.png" alt="image-20240206220637246"></p>
+<p>监视reactive定义的数据</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206220849260.png" alt="image-20240206220849260"></p>
+<p>这两种方法是不同的</p>
+<p>第一个的是地址的彻底改了</p>
+<p>第二个的是只是批量的把属性的值更改了</p>
+<p>reactive定义的对象默认是开启深度监视的</p>
+<p>总结：</p>
+<p><strong>ref定义的对象需要使用开启deep，但是reactive定义的对象需要手动进行更改</strong></p>
+<p>监视对象下的某个属性</p>
+<p>刚才说到watch检测的类型</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206221425256.png" alt="image-20240206221425256"></p>
+<p>可以用一个箭头函数返回属性的属性值</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206221522037.png" alt="image-20240206221522037"></p>
+<p>如果属性还是函数的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206221647511.png" alt="image-20240206221647511"></p>
+<p>如果</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206221737182.png" alt="image-20240206221737182"></p>
+<p>这么些的话</p>
+<p>car里面的c1和c2</p>
+<p>更改会被监视</p>
+<p>但是整体改的话监视不到</p>
+<p>函数</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206221835077.png" alt="image-20240206221835077"></p>
+<p>与此相反</p>
+<p>所以最好 的写法，<strong>监视对象中的对象</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206221918813.png" alt="image-20240206221918813"></p>
+<p>把深度打开这样都能检测的到</p>
+<p>多个数据的写成数组</p>
+
+    </div>
+    
+    
+    
+    
+    
+    
+    
+</div>
+
+            <footer id="footer">
+    <div id="footer-wrap">
+        <div>
+            &copy;
+            2022 - 2024 哈哈哈哈哈哈哈重生之我是兵王
+            <span id="footer-icon">
+                <i class="fa-solid fa-font-awesome fa-fw"></i>
+            </span>
+            &commat;chenw
+        </div>
+        <div>
+            Based on the <a target="_blank" rel="noopener" href="https://hexo.io">Hexo Engine</a> &amp;
+            <a target="_blank" rel="noopener" href="https://github.com/theme-particlex/hexo-theme-particlex">ParticleX Theme</a>
+        </div>
+        
+    </div>
+</footer>
+
+        </div>
+        
+        <transition name="fade">
+            <div id="preview" ref="preview" v-show="previewShow">
+                <img id="preview-content" ref="previewContent" />
+            </div>
+        </transition>
+        
+    </div>
+    <script src="/js/main.js"></script>
+    
+    
+
+
+
+
+    
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
