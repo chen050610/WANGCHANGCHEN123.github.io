@@ -313,6 +313,30 @@
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240206221918813.png" alt="image-20240206221918813"></p>
 <p>把深度打开这样都能检测的到</p>
 <p>多个数据的写成数组</p>
+<p>在app组件里面存在大量的vue2代码‘</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240207093057426.png" alt="image-20240207093057426"></p>
+<p>这里面的代码都可以删去直流一个import就可以</p>
+<p>因为可以自动的return</p>
+<p>可以把personreturn出去就相当于注册组件</p>
+<p>在获取页面的标签有些问题</p>
+<p>在app里面</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240207093446153.png" alt="image-20240207093446153"></p>
+<p>有一个title2的h2</p>
+<p>在person里面也有一个</p>
+<p>这样在person里面获取这个就会把app组件的也获取出来</p>
+<p>所以使用ref</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240207094131857.png" alt="image-20240207094131857"></p>
+<p>这样就可以获取dom元素 </p>
+<p>而且</p>
+<p>ref的只在自己的组件获取</p>
+<p>如果把ref放在组件的标签上</p>
+<p>获取到的是组件的实例对象</p>
+<p>它可以获取自组件的变量</p>
+<p>但是必须还得暴露出来在子组件</p>
+<p>在子组件</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240207095531952.png" alt="image-20240207095531952"></p>
+<p>把需要暴露的值写在这里</p>
+<p>先去学习typescript</p>
 
     </div>
     
