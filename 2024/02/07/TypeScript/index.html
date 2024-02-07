@@ -177,7 +177,7 @@
             
             <span class="tag">
                 
-                <a href="/tags/typescript/" style="color: #00bcd4">typescript</a>
+                <a href="/tags/typescript/" style="color: #00a596">typescript</a>
             </span>
             
         </span>
@@ -640,6 +640,294 @@ const dog =new Dog(&#39;xiaobai&#39;,18)
 </code></pre>
 <p>这样才可以确定继承的正常进行</p>
 <p><strong>抽象类</strong></p>
+<p>上述我们使用animals作为父类</p>
+<p>那么我们也可以实例化父类</p>
+<p>但是我们不希望实例化父类</p>
+<p>所以我们就可以把父类定义为抽象类</p>
+<p>这样他就实例化不了了		</p>
+<pre><code class="ts"> abstract class Animal&#123;
+    name:string
+    age:number
+    constructor(name:string,age:number)&#123;
+        this.name = name
+        this.age =age
+    &#125;
+    bark()&#123;
+        console.log(&#39;汪汪汪&#39;)
+    &#125;
+&#125;
+class Dog extends Animal&#123;
+
+&#125;
+const dog =new Dog(&quot;haha&quot;,180)
+console.log(dog)
+dog.bark()
+ // const person = new Animal()
+</code></pre>
+<p><strong>抽象类和其他的类区别不大</strong>，只是不能实例对象</p>
+<p>避免了类创建对象</p>
+<p><strong>抽象方法</strong></p>
+<p><strong>在方法之前加入abstract，而且只能定义在抽象类中</strong></p>
+<p><strong>而且，子类都要重写这个方法</strong></p>
+<pre><code class="ts"> abstract class Animal&#123;
+    name:string
+    age:number
+    constructor(name:string,age:number)&#123;
+        this.name = name
+        this.age =age
+    &#125;
+    bark()&#123;
+        console.log(&#39;汪汪汪&#39;)
+    &#125;
+     abstract fn()&#123;
+         console.log(‘hahah)
+     &#125;
+     
+&#125;
+class Dog extends Animal&#123;
+    fn()&#123;
+        console.log(&quot;11111&quot;)
+    &#125;
+&#125;
+const dog =new Dog(&quot;haha&quot;,180)
+console.log(dog)
+dog.bark()
+ // const person = new Animal()
+</code></pre>
+<p>这样的抽象的方法就定义完成了</p>
+<h2 id="接口"><a href="#接口" class="headerlink" title="接口"></a><strong>接口</strong></h2><p>和抽象类相似</p>
+<pre><code class="ts">type myType=&#123;//type这里就是那个别名
+    name:string
+    age:number
+    [propName:string]:any
+&#125;
+const obj:myType=&#123;
+    name:&#39;sss&#39;
+    age:18 
+&#125;
+</code></pre>
+<p>我们除了使用上面的方法还可以使用接口的方法去定义</p>
+<p>接口就是定义一个类或对象的解构</p>
+<pre><code class="ts">type myType=&#123;//type这里就是那个别名
+    name:string
+    age:number
+        [propName:string]:any
+&#125;
+interface myInterface&#123;
+    name:string
+    age:number
+&#125;
+const obj:myInterface=&#123;
+    name:&#39;sss&#39;,
+    age:18
+&#125;
+</code></pre>
+<pre><code class="ts">type myType=&#123;//type这里就是那个别名
+    name:string
+    age:number
+        [propName:string]:any
+&#125;
+interface myInterface&#123;
+    name:string
+    age:number
+&#125;
+interface myInterface&#123;
+    sex:string
+&#125;
+const obj:myInterface=&#123;
+    name:&#39;sss&#39;,
+    age:18
+    sex:&quot;nan&quot;
+&#125;
+</code></pre>
+<p>两个接口可以何和在一起</p>
+<p>接口所有的属性都不能有实际的值</p>
+<p>接口只定义对象的结构，不考虑实际值</p>
+<p>所有的方法都是抽象的</p>
+<p>使用如下</p>
+<pre><code class="ts">interface myInter&#123;
+    name:string
+    sayHi():void
+&#125;
+class person implements myInter&#123;
+    name:&#39;huttu&#39;
+    sayHi() &#123;
+        console.log(&quot;hi&quot;)
+    &#125;
+&#125;
+</code></pre>
+<p>接口的作用？</p>
+<p>就是对类的限制</p>
+<p>这个时ts独有的</p>
+<p><strong>属性的封装</strong></p>
+<p>属性中的数据被修改是非常危险的</p>
+<pre><code class="ts">class Person&#123;
+    name:string
+    age:number
+    constructor(name:string,age:number)&#123;
+        this.name = name
+        this.age = age
+    &#125;
+&#125;
+const person= new Person(&quot;hah&quot;,17)
+person.age=20//容易被修改
+</code></pre>
+<p><strong>public：可以在任意的位置上读到</strong></p>
+<p>当然也可以在子类中使用</p>
+<pre><code class="ts">class Person &#123;
+    public name:&#39;hahahah&#39;
+&#125;
+class leifen extends Person &#123;
+    console.log(this.name)//这里是可以读到的因为是public
+&#125;
+</code></pre>
+<p><strong>private：只能在类内部修改</strong></p>
+<pre><code class="ts">class Person&#123;
+    name:string
+    private age:number
+    constructor(name:string,age:number)&#123;
+        this.name = name
+        this.age = age//这里就是可以修改的
+    &#125;
+&#125;
+const person= new Person(&quot;hah&quot;,17)
+person.age=20//这里就会报错
+</code></pre>
+<p>如果外部真的想要读到的话</p>
+<p>就在类中添加方法</p>
+<pre><code class="ts">class Person&#123;
+    name:string
+    private age:number
+    constructor(name:string,age:number)&#123;
+        this.name = name
+        this.age = age//这里就是可以修改的
+    &#125;
+    getName()&#123;
+        console.log(this.age)
+        return this.age
+    &#125;
+    setName(value:number)&#123;
+        this.age=value
+    &#125;
+&#125;
+const person= new Person(&quot;hah&quot;,17)
+person.age=20//这里就会报错
+person.getName
+person.setName(20)
+</code></pre>
+<p>我们还可做一些限制</p>
+<pre><code class="ts">class Person&#123;
+    name:string
+    private age:number
+    constructor(name:string,age:number)&#123;
+        this.name = name
+        this.age = age//这里就是可以修改的
+    &#125;
+    getName()&#123;
+        console.log(this.age)
+        return this.age
+    &#125;
+    setName(value:number)&#123;
+        if(value&gt;0)&#123;
+            this.age=value
+        &#125;
+    &#125;
+&#125;
+const person= new Person(&quot;hah&quot;,17)
+person.age=20//这里就会报错
+person.getName
+person.setName(20)
+</code></pre>
+<p>这样定义的总是有些麻烦</p>
+<p>在修改值和获取值的时候总是要去调用这些函数</p>
+<p>做代理</p>
+<pre><code class="ts">class Person&#123;
+    name:string
+    private age:number
+    constructor(name:string,age:number)&#123;
+        this.name = name
+        this.age = age//这里就是可以修改的
+    &#125;
+    get _age()&#123;
+        return this.age
+    &#125;
+    set _age(value:number)&#123;
+        this.age = value
+    &#125;
+&#125;
+const person= new Person(&quot;hah&quot;,17)
+person._age   //hah
+person._age = 29
+</code></pre>
+<p><strong>protected</strong></p>
+<p>只能和当前类和当前类的子类可以使用</p>
+<pre><code class="ts">class Person &#123; 
+    stastic protected name:&#39;hahahah&#39;
+&#125;
+class leifen extends Person &#123;
+    console.log(this.name)//这里是可以读到
+&#125;
+console.log(Person.name)//这样时读不到的
+</code></pre>
+<p><strong>简单的写法</strong></p>
+<pre><code class="ts">class Person&#123;
+    public name:string
+    public age:number
+    constructor(name:string,age:number)&#123;
+        this.name=name
+        this.age=age
+    &#125;
+&#125;
+const person =new Person(&#39;hahah&#39;,19)
+</code></pre>
+<p>可以写成这样，这两个时等价的</p>
+<p><strong>语法糖</strong></p>
+<pre><code class="ts">class Person&#123;
+    constructor(public name:string,public age:number)&#123;
+    &#125;
+&#125;
+const person =new Person(&#39;hahah&#39;,19)
+</code></pre>
+<p><strong>总结</strong></p>
+<p>封装让对象中的类更加安全</p>
+<p><strong>泛型</strong></p>
+<pre><code class="ts">function fn(a:number):number&#123;
+    return a;
+&#125;
+</code></pre>
+<p>如果返回值的类型不确定</p>
+<p>泛型就是不确定类型</p>
+<pre><code class="ts">function fn&lt;T&gt;(a:T):T&#123;//这个T就是泛型
+    return a
+&#125;
+fn(10)//里面就可以自动推断出类型，不指定泛型，Ts对类型进行推断
+fn&lt;string&gt;(&#39;hello&#39;)//手动定义泛型
+</code></pre>
+<p>泛型可以指定多个</p>
+<pre><code class="ts">function fn&lt;T,K&gt;(T,K):T&#123;
+    return T
+    console.log(&quot;T&quot;)
+&#125;
+fn(13,&quot;hell0&quot;)
+fn&lt;number,string&gt;(13,&quot;hello&quot;)
+</code></pre>
+<p>还可以指定泛型的范围，有点看不懂了，真是天才  </p>
+<pre><code class="ts">interface myInter&#123;
+    length:number
+&#125;
+function fn&lt;T extends myInter&gt;(a:T):number	&#123;
+    return a.length
+&#125;
+fn(&quot;123&quot;)
+</code></pre>
+<p>解释一下</p>
+<p>fn传过去字符123</p>
+<p>T就是string的类型，因为继承myInter所以就有指定length方法的值是number，彻底通透明白了</p>
+<pre><code>T extends myInter，表示泛型T必须是myInter的实现类（抽象类）
+</code></pre>
+<p><strong>总结</strong></p>
+<p><strong>接口和泛型都是锦上添花的东西</strong></p>
+<hr>
 
     </div>
     
