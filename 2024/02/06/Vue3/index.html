@@ -337,6 +337,479 @@
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240207095531952.png" alt="image-20240207095531952"></p>
 <p>把需要暴露的值写在这里</p>
 <p>先去学习typescript</p>
+<p>学完以后再回来</p>
+<p>使用接口规范定义的setup定义的类</p>
+<p>创建types的文件夹</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240208103349994.png" alt="image-20240208103349994"></p>
+<p>定义规范</p>
+<p>在peron组件导入的时候<img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240208103424894.png" alt="image-20240208103424894"></p>
+<p>接收的时候需要使用type</p>
+<p>如果定义成数组每一个对象符合接口的规范</p>
+<p>这里姐可以使用泛型</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240208103802651.png" alt="image-20240208103802651"></p>
+<p>或者干净一点的话</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240208104031296.png" alt="image-20240208104031296"></p>
+<p>在person的里面</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240208104106166.png" alt="image-20240208104106166"></p>
+<p>或者</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240208104143812.png" alt="image-20240208104143812"></p>
+<p>就是数组定义的类型推荐reactive直接传递泛型</p>
+<p>下面演示</p>
+<pre><code class="vue">&lt;script lang=&quot;ts&quot; setup&gt;
+import Person from &quot;@/components/Person.vue&quot;;
+import &#123;type persons&#125; from &#39;@/types&#39;
+import &#123;reactive&#125; from &quot;vue&quot;;
+let personList:persons=reactive([
+  &#123;name:&#39;gagag&#39;,age:18&#125;,
+  &#123;name:&#39;gagag&#39;,age:18&#125;,
+  &#123;name:&#39;gagag&#39;,age:18&#125;,
+  &#123;name:&#39;gagag&#39;,age:18&#125;,
+])
+
+&lt;/script&gt;
+</code></pre>
+<p>可以写成这样的</p>
+<pre><code class="vue">&lt;script lang=&quot;ts&quot; setup&gt;
+import Person from &quot;@/components/Person.vue&quot;;
+import &#123;type persons&#125; from &#39;@/types&#39;
+import &#123;reactive&#125; from &quot;vue&quot;;
+let personList=reactive&lt;persons&gt;([
+  &#123;name:&#39;gagag&#39;,age:18&#125;,
+  &#123;name:&#39;gagag&#39;,age:18&#125;,
+  &#123;name:&#39;gagag&#39;,age:18&#125;,
+  &#123;name:&#39;gagag&#39;,age:18&#125;,
+])
+&lt;/script&gt;
+</code></pre>
+<h2 id="使用props传数据在vue3"><a href="#使用props传数据在vue3" class="headerlink" title="使用props传数据在vue3"></a>使用props传数据在vue3</h2><p>app组件</p>
+<pre><code class="vue">&lt;script lang=&quot;ts&quot; setup&gt;
+import Person from &quot;@/components/Person.vue&quot;;
+import &#123;type persons&#125; from &#39;@/types&#39;
+import &#123;reactive&#125; from &quot;vue&quot;;
+let personList=reactive&lt;persons&gt;([
+  &#123;name:&#39;gagag&#39;,age:18&#125;,
+  &#123;name:&#39;gagag&#39;,age:18&#125;,
+  &#123;name:&#39;gagag&#39;,age:18&#125;,
+  &#123;name:&#39;gagag&#39;,age:18&#125;,
+])
+&lt;/script&gt;
+
+&lt;template&gt;
+&lt;div class=&quot;app&quot;&gt;
+  &lt;Person :person=&quot;personList&quot;&gt;&lt;/Person&gt;
+&lt;/div&gt;
+&lt;/template&gt;
+</code></pre>
+<p>person组件</p>
+<pre><code class="vue">&lt;script setup lang=&quot;ts&quot;&gt;
+defineProps([&#39;person&#39;])
+&lt;/script&gt;
+
+&lt;template&gt;
+&lt;div class=&quot;person&quot;&gt;
+&#123;&#123;person&#125;&#125;
+&lt;/div&gt;
+&lt;/template&gt;
+</code></pre>
+<p>而且还有返回值</p>
+<p>因为<img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240208105719000.png" alt="image-20240208105719000"></p>
+<p>在这是打印不出的</p>
+<p>因为没有person变量</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240208105824059.png" alt="image-20240208105824059"></p>
+<p>这样的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240208105848355.png" alt="image-20240208105848355"></p>
+<p>补充一下v-for居然还可以遍历数字</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240208110451052.png" alt="image-20240208110451052"></p>
+<p>这样遍历5次，但是数据是空白的</p>
+<p>props也可以设置规范使用泛型</p>
+<p>代码</p>
+<pre><code class="vue">&lt;script setup lang=&quot;ts&quot;&gt;
+import &#123;type persons&#125; from &#39;@/types&#39;
+// let personlist=defineProps([&#39;person&#39;])
+// console.log(personlist)
+defineProps&lt;&#123;person:persons&#125;&gt;()
+&lt;/script&gt;
+</code></pre>
+<p>这样就限制了传过来的person是符合persons泛型的</p>
+<p>继续升级</p>
+<p>这回可以接收person+限制类型+限制必要性+指定默认值</p>
+<p>需要使用</p>
+<pre><code class="vue">&lt;script setup lang=&quot;ts&quot;&gt;
+import &#123;type persons&#125; from &#39;@/types&#39;
+// let personlist=defineProps([&#39;person&#39;])
+// console.log(personlist)
+withDefaults(defineProps&lt;&#123;person?:persons&#125;&gt;(),&#123;
+  person:()=&gt;[&#123;name:&#39;hahahha&#39;,age:18&#125;]
+&#125;)
+&lt;/script&gt;
+</code></pre>
+<p>withdefault</p>
+<p>问号的作用的是可以不用传递person</p>
+<p>后面的默认值必须是函数的返回值</p>
+<p>总结的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240208112549789.png" alt="image-20240208112549789"></p>
+<p>还有重点</p>
+<p>刚才在引入defineProps和之前引入definexpose的那个</p>
+<p>没有从vue引入就可以使用</p>
+<p>我们称这些函数为<strong>宏函数</strong></p>
+<p>声明周期</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240208114329459.png" alt="image-20240208114329459"></p>
+<p>这回变成箭头函数了</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240208114400561.png" alt="image-20240208114400561"></p>
+<p>父和子的生命周期</p>
+<p>从父亲的代码一个一个执行，所以先挂载的是子组件</p>
+<p>遇到子的的组件就进入子组件，执行完在到父组件然后挂载父组件</p>
+<h2 id="自定义HOOKs"><a href="#自定义HOOKs" class="headerlink" title="自定义HOOKs"></a>自定义HOOKs</h2><p>模块式开发</p>
+<p>每个功能的方法和数据写在一起</p>
+<p>首先创建hooks的文件夹</p>
+<p>这里一般装模块的</p>
+<p>命名基本使用use开头<img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240208150829987.png" alt="image-20240208150829987"> </p>
+<p>把代码</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240208150844091.png" alt="image-20240208150844091"></p>
+<p>包装成一个函数</p>
+<p>然后再返回出来</p>
+<p>然后在组件里面</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240208151021430.png" alt="image-20240208151021430"></p>
+<p>先调用那个函数就会返回刚才return的</p>
+<p>然后再解构赋值</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240208151102827.png" alt="image-20240208151102827"></p>
+<p>而且hook里面还可以写钩子</p>
+<p>还可以使用计算属性，监视属性</p>
+<h2 id="路由"><a href="#路由" class="headerlink" title="路由"></a>路由</h2><p>vue3路由的变化</p>
+<p>在mian.ts里面</p>
+<pre><code class="ts">import &#123; createApp&#125; from &quot;vue&quot;;
+//引入app创建应用
+import App from &quot;@/App.vue&quot;;
+import vueRouter from &#39;@/router&#39;
+import router from &quot;@/router&quot;;
+
+
+const app=createApp(App)
+app.use(router)
+app.mount(&#39;#app&#39;)
+</code></pre>
+<p>在路由器的配置文件里面</p>
+<pre><code class="ts">import &#123;createRouter,createWebHistory&#125; from &#39;vue-router&#39;
+import About from &quot;@/components/About.vue&quot;;
+import News from &quot;@/components/News.vue&quot;;
+import Home from &quot;@/components/Home.vue&quot;;
+
+const router = createRouter(&#123;
+    history:createWebHistory(), //路由的工作模式
+    routes:[
+        &#123;
+            path:&quot;/Home&quot;,
+            component:Home
+        &#125;,&#123;
+            path:&quot;/News&quot;,
+            component:News
+        &#125;,&#123;
+            path:&quot;/About&quot;,
+            component:About
+        &#125;,
+    ]
+&#125;)
+export default router
+</code></pre>
+<p>名字发生改变</p>
+<p>而且必须有一个配置项叫做history</p>
+<p>之前配置路由模式</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240208155608694.png" alt="image-20240208155608694"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240208155702921.png" alt="image-20240208155702921"></p>
+<p>如果想要整哈希的话</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240208155926748.png" alt="image-20240208155926748"></p>
+<p>​	之前的命名路由和to的对象方法还是之前的那样 </p>
+<p>嵌套路由</p>
+<p>父级路由，两种方法传递query的参数</p>
+<pre><code class="vue">&lt;template&gt;
+  &lt;div class=&quot;news&quot;&gt;
+    &lt;ul&gt;
+      &lt;li v-for=&quot;news in newList&quot;&gt;&lt;router-link :to=&quot;&#123;
+        path:&#39;/News/detail&#39;,
+        query:&#123;
+          content:news.content
+        &#125;
+      &#125;&quot;&gt;&#123;&#123;news.title&#125;&#125;&lt;/router-link&gt;&lt;/li&gt;
+&lt;!--      &lt;li v-for=&quot;news in newList&quot;&gt;&lt;router-link :to=&quot;`/News/Detail/?content=$&#123;news.content&#125;`&quot;&gt;&#123;&#123;news.title&#125;&#125;&lt;/router-link&gt;&lt;/li&gt;--&gt;
+    &lt;/ul&gt;
+    &lt;div class=&quot;news-content&quot;&gt;
+      &lt;router-view/&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script setup lang=&quot;ts&quot; name=&quot;News&quot;&gt;
+import &#123;reactive&#125; from &quot;vue&quot;;
+
+let newList = reactive([
+  &#123;id:&#39;jdhsdhshd01&#39;,title:&#39;内马尔·达·席尔瓦·桑托斯·儒尼奥尔&#39;,content:&#39;1992年2月5日出生于巴西圣保罗州，巴西职业足球运动员，司职前锋，现效力于沙特阿拉伯职业足球联赛的利雅得新月足球俱乐部 [1]，亦担任巴西国家男子足球队队长&#39;&#125;,
+  &#123;id:&#39;jdhsdhshd02&#39;,title:&#39;C罗&#39;,content:&#39;克里斯蒂亚诺·罗纳尔多（Cristiano Ronaldo），全名克里斯蒂亚诺·罗纳尔多·多斯·桑托斯·阿维罗（Cristiano Ronaldo dos Santos Aveiro），简称C罗，1985年2月5日出生于葡萄牙马德拉群岛丰沙尔，葡萄牙职业足球运动员，司职边锋/中锋，现效力于沙特阿拉伯职业足球联赛的利雅得胜利足球俱乐部&#39;&#125;,
+  &#123;id:&#39;jdhsdhshd03&#39;,title:&#39;姆巴佩&#39;,content:&#39;基利安·姆巴佩（Kylian Mbappé），全名基利安·桑米·姆巴佩·洛坦（Kylian Sanmi Mbappé Lottin），1998年12月20日出生于法国塞纳-圣但尼省邦迪，法国职业足球运动员，司职前锋，现效力于法国足球甲级联赛的巴黎圣日耳曼足球俱乐部。&#39;&#125;,
+  &#123;id:&#39;jdhsdhshd04&#39;,title:&#39;菲利克斯&#39;,content:&#39;若昂·费利克斯（João Félix），全名若昂·费利克斯·塞凯拉（João Félix Sequeira），1999年11月10日出生于葡萄牙维塞乌，葡萄牙职业足球运动员，司职前锋，现效力于西班牙足球甲级联赛的巴塞罗那足球俱乐部 [59]。&#39;&#125;,
+])
+&lt;/script&gt;
+
+&lt;style scoped&gt;
+/* 新闻 */
+.news &#123;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  height: 100%;
+&#125;
+.news ul &#123;
+  margin-top: 30px;
+  list-style: none;
+  padding-left: 10px;
+&#125;
+.news li&gt;a &#123;
+  font-size: 18px;
+  line-height: 40px;
+  text-decoration: none;
+  color: #64967E;
+  text-shadow: 0 0 1px rgb(0, 84, 0);
+&#125;
+.news-content &#123;
+  width: 70%;
+  height: 90%;
+  border: 1px solid;
+  margin-top: 20px;
+  border-radius: 10px;
+&#125;
+&lt;/style&gt;
+</code></pre>
+<p>接收的话</p>
+<pre><code class="vue">&lt;template&gt;
+  &lt;ul class=&quot;news-list&quot;&gt;
+    &lt;li&gt;&#123;&#123;route.query.content&#125;&#125;&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/template&gt;
+
+&lt;script setup lang=&quot;ts&quot; name=&quot;About&quot;&gt;
+import &#123;useRoute&#125; from &quot;vue-router&quot;;
+let route = useRoute()
+
+&lt;/script&gt;
+</code></pre>
+<p>注意:<strong>如果从响应式对象里面直接解构，就会失去响应式</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240208164741661.png" alt="image-20240208164741661"></p>
+<p>useroute的返回值</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240208162942617.png" alt="image-20240208162942617"></p>
+<p><strong>pararms参数</strong></p>
+<p>第二种的pararms的必须是name</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240208165601409.png" alt="image-20240208165601409"></p>
+<p>不能写路径</p>
+<p>在使用第一种写法的时候发现</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240208165840548.png" alt="image-20240208165840548"></p>
+<p>传递的内容不能太长</p>
+<p>第二种的写法没有这个限制</p>
+<pre><code class="vue">&lt;template&gt;
+  &lt;div class=&quot;news&quot;&gt;
+    &lt;ul&gt;
+&lt;!--      &lt;li v-for=&quot;news in newList&quot;&gt;&lt;router-link :to=&quot;`/News/Detail/$&#123;news.content&#125;`&quot;&gt;&#123;&#123;news.title&#125;&#125;&lt;/router-link&gt;&lt;/li&gt;--&gt;
+      &lt;li v-for=&quot;news in newList&quot;&gt;&lt;router-link :to=&quot;&#123;
+        name:&#39;hh&#39;,
+        params:&#123;
+          content:news.content
+        &#125;
+      &#125;&quot;&gt;&#123;&#123;news.title&#125;&#125;&lt;/router-link&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+    &lt;div class=&quot;news-content&quot;&gt;
+      &lt;router-view/&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script setup lang=&quot;ts&quot; name=&quot;News&quot;&gt;
+import &#123;reactive&#125; from &quot;vue&quot;;
+
+let newList = reactive([
+  &#123;id:&#39;jdhsdhshd01&#39;,title:&#39;内马尔·达·席尔瓦·桑托斯·儒尼奥尔&#39;,content:&#39;1992年2月5日出生于巴西圣保罗州，巴西职业足球运动员，司职前锋，现效力于沙特阿拉伯职业足球联赛的利雅得新月足球俱乐部 [1]，亦担任巴西国家男子足球队队长&#39;&#125;,
+  &#123;id:&#39;jdhsdhshd02&#39;,title:&#39;C罗&#39;,content:&#39;克里斯蒂亚诺·罗纳尔多（Cristiano Ronaldo），全名克里斯蒂亚诺·罗纳尔多·多斯·桑托斯·阿维罗（Cristiano Ronaldo dos Santos Aveiro），简称C罗，1985年2月5日出生于葡萄牙马德拉群岛丰沙尔，葡萄牙职业足球运动员，司职边锋/中锋，现效力于沙特阿拉伯职业足球联赛的利雅得胜利足球俱乐部&#39;&#125;,
+  &#123;id:&#39;jdhsdhshd03&#39;,title:&#39;姆巴佩&#39;,content:&#39;基利安·姆巴佩（Kylian Mbappé），全名基利安·桑米·姆巴佩·洛坦（Kylian Sanmi Mbappé Lottin），1998年12月20日出生于法国塞纳-圣但尼省邦迪，法国职业足球运动员，司职前锋，现效力于法国足球甲级联赛的巴黎圣日耳曼足球俱乐部。&#39;&#125;,
+  &#123;id:&#39;jdhsdhshd04&#39;,title:&#39;菲利克斯&#39;,content:&#39;若昂·费利克斯（João Félix），全名若昂·费利克斯·塞凯拉（João Félix Sequeira），1999年11月10日出生于葡萄牙维塞乌，葡萄牙职业足球运动员，司职前锋，现效力于西班牙足球甲级联赛的巴塞罗那足球俱乐部 [59]。&#39;&#125;,
+])
+&lt;/script&gt;
+</code></pre>
+<p>而且占位的</p>
+<pre><code>&#123;
+                    name:&#39;hh&#39;,
+                    path:&#39;Detail/:content&#39;,
+                    component:Detail,
+
+                &#125;
+            ]
+</code></pre>
+<p>和</p>
+<pre><code> &lt;li v-for=&quot;news in newList&quot;&gt;&lt;router-link :to=&quot;&#123;
+        name:&#39;hh&#39;,
+        params:&#123;
+          content:news.content
+        &#125;
+      &#125;&quot;&gt;&#123;&#123;news.title&#125;&#125;&lt;/router-link&gt;
+</code></pre>
+<p>这里的content要保持一致</p>
+<p><strong>注意不能传递数组，第二种的传递方法只能使用name，路由的占位的名字和pararms的参数名保持一致，还有一个可以控制传递和不传递</strong></p>
+<pre><code>  &#123;
+                    name:&#39;hh&#39;,
+                    path:&#39;Detail/:content?&#39;,
+                    component:Detail,
+
+                &#125;
+</code></pre>
+<p><strong>在comtent后面加上？在params的选项里面就可以不用传递comtent这个参数也可以传递，</strong></p>
+<h2 id="props配置项"><a href="#props配置项" class="headerlink" title="props配置项"></a>props配置项</h2><p>第一种使用true的写法</p>
+<p>在配置文件</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240208181739676.png" alt="image-20240208181739676"></p>
+<p>这样传递给detail的数据就是params的参数</p>
+<p>然后在这里接收这个参数</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240208181849519.png" alt="image-20240208181849519"></p>
+<p>第二种函数的写法</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240208182303709.png" alt="image-20240208182303709"></p>
+<p>这里可以也可以获取到</p>
+<p>query的参数</p>
+<p>然后再接受</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240208182339186.png" alt="image-20240208182339186"></p>
+<p>更简单的规则</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240208182427044.png" alt="image-20240208182427044"></p>
+<p>又是push和replace</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240208182638716.png" alt="image-20240208182638716"></p>
+<p>没有记录</p>
+<h2 id="编程式导航"><a href="#编程式导航" class="headerlink" title="编程式导航"></a>编程式导航</h2><p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240208182836630.png" alt="image-20240208182836630"></p>
+<p>调用useRouter</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240208183011802.png" alt="image-20240208183011802"></p>
+<p>和获取传递的参数useroute不一样</p>
+<pre><code>&lt;script setup lang=&quot;ts&quot; name=&quot;Home&quot;&gt;
+import &#123;onMounted&#125; from &quot;vue&quot;;
+import &#123;useRouter&#125; from &#39;vue-router&#39;
+const Router=useRouter()
+onMounted(()=&gt;&#123;
+  setTimeout(()=&gt;&#123;
+    Router.push(&#39;/News&#39;)
+  &#125;,3000)
+&#125;)
+&lt;/script&gt;
+</code></pre>
+<p>记住一定是useRouter不是useroute</p>
+<p>这样就可以i再点击首页以后跳转到？news</p>
+<p>实际上编程式导航比rouer-link用的多</p>
+<p><strong>记住to里面能写什么，这个push’里面就可以写什么</strong></p>
+<pre><code> router.push(&#123;
+    name:&#39;hh&#39;,
+    params:&#123;
+      content:news.content
+    &#125;
+  &#125;)
+&#125;
+</code></pre>
+<p>代码 </p>
+<pre><code class="vue">&lt;template&gt;
+  &lt;div class=&quot;news&quot;&gt;
+    &lt;ul&gt;
+      &lt;li v-for=&quot;news in newList&quot;&gt;
+        &lt;button @click=&quot;showContent(news)&quot;&gt;点击查看新闻&lt;/button&gt;
+        &lt;router-link :to=&quot;&#123;
+        name:&#39;hh&#39;,
+        params:&#123;
+          content:news.content
+        &#125;
+      &#125;&quot;&gt;&#123;&#123;news.title&#125;&#125;
+        &lt;/router-link&gt;
+     &lt;/li&gt;
+    &lt;/ul&gt;
+    &lt;div class=&quot;news-content&quot;&gt;
+      &lt;router-view/&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script setup lang=&quot;ts&quot; name=&quot;News&quot;&gt;
+import &#123;reactive&#125; from &quot;vue&quot;;
+import &#123;useRoute, useRouter&#125; from &quot;vue-router&quot;;
+
+let newList = reactive([
+  &#123;id:&#39;jdhsdhshd01&#39;,title:&#39;内马尔·达·席尔瓦·桑托斯·儒尼奥尔&#39;,content:&#39;1992年2月5日出生于巴西圣保罗州，巴西职业足球运动员，司职前锋，现效力于沙特阿拉伯职业足球联赛的利雅得新月足球俱乐部 [1]，亦担任巴西国家男子足球队队长&#39;&#125;,
+  &#123;id:&#39;jdhsdhshd02&#39;,title:&#39;C罗&#39;,content:&#39;克里斯蒂亚诺·罗纳尔多（Cristiano Ronaldo），全名克里斯蒂亚诺·罗纳尔多·多斯·桑托斯·阿维罗（Cristiano Ronaldo dos Santos Aveiro），简称C罗，1985年2月5日出生于葡萄牙马德拉群岛丰沙尔，葡萄牙职业足球运动员，司职边锋/中锋，现效力于沙特阿拉伯职业足球联赛的利雅得胜利足球俱乐部&#39;&#125;,
+  &#123;id:&#39;jdhsdhshd03&#39;,title:&#39;姆巴佩&#39;,content:&#39;基利安·姆巴佩（Kylian Mbappé），全名基利安·桑米·姆巴佩·洛坦（Kylian Sanmi Mbappé Lottin），1998年12月20日出生于法国塞纳-圣但尼省邦迪，法国职业足球运动员，司职前锋，现效力于法国足球甲级联赛的巴黎圣日耳曼足球俱乐部。&#39;&#125;,
+  &#123;id:&#39;jdhsdhshd04&#39;,title:&#39;菲利克斯&#39;,content:&#39;若昂·费利克斯（João Félix），全名若昂·费利克斯·塞凯拉（João Félix Sequeira），1999年11月10日出生于葡萄牙维塞乌，葡萄牙职业足球运动员，司职前锋，现效力于西班牙足球甲级联赛的巴塞罗那足球俱乐部 [59]。&#39;&#125;,
+])
+const router = useRouter()
+interface newsInter &#123;
+  id:string,
+  title:string,
+  content:string
+&#125;
+function showContent(news:newsInter)&#123;
+  router.push(&#123;
+    name:&#39;hh&#39;,
+    params:&#123;
+      content:news.content
+    &#125;
+  &#125;)
+&#125;
+&lt;/script&gt;
+
+&lt;style scoped&gt;
+/* 新闻 */
+.news &#123;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  height: 100%;
+&#125;
+.news ul &#123;
+  margin-top: 30px;
+  list-style: none;
+  padding-left: 10px;
+&#125;
+.news li&gt;a &#123;
+  font-size: 18px;
+  line-height: 40px;
+  text-decoration: none;
+  color: #64967E;
+  text-shadow: 0 0 1px rgb(0, 84, 0);
+&#125;
+.news-content &#123;
+  width: 70%;
+  height: 90%;
+  border: 1px solid;
+  margin-top: 20px;
+  border-radius: 10px;
+&#125;
+&lt;/style&gt;
+</code></pre>
+<h2 id="重定义"><a href="#重定义" class="headerlink" title="重定义"></a>重定义</h2><p>刚开始进入首页的时候</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240208185110192.png" alt="image-20240208185110192"></p>
+<p>什么也没有</p>
+<p>在一级路由下</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240208185219030.png" alt="image-20240208185219030"></p>
+<p>定义一个重定向</p>
+<p>让刚进来的首页为&#x2F;Home</p>
+<h2 id="pinia"><a href="#pinia" class="headerlink" title="pinia"></a>pinia</h2><p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240208185401550.png" alt="image-20240208185401550"></p>
+<p>没有vuex那么臃肿</p>
+<p>都是集中式状态管理</p>
+<p>就是把数据放在一个容器里面</p>
+<p>安装pinia</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240208200432717.png" alt="image-20240208200432717"></p>
+<pre><code>import &#123;useCountStore&#125; from &#39;@/store/Count&#39;
+
+let number = ref(1)
+const countStore = useCountStore()
+console.log(countStore)
+</code></pre>
+<p>发现是一个reactive定义的对像</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240208202231054.png" alt="image-20240208202231054"></p>
+<p>而且里面还有刚才在state定义的sum这里的sum是ref类型的</p>
+<p>那怎么读出来呢？</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240208202341663.png" alt="image-20240208202341663"></p>
+<p>这样读是错误的</p>
+<p>因为模仿一下</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240208202410281.png" alt="image-20240208202410281"></p>
+<p><strong>定义在reative的对象的属性再用ref定义</strong></p>
+<p><strong>读取的时候就不用加value</strong></p>
+<p>或者用</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240208202617902.png" alt="image-20240208202617902"></p>
+<p>修改的方法</p>
 
     </div>
     
