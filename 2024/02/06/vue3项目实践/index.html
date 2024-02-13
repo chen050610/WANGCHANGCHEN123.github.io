@@ -177,7 +177,7 @@
             
             <span class="tag">
                 
-                <a href="/tags/vue3%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5/" style="color: #03a9f4">vue3项目实践</a>
+                <a href="/tags/vue3%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5/" style="color: #ff7d73">vue3项目实践</a>
             </span>
             
         </span>
@@ -266,14 +266,43 @@ const updateProps = ()=&gt;&#123;
 <h5 id="安装指令"><a href="#安装指令" class="headerlink" title="安装指令"></a>安装指令</h5><pre><code class="bash">pnpm install -D eslint-plugin-import eslint-plugin-vue eslint-plugin-node eslint-plugin-prettier eslint-config-prettier eslint-plugin-node @babel/eslint-parser
 </code></pre>
 <p>修改为</p>
-<p>&#x2F;&#x2F; @see <a target="_blank" rel="noopener" href="https://eslint.bootcss.com/docs/rules/">https://eslint.bootcss.com/docs/rules/</a></p>
-<p>module.exports &#x3D; {<br>  env: {<br>    browser: true,<br>    es2021: true,<br>    node: true,<br>    jest: true,<br>  },<br>  &#x2F;* 指定如何解析语法 <em>&#x2F;<br>  parser: ‘vue-eslint-parser’,<br>  &#x2F;</em>* 优先级低于 parse 的语法解析配置 <em>&#x2F;<br>  parserOptions: {<br>    ecmaVersion: ‘latest’,<br>    sourceType: ‘module’,<br>    parser: ‘@typescript-eslint&#x2F;parser’,<br>    jsxPragma: ‘React’,<br>    ecmaFeatures: {<br>      jsx: true,<br>    },<br>  },<br>  &#x2F;</em> 继承已有的规则 <em>&#x2F;<br>  extends: [<br>    ‘eslint:recommended’,<br>    ‘plugin:vue&#x2F;vue3-essential’,<br>    ‘plugin:@typescript-eslint&#x2F;recommended’,<br>    ‘plugin:prettier&#x2F;recommended’,<br>  ],<br>  plugins: [‘vue’, ‘@typescript-eslint’],<br>  &#x2F;</em></p>
-<ul>
-<li>“off” 或 0    &#x3D;&#x3D;&gt;  关闭规则</li>
-<li>“warn” 或 1   &#x3D;&#x3D;&gt;  打开的规则作为警告（不影响代码执行）</li>
-<li>“error” 或 2  &#x3D;&#x3D;&gt;  规则作为一个错误（代码不能执行，界面报错）<br> *&#x2F;<br>rules: {</li>
-</ul>
-<pre><code class="js">// eslint（https://eslint.bootcss.com/docs/rules/）
+<pre><code class="js">    
+// @see https://eslint.bootcss.com/docs/rules/
+module.exports = &#123;
+  env: &#123;
+    browser: true,
+    es2021: true,
+    node: true,
+    jest: true,
+  &#125;,
+  /* 指定如何解析语法 */
+  parser: &#39;vue-eslint-parser&#39;,
+  /** 优先级低于 parse 的语法解析配置 */
+  parserOptions: &#123;
+    ecmaVersion: &#39;latest&#39;,
+    sourceType: &#39;module&#39;,
+    parser: &#39;@typescript-eslint/parser&#39;,
+    jsxPragma: &#39;React&#39;,
+    ecmaFeatures: &#123;
+      jsx: true,
+    &#125;,
+  &#125;,
+  /* 继承已有的规则 */
+  extends: [
+    &#39;eslint:recommended&#39;,
+    &#39;plugin:vue/vue3-essential&#39;,
+    &#39;plugin:@typescript-eslint/recommended&#39;,
+    &#39;plugin:prettier/recommended&#39;,
+  ],
+  plugins: [&#39;vue&#39;, &#39;@typescript-eslint&#39;],
+  /*
+
+   * &quot;off&quot; 或 0    ==&gt;  关闭规则
+   * &quot;warn&quot; 或 1   ==&gt;  打开的规则作为警告（不影响代码执行）
+   * &quot;error&quot; 或 2  ==&gt;  规则作为一个错误（代码不能执行，界面报错）
+     */
+       rules: &#123;
+// eslint（https://eslint.bootcss.com/docs/rules/）
 &#39;no-var&#39;: &#39;error&#39;, // 要求使用 let 或 const 而不是 var
 &#39;no-multiple-empty-lines&#39;: [&#39;warn&#39;, &#123; max: 1 &#125;], // 不允许多个空行
 &#39;no-console&#39;: process.env.NODE_ENV === &#39;production&#39; ? &#39;error&#39; : &#39;off&#39;,
