@@ -177,7 +177,7 @@
             
             <span class="tag">
                 
-                <a href="/tags/webpack/" style="color: #00bcd4">webpack</a>
+                <a href="/tags/webpack/" style="color: #03a9f4">webpack</a>
             </span>
             
         </span>
@@ -699,6 +699,423 @@ const ESLintWebpackPlugin = require(&quot;eslint-webpack-plugin&quot;);
 <p>然后在打包</p>
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240211215243331.png" alt="image-20240211215243331"></p>
 <p>发现之前使用的箭头函数和三点运算符都被替换了</p>
+<h2 id="处理html资源"><a href="#处理html资源" class="headerlink" title="处理html资源"></a>处理html资源</h2><p><strong>HtmlWebpackPlugin</strong></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/jantimon/html-webpack-plugin"><code>HtmlWebpackPlugin</code></a> 简化了 HTML 文件的创建，以便为你的 webpack 包提供服务。这对于那些文件名中包含哈希值，并且哈希值会随着每次编译而改变的 webpack 包特别有用。你可以让该插件为你生成一个 HTML 文件，使用 <a target="_blank" rel="noopener" href="https://lodash.com/docs#template">lodash 模板</a>提供模板，或者使用你自己的 <a target="_blank" rel="noopener" href="https://webpack.docschina.org/loaders">loader</a>。</p>
+<p><strong>安装</strong></p>
+<pre><code class="bash">npm install --save-dev html-webpack-plugin
+</code></pre>
+<p><strong>基本用法</strong></p>
+<p>该插件将为你生成一个 HTML5 文件， 在 body 中使用 <code>script</code> 标签引入你所有 webpack 生成的 bundle。 只需添加该插件到你的 webpack 配置中，如下所示：</p>
+<pre><code class="javascript">const HtmlWebpackPlugin = require(&#39;html-webpack-plugin&#39;);
+const path = require(&#39;path&#39;);
+
+module.exports = &#123;
+  entry: &#39;index.js&#39;,
+  output: &#123;
+    path: path.resolve(__dirname, &#39;./dist&#39;),
+    filename: &#39;index_bundle.js&#39;,
+  &#125;,
+  plugins: [new HtmlWebpackPlugin()],
+&#125;;
+</code></pre>
+<p>这将会生成一个包含以下内容的 <code>dist/index.html</code> 文件：</p>
+<pre><code class="html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot; /&gt;
+    &lt;title&gt;webpack App&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;script src=&quot;index_bundle.js&quot;&gt;&lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p>如果你有多个 webpack 入口，他们都会在已生成 HTML 文件中的 <code>&lt;script&gt;</code> 标签内引入。</p>
+<p>如果在 webpack 的输出中有任何 CSS 资源（例如，使用 <a target="_blank" rel="noopener" href="https://webpack.docschina.org/plugins/mini-css-extract-plugin/">MiniCssExtractPlugin</a> 提取的 CSS），那么这些资源也会在 HTML 文件 <code>&lt;head&gt;</code> 元素中的 <code>&lt;link&gt;</code> 标签内引入。</p>
+<p><strong>操作</strong></p>
+<p>下载以后</p>
+<pre><code>const HtmlWebpackPlugin= require(&quot;html-webpack-plugin&quot;)
+plugins: [
+        //插件的位置
+        new HtmlWebpackPlugin(),
+        new ESLintWebpackPlugin(&#123;
+            // 指定检查文件的根目录
+            context: path.resolve(__dirname, &quot;src&quot;),//哪些文件需要被检查
+        &#125;),
+    ],
+</code></pre>
+<p>然后在打包</p>
+<p>这样打包文件就会有一个html的文件</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240213132926601.png" alt="image-20240213132926601"></p>
+<p>而且会引入入口文件</p>
+<p>但是之前的dom元素没有了</p>
+<pre><code class="ts">plugins: [
+    //插件的位置
+    new HtmlWebpackPlugin(&#123;
+        template: path.resolve(__dirname, &quot;public/index.html&quot;),//以public为模板创建
+    &#125;),
+    new ESLintWebpackPlugin(&#123;
+        // 指定检查文件的根目录
+        context: path.resolve(__dirname, &quot;src&quot;),//哪些文件需要被检查
+    &#125;),
+],
+</code></pre>
+<p>着用就可以把都没元素</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240213133213826.png" alt="image-20240213133213826"></p>
+<h2 id="如何自动打包，再更改原先的模板的时候"><a href="#如何自动打包，再更改原先的模板的时候" class="headerlink" title="如何自动打包，再更改原先的模板的时候"></a>如何自动打包，再更改原先的模板的时候</h2><p>之前每次改代码，只有再从新打包以后才能看见效果</p>
+<p>就需要自动化</p>
+<h3 id="开发服务器-自动化"><a href="#开发服务器-自动化" class="headerlink" title="开发服务器&amp;自动化"></a>开发服务器&amp;自动化</h3><p>每次写完代码都需要手动输入指令才能编译代码，太麻烦了，我们希望一切自动化，就需要使用自动化工具</p>
+<h4 id="1-下载包"><a href="#1-下载包" class="headerlink" title="#1. 下载包"></a><a target="_blank" rel="noopener" href="https://xxpromise.gitee.io/webpack5-docs/base/server.html#_1-%E4%B8%8B%E8%BD%BD%E5%8C%85">#</a>1. 下载包</h4><pre><code class="text">npm i webpack-dev-server -D
+</code></pre>
+<h4 id="2-配置"><a href="#2-配置" class="headerlink" title="#2. 配置"></a><a target="_blank" rel="noopener" href="https://xxpromise.gitee.io/webpack5-docs/base/server.html#_2-%E9%85%8D%E7%BD%AE">#</a>2. 配置</h4><ul>
+<li>webpack.config.js</li>
+</ul>
+<pre><code class="javascript">const path = require(&quot;path&quot;);
+const ESLintWebpackPlugin = require(&quot;eslint-webpack-plugin&quot;);
+const HtmlWebpackPlugin = require(&quot;html-webpack-plugin&quot;);
+
+module.exports = &#123;
+  entry: &quot;./src/main.js&quot;,
+  output: &#123;
+    path: path.resolve(__dirname, &quot;dist&quot;),
+    filename: &quot;static/js/main.js&quot;, // 将 js 文件输出到 static/js 目录中
+    clean: true, // 自动将上次打包目录资源清空
+  &#125;,
+  module: &#123;
+    rules: [
+      &#123;
+        // 用来匹配 .css 结尾的文件
+        test: /\.css$/,
+        // use 数组里面 Loader 执行顺序是从右到左
+        use: [&quot;style-loader&quot;, &quot;css-loader&quot;],
+      &#125;,
+      &#123;
+        test: /\.less$/,
+        use: [&quot;style-loader&quot;, &quot;css-loader&quot;, &quot;less-loader&quot;],
+      &#125;,
+      &#123;
+        test: /\.s[ac]ss$/,
+        use: [&quot;style-loader&quot;, &quot;css-loader&quot;, &quot;sass-loader&quot;],
+      &#125;,
+      &#123;
+        test: /\.styl$/,
+        use: [&quot;style-loader&quot;, &quot;css-loader&quot;, &quot;stylus-loader&quot;],
+      &#125;,
+      &#123;
+        test: /\.(png|jpe?g|gif|webp)$/,
+        type: &quot;asset&quot;,
+        parser: &#123;
+          dataUrlCondition: &#123;
+            maxSize: 10 * 1024, // 小于10kb的图片会被base64处理
+          &#125;,
+        &#125;,
+        generator: &#123;
+          // 将图片文件输出到 static/imgs 目录中
+          // 将图片文件命名 [hash:8][ext][query]
+          // [hash:8]: hash值取8位
+          // [ext]: 使用之前的文件扩展名
+          // [query]: 添加之前的query参数
+          filename: &quot;static/imgs/[hash:8][ext][query]&quot;,
+        &#125;,
+      &#125;,
+      &#123;
+        test: /\.(ttf|woff2?)$/,
+        type: &quot;asset/resource&quot;,
+        generator: &#123;
+          filename: &quot;static/media/[hash:8][ext][query]&quot;,
+        &#125;,
+      &#125;,
+      &#123;
+        test: /\.js$/,
+        exclude: /node_modules/, // 排除node_modules代码不编译
+        loader: &quot;babel-loader&quot;,
+      &#125;,
+    ],
+  &#125;,
+  plugins: [
+    new ESLintWebpackPlugin(&#123;
+      // 指定检查文件的根目录
+      context: path.resolve(__dirname, &quot;src&quot;),
+    &#125;),
+    new HtmlWebpackPlugin(&#123;
+      // 以 public/index.html 为模板创建文件
+      // 新的html文件有两个特点：1. 内容和源文件一致 2. 自动引入打包生成的js等资源
+      template: path.resolve(__dirname, &quot;public/index.html&quot;),
+    &#125;),
+  ],
+  // 开发服务器
+  devServer: &#123;
+    host: &quot;localhost&quot;, // 启动服务器域名
+    port: &quot;3000&quot;, // 启动服务器端口号
+    open: true, // 是否自动打开浏览器
+  &#125;,
+  mode: &quot;development&quot;,
+&#125;;
+</code></pre>
+<h4 id="3-运行指令"><a href="#3-运行指令" class="headerlink" title="#3. 运行指令"></a><a target="_blank" rel="noopener" href="https://xxpromise.gitee.io/webpack5-docs/base/server.html#_3-%E8%BF%90%E8%A1%8C%E6%8C%87%E4%BB%A4">#</a>3. 运行指令</h4><pre><code class="text">npx webpack serve
+</code></pre>
+<p><strong>注意运行指令发生了变化</strong></p>
+<p>并且当你使用开发服务器时，所有代码都会在内存中编译打包，并不会输出到 dist 目录下。</p>
+<p>开发时我们只关心代码能运行，有效果即可，至于代码被编译成什么样子，我们并不需要知道。</p>
+<p><strong>他会自动监视src目录下代码的改变，如果发生了改变就会重新打包</strong></p>
+<p><strong>以上是开发模式的学习</strong></p>
+<p><strong>下面是生产模式的学习</strong></p>
+<h1 id="准备生产模式"><a href="#准备生产模式" class="headerlink" title="准备生产模式"></a><strong>准备生产模式</strong></h1><p>这里说一下</p>
+<p>把配置文件写在ige文件夹里面</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240213134546821.png" alt="image-20240213134546821"></p>
+<p>一个是生产模式</p>
+<p>一个是开发模式</p>
+<p>生产模式的代码需要更改一下</p>
+<p>其中这里的entry不用改</p>
+<p>因为这个config运行的位置还是在外面根目录下运行的只是文件的目录做个更改</p>
+<p>但是输出的位置 需要</p>
+<pre><code>odule.exports = &#123;
+    //入口
+    entry:&#39;./src/main.js&#39;,//相对路径
+    //输出
+    output: &#123;
+        path: path.resolve(__dirname,&#39;../dist&#39;),//输出路径绝对路径，使用path解决__dirname代表当前文件夹目录
+        filename: undefined,//入口文件输出的文件名字,生产模式们没有输出
+        clean: true,//自动清空上次打包的
+
+    &#125;,
+</code></pre>
+<p>运行指令</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240213135149934.png" alt="image-20240213135149934"></p>
+<p>这是开发模式的更改</p>
+<p>​	我们然后在定义几个指令</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240213140006993.png" alt="image-20240213140006993"></p>
+<p>这样就可以使用</p>
+<pre><code class="bash">npm run build //启动生产者
+npm run start //启动开发者模式
+npm run dev
+//后面的两个指令可以省略run
+</code></pre>
+<h2 id="css样式处理"><a href="#css样式处理" class="headerlink" title="css样式处理"></a>css样式处理</h2><p>Css 文件目前被打包到 js 文件中，当 js 文件加载时，会创建一个 style 标签来生成样式</p>
+<p>这样对于网站来说，会出现闪屏现象，用户体验不好</p>
+<p><strong>我们应该是单独的 Css 文件，通过 link 标签加载性能才好</strong></p>
+<p>闪屏是什么？</p>
+<p>就是之前的，css是js运行的时候，动态插入的</p>
+<p>网速稍微慢一点，js加载就慢，这个css样式一瞬间加载出来</p>
+<h4 id="1-下载包-1"><a href="#1-下载包-1" class="headerlink" title="1. 下载包"></a>1. 下载包</h4><pre><code class="text">npm i mini-css-extract-plugin -D
+</code></pre>
+<h4 id="2-配置-1"><a href="#2-配置-1" class="headerlink" title="#2. 配置"></a><a target="_blank" rel="noopener" href="https://xxpromise.gitee.io/webpack5-docs/base/optimizeCss.html#_2-%E9%85%8D%E7%BD%AE">#</a>2. 配置</h4><ul>
+<li>webpack.prod.js</li>
+<li>记住把之前使用所有style.loader的地方，都换成插件的名字，因为不需要使用style</li>
+</ul>
+<pre><code class="javascript">const path = require(&quot;path&quot;);
+const ESLintWebpackPlugin = require(&quot;eslint-webpack-plugin&quot;);
+const HtmlWebpackPlugin = require(&quot;html-webpack-plugin&quot;);
+const MiniCssExtractPlugin = require(&quot;mini-css-extract-plugin&quot;);
+
+module.exports = &#123;
+  entry: &quot;./src/main.js&quot;,
+  output: &#123;
+    path: path.resolve(__dirname, &quot;../dist&quot;), // 生产模式需要输出
+    filename: &quot;static/js/main.js&quot;, // 将 js 文件输出到 static/js 目录中
+    clean: true,
+  &#125;,
+  module: &#123;
+    rules: [
+      &#123;
+        // 用来匹配 .css 结尾的文件
+        test: /\.css$/,
+        // use 数组里面 Loader 执行顺序是从右到左
+        use: [MiniCssExtractPlugin.loader, &quot;css-loader&quot;],
+      &#125;,
+      &#123;
+        test: /\.less$/,
+        use: [MiniCssExtractPlugin.loader, &quot;css-loader&quot;, &quot;less-loader&quot;],
+      &#125;,
+      &#123;
+        test: /\.s[ac]ss$/,
+        use: [MiniCssExtractPlugin.loader, &quot;css-loader&quot;, &quot;sass-loader&quot;],
+      &#125;,
+      &#123;
+        test: /\.styl$/,
+        use: [MiniCssExtractPlugin.loader, &quot;css-loader&quot;, &quot;stylus-loader&quot;],
+      &#125;,
+      &#123;
+        test: /\.(png|jpe?g|gif|webp)$/,
+        type: &quot;asset&quot;,
+        parser: &#123;
+          dataUrlCondition: &#123;
+            maxSize: 10 * 1024, // 小于10kb的图片会被base64处理
+          &#125;,
+        &#125;,
+        generator: &#123;
+          // 将图片文件输出到 static/imgs 目录中
+          // 将图片文件命名 [hash:8][ext][query]
+          // [hash:8]: hash值取8位
+          // [ext]: 使用之前的文件扩展名
+          // [query]: 添加之前的query参数
+          filename: &quot;static/imgs/[hash:8][ext][query]&quot;,
+        &#125;,
+      &#125;,
+      &#123;
+        test: /\.(ttf|woff2?)$/,
+        type: &quot;asset/resource&quot;,
+        generator: &#123;
+          filename: &quot;static/media/[hash:8][ext][query]&quot;,
+        &#125;,
+      &#125;,
+      &#123;
+        test: /\.js$/,
+        exclude: /node_modules/, // 排除node_modules代码不编译
+        loader: &quot;babel-loader&quot;,
+      &#125;,
+    ],
+  &#125;,
+  plugins: [
+    new ESLintWebpackPlugin(&#123;
+      // 指定检查文件的根目录
+      context: path.resolve(__dirname, &quot;../src&quot;),
+    &#125;),
+    new HtmlWebpackPlugin(&#123;
+      // 以 public/index.html 为模板创建文件
+      // 新的html文件有两个特点：1. 内容和源文件一致 2. 自动引入打包生成的js等资源
+      template: path.resolve(__dirname, &quot;../public/index.html&quot;),
+    &#125;),
+    // 提取css成单独文件
+    new MiniCssExtractPlugin(&#123;
+      // 定义输出文件名和目录
+      filename: &quot;static/css/main.css&quot;,
+    &#125;),
+  ],
+  // devServer: &#123;
+  //   host: &quot;localhost&quot;, // 启动服务器域名
+  //   port: &quot;3000&quot;, // 启动服务器端口号
+  //   open: true, // 是否自动打开浏览器
+  // &#125;,
+  mode: &quot;production&quot;,
+&#125;;
+</code></pre>
+<h4 id="3-运行指令-1"><a href="#3-运行指令-1" class="headerlink" title="#3. 运行指令"></a><a target="_blank" rel="noopener" href="https://xxpromise.gitee.io/webpack5-docs/base/optimizeCss.html#_3-%E8%BF%90%E8%A1%8C%E6%8C%87%E4%BB%A4">#</a>3. 运行指令</h4><pre><code class="text">npm run build
+</code></pre>
+<p>这样以后</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240213142024427.png" alt="image-20240213142024427"></p>
+<h2 id="css兼容性的处理"><a href="#css兼容性的处理" class="headerlink" title="css兼容性的处理"></a>css兼容性的处理</h2><h2 id="css压缩"><a href="#css压缩" class="headerlink" title="css压缩"></a>css压缩</h2><ol>
+<li><strong>下载包</strong></li>
+</ol>
+<pre><code class="text">npm i css-minimizer-webpack-plugin -D
+</code></pre>
+<p><a target="_blank" rel="noopener" href="https://xxpromise.gitee.io/webpack5-docs/base/optimizeCss.html#_2-%E9%85%8D%E7%BD%AE-2">#</a>2. <strong>配置</strong></p>
+<ul>
+<li>webpack.prod.js</li>
+</ul>
+<pre><code class="javascript">const path = require(&quot;path&quot;);
+const ESLintWebpackPlugin = require(&quot;eslint-webpack-plugin&quot;);
+const HtmlWebpackPlugin = require(&quot;html-webpack-plugin&quot;);
+const MiniCssExtractPlugin = require(&quot;mini-css-extract-plugin&quot;);
+const CssMinimizerPlugin = require(&quot;css-minimizer-webpack-plugin&quot;);
+
+// 获取处理样式的Loaders
+const getStyleLoaders = (preProcessor) =&gt; &#123;
+  return [
+    MiniCssExtractPlugin.loader,
+    &quot;css-loader&quot;,
+    &#123;
+      loader: &quot;postcss-loader&quot;,
+      options: &#123;
+        postcssOptions: &#123;
+          plugins: [
+            &quot;postcss-preset-env&quot;, // 能解决大多数样式兼容性问题
+          ],
+        &#125;,
+      &#125;,
+    &#125;,
+    preProcessor,
+  ].filter(Boolean);
+&#125;;
+
+module.exports = &#123;
+  entry: &quot;./src/main.js&quot;,
+  output: &#123;
+    path: path.resolve(__dirname, &quot;../dist&quot;), // 生产模式需要输出
+    filename: &quot;static/js/main.js&quot;, // 将 js 文件输出到 static/js 目录中
+    clean: true,
+  &#125;,
+  module: &#123;
+    rules: [
+      &#123;
+        // 用来匹配 .css 结尾的文件
+        test: /\.css$/,
+        // use 数组里面 Loader 执行顺序是从右到左
+        use: getStyleLoaders(),
+      &#125;,
+      &#123;
+        test: /\.less$/,
+        use: getStyleLoaders(&quot;less-loader&quot;),
+      &#125;,
+      &#123;
+        test: /\.s[ac]ss$/,
+        use: getStyleLoaders(&quot;sass-loader&quot;),
+      &#125;,
+      &#123;
+        test: /\.styl$/,
+        use: getStyleLoaders(&quot;stylus-loader&quot;),
+      &#125;,
+      &#123;
+        test: /\.(png|jpe?g|gif|webp)$/,
+        type: &quot;asset&quot;,
+        parser: &#123;
+          dataUrlCondition: &#123;
+            maxSize: 10 * 1024, // 小于10kb的图片会被base64处理
+          &#125;,
+        &#125;,
+        generator: &#123;
+          // 将图片文件输出到 static/imgs 目录中
+          // 将图片文件命名 [hash:8][ext][query]
+          // [hash:8]: hash值取8位
+          // [ext]: 使用之前的文件扩展名
+          // [query]: 添加之前的query参数
+          filename: &quot;static/imgs/[hash:8][ext][query]&quot;,
+        &#125;,
+      &#125;,
+      &#123;
+        test: /\.(ttf|woff2?)$/,
+        type: &quot;asset/resource&quot;,
+        generator: &#123;
+          filename: &quot;static/media/[hash:8][ext][query]&quot;,
+        &#125;,
+      &#125;,
+      &#123;
+        test: /\.js$/,
+        exclude: /node_modules/, // 排除node_modules代码不编译
+        loader: &quot;babel-loader&quot;,
+      &#125;,
+    ],
+  &#125;,
+  plugins: [
+    new ESLintWebpackPlugin(&#123;
+      // 指定检查文件的根目录
+      context: path.resolve(__dirname, &quot;../src&quot;),
+    &#125;),
+    new HtmlWebpackPlugin(&#123;
+      // 以 public/index.html 为模板创建文件
+      // 新的html文件有两个特点：1. 内容和源文件一致 2. 自动引入打包生成的js等资源
+      template: path.resolve(__dirname, &quot;../public/index.html&quot;),
+    &#125;),
+    // 提取css成单独文件
+    new MiniCssExtractPlugin(&#123;
+      // 定义输出文件名和目录
+      filename: &quot;static/css/main.css&quot;,
+    &#125;),
+    // css压缩
+    new CssMinimizerPlugin(),
+  ],
+  // devServer: &#123;
+  //   host: &quot;localhost&quot;, // 启动服务器域名
+  //   port: &quot;3000&quot;, // 启动服务器端口号
+  //   open: true, // 是否自动打开浏览器
+  // &#125;,
+  mode: &quot;production&quot;,
+&#125;;
+</code></pre>
+<p>3.<strong>运行指令</strong></p>
+<pre><code class="text">npm run build
+</code></pre>
+<h1 id="webpack高级配置"><a href="#webpack高级配置" class="headerlink" title="webpack高级配置"></a>webpack高级配置</h1><h2 id="sourceMap"><a href="#sourceMap" class="headerlink" title="sourceMap"></a>sourceMap</h2><p><a target="_blank" rel="noopener" href="https://xxpromise.gitee.io/webpack5-docs/senior/">介绍 | 尚硅谷 Web 前端之 Webpack5 教程 (gitee.io)</a></p>
 
     </div>
     
