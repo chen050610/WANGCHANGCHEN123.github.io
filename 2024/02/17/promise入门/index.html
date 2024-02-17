@@ -1,0 +1,744 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <meta charset="utf-8" />
+    <title>promise入门 | 哈哈哈哈哈哈哈重生之我是兵王</title>
+    <meta name="author" content="chenw" />
+    <meta name="description" content="description" />
+    <meta name="keywords" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+	<canvas id="fireworks" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 32767"></canvas>
+	<script src="https://cdn.staticfile.org/animejs/3.2.1/anime.min.js"></script>
+	<script src="/js/fireworks.min.js"></script>
+	<canvas id="background" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: -1"></canvas>
+	<script src="/js/background.min.js"></script>
+	<div id="cursor"></div>
+	<link rel="stylesheet" href="/css/cursor.min.css">
+	<script src="/js/cursor.min.js"></script>
+    <link rel="icon" href="/images/avatar.jpg" />
+    <link rel="preconnect" href="https://cdn.staticfile.org" />
+<script src="https://cdn.staticfile.org/vue/3.3.7/vue.global.prod.min.js"></script>
+<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/6.4.2/css/all.min.css" />
+<link rel="preconnect" href="https://fonts.loli.net" />
+<link rel="preconnect" href="https://gstatic.loli.net" crossorigin />
+<link rel="stylesheet" href="https://fonts.loli.net/css2?family=Fira+Code:wght@400;500;600;700&family=Lexend:wght@400;500;600;700;800;900&family=Noto+Sans+SC:wght@400;500;600;700;800;900&display=swap" />
+<script> const mixins = {}; </script>
+
+<script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+
+
+<script src="https://cdn.staticfile.org/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdn.staticfile.org/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></script>
+<link
+    rel="stylesheet"
+    href="https://cdn.staticfile.org/highlight.js/11.9.0/styles/github.min.css"
+/>
+<script src="/js/lib/highlight.js"></script>
+
+
+
+<script src="/js/lib/preview.js"></script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/main.css" />
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+    <div id="layout">
+        <transition name="fade">
+            <div id="loading" v-show="loading">
+                <div id="loading-circle">
+                    <h2>LOADING</h2>
+                    <p>加载过慢请开启缓存 浏览器默认开启</p>
+                    <img src="/images/loading.gif" />
+                </div>
+            </div>
+        </transition>
+        <div id="menu" :class="{ hidden: hiddenMenu, 'menu-color': menuColor}">
+    <nav id="desktop-menu">
+        <a class="title" href="/">
+            <span>哈哈哈哈哈哈哈重生之我是兵王</span>
+        </a>
+        
+        <a href="/">
+            <i class="fa-solid fa-house fa-fw"></i>
+            <span>&ensp;Home</span>
+        </a>
+        
+        <a href="/about">
+            <i class="fa-solid fa-id-card fa-fw"></i>
+            <span>&ensp;About</span>
+        </a>
+        
+        <a href="/archives">
+            <i class="fa-solid fa-box-archive fa-fw"></i>
+            <span>&ensp;Archives</span>
+        </a>
+        
+        <a href="/categories">
+            <i class="fa-solid fa-bookmark fa-fw"></i>
+            <span>&ensp;Categories</span>
+        </a>
+        
+        <a href="/tags">
+            <i class="fa-solid fa-tags fa-fw"></i>
+            <span>&ensp;Tags</span>
+        </a>
+        
+    </nav>
+    <nav id="mobile-menu">
+        <div class="title" @click="showMenuItems = !showMenuItems">
+            <i class="fa-solid fa-bars fa-fw"></i>
+            <span>&emsp;哈哈哈哈哈哈哈重生之我是兵王</span>
+        </div>
+        <transition name="slide">
+            <div class="items" v-show="showMenuItems">
+                
+                <a href="/">
+                    <div class="item">
+                        <div style="min-width: 20px; max-width: 50px; width: 10%">
+                            <i class="fa-solid fa-house fa-fw"></i>
+                        </div>
+                        <div style="min-width: 100px; max-width: 150%; width: 20%">Home</div>
+                    </div>
+                </a>
+                
+                <a href="/about">
+                    <div class="item">
+                        <div style="min-width: 20px; max-width: 50px; width: 10%">
+                            <i class="fa-solid fa-id-card fa-fw"></i>
+                        </div>
+                        <div style="min-width: 100px; max-width: 150%; width: 20%">About</div>
+                    </div>
+                </a>
+                
+                <a href="/archives">
+                    <div class="item">
+                        <div style="min-width: 20px; max-width: 50px; width: 10%">
+                            <i class="fa-solid fa-box-archive fa-fw"></i>
+                        </div>
+                        <div style="min-width: 100px; max-width: 150%; width: 20%">Archives</div>
+                    </div>
+                </a>
+                
+                <a href="/categories">
+                    <div class="item">
+                        <div style="min-width: 20px; max-width: 50px; width: 10%">
+                            <i class="fa-solid fa-bookmark fa-fw"></i>
+                        </div>
+                        <div style="min-width: 100px; max-width: 150%; width: 20%">Categories</div>
+                    </div>
+                </a>
+                
+                <a href="/tags">
+                    <div class="item">
+                        <div style="min-width: 20px; max-width: 50px; width: 10%">
+                            <i class="fa-solid fa-tags fa-fw"></i>
+                        </div>
+                        <div style="min-width: 100px; max-width: 150%; width: 20%">Tags</div>
+                    </div>
+                </a>
+                
+            </div>
+        </transition>
+    </nav>
+</div>
+<transition name="fade">
+    <div id="menu-curtain" @click="showMenuItems = !showMenuItems" v-show="showMenuItems"></div>
+</transition>
+
+        <div id="main" :class="loading ? 'into-enter-from': 'into-enter-active'">
+            <div class="article">
+    <div>
+        <h1>promise入门</h1>
+    </div>
+    <div class="info">
+        <span class="date">
+            <span class="icon">
+                <i class="fa-solid fa-calendar fa-fw"></i>
+            </span>
+            2024/2/17
+        </span>
+        
+        
+        <span class="tags">
+            <span class="icon">
+                <i class="fa-solid fa-tags fa-fw"></i>
+            </span>
+            
+            
+            <span class="tag">
+                
+                <a href="/tags/promise%E4%BD%BF%E7%94%A8/" style="color: #03a9f4">promise使用</a>
+            </span>
+            
+        </span>
+        
+    </div>
+    
+    <div class="content" v-pre>
+        <p>摘要</p>
+<span id="more"></span>
+<p>正文</p>
+<h1 id="promise"><a href="#promise" class="headerlink" title="promise"></a>promise</h1><p><strong>练习的代码仓库</strong><a target="_blank" rel="noopener" href="https://github.com/chen050610/Promise"><a target="_blank" rel="noopener" href="https://github.com/chen050610/Promise">chen050610&#x2F;Promise: 学习Promise的练习代码 (github.com)</a></a></p>
+<h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217144828077.png" alt="image-20240217144828077"></p>
+<p>异步编程</p>
+<p>之前使用的都是回调函数</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217144949932.png" alt="image-20240217144949932"></p>
+<p><strong>优势</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217145114151.png" alt="image-20240217145114151"></p>
+<h2 id="Promise初体验"><a href="#Promise初体验" class="headerlink" title="Promise初体验"></a>Promise初体验</h2><pre><code class="html">&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;Title&lt;/title&gt;
+    &lt;script src=&quot;../jquery.js&quot;&gt;&lt;/script&gt;
+    &lt;script&gt;
+        $(()=&gt;&#123;
+            $(&#39;#btn&#39;).click(()=&gt;&#123;
+                function rand (m,n)&#123;
+                    return  Math.ceil(Math.random()*(n-m+1)) + m-1;
+                &#125;
+                // setTimeout(()=&gt;&#123;
+                //     let n = rand(1,100)
+                //     if (n &lt;= 30)&#123;alert(&quot;100原子&quot;)&#125;else&#123;alert(&#39;再接再厉&#39;)&#125;
+                // &#125;,2000)
+
+
+                // promise的实现,本质上是构造函数
+                //rosolve解决 函数类型的数据
+                //reject拒绝 函数类性的数据
+                const P = new Promise((resolve,reject) =&gt; &#123;
+                    setTimeout(()=&gt;&#123;
+                        let n = rand(1,100)
+                        if (n &lt;= 30)&#123;
+                            resolve()//将 promise 对象P的状态设置为 成功
+                        &#125;else&#123;
+                            reject()//将 promise 对象P的状态设置为 失败
+                        &#125;
+                    &#125;,1000)
+                &#125;);
+
+                P.then(()=&gt;&#123;//第一个是成功的回调
+                    alert(&#39;100圆子&#39;)
+                &#125;,()=&gt;&#123;//失败的回调
+                    alert(&#39;再接再厉&#39;)
+                &#125;)
+
+            &#125;)
+        &#125;)
+    &lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;button id=&quot;btn&quot;&gt;点我们抽奖&lt;/button&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p>还可以把失败的原因</p>
+<p>传递给</p>
+<pre><code class="js">// promise的实现,本质上是构造函数
+//rosolve解决 函数类型的数据
+//reject拒绝 函数类性的数据
+const P = new Promise((resolve,reject) =&gt; &#123;
+    setTimeout(()=&gt;&#123;
+        let n = rand(1,100)
+        if (n &lt;= 30)&#123;
+            resolve(n)//将 promise 对象P的状态设置为 成功
+        &#125;else&#123;
+            reject(n)//将 promise 对象P的状态设置为 失败
+        &#125;
+    &#125;,1000)
+&#125;);
+
+P.then((value)=&gt;&#123;//第一个是成功的回调
+    alert(&#39;100圆子&#39;+value)
+&#125;,(reason)=&gt;&#123;//失败的回调
+    alert(&#39;再接再厉&#39;+reason)
+&#125;)
+</code></pre>
+<p>buffer的介绍</p>
+<p>在 Node.js 中，<code>Buffer</code> 类被用来处理二进制数据，即字节序列。它提供了一个类似数组的对象来存储和操作数据，可以直接处理各种类型的数据，包括 ASCII、UTF-8、Base64、十六进制等。</p>
+<p>以下是关于 <code>Buffer</code> 的一些重要特点和用法：</p>
+<ol>
+<li><p><strong>创建 Buffer 对象</strong>：可以使用不同的方式创建 Buffer 对象，比如通过传入字符串、数组或是指定长度等方式：</p>
+<pre><code>javascriptCopy Code// 创建一个包含 &#39;hello&#39; 的 Buffer 对象
+const buf1 = Buffer.from(&#39;hello&#39;);
+
+// 创建一个指定长度的 Buffer 对象
+const buf2 = Buffer.alloc(10);
+
+// 创建一个包含 [1, 2, 3] 的 Buffer 对象
+const buf3 = Buffer.from([1, 2, 3]);
+</code></pre>
+</li>
+<li><p><strong>读取和写入数据</strong>：可以通过索引来读取或写入 Buffer 中的数据：</p>
+<pre><code>javascriptCopy Codeconst buf = Buffer.from(&#39;hello&#39;);
+console.log(buf[0]); // 获取第一个字节的值
+buf[1] = 111; // 修改第二个字节的值为 &#39;o&#39;
+</code></pre>
+</li>
+<li><p><strong>转换为字符串</strong>：可以使用 <code>toString()</code> 方法将 Buffer 对象转换为字符串，也可以指定编码格式：</p>
+<pre><code>javascriptCopy Codeconst buf = Buffer.from(&#39;hello&#39;);
+console.log(buf.toString()); // 将 Buffer 转换为字符串
+</code></pre>
+</li>
+<li><p><strong>处理二进制数据</strong>：由于 Buffer 存储的是二进制数据，因此可以用于处理文件、网络数据等场景：</p>
+<pre><code>javascriptCopy Codeconst fs = require(&#39;fs&#39;);
+fs.readFile(&#39;file.txt&#39;, (err, data) =&gt; &#123;
+  if (err) throw err;
+  const buf = Buffer.from(data);
+  // 对二进制数据进行处理
+&#125;);
+</code></pre>
+</li>
+</ol>
+<p>需要注意的是，Node.js 中的 Buffer 类在处理二进制数据时非常有用，但同时也需要小心处理，避免潜在的安全漏洞，比如缓冲区溢出等问题。</p>
+<p><strong>使用promise封装fs文件操作</strong></p>
+<pre><code class="js">const fs = require (&#39;fs&#39;)
+
+
+//回调函数的形式
+fs.readFile(&#39;./resource/content.txt&#39;,(err,data)=&gt;&#123;
+    if (err) throw err;
+    console.log(data.toString())
+&#125;)
+
+//
+let p = new Promise((resolve,reject)=&gt;&#123;
+    fs.readFile(&#39;./resource/content.txt&#39;,(err,data)=&gt;&#123;
+        if (err) reject(err); else resolve(data)
+    &#125;)
+&#125;)
+p.then(
+    (value)=&gt;&#123;
+        console.log(value.toString())
+    &#125;
+    ,
+    (reason)=&gt;&#123;
+        console.log(reason)
+    &#125;
+)
+</code></pre>
+<p>使用promise实现ajax的</p>
+<pre><code class="js">&lt;script&gt;
+  $(()=&gt;&#123;
+    $(&#39;#getMsg&#39;).click(()=&gt;&#123;
+      const p = new Promise((resolve, reject)=&gt;&#123;
+        $.ajax(&#123;
+          url: &#39;https://api.xygeng.cn/one&#39;, // 请求的 URL 地址
+          method: &#39;GET&#39;, // 请求的 HTTP 方法
+          dataType: &#39;json&#39;, // 期望的响应数据类型
+          success: function(data) &#123; // 成功回调函数，data 为响应数据
+            resolve(data.data.content)
+          &#125;,
+          error: function(xhr, status, error) &#123; // 失败回调函数，xhr 为 XMLHttpRequest 对象，status 为错误状态（例如 &#39;Not Found&#39;），error 为错误对象
+            reject(error)
+          &#125;
+        &#125;);
+      &#125;)
+      p.then((value)=&gt;&#123;alert(value)&#125;,(reason)=&gt;&#123;
+        console.log(reason)&#125;)
+
+      // $.ajax(&#123;
+      //   url: &#39;https://api.xygeng.cn/one&#39;, // 请求的 URL 地址
+      //   method: &#39;GET&#39;, // 请求的 HTTP 方法
+      //   dataType: &#39;json&#39;, // 期望的响应数据类型
+      //   success: function(data) &#123; // 成功回调函数，data 为响应数据
+      //     console.log(&#39;请求成功:&#39;, data.data.content);
+      //   &#125;,
+      //   error: function(xhr, status, error) &#123; // 失败回调函数，xhr 为 XMLHttpRequest 对象，status 为错误状态（例如 &#39;Not Found&#39;），error 为错误对象
+      //     console.error(&#39;请求失败:&#39;, error);
+      //   &#125;
+      // &#125;);
+    &#125;)
+
+  &#125;)
+&lt;/script&gt;
+</code></pre>
+<p>​		</p>
+<p>封装fs使用promise</p>
+<pre><code class="js">function mineReadFile(path)&#123;
+    return new Promise((resolve, reject)=&gt;&#123;
+        require(&#39;fs&#39;).readFile(path,(err,data)=&gt;&#123;
+            if (err) reject(err); else resolve(data.toString())
+        &#125;)
+    &#125;)
+&#125;
+
+
+p=mineReadFile(&#39;./content.txt&#39;)
+p.then((value)=&gt;&#123;
+    console.log(value)
+&#125;,(reason)=&gt;&#123;
+    console.log(reason)
+&#125;)
+</code></pre>
+<p><strong>util.promisify方法</strong></p>
+<p>数显上面的操作</p>
+<pre><code class="js">const  util= require(&#39;util&#39;)
+const fs = require(&#39;fs&#39;)
+let mineReadFile = util.promisify(fs.readFile)
+
+mineReadFile(&#39;./content.txt&#39;).then((value)=&gt;
+&#123;
+    console.log(value.toString())
+&#125;)//util.promisify 方法将回调形式的 fs.readFile 方法转换为 Promise 形式，以便更容易地处理文件读取操作。
+</code></pre>
+<p><strong>封装ajax</strong></p>
+<pre><code class="html">&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;Title&lt;/title&gt;
+    &lt;script&gt;
+        function sendAJAX(url)&#123;
+            return new Promise((resolve, reject)=&gt;&#123;
+                const xhr = new XMLHttpRequest()
+                xhr.open(&quot;GET&quot;,url)
+                xhr.send();
+                xhr.onreadystatechange = function ()&#123;
+                    if (xhr.readyState == 4)&#123;
+                        if (xhr.status &gt;=200 &amp;&amp; xhr.status &lt;300)&#123;
+                            resolve(xhr.response);
+                        &#125; else  &#123;reject(xhr.status)&#125;
+                    &#125;
+                &#125;
+            &#125;)
+        &#125;
+
+        let p =sendAJAX(&#39;https://api.xygeng.cn/one&#39;)
+        p.then((value)=&gt;&#123;
+                console.log(value)
+            &#125;,
+            (reason)=&gt;&#123;
+                console.log(reason)&#125;
+        )
+
+    &lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p><strong>promise的状态PromiseState</strong></p>
+<p>其实就是一个属性</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217162959305.png" alt="image-20240217162959305"></p>
+<p>有三种状态</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217163058350.png" alt="image-20240217163058350"></p>
+<p>padding：未决定的</p>
+<p>reslove：fulfilled：成功的</p>
+<p>rejected：失败</p>
+<p><strong>Promise 对象的值PromiseResult</strong></p>
+<p>保存着对象成功失败的结果</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217163427533.png" alt="image-20240217163427533"></p>
+<p>就是reslove和reject传过去的</p>
+<p><strong>工作流程</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217163524411.png" alt="image-20240217163524411"></p>
+<h2 id="Promise的API"><a href="#Promise的API" class="headerlink" title="Promise的API"></a>Promise的API</h2><p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217163906135.png" alt="image-20240217163906135"></p>
+<p>一般回调函数都是执行完所有代码以后在执行的</p>
+<p>但是这个里面的是同分布执行</p>
+<h2 id="先了解下js的执行机制"><a href="#先了解下js的执行机制" class="headerlink" title="先了解下js的执行机制"></a>先了解下js的执行机制</h2><p>1.异步</p>
+<p><strong>js是单线程的，为什么不是多线程呢？</strong></p>
+<p><strong>因为会造成DOM冲突</strong></p>
+<p><strong>如果一个线程增加这个dom</strong></p>
+<p><strong>但是另外一个线程操作删除上面的dom</strong></p>
+<p><strong>同时存在两种不同的操作 而且他们还是同时进行的</strong></p>
+<p>所以就设置未单线程</p>
+<p>比如说</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217165239939.png" alt="image-20240217165239939"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217165339956.png" alt="image-20240217165339956"></p>
+<p>当计时器时间到了</p>
+<p>回调函数就会到</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217165543484.png" alt="image-20240217165543484"></p>
+<p>然后就会进入时间轮询</p>
+<p>事件轮询是什么？</p>
+<p><strong>当主线程没有任务，就会用事件轮询就相当于监视你的队列里面有没有任务，如果有任务就会在交给线程</strong></p>
+<p><strong>在事件轮询中，线程会不断地检查任务队列，当队列中有任务时就立即执行，如果队列为空，则线程会等待直到有新的任务加入队列。</strong></p>
+<p><strong>因此，在事件轮询中，线程并不是一直在监视队列，而是当线程没有任务时才开始监视队列，以便及时响应新的任务。这种机制可以有效地管理异步任务，提高程序的性能和响应速度。</strong></p>
+<p>然后接回来</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217171604063.png" alt="image-20240217171604063"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217171612859.png" alt="image-20240217171612859"></p>
+<p>当执行到reslove会立刻执行</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217171645855.png" alt="image-20240217171645855"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217171706430.png" alt="image-20240217171706430"></p>
+<p>catch只能指定失败的回调</p>
+<pre><code class="js">let p = new Promise((reslove,reject)=&gt;&#123;
+    reject(&#39;error&#39;)
+&#125;)
+p.catch(reason=&gt;&#123;
+    console.log(reason)
+&#125;)
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217171926992.png" alt="image-20240217171926992"></p>
+<p>这个方法属于静态方法。不属于实例对象</p>
+<p>使用</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217172106947.png" alt="image-20240217172106947"></p>
+<p>如果随便传一些除了promise</p>
+<p>都会是返回一个Promise对象，对象里面的状态是reslove</p>
+<p>如果这样的话</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217172258440.png" alt="image-20240217172258440"></p>
+<p>返回的promise对象里面的状态就是失败的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217172352680.png" alt="image-20240217172352680"></p>
+<p>始终返回的都是失败的Promise的对象</p>
+<p>参数是成功的Promse对象也没用</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217172522097.png" alt="image-20240217172522097"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217172633221.png" alt="image-20240217172633221"></p>
+<p>这样all方法返回Promise才是正确的Promise其中有一个失败的</p>
+<p>返回的result<strong>也是失败的并且失败的是其中失败的Promise’</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217172750458.png" alt="image-20240217172750458"></p>
+<p>谁先改变状态谁的Promise</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217172834745.png" alt="image-20240217172834745"></p>
+<p>这里p1先改变状态</p>
+<p>返回p1的promise结果</p>
+<p>如果这样的话</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217172931289.png" alt="image-20240217172931289"></p>
+<p>就是p2了</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217172955818.png" alt="image-20240217172955818"></p>
+<p>添加一个注意的点，Promise执行的机制</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217173451818.png" alt="image-20240217173451818"></p>
+<p><strong>执行器会在Promise里面立刻执行</strong></p>
+<p>throw也能改变Promise的状态</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217173119926.png" alt="image-20240217173119926"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217173150801.png" alt="image-20240217173150801"></p>
+<p>实例绑定多个回调</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217173617609.png" alt="image-20240217173617609"></p>
+<p><strong>这些都会执行</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217173712629.png" alt="image-20240217173712629"></p>
+<p>演示</p>
+<p>两种情况都有可能</p>
+<p><strong>1.先执行resolve改变状态，然后执行回调：</strong></p>
+<p>如果执行器里面是同步任务的话，下面这样的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217173902368.png" alt="image-20240217173902368"></p>
+<p><strong>2.先执行回调，然后在执行resolve改变状态</strong></p>
+<p>如果是异步任务，等待需要一些事件，需要进入队列中</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217174247646.png" alt="image-20240217174247646"></p>
+<p>拿数据什么时候拿到</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217174539421.png" alt="image-20240217174539421"></p>
+<p>我理解的应该是</p>
+<p>setouttime的里面的先进入队列，还没有改变状态</p>
+<p>执行Promise的回调，因为value的值没有传过来，因为此时resolve还在队里里，然后就会在promise放进队列里面</p>
+<p><strong>其实总的来说，就是一个队列先进后进的问题，当一个 Promise 对象状态变为 <code>pending</code> 时，后续的 <code>.then()</code> 方法会被添加到该 Promise 对象的等待队列中，直到该 Promise 对象的状态变为 <code>fulfilled</code> 或 <code>rejected</code> 后才会执行对应的回调函数。</strong></p>
+<p>之前说</p>
+<p>then方法以后的返回结果也是一个Promise对象</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217175049776.png" alt="image-20240217175049776"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217175108464.png" alt="image-20240217175108464"></p>
+<p>状态结果和里面的使用哪个回调有关</p>
+<p>如果上面的使用了成功的回调</p>
+<p>然后如果</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217175245237.png" alt="image-20240217175245237"></p>
+<p>这样就会变成失败</p>
+<p>第二种方法</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217175322054.png" alt="image-20240217175322054"></p>
+<p>和静态方法resolve一样，</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217175412369.png" alt="image-20240217175412369"></p>
+<h2 id="串联多个任务"><a href="#串联多个任务" class="headerlink" title="串联多个任务"></a>串联多个任务</h2><p>链式调用开始</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217175605972.png" alt="image-20240217175605972"></p>
+<p>这个值就会是success</p>
+<p>再烤一下</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217180205179.png" alt="image-20240217180205179"></p>
+<p>这回就是undefined然后</p>
+<p>状态时未改变的</p>
+<p><strong>异常穿透</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217180424304.png" alt="image-20240217180424304"></p>
+<p>前面有很多串联的任务</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217185556219.png" alt="image-20240217185556219"></p>
+<p>在最后指定失败的回调</p>
+<p>上面正常没有问题</p>
+<p>但是</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217185652869.png" alt="image-20240217185652869"></p>
+<p>这个就会失败的回调</p>
+<p>中间的不用管最后的就是输出的reason</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217185903526.png" alt="image-20240217185903526"></p>
+<p>正常应该在第二个失败的回调</p>
+<p>其实可以放在最后</p>
+<p><strong>中断Promise链</strong></p>
+<p>有且只有一种方法</p>
+<p>返回一个pedding状态的Promise</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217190044579.png" alt="image-20240217190044579"></p>
+<p>就可以中断</p>
+<h2 id="promise自定义封装"><a href="#promise自定义封装" class="headerlink" title="promise自定义封装"></a>promise自定义封装</h2><p>我的半成品</p>
+<pre><code class="js">function Promise(executor) &#123;
+    //为实例对象添加属性
+    this.PromiseState = &#39;pendding&#39;
+    this.PromiseResult = null
+    this.callbacks = []
+    const self = this
+
+    function resolve(data) &#123;
+        if (self.PromiseState !== &#39;pending&#39;) return;
+        //改变对象状态和属性值
+        //注意这里的this时window所以需要
+        self.PromiseState = &#39;fulfilled&#39;
+        self.PromiseResult = &#39;data&#39;
+        self.callbacks.forEach(item =&gt;&#123;
+            item.onResolved(data)
+        &#125;)
+    &#125;
+
+    function reject(data) &#123;
+        //状态只能修改一次
+        if (self.PromiseState !== &#39;pending&#39;) return;
+        //改变对象状态和属性值
+        //注意这里的this时window所以需要
+        self.PromiseState = &#39;rejected&#39;
+        self.PromiseResult = &#39;data&#39;
+        self.callbacks.forEach(item =&gt;&#123;
+            item.onRejected(data)
+        &#125;)
+    &#125;
+    //throw抛出异常改变状态
+    try&#123;    //执行器函数同步调用
+        executor(resolve,reject);&#125;
+    catch (e)&#123;
+        reject(e)
+    &#125;
+&#125;
+Promise.prototype.then = function (onResolved,onRejected) &#123;
+    return Promise((resolve,reject)=&gt;&#123;
+        if (this.PromiseState === &#39;fulfilled&#39;) &#123;
+            let result=onResolved(this.PromiseResult)
+            try&#123;
+                if (result instanceof Promise)&#123;
+                    result.then((value)=&gt;&#123;
+                        resolve(value)
+                    &#125;,(error)=&gt;&#123;
+                        reject(error)
+                    &#125;)
+                &#125; else &#123;
+                    resolve(result)
+                &#125;
+            &#125; catch (e) &#123;
+                reject(e)
+            &#125;
+        &#125;
+        if (this.PromiseState === &#39;rejected&#39;) &#123;
+            onRejected(this.PromiseResult)
+        &#125;
+        if (this.PromiseState === &#39;pedding&#39;) &#123;
+            this.callbacks.push(        &#123;
+                onResolved,
+                onRejected
+            &#125;)
+
+        &#125;
+    &#125;)
+&#125;
+</code></pre>
+<h2 id="async和await"><a href="#async和await" class="headerlink" title="async和await"></a>async和await</h2><p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217200257280.png" alt="image-20240217200257280"></p>
+<p>async包裹的函数返回值也是promise对象</p>
+<p>有三种情况影响状态</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217200521068.png" alt="image-20240217200521068"></p>
+<p>返回值</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217200554693.png" alt="image-20240217200554693"></p>
+<p>注意</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217200620379.png" alt="image-20240217200620379"></p>
+<p>有三种情况。await的返回值</p>
+<p><strong>1.如果右侧为promise，且是成功的，就会返回成功的值</strong></p>
+<p><strong>2.如果返回其他数据类性，正常的返回</strong></p>
+<p>**3.如果是失败的promise，就会报错，报错是reject的值可以用try catch捕获到	**</p>
+<p>第三种情况</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217201213449.png" alt="image-20240217201213449"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217201230579.png" alt="image-20240217201230579"></p>
+<p>就可以拿到失败的结果</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217201254366.png" alt="image-20240217201254366"></p>
+<p>之前使用读取文件</p>
+<pre><code class="js">const fs = require(&#39;fs&#39;)
+fs.readFile(&#39;./resource/1.txt&#39;,(error,data1)=&gt;&#123;
+    if (error) throw error;
+    fs.readFile(&#39;./resource/2.txt&#39;,(error,data2)=&gt;&#123;
+        if (error)&#123;throw error&#125;
+        fs.readFile(&#39;./resource/3.txt&#39;,(error,data3)=&gt;&#123;
+            if (error ) throw error;
+            console.log(data1+data2+data3)
+        &#125;)
+
+    &#125;)
+&#125;)
+</code></pre>
+<p>现在读取多个文件</p>
+<pre><code class="js">const util = require(&#39;util&#39;)
+const mineReadFile = util.promisify(fs.readFile)
+
+async function readFile()&#123;
+    let data1 = await mineReadFile(&#39;/resource/1.txt&#39;)
+    let data2 = await mineReadFile(&#39;/resource/2.txt&#39;)
+    let data3 = await mineReadFile(&#39;/resource/3.txt&#39;)
+    console.log(data1+data2+data3)
+&#125;
+</code></pre>
+<p>await加成功的promise</p>
+<p>返回成功的值</p>
+<p>我们还可以把这个用try catch包裹</p>
+<p>这样就不用一层一层判断了</p>
+<pre><code class="js">const util = require(&#39;util&#39;)
+const mineReadFile = util.promisify(fs.readFile)
+
+try &#123;
+    async function readFile()&#123;
+        let data1 = await mineReadFile(&#39;/resource/1.txt&#39;)
+        let data2 = await mineReadFile(&#39;/resource/2.txt&#39;)
+        let data3 = await mineReadFile(&#39;/resource/3.txt&#39;)
+        console.log(data1+data2+data3)
+    &#125;
+&#125; catch (e) &#123;
+    console.log(e)
+&#125;
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240217203144780.png" alt="image-20240217203144780"></p>
+
+    </div>
+    
+    
+    
+    
+    
+    
+    
+</div>
+
+            <footer id="footer">
+    <div id="footer-wrap">
+        <div>
+            &copy;
+            2022 - 2024 哈哈哈哈哈哈哈重生之我是兵王
+            <span id="footer-icon">
+                <i class="fa-solid fa-font-awesome fa-fw"></i>
+            </span>
+            &commat;chenw
+        </div>
+        <div>
+            Based on the <a target="_blank" rel="noopener" href="https://hexo.io">Hexo Engine</a> &amp;
+            <a target="_blank" rel="noopener" href="https://github.com/theme-particlex/hexo-theme-particlex">ParticleX Theme</a>
+        </div>
+        
+    </div>
+</footer>
+
+        </div>
+        
+        <transition name="fade">
+            <div id="preview" ref="preview" v-show="previewShow">
+                <img id="preview-content" ref="previewContent" />
+            </div>
+        </transition>
+        
+    </div>
+    <script src="/js/main.js"></script>
+    
+    
+
+
+
+
+    
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

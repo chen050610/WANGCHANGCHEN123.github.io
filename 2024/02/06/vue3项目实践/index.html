@@ -177,7 +177,7 @@
             
             <span class="tag">
                 
-                <a href="/tags/vue3%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5/" style="color: #ff7d73">vue3项目实践</a>
+                <a href="/tags/vue3%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5/" style="color: #00a596">vue3项目实践</a>
             </span>
             
         </span>
@@ -602,7 +602,389 @@ export default () =&gt; &#123;
 <p>在入口文件注册</p>
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240213214758802.png" alt="image-20240213214758802"></p>
 <p>这样其他的组件就不用引入很多次了</p>
-<h3 id="自定义插件注册svg全局组件"><a href="#自定义插件注册svg全局组件" class="headerlink" title="自定义插件注册svg全局组件"></a>自定义插件注册svg全局组件</h3>
+<h3 id="自定义插件注册svg全局组件"><a href="#自定义插件注册svg全局组件" class="headerlink" title="自定义插件注册svg全局组件"></a>自定义插件注册svg全局组件</h3><h2 id="sass集成"><a href="#sass集成" class="headerlink" title="sass集成"></a>sass集成</h2><p>我们目前在组件内部已经可以使用scss样式,因为在配置styleLint工具的时候，项目当中已经安装过sass sass-loader,因此我们再组件内可以使用scss语法！！！需要加上lang&#x3D;”scss”</p>
+<pre><code>&lt;style scoped lang=&quot;scss&quot;&gt;&lt;/style&gt;
+</code></pre>
+<p>接下来我们为项目添加一些全局的样式</p>
+<p>在src&#x2F;styles目录下创建一个index.scss文件，当然项目中需要用到清除默认样式，因此在index.scss引入reset.scss</p>
+<pre><code>@import reset.scss
+</code></pre>
+<p>在入口文件引入</p>
+<pre><code>import &#39;@/styles&#39;
+</code></pre>
+<p>但是你会发现在src&#x2F;styles&#x2F;index.scss全局样式文件中没有办法使用$变量.因此需要给项目中引入全局变量$.</p>
+<p>在style&#x2F;variable.scss创建一个variable.scss文件！</p>
+<p>在vite.config.ts文件配置如下:</p>
+<pre><code>    css: &#123;
+      preprocessorOptions: &#123;
+        scss: &#123;
+          javascriptEnabled: true,
+          additionalData: &#39;@import &quot;./src/styles/variable.scss&quot;;&#39;,
+        &#125;,
+      &#125;,
+    &#125;,
+</code></pre>
+<p>新增上面的配置项</p>
+<p><strong><code>@import &quot;./src/styles/variable.less&quot;;</code>后面的<code>;</code>不要忘记，不然会报错</strong>!</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240214102436853.png" alt="image-20240214102436853"></p>
+<p>然后再</p>
+<p>这里就可以使用</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240214102504903.png" alt="image-20240214102504903"></p>
+<h2 id="mock数据"><a href="#mock数据" class="headerlink" title="mock数据"></a>mock数据</h2><p>安装依赖:<a target="_blank" rel="noopener" href="https://www.npmjs.com/package/vite-plugin-mock">https://www.npmjs.com/package/vite-plugin-mock</a></p>
+<pre><code>pnpm install -D vite-plugin-mock mockjs
+使用
+</code></pre>
+<p>在 vite.config.js 配置文件启用插件。</p>
+<pre><code>import &#123; UserConfigExport, ConfigEnv &#125; from &#39;vite&#39;
+import &#123; viteMockServe &#125; from &#39;vite-plugin-mock&#39;
+import vue from &#39;@vitejs/plugin-vue&#39;
+export default (&#123; command &#125;)=&gt; &#123;
+  return &#123;
+    plugins: [
+      vue(),
+      viteMockServe(&#123;
+        localEnabled: command === &#39;serve&#39;,
+      &#125;),
+    ],
+  &#125;
+&#125;
+</code></pre>
+<p>在根目录创建mock文件夹:去创建我们需要mock数据与接口！！！</p>
+<p>在mock文件夹内部创建一个user.ts文件</p>
+<pre><code class="ts">//用户信息数据
+function createUserList() &#123;
+    return [
+        &#123;
+            userId: 1,
+            avatar:
+                &#39;https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif&#39;,
+            username: &#39;admin&#39;,
+            password: &#39;111111&#39;,
+            desc: &#39;平台管理员&#39;,
+            roles: [&#39;平台管理员&#39;],
+            buttons: [&#39;cuser.detail&#39;],
+            routes: [&#39;home&#39;],
+            token: &#39;Admin Token&#39;,
+        &#125;,
+        &#123;
+            userId: 2,
+            avatar:
+                &#39;https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif&#39;,
+            username: &#39;system&#39;,
+            password: &#39;111111&#39;,
+            desc: &#39;系统管理员&#39;,
+            roles: [&#39;系统管理员&#39;],
+            buttons: [&#39;cuser.detail&#39;, &#39;cuser.user&#39;],
+            routes: [&#39;home&#39;],
+            token: &#39;System Token&#39;,
+        &#125;,
+    ]
+&#125;
+
+export default [
+    // 用户登录接口
+    &#123;
+        url: &#39;/api/user/login&#39;,//请求地址
+        method: &#39;post&#39;,//请求方式
+        response: (&#123; body &#125;) =&gt; &#123;
+            //获取请求体携带过来的用户名与密码
+            const &#123; username, password &#125; = body;
+            //调用获取用户信息函数,用于判断是否有此用户
+            const checkUser = createUserList().find(
+                (item) =&gt; item.username === username &amp;&amp; item.password === password,
+            )
+            //没有用户返回失败信息
+            if (!checkUser) &#123;
+                return &#123; code: 201, data: &#123; message: &#39;账号或者密码不正确&#39; &#125; &#125;
+            &#125;
+            //如果有返回成功信息
+            const &#123; token &#125; = checkUser
+            return &#123; code: 200, data: &#123; token &#125; &#125;
+        &#125;,
+    &#125;,
+    // 获取用户信息
+    &#123;
+        url: &#39;/api/user/info&#39;,
+        method: &#39;get&#39;,
+        response: (request) =&gt; &#123;
+            //获取请求头携带token
+            const token = request.headers.token;
+            //查看用户信息是否包含有次token用户
+            const checkUser = createUserList().find((item) =&gt; item.token === token)
+            //没有返回失败的信息
+            if (!checkUser) &#123;
+                return &#123; code: 201, data: &#123; message: &#39;获取用户信息失败&#39; &#125; &#125;
+            &#125;
+            //如果有返回成功信息
+            return &#123; code: 200, data: &#123;checkUser&#125; &#125;
+        &#125;,
+    &#125;,
+]
+</code></pre>
+<p>最后吧配置文件改成这样</p>
+<pre><code class="ts">import &#123; defineConfig &#125; from &#39;vite&#39;
+import &#123; createSvgIconsPlugin &#125; from &#39;vite-plugin-svg-icons&#39;
+import vue from &#39;@vitejs/plugin-vue&#39;
+//@ts-ignore
+import path from &#39;path&#39;
+import &#123; viteMockServe &#125; from &#39;vite-plugin-mock&#39;
+import &#123; UserConfigExport, ConfigEnv &#125; from &#39;vite&#39;
+
+export default defineConfig((&#123;command&#125;)=&gt;&#123;
+  return &#123;
+    plugins: [
+      vue(),
+      createSvgIconsPlugin(&#123;
+        // Specify the icon folder to be cached
+        iconDirs: [path.resolve(process.cwd(), &#39;src/assets/icons&#39;)],
+        // Specify symbolId format
+        symbolId: &#39;icon-[dir]-[name]&#39;,
+      &#125;),
+      viteMockServe(&#123;
+        localEnabled: command === &#39;serve&#39;,//保证开发阶段能使用mock接口
+      &#125;),
+    ],
+    resolve: &#123;
+      alias: &#123;
+        &#39;@&#39;: path.resolve(&#39;./src&#39;), // 相对路径别名配置，使用 @ 代替 src
+      &#125;,
+    &#125;,
+    //scss全局变量的配置
+    css: &#123;
+      preprocessorOptions: &#123;
+        scss: &#123;
+          javascriptEnabled: true,
+          additionalData: &#39;@import &quot;./src/styles/variable.scss&quot;;&#39;,
+        &#125;,
+      &#125;,
+    &#125;,
+  &#125;
+&#125;)
+</code></pre>
+<p><strong>安装axios</strong></p>
+<pre><code>pnpm install axios
+</code></pre>
+<p>最后通过axios测试接口！！！</p>
+<p>测试</p>
+<pre><code>//测试假的接口能不能使用
+import axios from &#39;axios&#39;
+//登录接口
+axios(&#123;
+  url:&#39;/api/user/login&#39;,
+  method:&#39;post&#39;,
+  data:&#123;
+    username:&#39;admin&#39;,
+    password:&#39;111111&#39;,
+  &#125;
+&#125;)
+</code></pre>
+<p>然后</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240214105546530.png" alt="image-20240214105546530"></p>
+<p>200成功了</p>
+<h2 id="axios的二次封装"><a href="#axios的二次封装" class="headerlink" title="axios的二次封装"></a>axios的二次封装</h2><p>在开发项目的时候避免不了与后端进行交互,因此我们需要使用axios插件实现发送网络请求。在开发项目的时候</p>
+<p>我们经常会把axios进行二次封装。</p>
+<p>目的:</p>
+<p>1:使用请求拦截器，可以在请求拦截器中处理一些业务(开始进度条、请求头携带公共参数)</p>
+<p>2:使用响应拦截器，可以在响应拦截器中处理一些业务(进度条结束、简化服务器返回的数据、处理http网络错误)</p>
+<p>在根目录下创建utils&#x2F;request.ts</p>
+<p>实验的代码</p>
+<pre><code class="ts">//进行二次封装
+import axios from &#39;axios&#39;
+import &#123; ElMessage &#125; from &#39;element-plus&#39;
+///第一步，利用axios对象的create的方法，去创建axios的实例
+let request = axios.create(&#123;
+  //@ts-ignore
+  baseURL: import.meta.env.VITE_APP_BASE_API as string,
+  timeout: 5000, //超时的时间
+&#125;)
+//第二部，添加请求和响应拦截器
+request.interceptors.request.use((config) =&gt; &#123;
+  //返回配置对象
+  console.log(config)
+  //携带公共的参数
+  config.headers.token = &#39;123&#39;
+  //config有一个headers的属性就是响应头，经常给服务器端携带公共参数
+  return config
+&#125;)
+
+//第三步配置响应拦截器
+request.interceptors.response.use(
+  (response: any): any =&gt; &#123;
+    //成功的回调，简化数据
+    return response.data //简化数据
+    console.log(response)
+  &#125;,
+  (error: any) =&gt; &#123;
+    //失败的回调：处理http网络错误
+    //定义一个变量；存储网络错误信息
+    let message = &#39;&#39;
+    //错误的http状态码
+    let status = error.response.status
+    switch (status) &#123;
+      case 401:
+        message = &#39;token 过期了&#39;
+        break
+      case 403:
+        message = &#39;无权限&#39;
+        break
+      case 404:
+        message = &#39;请求地址出错&#39;
+        break
+      default:
+        message = &#39;网络发生了错误&#39;
+        break
+    &#125;
+
+    //这是elementui里面提示错误信息的ui
+    ElMessage(&#123;
+      type: &#39;error&#39;,
+      message,
+    &#125;)
+
+    return Promise.reject(error)
+  &#125;,
+)
+export default request
+</code></pre>
+<p>实验的代码</p>
+<pre><code class="ts">&lt;script setup lang=&quot;ts&quot;&gt;
+import request from &quot;../untils/request.ts&quot;;
+import &#123;onMounted&#125; from &quot;vue&quot;;
+onMounted(()=&gt;&#123;
+  request(&#123;
+    url:&#39;/user/login&#39;,
+    method:&#39;post&#39;,
+    data:&#123;
+      username:&#39;admin&#39;,
+      password:&#39;111111&#39;
+    &#125;
+  &#125;).then(res=&gt;&#123;
+    console.log(res)
+  &#125;)
+&#125;)
+&lt;/script&gt;
+</code></pre>
+<h2 id="API接口统一管理"><a href="#API接口统一管理" class="headerlink" title="API接口统一管理"></a>API接口统一管理</h2><p>在src下新建api文件夹</p>
+<h2 id="模板的路由配置"><a href="#模板的路由配置" class="headerlink" title="模板的路由配置"></a>模板的路由配置</h2><p>需要四个一级路由</p>
+<p>1.登陆界面</p>
+<p>2.首页界面</p>
+<p>3.自由界面</p>
+<p>4.404界面</p>
+<p>路由配置中</p>
+<pre><code>        &#123;
+            path:&#39;/:pathMatch(.*)*&#39;,
+            redirect:&#39;/404&#39;,
+            //@ts-ignore
+            name:&#39;Any&#39;
+        &#125;,
+</code></pre>
+<p>表示匹配到其他的路由话重定向到404</p>
+<p>vue</p>
+<p>vuerouter的配置项</p>
+<pre><code class="ts">    scrollBehavior()&#123;
+        return &#123;
+            left:0,
+            top:0
+        &#125;
+</code></pre>
+<p>这段代码是Vue Router中的<code>scrollBehavior</code>方法，它用于定义路由切换时滚动行为的配置。</p>
+<p>当用户从一个页面切换到另一个页面时，浏览器默认会将滚动位置保持在上一页面的位置。但是，在某些情况下，你可能希望在路由切换时将滚动位置重置为页面顶部或其他指定位置。</p>
+<p>在<code>scrollBehavior</code>方法中，你可以返回一个对象来指定滚动的位置。在这个例子中，<code>left:0</code>和<code>top:0</code>表示将滚动位置设置为页面的左上角，即将滚动条位置重置为页面顶部。</p>
+<p>通过使用这个<code>scrollBehavior</code>方法，你可以自定义路由切换时滚动的位置，提供更好的用户体验，确保页面切换后始终显示在期望的滚动位置。</p>
+<p>追加动态的类名</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240215180538007.png" alt="image-20240215180538007"></p>
+<p>然后就可以</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240215180816867.png" alt="image-20240215180816867"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240215180826106.png" alt="image-20240215180826106"></p>
+<p><strong>路由的matched属性</strong></p>
+<p>可以匹配在哪个路由里面</p>
+<pre><code class="ts">&lt;script setup lang=&quot;ts&quot;&gt;
+//@ts-ignore
+import &#123;useLayOutSettingStore&#125; from &quot;@/store/setting.ts&quot;;
+import &#123;ArrowRight&#125; from &quot;@element-plus/icons-vue&quot;;
+import &#123;toRefs&#125; from &quot;vue&quot;;
+//@ts-ignore
+import &#123;useRoute&#125; from &quot;vue-router&quot;;
+
+const $route = useRoute()
+const layoutStore = useLayOutSettingStore();
+let &#123;fold&#125; = toRefs(layoutStore)
+const changeIcon = ()=&gt;&#123;
+  fold.value= !fold.value
+&#125;
+const hander = ()=&gt;&#123;
+  console.log($route.matched)
+&#125;
+&lt;/script&gt;
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240215184922790.png" alt="image-20240215184922790"></p>
+<p>还有组件的这个用法</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240215185646662.png" alt="image-20240215185646662"></p>
+<p><strong>还有v-for的优先级大于v-if大于v-show</strong></p>
+<p><strong>nextick</strong></p>
+<p>现在我们要实现</p>
+<p>组件的销毁和创建</p>
+<p>就是页面的刷新</p>
+<pre><code class="ts">&lt;script setup lang=&quot;ts&quot;&gt;
+//@ts-ignore
+import &#123;useLayOutSettingStore&#125; from &quot;@/store/setting.ts&quot;;
+import &#123;watch,ref,nextTick&#125; from &quot;vue&quot;;
+const layoutStore = useLayOutSettingStore();
+let flag = ref(true)
+watch(()=&gt;layoutStore.refsh,()=&gt;&#123;
+  //刷新就是销毁重建组件
+  flag.value = false;
+  nextTick(()=&gt;&#123;
+    flag.value = true
+  &#125;)
+
+&#125;)
+
+&lt;/script&gt;
+
+&lt;template&gt;
+  &lt;!--  路由组件的出口--&gt;
+  &lt;router-view v-slot=&quot;&#123; Component &#125;&quot;&gt;
+    &lt;transition name=&quot;fade&quot;&gt;
+      &lt;!--      渲染layout以一级组件的子路由--&gt;
+      &lt;component :is=&quot;Component&quot; v-if=&quot;flag&quot; /&gt;
+    &lt;/transition&gt;
+  &lt;/router-view&gt;
+&lt;/template&gt;
+</code></pre>
+<p>就是当页面销毁以后当dom完成没有了以后就会触发nextTick</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240215194701746.png" alt="image-20240215194701746"></p>
+<p>如果这个页面是全屏的话就会返回true </p>
+<p>如果不是的话</p>
+<p>就会返回null</p>
+<p>使用</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240215194934009.png" alt="image-20240215194934009"></p>
+<p>这个函数就可以变成全屏</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240215195111269.png" alt="image-20240215195111269"></p>
+<p>第二个是退出全屏</p>
+<p>如果想退出登陆以后</p>
+<p>回到登录时的页面的话</p>
+<p>把登陆时候的路径携带过去</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240216113102482.png" alt="image-20240216113102482"></p>
+<p>路由守卫</p>
+<p>全局首位</p>
+<p>访问前有进度条</p>
+<p>访问以后进度条消失</p>
+<p><strong>路由的鉴权</strong></p>
+<p>就是什么时候能够访问这个路由</p>
+<p>有没有权限</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240216115418943.png" alt="image-20240216115418943"></p>
+<p>记得在入口文件那里引入</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240216115712268.png" alt="image-20240216115712268"></p>
+<p>还有注意点</p>
+<p>在组件外部获取pinia仓库数据的话</p>
+<p>需要先引入大仓库</p>
+<p>需要这样</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240216131632195.png" alt="image-20240216131632195"></p>
+<p>实现</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240216134624505.png" alt="image-20240216134624505"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240216134634627.png" alt="image-20240216134634627"></p>
+
     </div>
     
     
