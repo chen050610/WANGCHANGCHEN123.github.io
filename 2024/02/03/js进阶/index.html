@@ -186,7 +186,7 @@
             
             <span class="tag">
                 
-                <a href="/tags/js%E8%BF%9B%E9%98%B6/" style="color: #ffa2c4">js进阶</a>
+                <a href="/tags/js%E8%BF%9B%E9%98%B6/" style="color: #03a9f4">js进阶</a>
             </span>
             
         </span>
@@ -194,10 +194,7 @@
     </div>
     
     <div class="content" v-pre>
-        <p>​	摘要</p>
-<span id="more"></span>
-
-<p>正文</p>
+        <p>C</p>
 <h2 id="JS进阶"><a href="#JS进阶" class="headerlink" title="JS进阶"></a>JS进阶</h2><p>哔哩哔哩</p>
 <p>黑马程序员</p>
 <p>课程的安排</p>
@@ -338,7 +335,7 @@
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240203213533173.png" alt="image-20240203213533173"></p>
 <p>多个立刻执行函数之间</p>
 <p>还有的就是数组的 解构</p>
-<p>数组的map方法遍历数组‘</p>
+<p>数组的map方法遍历数组</p>
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240203213844526.png" alt="image-20240203213844526"></p>
 <p>但是这样的写就会出问题</p>
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240203213917084.png" alt="image-20240203213917084"></p>
@@ -841,6 +838,12 @@
 <p>再更改就会引起元对象的改变，这就是浅拷贝</p>
 <p>所以只适用于简单的</p>
 <p>不适用于嵌套的</p>
+<p>在 JavaScript 中，浅拷贝是指创建一个新的对象，新对象中包含了原始对象的属性值。但是，如果原始对象的属性值是对象或数组等引用类型数据，浅拷贝只会复制它们的引用而不是创建新的对象或数组。</p>
+<p>具体来说，进行浅拷贝时，对于原始对象的每个属性：</p>
+<ul>
+<li>如果属性的值是基本数据类型（如数字、字符串、布尔值等），则直接复制其值到新对象。</li>
+<li>如果属性的值是引用类型数据（如对象、数组等），则复制的是引用，新对象中的该属性与原始对象中的属性指向同一个对象或数组。</li>
+</ul>
 <p>**浅拷贝对于普通的数据直接拷贝的是对象不是地址，这样的修改就不会引起元对象的改变，但是对于多层的，拷贝的就是原对象地址了， **</p>
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240205184241786.png" alt="image-20240205184241786"></p>
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240205184309550.png" alt="image-20240205184309550"></p>

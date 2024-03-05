@@ -1,0 +1,504 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <meta charset="utf-8" />
+    <title>Express | 哈哈哈哈哈哈哈重生之我是兵王</title>
+    <meta name="author" content="chenw" />
+    <meta name="description" content="description" />
+    <meta name="keywords" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+	<canvas id="fireworks" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 32767"></canvas>
+	<script src="https://cdn.staticfile.org/animejs/3.2.1/anime.min.js"></script>
+	<script src="/js/fireworks.min.js"></script>
+	<canvas id="background" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: -1"></canvas>
+	<script src="/js/background.min.js"></script>
+	<div id="cursor"></div>
+	<link rel="stylesheet" href="/css/cursor.min.css">
+	<script src="/js/cursor.min.js"></script>
+    <link rel="icon" href="/images/avatar.jpg" />
+    <link rel="preconnect" href="https://cdn.staticfile.org" />
+<script src="https://cdn.staticfile.org/vue/3.3.7/vue.global.prod.min.js"></script>
+<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/6.4.2/css/all.min.css" />
+<link rel="preconnect" href="https://fonts.loli.net" />
+<link rel="preconnect" href="https://gstatic.loli.net" crossorigin />
+<link rel="stylesheet" href="https://fonts.loli.net/css2?family=Fira+Code:wght@400;500;600;700&family=Lexend:wght@400;500;600;700;800;900&family=Noto+Sans+SC:wght@400;500;600;700;800;900&display=swap" />
+<script> const mixins = {}; </script>
+
+<script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+
+
+<script src="https://cdn.staticfile.org/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdn.staticfile.org/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></script>
+<link
+    rel="stylesheet"
+    href="https://cdn.staticfile.org/highlight.js/11.9.0/styles/github.min.css"
+/>
+<script src="/js/lib/highlight.js"></script>
+
+
+
+<script src="/js/lib/preview.js"></script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/main.css" />
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+    <div id="layout">
+        <transition name="fade">
+            <div id="loading" v-show="loading">
+                <div id="loading-circle">
+                    <h2>LOADING</h2>
+                    <p>加载过慢请开启缓存 浏览器默认开启</p>
+                    <img src="/images/loading.gif" />
+                </div>
+            </div>
+        </transition>
+        <div id="menu" :class="{ hidden: hiddenMenu, 'menu-color': menuColor}">
+    <nav id="desktop-menu">
+        <a class="title" href="/">
+            <span>哈哈哈哈哈哈哈重生之我是兵王</span>
+        </a>
+        
+        <a href="/">
+            <i class="fa-solid fa-house fa-fw"></i>
+            <span>&ensp;Home</span>
+        </a>
+        
+        <a href="/about">
+            <i class="fa-solid fa-id-card fa-fw"></i>
+            <span>&ensp;About</span>
+        </a>
+        
+        <a href="/archives">
+            <i class="fa-solid fa-box-archive fa-fw"></i>
+            <span>&ensp;Archives</span>
+        </a>
+        
+        <a href="/categories">
+            <i class="fa-solid fa-bookmark fa-fw"></i>
+            <span>&ensp;Categories</span>
+        </a>
+        
+        <a href="/tags">
+            <i class="fa-solid fa-tags fa-fw"></i>
+            <span>&ensp;Tags</span>
+        </a>
+        
+    </nav>
+    <nav id="mobile-menu">
+        <div class="title" @click="showMenuItems = !showMenuItems">
+            <i class="fa-solid fa-bars fa-fw"></i>
+            <span>&emsp;哈哈哈哈哈哈哈重生之我是兵王</span>
+        </div>
+        <transition name="slide">
+            <div class="items" v-show="showMenuItems">
+                
+                <a href="/">
+                    <div class="item">
+                        <div style="min-width: 20px; max-width: 50px; width: 10%">
+                            <i class="fa-solid fa-house fa-fw"></i>
+                        </div>
+                        <div style="min-width: 100px; max-width: 150%; width: 20%">Home</div>
+                    </div>
+                </a>
+                
+                <a href="/about">
+                    <div class="item">
+                        <div style="min-width: 20px; max-width: 50px; width: 10%">
+                            <i class="fa-solid fa-id-card fa-fw"></i>
+                        </div>
+                        <div style="min-width: 100px; max-width: 150%; width: 20%">About</div>
+                    </div>
+                </a>
+                
+                <a href="/archives">
+                    <div class="item">
+                        <div style="min-width: 20px; max-width: 50px; width: 10%">
+                            <i class="fa-solid fa-box-archive fa-fw"></i>
+                        </div>
+                        <div style="min-width: 100px; max-width: 150%; width: 20%">Archives</div>
+                    </div>
+                </a>
+                
+                <a href="/categories">
+                    <div class="item">
+                        <div style="min-width: 20px; max-width: 50px; width: 10%">
+                            <i class="fa-solid fa-bookmark fa-fw"></i>
+                        </div>
+                        <div style="min-width: 100px; max-width: 150%; width: 20%">Categories</div>
+                    </div>
+                </a>
+                
+                <a href="/tags">
+                    <div class="item">
+                        <div style="min-width: 20px; max-width: 50px; width: 10%">
+                            <i class="fa-solid fa-tags fa-fw"></i>
+                        </div>
+                        <div style="min-width: 100px; max-width: 150%; width: 20%">Tags</div>
+                    </div>
+                </a>
+                
+            </div>
+        </transition>
+    </nav>
+</div>
+<transition name="fade">
+    <div id="menu-curtain" @click="showMenuItems = !showMenuItems" v-show="showMenuItems"></div>
+</transition>
+
+        <div id="main" :class="loading ? 'into-enter-from': 'into-enter-active'">
+            <div class="article">
+    <div>
+        <h1>Express</h1>
+    </div>
+    <div class="info">
+        <span class="date">
+            <span class="icon">
+                <i class="fa-solid fa-calendar fa-fw"></i>
+            </span>
+            2024/2/6
+        </span>
+        
+        
+    </div>
+    
+    <div class="content" v-pre>
+        <p>​	摘要</p>
+<span id="more"></span>
+
+<p>正文</p>
+<h1 id="Express"><a href="#Express" class="headerlink" title="Express"></a>Express</h1><p>启动web服务器的</p>
+<p>Express的中间件</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240304180059604.png" alt="image-20240304180059604"></p>
+<p>中间件的优缺点</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240304180134712.png" alt="image-20240304180134712"></p>
+<p>Epress只是进行了二次的封装</p>
+<p>Express的作者</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240304180233680.png" alt="image-20240304180233680"></p>
+<p>experss的优点</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240304180313019.png" alt="image-20240304180313019"></p>
+<p>应用的场景</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240304180348539.png" alt="image-20240304180348539"></p>
+<p>简单的express的使用</p>
+<pre><code class="js">const express = require(&#39;express&#39;)
+
+const app = express()//创建实列
+
+//创建路由
+app.get(&#39;/&#39;,(req,res)=&gt;&#123;
+    res.send(&#39;Hello worid&#39;)
+&#125;)
+
+
+app.listen(3000,()=&gt;&#123;
+    console.log(&#39;service is running&#39;)
+&#125;)
+</code></pre>
+<p>Express的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240304181429166.png" alt="image-20240304181429166"></p>
+<p>request的一些api</p>
+<pre><code class="js">const express = require(&#39;express&#39;)
+
+const app = express()//创建实列
+
+//创建路由
+app.get(&#39;/&#39;,(req,res)=&gt;&#123;
+    console.log(req.url)
+    console.log(req.method)
+    console.log(req.headers)
+    res.send(&#39;Hello worid&#39;)
+&#125;)
+
+
+app.listen(3000,()=&gt;&#123;
+    console.log(&#39;service is running&#39;)
+&#125;)
+</code></pre>
+<p>详细的在中文文档</p>
+<p>请求 - Express 中文文档 (nodejs.cn)</p>
+<p><a target="_blank" rel="noopener" href="https://nodejs.cn/express/4x/api/req/">请求 - Express 中文文档 (nodejs.cn)</a></p>
+<p>还可以这样的设置一些内容</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240304183534382.png" alt="image-20240304183534382"></p>
+<p>设置动态路径</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240304183918278.png" alt="image-20240304183918278"></p>
+<p>感觉和vue里面的路由的params的用法类似</p>
+<pre><code class="js">app.get(&#39;/todo/:id&#39;,(req,res)=&gt;&#123;
+    res.send(req.params.id)
+&#125;)
+</code></pre>
+<p>这里扩展一些知识</p>
+<p>fs模块读取文件可以使用</p>
+<pre><code class="js">fs.readFile//这个方法是异步的
+fs.readFileSync//这个方法同步的
+</code></pre>
+<p>最好使用异步的参数</p>
+<p>简单的读取文件再发送给客户端</p>
+<pre><code class="js">app.get(&#39;/todo&#39;,(req,res)=&gt;&#123;
+    fs.readFile(&#39;./1.json&#39;,&#39;utf-8&#39;,(error,data)=&gt;&#123;
+        if (error)&#123;
+            return res.status(404).json(&#123;
+                error:error.message
+            &#125;)
+        &#125;
+        const message = JSON.parse(data)
+        res.send(message)
+
+    &#125;)
+&#125;)
+</code></pre>
+<p>还有需要注意点</p>
+<p>不可以连续的发送数据</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240304190305821.png" alt="image-20240304190305821"></p>
+<p>一个请求只能对应一个响应</p>
+<pre><code class="js">app.get(&#39;/todo/:id&#39;,(req,res)=&gt;&#123;
+    fs.readFile(&#39;./1.json&#39;,&#39;utf-8&#39;,(error,data)=&gt;&#123;
+        if (error)&#123;
+            return res.status(201).json(&#123;
+                error:error.message
+            &#125;)
+        &#125;
+        const message = JSON.parse(data)
+        const todo = message.user.find(item =&gt; item.id === parseInt(req.params.id))
+        if (!todo)&#123;return res.send(&#39;失败&#39;)&#125;
+        res.json(todo)
+    &#125;)
+&#125;)
+</code></pre>
+<p>find的方法返回符合的数组</p>
+<p>将字符串转为数字的方法</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240304191747736.png" alt="image-20240304191747736"></p>
+<p>把上面的过程封装一个模块</p>
+<p>封装的代码</p>
+<pre><code class="js">const fs = require(&#39;fs&#39;)
+const express = require(&#39;express&#39;)
+const &#123; promisify &#125; = require(&#39;util&#39;)
+const path = require(&#39;path&#39;)
+
+const readFile = promisify(fs.readFile)//这样就可以把有回调的封装为promise的对象
+const PATH = path.join(__dirname,&#39;./1.json&#39;)
+
+exports.getFile = async ()=&gt;&#123;
+    const message = await readFile(PATH,&#39;utf-8&#39;)
+    return  JSON.parse(message)
+&#125;
+</code></pre>
+<p>然后再app里面调用</p>
+<pre><code class="js">app.get(&#39;/getfile&#39; , async (req,res)=&gt;&#123;
+    const message =await getFile() //这里注意async函数返回的是一个primise的对象 需要在使用await来接收成功的返回值
+    res.send(message)
+&#125;)
+</code></pre>
+<p>或者使用.then的方法进行接收</p>
+<p>这样的额可以实现</p>
+<pre><code class="js">app.get(&#39;/getfile1&#39; , (req,res)=&gt;&#123;
+    let message= &#39;&#39;
+    getFile().then((value)=&gt;&#123;
+        res.send(value)
+    &#125;,(reason)=&gt;&#123;
+        res.send(reason)
+    &#125;)
+&#125;)
+</code></pre>
+<p>用复习一遍promise</p>
+<p>完美一点使用trycatch捕获异常</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240304194446891.png" alt="image-20240304194446891"></p>
+<p>获取表单的数据</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240304195150914.png" alt="image-20240304195150914"></p>
+<pre><code class="js">//获取前端传过来的数据存储起来
+//配置解析表单的请求体:解析application/json的格式
+app.use(express.json())
+app.post(&#39;/todolist&#39;,(req,res)=&gt;&#123;
+    res.send(req.body)
+&#125;)
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240304195219601.png" alt="image-20240304195219601"></p>
+<p>上面的是使用raw的</p>
+<p>还有方便的x-www-forward</p>
+<p>如果要解析这样的数据</p>
+<p>需要使用</p>
+<pre><code class="js">//获取前端传过来的数据存储起来
+//配置解析表单的请求体:
+app.use(express.urlencoded())
+app.post(&#39;/todolist1&#39;,(req,res)=&gt;&#123;
+    res.send(req.body)
+&#125;)
+</code></pre>
+<p>也可以使用</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240304195453805.png" alt="image-20240304195453805"></p>
+<p>上面的app.use可以复合一起使用</p>
+<p>实现修改的逻辑</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240304200136624.png" alt="image-20240304200136624"></p>
+<p>对象的assign的方法</p>
+<pre><code>
+Object.assign(target, ...sources)
+target：目标对象，即要将属性复制到的对象。
+sources：一个或多个源对象，包含要复制属性的对象。
+示例用法：
+javascript
+// 创建目标对象
+const target = &#123; a: 1, b: 2 &#125;;
+
+// 创建源对象
+const source1 = &#123; b: 3, c: 4 &#125;;
+const source2 = &#123; c: 5, d: 6 &#125;;
+
+// 将源对象的属性复制到目标对象
+const result = Object.assign(target, source1, source2);
+
+console.log(result);
+// 输出: &#123; a: 1, b: 3, c: 5, d: 6 &#125;
+// 注意：target 对象被修改，同时返回值也是目标对象的引用
+
+// 创建新的目标对象，避免修改原始目标对象
+const newTarget = &#123; x: 0, y: 0 &#125;;
+const newResult = Object.assign(&#123;&#125;, newTarget, source1);
+
+console.log(newResult);
+// 输出: &#123; x: 0, y: 0, b: 3, c: 4 &#125;
+// 原始目标对象不受影响，返回一个新对象
+注意事项：
+Object.assign() 方法会修改目标对象（第一个参数），并将源对象的属性复制到目标对象中。如果目标对象中已有相同属性，则会被覆盖。
+如果源对象具有嵌套结构（如对象中嵌套对象），Object.assign() 只会进行浅复制，即只复制对象的引用。
+返回值为目标对象本身，并非一个新对象。如果需要避免修改原目标对象，可以传入一个空对象作为第一个参数。
+</code></pre>
+<h2 id="Express的中间件"><a href="#Express的中间件" class="headerlink" title="Express的中间件"></a>Express的中间件</h2><p>不使用中间件进行输出日志</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240304200827229.png" alt="image-20240304200827229"></p>
+<p>如果有中间件</p>
+<p>这里就要说到</p>
+<p>app.use的功能</p>
+<pre><code class="js">//use里面必须是函数的形式
+// 这里的use里面的函数在每个路由有人访问都会调用这个函数，所有的
+app.use(()=&gt;&#123;
+    console.log(&#39;hello&#39;)
+&#125;)
+</code></pre>
+<p>单上只有上面这么写。只会停在这个函数里面不会有响应</p>
+<pre><code class="js">app.use((req,res,next)=&gt;&#123;
+    console.log(&#39;hello&#39;)
+    next()
+&#125;)
+app.get(&#39;/&#39;,(req,res)=&gt;&#123;
+    res.send(&#39;hahah&#39;)
+&#125;)
+</code></pre>
+<p>有点像vue里面的路由守卫</p>
+<p>注意中间件的位置很重要</p>
+<p>路由里也有next的方法</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240304201754413.png" alt="image-20240304201754413"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240304201938044.png" alt="image-20240304201938044"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240304202141355.png" alt="image-20240304202141355"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240304202151029.png" alt="image-20240304202151029"></p>
+<p>上面就是中间件的定义</p>
+<p>建议把中间件挂载在最前面</p>
+<p>之前的也是</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240304202519253.png" alt="image-20240304202519253"></p>
+<p>中间件的类型</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240304203239526.png" alt="image-20240304203239526"></p>
+<p>限制请求路径的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240304203420068.png" alt="image-20240304203420068"></p>
+<p>配置多个处理函数</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240304203535863.png" alt="image-20240304203535863"></p>
+<p>课可以有多个中间件的处理函数</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240304203709432.png" alt="image-20240304203709432"></p>
+<p>为同一个路径定义多个处理中间件</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240304203912212.png" alt="image-20240304203912212"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240304204012071.png" alt="image-20240304204012071"></p>
+<p>这样的使用就可以跳过下面的中间件，往后面走</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240304204225025.png" alt="image-20240304204225025"></p>
+<p>把中间件提前声明然后放在数组里面</p>
+<h2 id="路由器中间件"><a href="#路由器中间件" class="headerlink" title="路由器中间件"></a>路由器中间件</h2><p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240304204434281.png" alt="image-20240304204434281"></p>
+<p>我们可以把<img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240304204528203.png" alt="image-20240304204528203"></p>
+<p>这字额写在一个模块里面</p>
+<p>就像我在做项目</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240304204712717.png" alt="image-20240304204712717"></p>
+<p>方法写在这里</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240304204735631.png" alt="image-20240304204735631"></p>
+<p>这里提下</p>
+<p>module.exports 这个暴露相当于默认的暴露</p>
+<p>然后在app里面挂载</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240304205046519.png" alt="image-20240304205046519"></p>
+<p>这样维护代码更加方便</p>
+<p>之前挂载添加路径</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240304205127347.png" alt="image-20240304205127347"></p>
+<p>这样router里面的</p>
+<p>错误处理中间件	</p>
+<p>重复的错误处理代码</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240304205338604.png" alt="image-20240304205338604"></p>
+<p>这样写比较麻烦</p>
+<p>所有有错误处理的中间价，</p>
+<p>这个中间件一般写在后面，原因下面</p>
+<p>我们还是使用trycatch,需要使用next的方法</p>
+<p>这个next的用法</p>
+<p><img src="/Express.assets/image-20240304205754566.png" alt="image-20240304205754566"></p>
+<p>除了‘route’，往里面放参数就会是错误信息</p>
+<p>然后就会跳过后面的所有的中间件，直接到我们定义错误的中间件哪里</p>
+<p>错误中间件的写法</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240304205919097.png" alt="image-20240304205919097"></p>
+<p>这里的err就是next里面的错误信息</p>
+<p>服务端的404</p>
+<p>就是配置404的内容</p>
+<p>直接在 最后进行配置</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240305141451238.png" alt="image-20240305141451238"></p>
+<p>内置中间件</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240305141555414.png" alt="image-20240305141555414"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240305141616288.png" alt="image-20240305141616288"></p>
+<p>最后一个托管静态资源</p>
+<p>第三方的中间件</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240305141701713.png" alt="image-20240305141701713"></p>
+
+    </div>
+    
+    
+    
+    
+    
+    
+    
+</div>
+
+            <footer id="footer">
+    <div id="footer-wrap">
+        <div>
+            &copy;
+            2022 - 2024 哈哈哈哈哈哈哈重生之我是兵王
+            <span id="footer-icon">
+                <i class="fa-solid fa-font-awesome fa-fw"></i>
+            </span>
+            &commat;chenw
+        </div>
+        <div>
+            Based on the <a target="_blank" rel="noopener" href="https://hexo.io">Hexo Engine</a> &amp;
+            <a target="_blank" rel="noopener" href="https://github.com/theme-particlex/hexo-theme-particlex">ParticleX Theme</a>
+        </div>
+        
+    </div>
+</footer>
+
+        </div>
+        
+        <transition name="fade">
+            <div id="preview" ref="preview" v-show="previewShow">
+                <img id="preview-content" ref="previewContent" />
+            </div>
+        </transition>
+        
+    </div>
+    <script src="/js/main.js"></script>
+    
+    
+
+
+
+
+    
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

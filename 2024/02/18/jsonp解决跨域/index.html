@@ -3,7 +3,7 @@
 <html lang="zh-Hans">
 <head>
     <meta charset="utf-8" />
-    <title>axios | 哈哈哈哈哈哈哈重生之我是兵王</title>
+    <title> | 哈哈哈哈哈哈哈重生之我是兵王</title>
     <meta name="author" content="chenw" />
     <meta name="description" content="description" />
     <meta name="keywords" content="" />
@@ -158,37 +158,87 @@
         <div id="main" :class="loading ? 'into-enter-from': 'into-enter-active'">
             <div class="article">
     <div>
-        <h1>axios</h1>
+        <h1></h1>
     </div>
     <div class="info">
         <span class="date">
             <span class="icon">
                 <i class="fa-solid fa-calendar fa-fw"></i>
             </span>
-            2024/2/17
+            2024/2/18
         </span>
         
-        
-        <span class="tags">
-            <span class="icon">
-                <i class="fa-solid fa-tags fa-fw"></i>
-            </span>
-            
-            
-            <span class="tag">
-                
-                <a href="/tags/axios/" style="color: #ffa2c4">axios</a>
-            </span>
-            
-        </span>
         
     </div>
     
     <div class="content" v-pre>
-        <p>摘要</p>
+        <p>title: jsonp解决跨域<br>date: 2024-02-18 15:46:45<br>tags: </p>
 <span id="more"></span>
-<p>正文</p>
-<h1 id="axios入门-源码分析"><a href="#axios入门-源码分析" class="headerlink" title="axios入门&amp;源码分析"></a>axios入门&amp;源码分析</h1>
+
+<h1 id="Jsonp解决跨域问题"><a href="#Jsonp解决跨域问题" class="headerlink" title="Jsonp解决跨域问题"></a>Jsonp解决跨域问题</h1><p>最基础的在外部调用</p>
+<pre><code class="html">&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;Title&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;script&gt;
+    function test(data)&#123;
+        console.log(data)
+    &#125;
+&lt;/script&gt;
+
+&lt;script&gt;
+    test(11)
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p>如果不同的文件</p>
+<p>这样</p>
+<pre><code class="html">&lt;script&gt;
+    function test(data)&#123;
+        console.log(data)
+    &#125;
+&lt;/script&gt;
+&lt;script src=&quot;1.js&quot;&gt;&lt;/script&gt;
+</code></pre>
+<p>依旧可以实现</p>
+<p>这样也可以实现，动态加载script</p>
+<pre><code class="js">&lt;script&gt;
+    function test(data)&#123;
+        console.log(data)
+    &#125;
+    let oscript = document.createElement(&#39;script&#39;)
+    oscript.src =  &#39;1.js&#39;
+    document.body.appendChild(oscript)
+&lt;/script&gt; 
+</code></pre>
+<p>所以</p>
+<p>1.script没有跨域限制</p>
+<p>2.后端配合返回的是函数调用的形式，把需要传递的内容放在参数里面</p>
+<p>3.前端声明好这个函数</p>
+<p>举例</p>
+<p>下面是接口</p>
+<p>会返回函数调用的形式，里面是数据</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240218160255156.png" alt="image-20240218160255156"></p>
+<p>然后在文件里面用src引入</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240218160322757.png" alt="image-20240218160322757"></p>
+<p>然后在定义这个方法</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240218160342002.png" alt="image-20240218160342002"></p>
+<p>这样就可以拿到数据</p>
+<p>一般后端配合在接口名字处传参</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240218160503575.png" alt="image-20240218160503575"></p>
+<p>这样前端传过来什么数据</p>
+<p>函数的调用的名称就是什么</p>
+<h2 id="jsonp的缺点"><a href="#jsonp的缺点" class="headerlink" title="jsonp的缺点"></a>jsonp的缺点</h2><p>只能做get的请求，无法post，put</p>
+<h2 id="实践"><a href="#实践" class="headerlink" title="实践"></a>实践</h2><p>百度其实也是使用了jsonp</p>
+<p>当搜索一些东西的时候</p>
+<p>前端会把搜索的东西传递给后端的接口</p>
+<p>然后接口返回一个jsonp格式的数据</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240218162316398.png" alt="image-20240218162316398"></p>
+
     </div>
     
     
