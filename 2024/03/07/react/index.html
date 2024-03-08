@@ -1408,6 +1408,615 @@ const person2 = &#123;...person,name:&#39;王昌晨&#39;&#125;//在复制的同�
                        this.input2 = currentNode&#125;&#125; onBlur=&#123;this.demo2&#125; type=&quot;text&quot; placeholder=&quot;失去焦点提示&quot;/&gt;
 </code></pre>
 <p>执行几次呢？</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240308152628767.png" alt="image-20240308152628767"></p>
+<p>我们通过下面的代码可以清楚的看见能使用几次</p>
+<pre><code class="js">&lt;script type=&quot;text/babel&quot;&gt;
+    class Demo extends React.Component &#123;
+        state = &#123;
+            isHot:false
+        &#125;
+        demo1 = ()=&gt;&#123;
+            this.setState(&#123;isHot:!this.state.isHot&#125;)
+        &#125;
+        demo2 = ()=&gt;&#123;
+            alert(this.input2.value)
+        &#125;
+        render()&#123;
+            return  (
+                &lt;div&gt;
+                    &lt;h1 onClick=&#123;this.demo1&#125;&gt;今天的天气很&#123;this.state.isHot?&#39;炎热&#39;:&quot;凉爽&quot;&#125;&lt;/h1&gt;
+                    &lt;input ref=&#123;(currentNode)=&gt;&#123;
+                       this.input2 = currentNode
+                        console.log(&#39;@&#39;,currentNode)
+                    &#125;&#125; onBlur=&#123;this.demo2&#125; type=&quot;text&quot; placeholder=&quot;失去焦点提示&quot;/&gt;
+                &lt;/div&gt;
+            )
+        &#125;
+    &#125;
+    ReactDOM.render(&lt;Demo/&gt;,document.getElementById(&#39;test&#39;))
+&lt;/script&gt;
+</code></pre>
+<p>每当我们使用更新天气的就会刷新页面，</p>
+<p>这个时候我们就会发现实际上调用两次</p>
+<p>第一次的调用函数的参数为0</p>
+<p>第二次调用才获取的标qian3</p>
+<p>原因在这里</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240308153630656.png" alt="image-20240308153630656"></p>
+<p>为了有一次清空的操作</p>
+<p>React熏染到这个回调时候，先设置参数为null，清空的操作，然后网参数传递</p>
+<p>然后继续</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240308153926882.png" alt="image-20240308153926882"></p>
+<p>看起来有点困难其实很简单，其实就是把回调函数写在类的里面</p>
+<pre><code class="js">class Demo extends React.Component &#123;
+    state = &#123;
+        isHot:false
+    &#125;
+    demo1 = ()=&gt;&#123;
+        this.setState(&#123;isHot:!this.state.isHot&#125;)
+    &#125;
+    demo2 = ()=&gt;&#123;
+        alert(this.input2.value)
+    &#125;
+    render()&#123;
+        return  (
+            &lt;div&gt;
+                &lt;h1 onClick=&#123;this.demo1&#125;&gt;今天的天气很&#123;this.state.isHot?&#39;炎热&#39;:&quot;凉爽&quot;&#125;&lt;/h1&gt;
+                &lt;input ref=&#123; this.saveInput &#125; onBlur=&#123;this.demo2&#125; type=&quot;text&quot; placeholder=&quot;失去焦点提示&quot;/&gt;
+                &#123;/*&lt;input ref=&#123;(currentNode)=&gt;&#123;
+                   this.input2 = currentNode
+                    console.log(&#39;@&#39;,currentNode)
+                &#125;&#125; onBlur=&#123;this.demo2&#125; type=&quot;text&quot; placeholder=&quot;失去焦点提示&quot;/&gt;*/&#125;
+            &lt;/div&gt;
+        )
+    &#125;
+&#125;
+</code></pre>
+<p>下面写法就可以保证不执行那么多次，因为没有放在render里，而是放在类的里面</p>
+<pre><code class="js">    class Demo extends React.Component &#123;
+        state = &#123;
+            isHot:false
+        &#125;
+        demo1 = ()=&gt;&#123;
+            this.setState(&#123;isHot:!this.state.isHot&#125;)
+        &#125;
+        demo2 = ()=&gt;&#123;
+            alert(this.input2.value)
+        &#125;
+        saveInput = (currentNode) =&gt; &#123;
+            this.input2 = currentNode
+            console.log(&#39;@&#39;,currentNode)
+        &#125;
+        render()&#123;
+            return  (
+                &lt;div&gt;
+                    &lt;h1 onClick=&#123;this.demo1&#125;&gt;今天的天气很&#123;this.state.isHot?&#39;炎热&#39;:&quot;凉爽&quot;&#125;&lt;/h1&gt;
+                    &lt;input ref=&#123; this.saveInput &#125; onBlur=&#123;this.demo2&#125; type=&quot;text&quot; placeholder=&quot;失去焦点提示&quot;/&gt;
+                    &#123;/*&lt;input ref=&#123;(currentNode)=&gt;&#123;
+                       this.input2 = currentNode
+                        console.log(&#39;@&#39;,currentNode)
+                    &#125;&#125; onBlur=&#123;this.demo2&#125; type=&quot;text&quot; placeholder=&quot;失去焦点提示&quot;/&gt;*/&#125;
+                &lt;/div&gt;
+            )
+        &#125;
+    &#125;
+</code></pre>
+<p><strong>以后写内敛的回调函数和写内绑定的回调函数其实区别不大，影响也不大，但是内敛的写法还是偏多的</strong></p>
+<p>jsx的注释</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240308154038486.png" alt="image-20240308154038486"></p>
+<p>其实一个快捷键解决了</p>
+<p>算了快捷键也是不好用的、</p>
+<p>所以还是这样的注释把</p>
+<p>下面的ref的定义方法是最新的</p>
+<p><strong>使用createRef的api</strong></p>
+<p>​	使用createRef实现的基本操作</p>
+<pre><code class="js">&lt;script type=&quot;text/babel&quot;&gt;
+    class Demo extends React.Component &#123;
+        state = &#123;
+            isHot:false
+        &#125;
+        demo1 = ()=&gt;&#123;
+            this.setState(&#123;isHot:!this.state.isHot&#125;)
+        &#125;
+        demo2 = ()=&gt;&#123;
+            console.log(this.myRef.current)//这个属性里面保存着标签
+        &#125;
+/React.createRef可调用以后返回一个容器,该容器可以储存被ref标记的节点
+        myRef= React.createRef()
+        render()&#123;
+            return  (
+                &lt;div&gt;
+                    &lt;h1 onClick=&#123;this.demo1&#125;&gt;今天的天气很&#123;this.state.isHot?&#39;炎热&#39;:&quot;凉爽&quot;&#125;&lt;/h1&gt;
+                    &#123;/*当执行到这里,React会把当前ref所在的节点储存在这个容器里面,这既不是回调函数了*/&#125;
+                    &lt;input ref=&#123; this.myRef &#125; onBlur=&#123;this.demo2&#125; type=&quot;text&quot; placeholder=&quot;失去焦点提示&quot;/&gt;
+                &lt;/div&gt;
+            )
+        &#125;
+</code></pre>
+<p>有个注意的事项</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240308160709778.png" alt="image-20240308160709778"></p>
+<p>这里面只能定义一个ref，否则的话后面就会把前面的挤掉</p>
+<p>但是可以创建多个容器</p>
+<p>像这样的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240308160826935.png" alt="image-20240308160826935"></p>
+<p>这种形式的ref是react官推荐的</p>
+<p>总结一下</p>
+<p><strong>字符串类型的ref，回调类型的ref(内联绑定，内绑定)，cretaeRef的ref</strong></p>
+<p><strong>事件处理</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240308161508099.png" alt="image-20240308161508099"></p>
+<p>为什么React为什么要二次封装事件，</p>
+<p>是为了更好的兼容性</p>
+<p>其实</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240308161619064.png" alt="image-20240308161619064"></p>
+<p>我们给button和input添加的事件处理最后都绑在了外侧的div上</p>
+<p>为什么呢？</p>
+<p>因为事件委托的原理是事件冒泡</p>
+<p>就比如</p>
+<pre><code class="js">&lt;ul&gt;
+    &lt;li&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</code></pre>
+<p><strong>我们想要实现点击每个li标签就会有事件的触发，</strong></p>
+<p><strong>我们可以在最外测ul上绑定事件，</strong></p>
+<p><strong>因为点击li最后事件冒泡还是会到ul上触发事件</strong></p>
+<p><strong>这就是事件委托，委托到最外层的事件，为了就是高效</strong></p>
+<p><strong>通过event.target得到发生事件的dom元素</strong></p>
+<p>之前文档说不要使用ref，不管是什么类型的</p>
+<p>其实我们刚才上面的案列，都可以不适用ref</p>
+<p>那怎么用？</p>
+<p><strong>我们通过event.target的方法通过触发的事件获取，如下</strong></p>
+<pre><code class="js">class Demo extends React.Component &#123;
+    state = &#123;
+        isHot:false
+    &#125;
+    demo1 = ()=&gt;&#123;
+        this.setState(&#123;isHot:!this.state.isHot&#125;)
+    &#125;
+    demo2 = (event)=&gt;&#123;
+        console.log(event.target)//这个属性里面保存着标签
+    &#125;
+    //React.createRef可调用以后返回一个容器,该容器可以储存被ref标记的节点
+    myRef= React.createRef()
+    render()&#123;
+        return  (
+            &lt;div&gt;
+                &lt;h1 onClick=&#123;this.demo1&#125;&gt;今天的天气很&#123;this.state.isHot?&#39;炎热&#39;:&quot;凉爽&quot;&#125;&lt;/h1&gt;
+                &#123;/*当执行到这里,React会把当前ref所在的节点储存在这个容器里面,这既不是回调函数了*/&#125;
+                &lt;input  onBlur=&#123;this.demo2&#125; type=&quot;text&quot; placeholder=&quot;失去焦点提示&quot;/&gt;
+            &lt;/div&gt;
+        )
+    &#125;
+&#125;
+</code></pre>
+<p><strong>通过event.target可以获取到触发事件恶的dom元素</strong></p>
+<p><strong>总的来说ref尽量能避免就避免</strong></p>
+<h2 id="收集表单数据"><a href="#收集表单数据" class="headerlink" title="收集表单数据"></a>收集表单数据</h2><p>这里就有两个概念</p>
+<p>1.非受控组件</p>
+<p>2.受控组件</p>
+<p>先说非受控组件</p>
+<p>​	</p>
+<pre><code class="js">&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+  &lt;meta charset=&quot;UTF-8&quot;&gt;
+  &lt;title&gt;Title&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div id=&quot;test&quot;&gt;&lt;/div&gt;
+
+&lt;!--引入react的核心库--&gt;
+&lt;script src=&quot;../js/react.development.js&quot;&gt;&lt;/script&gt;
+&lt;!--引入react-dom--&gt;
+&lt;script src=&quot;../js/react-dom.development.js&quot;&gt;&lt;/script&gt;
+&lt;!--引入babel，将jsx转为js
+注意顺序不能搞错--&gt;
+&lt;script src=&quot;../js/babel.min.js&quot;&gt;&lt;/script&gt;
+&lt;!--引入proto-types,用于类型标签属性值的限制--&gt;
+&lt;script src=&quot;../js/prop-types.js&quot;&gt;&lt;/script&gt;
+&lt;script type=&quot;text/babel&quot;&gt;
+  class Demo extends React.Component &#123;
+    handleForm = (event)=&gt;&#123;
+      event.preventDefault()//阻止页面的默认事件
+      alert(&#39;您的用户名为&#39;+this.username.value+&#39;您的密码为&#39;+this.password.value)
+    &#125;
+    render()&#123;
+      return  (
+              &lt;div&gt;
+                &lt;form action=&quot;https://www.baidu.com&quot; onSubmit=&#123;this.handleForm&#125;&gt;
+                  用户名 &lt;input ref=&#123;c=&gt;this.username = c&#125; type=&quot;text&quot; placeholder=&quot;请输入账号&quot; name=&quot;username&quot;/&gt;&amp;nbsp;
+                  密码 &lt;input ref=&#123;c=&gt;this.password = c&#125; type=&quot;password&quot; placeholder=&quot;请输入密码&quot; name=&quot;password&quot;/&gt;&amp;nbsp;
+                  &lt;button &gt;登录&lt;/button&gt;
+                &lt;/form&gt;
+              &lt;/div&gt;
+      )
+    &#125;
+  &#125;
+  ReactDOM.render(&lt;Demo/&gt;,document.getElementById(&#39;test&#39;))
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p>上面的代码</p>
+<p>当我们输入用户名和密码，再点击提交的时候，</p>
+<p>然后调用回调函数，就会分别去取我们节点的属性值username和password</p>
+<p><strong>像这样我们现用先现取的标签的值，我们就称其为非受控组件</strong></p>
+<p>这里暂停一下</p>
+<p>这里感觉vue里面的v-model真是方便，双向绑定数据</p>
+<p><strong>那受控组件该怎么写呢?</strong></p>
+<p>下面就是受控组件的实列</p>
+<pre><code class="js">&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+  &lt;meta charset=&quot;UTF-8&quot;&gt;
+  &lt;title&gt;Title&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div id=&quot;test&quot;&gt;&lt;/div&gt;
+
+&lt;!--引入react的核心库--&gt;
+&lt;script src=&quot;../js/react.development.js&quot;&gt;&lt;/script&gt;
+&lt;!--引入react-dom--&gt;
+&lt;script src=&quot;../js/react-dom.development.js&quot;&gt;&lt;/script&gt;
+&lt;!--引入babel，将jsx转为js
+注意顺序不能搞错--&gt;
+&lt;script src=&quot;../js/babel.min.js&quot;&gt;&lt;/script&gt;
+&lt;!--引入proto-types,用于类型标签属性值的限制--&gt;
+&lt;script src=&quot;../js/prop-types.js&quot;&gt;&lt;/script&gt;
+&lt;script type=&quot;text/babel&quot;&gt;
+  class Demo extends React.Component &#123;
+    state=&#123;
+      username:&quot;&quot;,
+      password:&quot;&quot;//在这里我们可以初始化值
+    &#125;
+    demo = (event)=&gt;&#123;
+      //只要改变就会调用
+      console.log(event.target.value)
+      this.setState(&#123;username:event.target.value&#125;)//只要我们该表就会更改state的状态值
+    &#125;
+    demo2 = (event)=&gt;&#123;
+      //只要改变就会调用
+      console.log(event.target.value)
+      this.setState(&#123;password:event.target.value&#125;)//只要我们该表就会更改state的状态值
+    &#125;
+    handleForm = (event)=&gt;&#123;
+      event.preventDefault()//阻止页面的默认事件
+      alert(&#39;您的用户名为&#39;+this.state.username+&#39;您的密码为&#39;+this.state.password)
+    &#125;
+    render()&#123;
+      return  (
+              &lt;div&gt;
+                &lt;form action=&quot;https://www.baidu.com&quot; onSubmit=&#123;this.handleForm&#125;&gt;
+                  用户名 &lt;input onChange=&#123;this.demo&#125; type=&quot;text&quot; placeholder=&quot;请输入账号&quot; name=&quot;username&quot;/&gt;&amp;nbsp;
+                  密码 &lt;input onChange=&#123;this.demo2&#125; type=&quot;password&quot; placeholder=&quot;请输入密码&quot; name=&quot;password&quot;/&gt;&amp;nbsp;
+                  &lt;button &gt;登录&lt;/button&gt;
+                &lt;/form&gt;
+              &lt;/div&gt;
+      )
+    &#125;
+  &#125;
+  ReactDOM.render(&lt;Demo/&gt;,document.getElementById(&#39;test&#39;))
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p>当我们输入框的内容发生了就会调用回调</p>
+<p>通过回调我们可以实时的将数据通过setState更新到state里面</p>
+<p>就相当于vue里的双向绑定</p>
+<p>受控组件还有一个优势就是减少了ref的使用</p>
+<p>非受控组件刚才的例子一直在使用ref收取表单的数据</p>
+<h3 id="组件的声明周期"><a href="#组件的声明周期" class="headerlink" title="组件的声明周期"></a>组件的声明周期</h3><p><strong>高阶函数和函数的柯里化</strong></p>
+<p>如果我们继续上面的例子</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240308173823123.png" alt="image-20240308173823123"></p>
+<p>如果有很多项怎么办?</p>
+<p>那么可以通过参数进行界定</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240308174015960.png" alt="image-20240308174015960"></p>
+<p>但是上面这样的写写法是不对的因为后面有小括号,这样获取的是返回值</p>
+<p>所以我们我们可以把返回值定义成一个函数</p>
+<p>补充点对象相关的知识</p>
+<pre><code class="js">let a = &#39;name&#39;
+let obj = &#123;&#125;
+obj[a]=&#39;tom&#39;//&#123;name:&#39;tom&#39;&#125;
+</code></pre>
+<p>所以我们可以写成这样</p>
+<pre><code class="js">  class Demo extends React.Component &#123;
+    state=&#123;
+      username:&quot;&quot;,
+      password:&quot;&quot;//在这里我们可以初始化值
+    &#125;
+    demo = (data)=&gt;&#123;
+      console.log(data)
+      return (event)=&gt;&#123;
+        console.log([data],event.target.value)
+
+      &#125;
+    &#125;
+    // handleForm = (event)=&gt;&#123;
+    //   event.preventDefault()//阻止页面的默认事件
+    //   alert(&#39;您的用户名为&#39;+this.state.username+&#39;您的密码为&#39;+this.state.password)
+    // &#125;
+    render()&#123;
+      return  (
+              &lt;div&gt;
+                &lt;form action=&quot;https://www.baidu.com&quot; onSubmit=&#123;this.handleForm&#125;&gt;
+                  用户名 &lt;input onChange=&#123;this.demo(&#39;username&#39;)&#125; type=&quot;text&quot; placeholder=&quot;请输入账号&quot; name=&quot;username&quot;/&gt;&amp;nbsp;
+                  密码 &lt;input onChange=&#123;this.demo(&#39;password&#39;)&#125; type=&quot;password&quot; placeholder=&quot;请输入密码&quot; name=&quot;password&quot;/&gt;&amp;nbsp;
+                  &lt;button &gt;登录&lt;/button&gt;
+                &lt;/form&gt;
+              &lt;/div&gt;
+      )
+    &#125;
+  &#125;
+</code></pre>
+<p>这时候物品们就可以引入高阶函数的定义了</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240308180409931.png" alt="image-20240308180409931"></p>
+<p>常见的高阶函数有:promise,settimeout,因为这两个的参数 函数</p>
+<p><strong>函数的柯里化</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240308180807412.png" alt="image-20240308180807412"></p>
+<p>简单的例子</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240308180929289.png" alt="image-20240308180929289"></p>
+<p>其实不用函数科比化也能实现上面的代码</p>
+<pre><code class="js">  class Demo extends React.Component &#123;
+    state=&#123;
+      username:&quot;&quot;,
+      password:&quot;&quot;//在这里我们可以初始化值
+    &#125;
+    demo = (data)=&gt;&#123;
+      console.log(data)
+      return (event)=&gt;&#123;
+        console.log([data],event.target.value)
+
+      &#125;
+    &#125;
+    // handleForm = (event)=&gt;&#123;
+    //   event.preventDefault()//阻止页面的默认事件
+    //   alert(&#39;您的用户名为&#39;+this.state.username+&#39;您的密码为&#39;+this.state.password)
+    // &#125;
+    render()&#123;
+      return  (
+              &lt;div&gt;
+                &lt;form action=&quot;https://www.baidu.com&quot; onSubmit=&#123;this.handleForm&#125;&gt;
+                  用户名 &lt;input onChange=&#123;this.demo(&#39;username&#39;)&#125; type=&quot;text&quot; placeholder=&quot;请输入账号&quot; name=&quot;username&quot;/&gt;&amp;nbsp;
+                  密码 &lt;input onChange=&#123;this.demo(&#39;password&#39;)&#125; type=&quot;password&quot; placeholder=&quot;请输入密码&quot; name=&quot;password&quot;/&gt;&amp;nbsp;
+                  &lt;button &gt;登录&lt;/button&gt;
+                &lt;/form&gt;
+              &lt;/div&gt;
+      )
+    &#125;
+  &#125;
+</code></pre>
+<p>上面使用函数的科比话</p>
+<p>不用函数的柯比化接收到参数</p>
+<pre><code class="js">&lt;script type=&quot;text/babel&quot;&gt;
+  class Demo extends React.Component &#123;
+    state=&#123;
+      username:&quot;&quot;,
+      password:&quot;&quot;//在这里我们可以初始化值
+    &#125;
+    demo = (data,value)=&gt;&#123;
+      this.setState(&#123;[data]:value&#125;)
+    &#125;
+    handleForm = (event)=&gt;&#123;
+      event.preventDefault()//阻止页面的默认事件
+      alert(&#39;您的用户名为&#39;+this.state.username+&#39;您的密码为&#39;+this.state.password)
+    &#125;
+    render()&#123;
+      return  (
+              &lt;div&gt;
+                &lt;form action=&quot;https://www.baidu.com&quot; onSubmit=&#123;this.handleForm&#125;&gt;
+                  用户名 &lt;input onChange=&#123;(event)=&gt;&#123;this.demo(&#39;username&#39;,event.target.value)&#125;&#125; type=&quot;text&quot; placeholder=&quot;请输入账号&quot; name=&quot;username&quot;/&gt;&amp;nbsp;
+                  密码 &lt;input onChange=&#123;(event)=&gt;&#123;this.demo(&#39;password&#39;,event.target.value)&#125;&#125; type=&quot;password&quot; placeholder=&quot;请输入密码&quot; name=&quot;password&quot;/&gt;&amp;nbsp;
+                  &lt;button &gt;登录&lt;/button&gt;
+                &lt;/form&gt;
+              &lt;/div&gt;
+      )
+    &#125;
+  &#125;
+  ReactDOM.render(&lt;Demo/&gt;,document.getElementById(&#39;test&#39;))
+&lt;/script&gt;
+</code></pre>
+<p>这样我们就可以实现</p>
+<h2 id="组件的生命周期"><a href="#组件的生命周期" class="headerlink" title="组件的生命周期"></a>组件的生命周期</h2><p>首先组建的卸载</p>
+<pre><code class="js">&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;Title&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div id=&quot;test&quot;&gt;&lt;/div&gt;
+
+&lt;!--引入react的核心库--&gt;
+&lt;script src=&quot;../js/react.development.js&quot;&gt;&lt;/script&gt;
+&lt;!--引入react-dom--&gt;
+&lt;script src=&quot;../js/react-dom.development.js&quot;&gt;&lt;/script&gt;
+&lt;!--引入babel，将jsx转为js
+注意顺序不能搞错--&gt;
+&lt;script src=&quot;../js/babel.min.js&quot;&gt;&lt;/script&gt;
+&lt;!--引入proto-types,用于类型标签属性值的限制--&gt;
+&lt;script src=&quot;../js/prop-types.js&quot;&gt;&lt;/script&gt;
+&lt;script type=&quot;text/babel&quot;&gt;
+    class Life extends React.Component&#123;
+        death=()=&gt;&#123;
+          ReactDOM.unmountComponentAtNode(document.getElementById(&#39;test&#39;))
+        &#125;
+        render()&#123;
+            return (
+                &lt;div&gt;
+                    &lt;h2&gt;React学不会怎么办&lt;/h2&gt;
+                    &lt;button onClick=&#123;this.death&#125;&gt;不活了&lt;/button&gt;
+                &lt;/div&gt;
+            )
+        &#125;
+    &#125;
+    ReactDOM.render(&lt;Life/&gt;,document.getElementById(&#39;test&#39;))
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p>使用uunmountComponentAtNode可以使某个组件卸载</p>
+<p>组件挂载的声明周期钩子</p>
+<pre><code class="js">&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;Title&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div id=&quot;test&quot;&gt;&lt;/div&gt;
+
+&lt;!--引入react的核心库--&gt;
+&lt;script src=&quot;../js/react.development.js&quot;&gt;&lt;/script&gt;
+&lt;!--引入react-dom--&gt;
+&lt;script src=&quot;../js/react-dom.development.js&quot;&gt;&lt;/script&gt;
+&lt;!--引入babel，将jsx转为js
+注意顺序不能搞错--&gt;
+&lt;script src=&quot;../js/babel.min.js&quot;&gt;&lt;/script&gt;
+&lt;!--引入proto-types,用于类型标签属性值的限制--&gt;
+&lt;script src=&quot;../js/prop-types.js&quot;&gt;&lt;/script&gt;
+&lt;script type=&quot;text/babel&quot;&gt;
+    class Life extends React.Component&#123;
+        state=&#123;
+            opacity:0.5
+        &#125;
+
+        death=()=&gt;&#123;
+            ReactDOM.unmountComponentAtNode(document.getElementById(&#39;test&#39;))
+        &#125;
+        componentDidMount()&#123;// 这里的构造只调用一次,和render函数一样,组件实例化以后,REact会自己帮你调用
+            setInterval(()=&gt;&#123;
+                let &#123;opacity&#125; = this.state
+                opacity -= 0.1
+                if (opacity&lt;=0) opacity = 1
+                this.setState(&#123;opacity:opacity&#125;)
+            &#125;,200)
+        &#125;
+        render()&#123;
+            return (
+                &lt;div&gt;
+                    &lt;h2 style=&#123;&#123;opacity:this.state.opacity&#125;&#125;&gt;React学不会怎么办&lt;/h2&gt;
+                    &lt;button onClick=&#123;this.death&#125;&gt;不活了&lt;/button&gt;
+                &lt;/div&gt;
+            )
+        &#125;
+    &#125;
+    ReactDOM.render(&lt;Life/&gt;,document.getElementById(&#39;test&#39;))
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p>只在组件完成挂载以后开始执行 </p>
+<p>componentDidMount:组件挂载完毕调用</p>
+<p>render:初始化渲染,数据更新以后</p>
+<p>但是在卸载组件的时候上面的代码会出问题,</p>
+<p>因为在卸载组件之前没有把定时器卸载掉</p>
+<p>所以修改完以后</p>
+<pre><code class="js">&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;Title&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div id=&quot;test&quot;&gt;&lt;/div&gt;
+
+&lt;!--引入react的核心库--&gt;
+&lt;script src=&quot;../js/react.development.js&quot;&gt;&lt;/script&gt;
+&lt;!--引入react-dom--&gt;
+&lt;script src=&quot;../js/react-dom.development.js&quot;&gt;&lt;/script&gt;
+&lt;!--引入babel，将jsx转为js
+注意顺序不能搞错--&gt;
+&lt;script src=&quot;../js/babel.min.js&quot;&gt;&lt;/script&gt;
+&lt;!--引入proto-types,用于类型标签属性值的限制--&gt;
+&lt;script src=&quot;../js/prop-types.js&quot;&gt;&lt;/script&gt;
+&lt;script type=&quot;text/babel&quot;&gt;
+    class Life extends React.Component&#123;
+        state=&#123;
+            opacity:0.5
+        &#125;
+
+        death=()=&gt;&#123;
+            clearInterval(this.timer)
+            ReactDOM.unmountComponentAtNode(document.getElementById(&#39;test&#39;))
+        &#125;
+        componentDidMount()&#123;// 这里的构造只调用一次,和render函数一样,组件实例化以后,REact会自己帮你调用
+            this.timer=setInterval(()=&gt;&#123;
+                let &#123;opacity&#125; = this.state
+                opacity -= 0.1
+                if (opacity&lt;=0) opacity = 1
+                this.setState(&#123;opacity:opacity&#125;)
+            &#125;,200)
+        &#125;
+        render()&#123;
+            return (
+                &lt;div&gt;
+                    &lt;h2 style=&#123;&#123;opacity:this.state.opacity&#125;&#125;&gt;React学不会怎么办&lt;/h2&gt;
+                    &lt;button onClick=&#123;this.death&#125;&gt;不活了&lt;/button&gt;
+                &lt;/div&gt;
+            )
+        &#125;
+    &#125;
+    ReactDOM.render(&lt;Life/&gt;,document.getElementById(&#39;test&#39;))
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p>其实还可以写在组件将要写在卸载还没有卸载的时候</p>
+<pre><code class="js">&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;Title&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div id=&quot;test&quot;&gt;&lt;/div&gt;
+
+&lt;!--引入react的核心库--&gt;
+&lt;script src=&quot;../js/react.development.js&quot;&gt;&lt;/script&gt;
+&lt;!--引入react-dom--&gt;
+&lt;script src=&quot;../js/react-dom.development.js&quot;&gt;&lt;/script&gt;
+&lt;!--引入babel，将jsx转为js
+注意顺序不能搞错--&gt;
+&lt;script src=&quot;../js/babel.min.js&quot;&gt;&lt;/script&gt;
+&lt;!--引入proto-types,用于类型标签属性值的限制--&gt;
+&lt;script src=&quot;../js/prop-types.js&quot;&gt;&lt;/script&gt;
+&lt;script type=&quot;text/babel&quot;&gt;
+    class Life extends React.Component&#123;
+        state=&#123;
+            opacity:0.5
+        &#125;
+
+        death=()=&gt;&#123;
+
+            ReactDOM.unmountComponentAtNode(document.getElementById(&#39;test&#39;))
+        &#125;
+        componentDidMount()&#123;// 这里的构造只调用一次,和render函数一样,组件实例化以后,REact会自己帮你调用
+            this.timer=setInterval(()=&gt;&#123;
+                let &#123;opacity&#125; = this.state
+                opacity -= 0.1
+                if (opacity&lt;=0) opacity = 1
+                this.setState(&#123;opacity:opacity&#125;)
+            &#125;,200)
+        &#125;
+        componentWillUnmount()&#123;
+            clearInterval(this.timer)
+        &#125;
+        render()&#123;
+            return (
+                &lt;div&gt;
+                    &lt;h2 style=&#123;&#123;opacity:this.state.opacity&#125;&#125;&gt;React学不会怎么办&lt;/h2&gt;
+                    &lt;button onClick=&#123;this.death&#125;&gt;不活了&lt;/button&gt;
+                &lt;/div&gt;
+            )
+        &#125;
+    &#125;
+    ReactDOM.render(&lt;Life/&gt;,document.getElementById(&#39;test&#39;))
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p>使用componentWillUnmount这个钩子在快要卸载的时候调用</p>
 
     </div>
     
