@@ -525,7 +525,7 @@ ReactDOM.render(VDOM,document.getElementById(&#39;test&#39;))
 <h2 id="React面对组件编程"><a href="#React面对组件编程" class="headerlink" title="React面对组件编程"></a>React面对组件编程</h2><p>开发者工具的调试工具</p>
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240307200440946.png" alt="image-20240307200440946"></p>
 <p>这里的components是记录组件的</p>
-<p>这里的profiler是分子一些东西 </p>
+<p>这里的profiler是分析一些东西 </p>
 <p><strong>组件有两种定义的方法</strong></p>
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240307200622358.png" alt="image-20240307200622358"></p>
 <p>函数式组件的几个要点</p>
@@ -566,7 +566,7 @@ ReactDOM.render(VDOM,document.getElementById(&#39;test&#39;))
 <p>这里的</p>
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240307201904789.png" alt="image-20240307201904789"></p>
 <p>Demo是React帮你调用的</p>
-<p>那如果不是箭头函数那这里的thi指向谁？</p>
+<p>那如果不是箭头函数那这里的this指向谁？</p>
 <p>答案是undefine</p>
 <p>因为</p>
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240307202050218.png" alt="image-20240307202050218"></p>
@@ -579,7 +579,7 @@ ReactDOM.render(VDOM,document.getElementById(&#39;test&#39;))
 <p>2.发现组件使用函数定义的，随后调用该函数。将返回的虚拟的dom转为真实的dom，然后呈现在页面</p>
 <p><strong>类组件</strong></p>
 <p>class里面的方法定义不需要使用function</p>
-<p>一般方法都在类的原型对象上面</p>
+<p>一般方法都在类的原型对象上面,只要不写成赋值函数，那么就会在原型对象上</p>
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240307203205647.png" alt="image-20240307203205647"></p>
 <p>又复习了一下类的</p>
 <p>如果</p>
@@ -602,7 +602,7 @@ ReactDOM.render(VDOM,document.getElementById(&#39;test&#39;))
 <p>2.必须使用render函数，使用return返回需要的东西</p>
 <p>3.当执行玩render以后发现是类的就是使用new 该类的实例，并且通过该实例调用render的方法，<strong>而且这里面的this就是组件实例对象</strong></p>
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240307205032993.png" alt="image-20240307205032993"></p>
-<p>这里面props和refs和stat特别的重要</p>
+<p>这里面props和refs和state特别的重要</p>
 <pre><code class="js">&lt;!DOCTYPE html&gt;
 &lt;html lang=&quot;en&quot;&gt;
 &lt;head&gt;
@@ -694,7 +694,7 @@ ReactDOM.render(&lt;MyComponent/&gt;,document.getElementById(&#39;test&#39;))
 <p>这样才可以调用</p>
 <p><strong>类中方法this的指向</strong></p>
 <p>实例对象</p>
-<p>如果直接这样的调用就会初心问题</p>
+<p>如果直接这样的调用就会出现问题</p>
 <pre><code class="js">&lt;!DOCTYPE html&gt;
 &lt;html lang=&quot;en&quot;&gt;
 &lt;head&gt;
@@ -825,7 +825,7 @@ ReactDOM.render(&lt;MyComponent/&gt;,document.getElementById(&#39;test&#39;))
 </code></pre>
 <p>我们要修改state的状态不可以直接修改</p>
 <p>如果直接修改的话不会引state的改变</p>
-<p>我们顺着原型链找到类继承react里面的setvalue这里面的可以帮助你修改</p>
+<p>我们顺着原型链找到类继承react里面的setState这里面的可以帮助你修改</p>
 <p>所以修正以后的代码</p>
 <pre><code class="js">&lt;!DOCTYPE html&gt;
 &lt;html lang=&quot;en&quot;&gt;
@@ -936,10 +936,10 @@ onClick=&#123;this.demo&#125;
 <p>这在提一下类，如果我们在实例对象</p>
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240308104111622.png" alt="image-20240308104111622"></p>
 <p>这里的wheel是定制</p>
-<p>其实我们 不用非得网构造器里面写</p>
+<p>其实我们 不用非得在构造器里面写</p>
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240308104203094.png" alt="image-20240308104203094"></p>
 <p><strong>记住不要声明变量</strong></p>
-<pre><code class="js">a=1//再类里面这样写的意思是给car的实例对象追加一个属性名文a，值为1
+<pre><code class="js">a=1//在类里面这样写的意思是给car的实例对象追加一个属性名文a，值为1
 </code></pre>
 <p>所以之前的代码精简成</p>
 <p>其实完全可以这样写</p>
@@ -959,7 +959,7 @@ onClick=&#123;this.demo&#125;
 <p>但是需要这么写</p>
 <p>一步一步的来</p>
 <p>首先我们</p>
-<p><strong>因为我们写成函数赋值的形式，所以这个函数就不会再函数的原型对象上面，其实就是上面的赋值语句一样 changeWeather当做a function (){<br>            this.setState({isHot:!this.state.isHot})<br>        }，当作值，但是有问题这里的this的指向是undefine的因为组件实例不会注定调用它，他是个回调的函数</strong></p>
+<p><strong>因为我们写成函数赋值的形式，所以这个函数就不会再函数的原型对象上面，其实就是上面的赋值语句一样 changeWeather当做a function (){<br>            this.setState({isHot:!this.state.isHot})<br>        }，当作值，但是有问题这里的this的指向是undefine的因为组件实例不会调用它，他是个回调的函数</strong></p>
 <pre><code class="js">    class Weather extends React.Component &#123;
         constructor(props) &#123;
             super(props);
@@ -1052,7 +1052,7 @@ onClick=&#123;this.demo&#125;
 <pre><code class="js">  const p = &#123;name:&#39;tom&#39;,age:&#39;18&#39;,sex: &#39;女&#39;&#125;
   ReactDOM.render(&lt;Person &#123;...p&#125;/&gt;,document.getElementById(&#39;test&#39;))
 </code></pre>
-<p>有点疑问三点运算符不是不能使用在对象身上吗，除非定义一个对象的迭代器，三点运算符的爹那个就是使用了迭代器</p>
+<p>有点疑问三点运算符不是不能使用在对象身上吗，除非定义一个对象的迭代器，三点运算符的那个底层原理就是使用了迭代器才能遍历</p>
 <p>卧槽学到一个新的语法</p>
 <pre><code class="js">//其实对象可以使用三点运算符，只不过适用于对象的字面量的赋值
 /例如
@@ -1078,7 +1078,7 @@ console.log(originalObject === shallowCopyObject); // false
 <p>千万不要我上面的误导了</p>
 <p>上面只是复习一下</p>
 <p>首先简写的{}这个作用还是js的表达式，原生的js对象不可以使用三点运算符但是这个里面是可以使用的，原因我也不知道</p>
-<p>虽然babel可以让你使用三点运算符解构对象</p>
+<p>因为babel可以让你使用三点运算符解构对象</p>
 <p>但是不可以随便用</p>
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240308130931802.png" alt="image-20240308130931802"></p>
 <p>之前用于传递数据</p>
@@ -1251,7 +1251,7 @@ const person2 = &#123;...person,name:&#39;王昌晨&#39;&#125;//在复制的同�
 <p>如果在继承的子类里面，使用构造器，但是没有接收props并且也没有通过super传递，那么this.props的值就是undefined</p>
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240308141953032.png" alt="image-20240308141953032"></p>
 <p>之前说过的函数式的组件</p>
-<p>因为hi函数所以没有this，所以使用不了state和refs，</p>
+<p>因为函数所以没有this，所以使用不了state和refs，</p>
 <p>但是可以使用props，因为函数是由有参数的</p>
 <p>这样也是可以实现的</p>
 <pre><code class="js">&lt;script type=&quot;text/babel&quot;&gt;
@@ -1336,7 +1336,7 @@ const person2 = &#123;...person,name:&#39;王昌晨&#39;&#125;//在复制的同�
 <p>为什么要被淘汰了呢？官网里面有答案</p>
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240308145011084.png" alt="image-20240308145011084"></p>
 <p>说明白就是效率的问题</p>
-<p>，如果ref写多了就会出现效率问题</p>
+<p>如果ref写多了就会出现效率问题</p>
 <p>所以不推荐</p>
 <p>下面是新的ref</p>
 <p><strong>回调函数形式的ref createref</strong></p>
@@ -1439,7 +1439,7 @@ const person2 = &#123;...person,name:&#39;王昌晨&#39;&#125;//在复制的同�
 <p>每当我们使用更新天气的就会刷新页面，</p>
 <p>这个时候我们就会发现实际上调用两次</p>
 <p>第一次的调用函数的参数为0</p>
-<p>第二次调用才获取的标qian3</p>
+<p>第二次调用才获取的标签</p>
 <p>原因在这里</p>
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240308153630656.png" alt="image-20240308153630656"></p>
 <p>为了有一次清空的操作</p>
@@ -1590,7 +1590,7 @@ const person2 = &#123;...person,name:&#39;王昌晨&#39;&#125;//在复制的同�
     &#125;
 &#125;
 </code></pre>
-<p><strong>通过event.target可以获取到触发事件恶的dom元素</strong></p>
+<p><strong>通过event.target可以获取到触发事件的dom元素</strong></p>
 <p><strong>总的来说ref尽量能避免就避免</strong></p>
 <h2 id="收集表单数据"><a href="#收集表单数据" class="headerlink" title="收集表单数据"></a>收集表单数据</h2><p>这里就有两个概念</p>
 <p>1.非受控组件</p>
@@ -1756,7 +1756,7 @@ obj[a]=&#39;tom&#39;//&#123;name:&#39;tom&#39;&#125;
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240308180807412.png" alt="image-20240308180807412"></p>
 <p>简单的例子</p>
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240308180929289.png" alt="image-20240308180929289"></p>
-<p>其实不用函数科比化也能实现上面的代码</p>
+<p>其实不用函数柯比化也能实现上面的代码</p>
 <pre><code class="js">  class Demo extends React.Component &#123;
     state=&#123;
       username:&quot;&quot;,
@@ -1855,7 +1855,7 @@ obj[a]=&#39;tom&#39;//&#123;name:&#39;tom&#39;&#125;
 &lt;/body&gt;
 &lt;/html&gt;
 </code></pre>
-<p>使用uunmountComponentAtNode可以使某个组件卸载</p>
+<p>使用unmountComponentAtNode可以使某个组件卸载</p>
 <p>组件挂载的声明周期钩子</p>
 <pre><code class="js">&lt;!DOCTYPE html&gt;
 &lt;html lang=&quot;en&quot;&gt;
@@ -2017,6 +2017,385 @@ obj[a]=&#39;tom&#39;//&#123;name:&#39;tom&#39;&#125;
 &lt;/html&gt;
 </code></pre>
 <p>使用componentWillUnmount这个钩子在快要卸载的时候调用</p>
+<p><strong>React的生命周期</strong></p>
+<p>&#x2F;<img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/react%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F(%E6%97%A7).png" alt="react生命周期(旧)"></p>
+<p>其实render也是一个生命周期钩子函数，上面的 生命周期是旧版本的</p>
+<p>先测试左边的的钩子</p>
+<pre><code class="js">&lt;script type=&quot;text/babel&quot;&gt;
+    class Count extends React.Component&#123;
+        constructor(props) &#123;
+            super(props);
+            console.log(&#39;Count-constructor&#39;)
+            this.state=&#123;
+                count:0,
+            &#125;
+        &#125;
+        //组建的将要挂载,在render的前面
+        componentWillMount()&#123;
+            console.log(&#39;Count-componentWillMount&#39;)
+        &#125;
+        render()&#123;
+            console.log(&#39;Count-render&#39;)
+            const &#123;count&#125; = this.state
+            return (
+                &lt;div&gt;
+                    &lt;h2&gt;当前求和为:&#123;count&#125;&lt;/h2&gt;
+                    &lt;button onClick=&#123;this.add&#125;&gt;当前求和为:&lt;/button&gt;
+                &lt;/div&gt;
+            )
+        &#125;
+        //组件已经挂载完毕，已经通过render渲染在页面上了
+        componentDidMount()&#123;
+            console.log(&#39;Count-componentDidMount&#39;)
+        &#125;
+        add = ()=&gt;&#123;
+            const &#123;count&#125; = this.state
+            this.setState(&#123;count:count+1&#125;)
+        &#125;
+    &#125;
+    ReactDOM.render(&lt;Count/&gt;,document.getElementById(&#39;test&#39;))
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240309093729432.png" alt="image-20240309093729432"></p>
+<p>上面的顺序已经验证了</p>
+<p>组件的卸载生命周期钩子</p>
+<pre><code class="js">            ReactDOM.unmountComponentAtNode(&#39;test&#39;)
+</code></pre>
+<p>调用这个以后就会卸载组件</p>
+<p>然后就会调用</p>
+<pre><code class="js">        componentWillUnmount()&#123;
+            console.log(&#39;Conut-componentWillUnmount&#39;)
+        &#125;
+</code></pre>
+<p>这个生命周期</p>
+<p>然后再讲讲更新的钩子</p>
+<p>主要有三个流程</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240309094242736.png" alt="ie-20240309094242736"></p>
+<p>先说一下2这条线</p>
+<p>调用setState以后</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240309094628518.png" alt="image-20240309094628518"></p>
+<p>讲一下这个钩子</p>
+<p><strong>当我们使用setState更改状态以后，就会调用上面的钩子，这个如果没有写就会默认帮你调用。</strong></p>
+<p><strong>返回值使boolen类型的，如果钩子返回的是true，那么后面的更新的钩子 都可以走下去，</strong></p>
+<p><strong>如果false，更新的操作就会停在这里了，不写默认返回真</strong></p>
+<pre><code class="js">        shouldComponentUpdate()&#123;
+            console.log(&#39;Count-shouldComponentUpdate&#39;)
+            return true
+        &#125;
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240309095036994.png" alt="image-20240309095036994"></p>
+<p>如果是false</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240309095108314.png" alt="image-20240309095108314"></p>
+<p>render不会调用，</p>
+<p><strong>简单地的就是控制组件更新的阀门</strong></p>
+<p>然后是</p>
+<p>组件将要更新</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240309095237631.png" alt="image-20240309095237631"></p>
+<pre><code class="js">        //这一步在render的前面，实在更新的之前
+        componentWillUpdate()&#123;
+            console.log(&#39;Cout-componentWillUpdate&#39;)
+        &#125;
+</code></pre>
+<p>然后是</p>
+<p>组件更新完毕的钩子</p>
+<pre><code class="js">        //组件更新完成以后，render的后面
+        componentDidUpdate()&#123;
+            console.log(&#39;Cout-componentDidUpdate&#39;)
+        &#125;
+</code></pre>
+<p>执行的效果</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240309095603118.png" alt="image-20240309095603118"></p>
+<p>然后我们在看这条线</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240309100705256.png" alt="image-20240309100705256"></p>
+<p>调用forceUpdate的</p>
+<p>这个是强制更新，不对 状态里面的数据进行更改，也能更新，这个流程会绕过阀门shouldcomponentupdate</p>
+<p>当我们调用</p>
+<pre><code class="js">        //轻质更新
+        force=()=&gt;&#123;
+            this.forceUpdate()
+        &#125;
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240309101111562.png" alt="image-20240309101111562"></p>
+<p>不受阀门的控制</p>
+<p>接下来第一条线</p>
+<p>这一条线需要父子关系</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240309101857230.png" alt="image-20240309101857230"></p>
+<p>当我们父组件执行render以后，子组件就会响应componentWillReceiveProps,子组件将要接到props</p>
+<p>这个钩子当我们传递数据给子组件，子组件里面就会调用这个钩子</p>
+<p>如下</p>
+<pre><code class="js">    class A extends React.Component&#123;
+        state=&#123;
+            carName:&#39;奔驰&#39;
+        &#125;
+        changeCar=()=&gt;&#123;
+            this.setState(&#123;carName:&#39;奥托&#39;&#125;)
+        &#125;
+        render()&#123;
+            return(
+                &lt;div&gt;
+                    &lt;div&gt;A组件&lt;/div&gt;
+                    &lt;button onClick=&#123;this.changeCar&#125;&gt;换车&lt;/button&gt;
+                    &lt;B carName=&#123;this.state.carName&#125;&gt;&lt;/B&gt;
+                &lt;/div&gt;
+            )
+        &#125;
+    &#125;
+    class B extends React.Component&#123;
+        componentWillReceiveProps()&#123;
+            console.log(&#39;B-componentWillReceiveProps&#39;)
+        &#125;
+        render()&#123;
+            return(
+                &lt;div&gt;
+                    &lt;p&gt;B组件，接收到&#123;this.props.carName&#125;&lt;/p&gt;
+                &lt;/div&gt;
+            )
+        &#125;
+    &#125;
+    ReactDOM.render(&lt;A/&gt;,document.getElementById(&#39;test&#39;))
+</code></pre>
+<p>但是这个componentWillReceiveProps有个弊端就是第一次传递props就不会调用。</p>
+<p>什么意思呢？</p>
+<p><strong>就是上面我们初始的时候就给B组件把state里面的carName传递过去，b组件显示了，数据已经通过props传过去但是却没有调用</strong></p>
+<p><strong>componentWillReceiveProps，只有更新state里的state里的carName以后才会调用</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240309103003362.png" alt="image-20240309103003362"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240309103115494.png" alt="image-20240309103115494"></p>
+<p>常用的钩子</p>
+<p>**componentDidMount()**常用于做一些初始化的东西，例如开启定时器，发送网络请求，订阅消息</p>
+<p>**componentWillUnmount()**一般做收尾的东西，例如关闭定时器</p>
+<p>上面是旧版的生命周期</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/react%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F(%E6%96%B0).png" alt="react生命周期(新)"></p>
+<p>有些生命周期已经改名了但是还可以使用</p>
+<p>不过会有报错</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240309104918803.png" alt="image-20240309104918803"></p>
+<p>但是在18版本必须写改名以后的</p>
+<p>我们把名字改下，新版本下面三个需要加上前缀</p>
+<pre><code class="js">UNSAFE_componentWillMount()&#123;
+    console.log(&#39;Count-componentWillMount&#39;)
+&#125;
+UNSAFE_componentWillUpdate()&#123;
+    console.log(&#39;Cout-componentWillUpdate&#39;)
+&#125;
+UNSAFE_componentWillReceiveProps()&#123;
+    console.log(&#39;B-componentWillReceiveProps&#39;)
+&#125;
+</code></pre>
+<p>这样就可以</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240309105212538.png" alt="image-20240309105212538"></p>
+<p>所有的带will的除了<strong>componentWillUnmount</strong>都得加上<strong>UNSAFE</strong></p>
+<p>为什么要这样呢？</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240309105619178.png" alt="image-20240309105619178"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240309105627220.png" alt="image-20240309105627220"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240309105720027.png" alt="image-20240309105720027"></p>
+<p>这几个钩子，经常被人滥用，这几个钩子经常不用</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240309105902373.png" alt="image-20240309105902373"></p>
+<p>除了这个区别还有别的吗？</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240309110039854.png" alt="image-20240309110039854"></p>
+<p>对吧旧版本没有经过UNSAFE_componentWillUpdate，UNSAFE_componentWillMount，但是还是会掉用</p>
+<p>用上图的一个新的钩子替代了他们</p>
+<p>更新的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240309110319172.png" alt="image-20240309110319172"></p>
+<p>注意更新渲染以后有新增一个钩子</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240309110405193.png" alt="image-20240309110405193"></p>
+<p>getSnapshotBeforeUpdate</p>
+<p>相比之下</p>
+<p>新版本的钩子</p>
+<hr>
+<p><strong>将要废弃了三个钩子分别为UNSAFE_componentWillMount，UNSAFE_componentWillUpdate，UNSAFE_componentWillReceiveProps，注意是将要，新增getSnapshotBeforeUpdate，getDerivedStateFormProps</strong></p>
+<p><strong>getDerivedStateFromProps</strong></p>
+<p>不能定义给是使用</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240309111212958.png" alt="image-20240309111212958"></p>
+<p>需要static</p>
+<p>还是不行</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240309111307893.png" alt="image-20240309111307893"></p>
+<p>需要返回null或者状态的那个对象</p>
+<p>返回null对功能没有影响</p>
+<p>如果返回状态对象的话</p>
+<pre><code class="js">constructor(props) &#123;
+    super(props);
+    console.log(&#39;Count-constructor&#39;)
+    this.state=&#123;
+        count:0,
+    &#125;
+&#125;
+//构造器以后
+static getDerivedStateFromProps()&#123;
+    console.log(&#39;getDerivedStateFromProps&#39;)
+    return &#123;count:100,&#125;
+&#125;
+</code></pre>
+<p>这样更新state就会影响了，以后用于改不了，其他的不受影响</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240309111535487.png" alt="image-20240309111535487"></p>
+<p>而且这里的还能接收到props</p>
+<p>这就能解释他的名字了</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240309111705341.png" alt="image-20240309111705341"></p>
+<pre><code class="js">&lt;script type=&quot;text/babel&quot;&gt;
+    class Count extends React.Component&#123;
+        constructor(props) &#123;
+            super(props);
+            console.log(&#39;Count-constructor&#39;)
+            this.state=&#123;
+                count:0,
+            &#125;
+        &#125;
+        //构造器以后
+        static getDerivedStateFromProps(props)&#123;
+            console.log(&#39;getDerivedStateFromProps=&gt;&#39;+ props)
+            return props
+        &#125;
+        render()&#123;
+            console.log(&#39;Count-render&#39;)
+            const &#123;count&#125; = this.state
+            return (
+                &lt;div&gt;
+                    &lt;h2&gt;当前求和为:&#123;count&#125;&lt;/h2&gt;
+                    &lt;button onClick=&#123;this.add&#125;&gt;当前求和为:&lt;/button&gt;
+                    &lt;button onClick=&#123;this.death&#125;&gt;卸载组件&lt;/button&gt;
+                    &lt;button onClick=&#123;this.force&#125;&gt;不更改任何状态中的数据，强制更新&lt;/button&gt;
+                &lt;/div&gt;
+            )
+        &#125;
+        //组件已经挂载完毕，已经通过render渲染在页面上了
+        componentDidMount()&#123;
+            console.log(&#39;Count-componentDidMount&#39;)
+        &#125;
+        //组件卸载前调用这个函数
+        componentWillUnmount()&#123;
+            console.log(&#39;Conut-componentWillUnmount&#39;)
+        &#125;
+        shouldComponentUpdate()&#123;
+            console.log(&#39;Count-shouldComponentUpdate&#39;)
+            return true
+        &#125;
+        //组件更新完成以后，rnder的后面
+        componentDidUpdate()&#123;
+            console.log(&#39;Cout-componentDidUpdate&#39;)
+        &#125;
+        add = ()=&gt;&#123;
+            const &#123;count&#125; = this.state
+            this.setState(&#123;count:count+1&#125;)
+        &#125;
+        death = ()=&gt;&#123;
+            ReactDOM.unmountComponentAtNode(&#39;test&#39;)
+        &#125;
+        //轻质更新
+        force=()=&gt;&#123;
+            this.forceUpdate()
+        &#125;
+    &#125;
+    ReactDOM.render(&lt;Count age=&#39;100&#39;/&gt;,document.getElementById(&#39;test&#39;))
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240309111831207.png" alt="image-20240309111831207"></p>
+<p><strong>这样就实现了</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240309111923036.png" alt="image-20240309111923036"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240309111941448.png" alt="image-20240309111941448"></p>
+<p>还有一个参数state</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240309112012045.png" alt="image-20240309112012045"></p>
+<p><strong>getSnapshotBeforeUpdate</strong></p>
+<pre><code class="js">getSnapshotBeforeUpdate()&#123;
+    console.log(&#39;getSnapshotBeforeUpdate&#39;)
+&#125;
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240310083727159.png" alt="image-20240310083727159"></p>
+<p>如果不返回值就会报错</p>
+<p>提示说快照值或者 一个null值</p>
+<p>这个快照之可以是任意的值 </p>
+<p>但是这里的返回值去哪里了？<br>先说一下componentDidupdate</p>
+<p>这里的参数</p>
+<pre><code class="js">        componentDidUpdate(preProps,preState)&#123;
+            console.log(&#39;Cout-componentDidUpdate&#39;,preProps,preState)
+        &#125;
+</code></pre>
+<p>这里的参数分别为，</p>
+<p>传过来的props和上一次的的state，注意不是最新的</p>
+<p>接着上面的话题</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240310084437340.png" alt="image-20240310084437340"></p>
+<p>所以它有三个参数</p>
+<pre><code class="js">componentDidUpdate(preProps,preState,snapshotValue)&#123;
+    console.log(&#39;Cout-componentDidUpdate&#39;,preProps,preState,snapshotValue)
+&#125;
+</code></pre>
+<p>那这个有什么用呢？</p>
+<p><strong>为了记录之前的数据，加入之前有10个人，更新以后有11个人，如果逆向获取之前的10个人的数据，我们就可以使用快照记录下之前的数据</strong></p>
+<p>作用就是</p>
+<p><strong>在更新的时候获取快照</strong></p>
+<p>新版生命周期的总结</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240310085826926.png" alt="image-20240310085826926"></p>
+<h2 id="Dom的diffing算法"><a href="#Dom的diffing算法" class="headerlink" title="Dom的diffing算法"></a>Dom的diffing算法</h2><p>验证React的diffing的算法</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240310090136662.png" alt="image-20240310090136662"></p>
+<p>每个一秒更细state的数据</p>
+<p>因为模板里面的h1和input没有发生改变，但是span的发生变化，所以其他的渲染一次，但是span里面一直在熏染</p>
+<p>如果里面的span还有input的话，里面的input不会更新熏染</p>
+<p>这里重新复习一下vue和react的key的作用原理</p>
+<p>这个代码</p>
+<pre><code class="js">    class Person extends React.Component &#123;
+        state=&#123;
+            persons:[
+                &#123;id:1,name:&quot;黎明&quot;&#125;,
+                &#123;id:2,name:&quot;小白&quot;&#125;,
+                &#123;id:3,name:&quot;小黑&quot;&#125;,
+                &#123;id:4,name:&#39;小红&#39;&#125;,
+            ]
+        &#125;
+        addPerson = ()=&gt;&#123;
+            const &#123;persons&#125; = this.state
+            const p = &#123;id:persons.length+1,name:&quot;小王&quot;&#125;
+            this.setState(&#123;persons:[p,...persons]&#125;)
+        &#125;
+        render()&#123;
+            return (
+                &lt;div&gt;
+                    &lt;h2&gt;展示人员信息&lt;/h2&gt;
+                    &lt;button onClick=&#123;this.addPerson&#125;&gt;添加一个小王&lt;/button&gt;
+                    &lt;ul&gt;
+                        &#123;
+                            this.state.persons.map((item,index)=&gt;&lt;li key=&quot;index&quot;&gt;&#123;item.name&#125;&lt;/li&gt;)
+                        &#125;
+                    &lt;/ul&gt;
+                &lt;/div&gt;
+            )
+        &#125;
+    &#125;
+    ReactDOM.render(&lt;Person&gt;&lt;/Person&gt;,document.getElementById(&#39;test&#39;))
+</code></pre>
+<p>上面的代码存在严重的效率问题</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240310091527249.png" alt="image-20240310091527249"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240310091616022.png" alt="image-20240310091616022"></p>
+<p><strong>新的虚拟DOM生新的虚拟DOM，然后和旧的虚拟DOM进行比较，然后比较玩以后在生成新的虚拟DOM，记住对比的是虚拟dom</strong></p>
+<p>比较过程是这样的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240310091847370.png" alt="image-20240310091847370"></p>
+<p>我们根据上面的例子看一下</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240310093424684.png" alt="image-20240310093424684"></p>
+<p><strong>根据diffing算法，先取和旧的虚拟DOM相同的，首先是0 ，但是数据发生改变了，所以需要重新更新dom，接下去的一样，但是我们只是更新了一条数据，所以上面的代码有效率问题，如果上面的小王是往后面的放就不会出现这个问题</strong></p>
+<p>如果我们有2000条数据，但是我们只更新一条，还是往前面加，这样我们的2001数据都得更新，</p>
+<p>所以我们换个值当最索引值做key，我们就可以拿数据里面的id当作id</p>
+<p>上面的问题，当我们的出现大佬输入的节点就会更严重</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240310094215984.png" alt="image-20240310094215984"></p>
+<p>这样的而原因就是因为</p>
+<p><strong>当小王插入以后，key为0，小张的变为1，之前的小张为0 ，里面的输入框因为前后的diffing对比以后没有发生改变，所以input框不会更新还会再原来的位置</strong></p>
+<p>如果上面是往后面的加，就不会造成上面的问题</p>
+<p>总结</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240310094918754.png" alt="image-20240310094918754"></p>
+<p>如何避免呢？</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240310095020295.png" alt="image-20240310095020295"></p>
+<h2 id="初始化React脚手架"><a href="#初始化React脚手架" class="headerlink" title="初始化React脚手架"></a>初始化React<strong>脚手架</strong></h2><p>作用:快速安全的编写基于某种技术</p>
+<p>使用webpack搭建的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240310095419651.png" alt="image-20240310095419651"></p>
+<p>创建的过程</p>
+<p>1.首先安装库，我使用的pnpm</p>
+<pre><code class="bash">pnpm i -g create-react-app
+</code></pre>
+<p>2.然后创建脚手架项目</p>
+<pre><code class="bash">create-react-app hello_react
+</code></pre>
+<p>然后就创建完成了</p>
+<pre><code>补充一点知识，做移动端的app
+Android 一般使用java
+IOS 一般使用oc swift
+</code></pre>
+<p><strong>加壳技术就是在把pc端的网页加个壳，就会有apk的文件，就可以安在手机上，其实不是一个应用，只是一个壳，当用户点击是就是打开一个壳，壳里面里面内嵌一个网页，这就是应用加壳技术，一般小型软件可以</strong></p>
+<p>再说一下noscript的标签</p>
+<p>当浏览器不支持js就会显示里面的内容</p>
+<p>robots的文件，规定哪些可以爬取，哪些不可以爬取</p>
 
     </div>
     
