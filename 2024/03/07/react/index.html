@@ -2709,6 +2709,87 @@ PubSub.subscribe(&#39;userInfo&#39;,(message,data)=&gt;&#123;
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240311205628687.png" alt="image-20240311205628687"></p>
 <p>这个关注分离是什么意思呢？</p>
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240311205717212.png" alt="image-20240311205717212"></p>
+<p>下面演示</p>
+<pre><code class="js">        fetch(`https://api.github.com/search/users?q=$&#123;this.state.name&#125;`).then((res)=&gt;&#123;
+            console.log(&#39;联系服务器成功&#39;,res)
+        &#125;,(err)=&gt;&#123;
+            console.log(&#39;练习服务器失败&#39;,err)
+        &#125;)
+</code></pre>
+<p>这里面成功返回的数据</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240311210412873.png" alt="image-20240311210412873"></p>
+<p>发现并没有我们需要数据</p>
+<p>如果我们更改地址再次进行访问，这次会调用错误的回调吗？</p>
+<p>我们发现还是调用的是成功的回调，</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240311210735749.png" alt="image-20240311210735749"></p>
+<p>为什么呢？</p>
+<p>因为你请求这个服务器的ip，但是这个服务器没有这个路由，服务器业委会给你响应404</p>
+<p>那怎么调用这个错误的回调呢？</p>
+<p>使用离线的功能</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240311210957487.png" alt="image-20240311210957487"></p>
+<p>这样就会调用失败的回调</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240311211104307.png" alt="image-20240311211104307"></p>
+<p>那接着上面的话题怎么向服务器要数据，上面只是向服务器建立联系</p>
+<p>我们发现Response上面有一个json()的方法</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240311211359052.png" alt="image-20240311211359052"></p>
+<p>输出一下response.jsonde 内容</p>
+<pre><code class="js">        fetch(`https://api.github.com/search/u?q=$&#123;this.state.name&#125;`).then((Response)=&gt;&#123;
+            console.log(&#39;联系服务器成功&#39;,Response.json())
+        &#125;,(err)=&gt;&#123;
+            console.log(&#39;练习服务器失败&#39;,err)
+        &#125;)
+</code></pre>
+<p>发现个promise对象，其实服务器返回你的数据就在里面，</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240311211600404.png" alt="image-20240311211600404"></p>
+<p>然后之前学过链式调用，如果这里面返回的是成功的Promise</p>
+<pre><code class="js">return Response.json()
+</code></pre>
+<p>这里再复习一下</p>
+<pre><code>1.如果then返回的是非promise的值，那么.then返回的是成功的Promise，并且成功的值为返回的值
+2.如果返回的是prmise的话，那么这个.then返回的值就是promise，值为返回的promise的值
+3.如果回调中抛出异常，那么返回失败的promise，值为抛出异常的值
+</code></pre>
+<p>这里就可以这么写</p>
+<pre><code class="js">        fetch(`https://api.github.com/search/users?q=$&#123;this.state.name&#125;`).then((response)=&gt;&#123;
+            return response.json()
+        &#125;,(err)=&gt;&#123;
+            console.log(&#39;练习服务器失败&#39;,err)
+            return Promise.reject(err)
+        &#125;).then(
+            (response)=&gt;&#123;
+                console.log(&#39;获取数据成功&#39;,response)&#125;,
+            (err)=&gt;&#123;
+                console.log(&#39;获取数据失败&#39;,err)
+            &#125;
+        )
+</code></pre>
+<p>这样就可以获取数据</p>
+<p>注意这里的response.json()不可以打印，打印的话就会报错</p>
+<p>其实上面的回调有点鸡肋失败的回调写了很多次</p>
+<p>所以我们可以最后优化以后的</p>
+<pre><code class="js">        fetch(`https://api.github.com/search/users?q=$&#123;this.state.name&#125;`).then((response)=&gt;&#123;
+            return response.json()
+        &#125;).then(
+            (response)=&gt;&#123;
+                console.log(&#39;获取数据成功&#39;,response)&#125;
+        ).catch(
+            (error)=&gt;&#123;
+                console.log(error)&#125;
+        )
+</code></pre>
+<p>最后用catch处理失败的，</p>
+<p>或者使用await的方法</p>
+<pre><code class="js">try &#123;
+    const res = await fetch(`https://api.github.com/search/users?q=$&#123;this.state.name&#125;`)
+    const result = await res.json()
+    console.log(result)
+&#125; catch (e) &#123;
+    console.log(e)
+&#125;
+</code></pre>
+<p>上面的就是实现关注分离了，</p>
+<p>先告诉你成没成功连到服务器，然后数据回来就可以</p>
+<p>但是他的兼容性低老版本的浏览器不支持</p>
 
     </div>
     
