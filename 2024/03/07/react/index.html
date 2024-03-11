@@ -1521,7 +1521,7 @@ const person2 = &#123;...person,name:&#39;王昌晨&#39;&#125;//在复制的同�
             console.log(this.myRef.current)//这个属性里面保存着标签
         &#125;
 /React.createRef可调用以后返回一个容器,该容器可以储存被ref标记的节点
-        myRef= React.createRef()
+        myRef = React.createRef()
         render()&#123;
             return  (
                 &lt;div&gt;
@@ -2396,6 +2396,319 @@ IOS 一般使用oc swift
 <p>再说一下noscript的标签</p>
 <p>当浏览器不支持js就会显示里面的内容</p>
 <p>robots的文件，规定哪些可以爬取，哪些不可以爬取</p>
+<p>在入口文件</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240310105538811.png" alt="image-20240310105538811"></p>
+<p>渲染的时候外层包裹的的标签是检查app组件是否有错误，</p>
+<p>比如react要淘汰的字符串了的ref类型，就会检查出来</p>
+<p>再补充点</p>
+<p>在webpack里面一切皆模块</p>
+<p>图片也可以这样的引入</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240310105830110.png" alt="image-20240310105830110"></p>
+<p>下面的文件是用于记录页面行性能</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240310105909326.png" alt="image-20240310105909326"></p>
+<p>我们可以简写一下</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240310113950842.png" alt="image-20240310113950842"></p>
+<p>更简单的是，注意这是es6的语法，不是从react里面解构出来</p>
+<p>正常是从React里面解构的</p>
+<pre><code class="js">import React ,&#123;Component&#125;from &quot;react&quot;;
+</code></pre>
+<p>还有一个注意点</p>
+<p>如果我们项目的目录下有组件的文件，有一些功能性的文件的话</p>
+<p>有时候我们可能导致很乱</p>
+<p><strong>1.我们可以将组组建的文件名字大写</strong></p>
+<p><strong>2.我们可以把js后缀改为jsx，因为React里可以使用jsx</strong></p>
+<p>就可以这样</p>
+<p>另外在别的文件引入的话也可以进行省略后面的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240310151256413.png" alt="image-20240310151256413"></p>
+<p>后面的jsx也可以省略</p>
+<p>app里面也是可以更改的</p>
+<p>如果名字是index的话就可以直接省略</p>
+<p>样式的模块化（一般不使用）</p>
+<p>可以增长知识</p>
+<pre><code class="js">import React,&#123;Component&#125;  from &quot;react&quot;
+import hello  from &#39;./Hello.module.css&#39;
+export default class Hello extends Component &#123;
+    render()&#123;
+        return (
+            &lt;div&gt;
+                &lt;h1 className=&#123;hello.title&#125;&gt;hello,react&lt;/h1&gt;
+            &lt;/div&gt;
+        )
+    &#125;
+&#125;
+</code></pre>
+<pre><code class="js">.title&#123;
+    background-color: orange;
+&#125;
+</code></pre>
+<p>然后把css的文件名字改成这样</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240310152101136.png" alt="image-20240310152101136"></p>
+<p>我们可以使用代码片段快速的生成一个</p>
+<p>使用</p>
+<pre><code>rcc
+</code></pre>
+<p>就会快速创建一个类组件的组件</p>
+<p>使用</p>
+<pre><code>rfc
+</code></pre>
+<p>就会快速创建一个函数式组件的组件</p>
+<p><strong>一般成型的模块的往上面放,j就是使用的第三库的包</strong></p>
+<p><strong>一般自己写的组件往下面放，样式放在最后</strong></p>
+<pre><code class="js">defaultchecked，这个相比于checked，是可以取消勾选的，checked是更改不了的，得要change
+</code></pre>
+<p>event对象里面还有</p>
+<pre><code class="js">class Header extends Component &#123;
+    handleKeyUp = (event)=&gt;&#123;
+        console.log(event.target.value,event.keyCode)
+&#125;
+    render() &#123;
+        return (
+            &lt;div className=&quot;todo-header&quot;&gt;
+                &lt;input type=&quot;text&quot; placeholder=&quot;请输入你的任务名称，按回车键确认&quot; onKeyUp=&#123;this.handleKeyUp&#125;/&gt;
+            &lt;/div&gt;
+        );
+    &#125;
+&#125;
+</code></pre>
+<p>event里面的keyCode键盘吗，可以通过这个来判断是否回车</p>
+<p>这里的子组件向父组件传递就可以使用函数的形式进行传递。和vue里面的一样</p>
+<p>如下</p>
+<p>父组件</p>
+<pre><code class="js">    a = (value)=&gt;&#123;
+        console.log(value)
+    &#125;
+    render() &#123;
+        const &#123;todos&#125; = this.state
+        return (
+            &lt;div&gt;
+                &lt;div className=&quot;todo-container&quot;&gt;
+                    &lt;div className=&quot;todo-wrap&quot;&gt;
+                        &lt;Header a=&#123;this.a&#125;/&gt;
+                        &lt;List todos=&#123;todos&#125;/&gt;
+                        &lt;Footer/&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        );
+    &#125;
+&#125;
+</code></pre>
+<p>子组件</p>
+<pre><code class="js">    handleKeyUp = (event)=&gt;&#123;
+        const a = this.props.a
+        const &#123;target , keyCode&#125; = event
+        if (keyCode !== 13) return
+        console.log(target.value, keyCode)
+        a(target.value)
+
+&#125;
+</code></pre>
+<p>之前说过的技巧</p>
+<pre><code class="js">const person = &#123;name:&#39;11&#39;,age:19&#125;
+const  person1 = &#123;...person,name:&#39;666&#39;&#125;
+console.log( person1 )//&#123;name:&quot;666&quot;,age:19&#125;
+</code></pre>
+<p>之前的代码</p>
+<pre><code class="js">    shouldChecked = (value,item)=&gt;&#123;
+        console.log(value,item)        
+        const newTodos = this.state.todos.map((item1)=&gt;&#123;
+            if (item1 === item)&#123;
+                item1.done = value
+            &#125;
+            return item1
+        &#125;)
+        console.log(newTodos)
+        this.setState(&#123;todos:newTodos&#125;)
+    &#125;
+</code></pre>
+<p>我可以完全写成这样</p>
+<pre><code class="js">    shouldChecked = (value,item)=&gt;&#123;
+        console.log(value,item)
+        const newTodos = this.state.todos.map((item1)=&gt;&#123;
+            // if (item1 === item)&#123;
+            //     item1.done = value
+            // &#125;
+            // return item1
+            if (item1 ===item)&#123;
+                return &#123;...item1,done:value&#125;
+            &#125; else return item1
+        &#125;)
+        console.log(newTodos)
+        this.setState(&#123;todos:newTodos&#125;)
+    &#125;
+</code></pre>
+<p>脚手架里面没有配置PropTypes所以需要自己安装</p>
+<pre><code>PropTypes用于对prop传过来的数据做检查的
+</code></pre>
+<p>指令</p>
+<pre><code class="bash">pnpm i prop-types
+</code></pre>
+<pre><code class="jsx">   import PropTypes from &quot;prop-types&quot;
+   static propTypes =&#123;
+        addTodo:PropTypes.func.isRequired
+    &#125;//卸载类的里面
+</code></pre>
+<p>删除的操作还可以优化一下</p>
+<pre><code class="js">    deleteTodo = (event)=&gt;&#123;
+        if (window.confirm(&#39;确定删除吗？&#39;))&#123;
+            console.log(this.props.item)
+            this.props.deleteTodo(this.props.item)
+        &#125;
+    &#125;
+</code></pre>
+<p><strong>原生的js这里不需要写window，但是React的里面需要加上window</strong></p>
+<p>我们在实现</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240310194050185.png" alt="image-20240310194050185"></p>
+<p>通过勾选然后实时的改变，就需要app组件向footer组件传递todos</p>
+<p>这里就用到getDerivedStateFromPropsz这个钩子</p>
+<p>在熏染前调用</p>
+<pre><code class="jsx">   state = &#123;
+        finished:null,
+        all:null
+    &#125;    
+static getDerivedStateFromProps(props,state)&#123;
+        const newTodos = props.todos.filter((item)=&gt;&#123;
+            return item.done === true
+        &#125;)
+        return &#123;
+            finished: newTodos.length,
+            all: props.todos.length
+        &#125;
+    &#125;
+</code></pre>
+<p>这样state的数据都却决于饿哦们传递过来的数据的长度</p>
+<p>注意这是静态方法，需要是使用static</p>
+<p><strong>其实更简单的方法就是把上面的操作（薰染前计算）写在render里面</strong></p>
+<p>这里强调defaultChecked的用法</p>
+<p><strong>defaultChecked只有第一次有效</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240310195018692.png" alt="image-20240310195018692"></p>
+<p>这里的是我用defaultChecked定义的</p>
+<p>开始没有全部的勾选，</p>
+<p>但是当我们全部勾选上</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240310195139432.png" alt="image-20240310195139432"></p>
+<p>他也不会有效了</p>
+<p>这就是第一次有效</p>
+<p>所以使用checked但是需要配合onChange使用</p>
+<p><strong>状态提升</strong></p>
+<p>把子组件需要的状态写在夫组件里面</p>
+<p>状态在哪里修改状态的方法就在哪里</p>
+<h3 id="React里面发送ajax请求"><a href="#React里面发送ajax请求" class="headerlink" title="React里面发送ajax请求"></a>React里面发送ajax请求</h3><p>使用axios进行发送ajax请求</p>
+<p> 在使用ajax发送数据的时候出现了跨域的问题</p>
+<p>所以需要配置代理服务器</p>
+<p>这里讲一下为什么代理服务器可以解决就跨域、</p>
+<p><strong>我们创建一个和客户端一样端口号的服务器，然后，假如说我们的客户端的端口号是3000，服务器的端口号是5000，然后我们需要向，代理服务器发送请求，这个代理服务器就会就把刚才的请求转发给5000，然后5000，就可以把响应给代理的3000端口，这里之前就会有疑问，为什么5000能给3000代理响应，不应该还是跨域吗， 因为，这个代理没有ajax引擎，之前的客户端的3000端口被拦截是因为有ajax引擎，这样响应的数据被拦在外面，同源策略不会限制</strong></p>
+<p>配置代理的方法</p>
+<p>把你的package.json文件里面加入</p>
+<pre><code class="js">  &quot;proxy&quot;: &quot;http://localhost:5000&quot;
+</code></pre>
+<p>这个是你要请求的地址</p>
+<p>然后</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240311105551434.png" alt="image-20240311105551434"></p>
+<p>所以我们请求的地址也得是代理服务器的地址</p>
+<pre><code class="js">    getInfo = ()=&gt;&#123;
+        axios.get(&#39;http://localhost:3000/students&#39;).then((response)=&gt;&#123;
+            console.log(response.data)
+        &#125;,(error)=&gt;&#123;
+            &#39;失败了&#39;
+        &#125;)
+    &#125;
+</code></pre>
+<p>这里有一个注意点，</p>
+<p>如果3000端口有的请求地址有的话，就不会请求服务器了</p>
+<p>例如</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240311105922021.png" alt="image-20240311105922021"></p>
+<p>在我们的3000端口下有index.html，所以代理服务器就不会请求服务器了，</p>
+<p>如果public里面有students那么也不会给服务器5000了，</p>
+<p>上面的写法不太好</p>
+<p>我们还有一种情况，如果，我们请求两个地址，一个5000端口，一个5001端口，那么上面</p>
+<pre><code class="js">&quot;proxy&quot;: &quot;http://localhost:5000&quot;
+</code></pre>
+<p>这样就配置死了</p>
+<p><strong>所以配置多个代理的方法</strong>（这种方法实验了很多次 还是不好用）</p>
+<p>这个博客可以看一下</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/ZLJ_999/article/details/124169675">react跨域 http-proxy-middleware 无效还是404_http-proxy-middleware 403-CSDN博客</a></p>
+<p>1.在src目录下创建setupProxy(react脚手架会发现这个文件，然后把这个文件的配置加到webpackd的配置里，webpack里面使用都是cjs的语法)</p>
+<p>2.这个文件里面只能使用cjs的语法写，就是（common js）</p>
+<p>3.在setupProxy里面的代码</p>
+<pre><code class="js">const &#123;createProxyMiddleware&#125; = require(&#39;http-proxy-middleware&#39;)
+
+
+
+module.exports = function (app)&#123;
+    app.use(
+        createProxyMiddleware(&#39;api1&#39;,&#123;//遇见api1的前缀就会触发该代理配置HOST就是请求的地址
+            target:&#39;http://localhost:5000&#39;,//请求转给谁
+            changeOrigin:true,////控制服务器收到的响应头中HOST字段的值，这个就可以欺骗服务器。，如果服务器对请求的地址做出限制，只允许5000访问的，那么这个就排上用场了，3000请求的，请求头里面的就是HOST就是5000，不加也不会有太大的问题
+            pathRewrite:&#123;&#39;^/api1&#39;:&#39;&#39;&#125;
+        &#125;)
+    )
+&#125;
+</code></pre>
+<p>然后请求的地址也要更改下</p>
+<pre><code class="js">    getInfo = ()=&gt;&#123;
+        axios.get(&#39;http://localhost:3000/api1/students&#39;).then((response)=&gt;&#123;
+            console.log(response.data)
+        &#125;,(error)=&gt;&#123;
+            &#39;失败了&#39;
+        &#125;)
+    &#125;
+</code></pre>
+<p>这里的api1机会匹配到setupProxy里面的api1，多个是同样的道理，但是我的实验 很多次也是没有用的</p>
+<p>在Express里面可以通过</p>
+<p>**req.get(‘’)**获取相应的请求头的值</p>
+<p><strong>或者在服务端开启跨域</strong></p>
+<pre><code class="js">const cors = require(&#39;cors&#39;)
+app.use(cors())
+</code></pre>
+<p><strong>Github案例</strong></p>
+<p>注意解构赋值</p>
+<pre><code class="js">    info = (&#123;target:&#123;value&#125;&#125;)=&gt;&#123;
+        console.log(value)
+        console.log(target)
+    &#125;
+</code></pre>
+<p>这里是解构不出target的,只能解构出value</p>
+<p>这里在补充一个知识</p>
+<p>三元表达式可以连着写</p>
+<p>就像这样的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240311200413605.png" alt="image-20240311200413605"></p>
+<p>这样就可以充当if的功能，而且还能写在代码块</p>
+<h2 id="组件间的通信"><a href="#组件间的通信" class="headerlink" title="组件间的通信"></a>组件间的通信</h2><p><strong>1.消息订阅和发布</strong></p>
+<p><strong>PubSubjs</strong></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/mroderick/PubSubJS">mroderick&#x2F;PubSubJS: Dependency free publish&#x2F;subscribe for JavaScript (github.com)</a></p>
+<p>和vue里面的mitt和pubsub的使用方法一样的</p>
+<p>这是消息的接收方</p>
+<p>这里的message就是前面的消息的名称，后面就是消息的数据</p>
+<pre><code class="js">        PubSub.subscribe(&#39;userInfo&#39;,(message,data)=&gt;&#123;
+            console.log(message,data)
+        &#125;)
+</code></pre>
+<p>这里是消息的发送方</p>
+<pre><code class="js">        PubSub.publish(&#39;userInfo&#39;,this.state.userInfo)
+</code></pre>
+<p>这里说一下我遇到的问题</p>
+<p>就是当我使用subscribe接收数据以后</p>
+<pre><code class="js">let data1=[]
+PubSub.subscribe(&#39;userInfo&#39;,(message,data)=&gt;&#123;
+    // this.setState(&#123;userInfo:data&#125;)
+    data1=data
+&#125;)
+</code></pre>
+<p>我没有使用state来保存数据</p>
+<p>然后后面我遍历这个数据data1，发现页面一致没有显示，</p>
+<p>后分析得出，这里必须把数据写在state里面，要么这里的数据更改以后，不会引起render的重新熏染，因为只用state里面的数据发生改变，才可以重新熏染，</p>
+<p>所以写成这样</p>
+<pre><code class="js">        PubSub.subscribe(&#39;userInfo&#39;,(message,data)=&gt;&#123;
+            this.setState(&#123;userInfo:data&#125;)
+        &#125;)
+</code></pre>
+<h2 id="Fecth"><a href="#Fecth" class="headerlink" title="Fecth"></a><strong>Fecth</strong></h2><p>之前学过的jQuery和axios发送ajax请求都是对XHR的封装</p>
+<p>fecth也是发送ajax 的，但是它可以理解为他是和xhr并列的，这个是内置的，而且不是第三方库，而且这个是promise风格的，能够解决回调地狱，</p>
+<p>这篇文章讲的好</p>
+<p><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000003810652">javascript - 传统 Ajax 已死，Fetch 永生 - 会影 - SegmentFault 思否</a></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240311205628687.png" alt="image-20240311205628687"></p>
+<p>这个关注分离是什么意思呢？</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240311205717212.png" alt="image-20240311205717212"></p>
 
     </div>
     
