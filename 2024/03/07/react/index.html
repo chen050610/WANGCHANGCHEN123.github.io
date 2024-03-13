@@ -2790,6 +2790,555 @@ PubSub.subscribe(&#39;userInfo&#39;,(message,data)=&gt;&#123;
 <p>上面的就是实现关注分离了，</p>
 <p>先告诉你成没成功连到服务器，然后数据回来就可以</p>
 <p>但是他的兼容性低老版本的浏览器不支持</p>
+<p>这个的使用的场景非常少，了解就可以</p>
+<p><strong>在使用的PUsub的地方再强调一下需要使用</strong></p>
+<p><strong>componentWillUmount，取消订阅</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240312150152857.png" alt="image-20240312150152857"></p>
+<h2 id="React的路由"><a href="#React的路由" class="headerlink" title="React的路由"></a>React的路由</h2><p>之前写的都是SPA意思就是单页面的应用</p>
+<p>使用路由的技术</p>
+<p><strong>前端路由的讲解</strong></p>
+<p>前端路由的基石</p>
+<p>我们知道有DOM和BOM</p>
+<p>BOM里面就有浏览器的历史记录，前端路由借助的就是他的history</p>
+<p>我们记住第三方库去history去操作</p>
+<pre><code class="js">&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+  &lt;meta charset=&quot;UTF-8&quot;&gt;
+  &lt;title&gt;前端路由的基石_history&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;a href=&quot;http://www.atguigu.com&quot; onclick=&quot;return push(&#39;/test1&#39;) &quot;&gt;push test1&lt;/a&gt;&lt;br&gt;&lt;br&gt;
+    &lt;button onClick=&quot;push(&#39;/test2&#39;)&quot;&gt;push test2&lt;/button&gt;&lt;br&gt;&lt;br&gt;
+    &lt;button onClick=&quot;replace(&#39;/test3&#39;)&quot;&gt;replace test3&lt;/button&gt;&lt;br&gt;&lt;br&gt;
+    &lt;button onClick=&quot;back()&quot;&gt;&amp;lt;= 回退&lt;/button&gt;
+    &lt;button onClick=&quot;forword()&quot;&gt;前进 =&amp;gt;&lt;/button&gt;
+
+    &lt;script type=&quot;text/javascript&quot; src=&quot;https://cdn.bootcss.com/history/4.7.2/history.js&quot;&gt;&lt;/script&gt;
+    &lt;script type=&quot;text/javascript&quot;&gt;
+        // let history = History.createBrowserHistory() //方法一，直接使用H5推出的history身上的API
+        let history = History.createHashHistory() //方法二，hash值（锚点）
+
+        function push (path) &#123;
+            history.push(path)
+            return false
+        &#125;
+
+        function replace (path) &#123;
+            history.replace(path)
+        &#125;
+
+        function back() &#123;
+            history.goBack()
+        &#125;
+
+        function forword() &#123;
+            history.goForward()
+        &#125;
+
+        history.listen((location) =&gt; &#123;
+            console.log(&#39;请求路由路径变化了&#39;, location)
+        &#125;)
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p>这里面的第三方库就可以就是对BOM里面的history的封装，</p>
+<p>如果使用原生的会很繁琐</p>
+<pre><code class="js">    &lt;a href=&quot;http://www.atguigu.com&quot; onclick=&quot;return push(&#39;/test1&#39;) &quot;&gt;push test1&lt;/a&gt;&lt;br&gt;&lt;br&gt;
+            function push (path) &#123;
+            history.push(path)
+            return false//就不会跳转，但是会将浏览器的地址栏改为/test
+                1
+        &#125;
+</code></pre>
+<p>上面的就是大概的react路由的原理。路由跳转，还可以监控路由跳转的路径</p>
+<p><strong>浏览器的历史记录就是一个栈的结构</strong></p>
+<p>push是像栈顶推入一条数据</p>
+<p>replace是直接替换当前的数据</p>
+<p>路由有两种工作模式</p>
+<p>方法一：直接使用H5推出的history身上的api</p>
+<pre><code class="js">let history = History.createBrowserHistory()
+</code></pre>
+<p>方法二：使用hash模式（锚点）</p>
+<pre><code class="js">    let history = History.createHashHistory()
+</code></pre>
+<p>第二种的兼容性比较好</p>
+<h3 id="路由技术的使用"><a href="#路由技术的使用" class="headerlink" title="路由技术的使用"></a>路由技术的使用</h3><p>需要使用react-router库，这个有三种实现，分别给三种方式实现</p>
+<p>1.web</p>
+<p>2.native（react的原生应用）</p>
+<p>3.any</p>
+<p>我们需要使用react-router-dom</p>
+<p>这里先讲解5版本的react-router-dom</p>
+<p>先说一下基本的使用</p>
+<pre><code class="js">import React, &#123;Component&#125; from &#39;react&#39;;
+import &#123;Link,BrowserRouter&#125; from &#39;react-router-dom&#39;
+在render里面
+                            &lt;BrowserRouter&gt;
+                                &lt;Link className=&quot;list-group-item&quot; to=&#39;/about&#39;&gt;About&lt;/Link&gt;
+                                &lt;Link className=&quot;list-group-item&quot; to=&#39;/home&#39;&gt;Home&lt;/Link&gt;
+                            &lt;/BrowserRouter&gt;
+</code></pre>
+<p>说一下错误的写法</p>
+<pre><code class="js">&lt;BrowserRouter&gt;
+                                &lt;Link className=&quot;list-group-item&quot; to=&#39;/about&#39;&gt;About&lt;/Link&gt;
+                                &lt;Link className=&quot;list-group-item&quot; to=&#39;/home&#39;&gt;Home&lt;/Link&gt;
+                            &lt;/BrowserRouter&gt;
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+                    &lt;div className=&quot;col-xs-6&quot;&gt;
+                        &lt;div className=&quot;panel&quot;&gt;
+                            &lt;div className=&quot;panel-body&quot;&gt;
+                                &#123;/*注册路由*/&#125;
+                                &lt;BrowserRouter&gt;
+                                    &lt;Route path=&quot;/home&quot; component=&#123;Home&#125;/&gt;
+                                    &lt;Route path=&quot;/about&quot; component=&#123;About&#125;/&gt;
+                                &lt;/BrowserRouter&gt;
+</code></pre>
+<p>这里面使用了两个BrowserRouter，标签，一个路由器只能有一个路由器管理</p>
+<p>所以一劳永逸的方法就是</p>
+<p>在index的文件里面</p>
+<pre><code class="js">import React from &quot;react&quot;;
+import ReactDOM from &quot;react-dom&quot;;
+import App from &#39;./app&#39;
+import &#123;BrowserRouter&#125; from &#39;react-router-dom&#39;
+
+
+ReactDOM.render(
+    &lt;BrowserRouter&gt;
+        &lt;App/&gt;
+    &lt;/BrowserRouter&gt;
+    ,document.getElementById(&#39;root&#39;))
+</code></pre>
+<p>在这里面进行包裹</p>
+<p>最后app里面的代码</p>
+<pre><code class="js">import React, &#123;Component&#125; from &#39;react&#39;;
+import &#123;Link,BrowserRouter,Route&#125; from &#39;react-router-dom&#39;
+import Home from &quot;./components/Home&quot;;
+import About from &quot;./components/About&quot;;
+
+class App extends Component &#123;
+    render() &#123;
+        return (
+            &lt;div&gt;
+                &lt;div className=&quot;row&quot;&gt;
+                    &lt;div className=&quot;col-xs-offset-2 col-xs-8&quot;&gt;
+                        &lt;div className=&quot;page-header&quot;&gt;&lt;h2&gt;React Router Demo&lt;/h2&gt;&lt;/div&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+                &lt;div className=&quot;row&quot;&gt;
+                    &lt;div className=&quot;col-xs-2 col-xs-offset-2&quot;&gt;
+                        &lt;div className=&quot;list-group&quot;&gt;
+                            &#123;/*原生的html里面使用a标签跳转不同的页面*/&#125;
+                            &#123;/*&lt;a className=&quot;list-group-item&quot; href=&quot;./about.html&quot;&gt;About&lt;/a&gt;*/&#125;
+                            &#123;/*&lt;a className=&quot;list-group-item active&quot; href=&quot;./home.html&quot;&gt;Home&lt;/a&gt;*/&#125;
+                            &#123;/*在react里面使用路由链接切换组件*/&#125;
+                            &lt;Link className=&quot;list-group-item&quot; to=&#39;/about&#39;&gt;About&lt;/Link&gt;
+                            &lt;Link className=&quot;list-group-item&quot; to=&#39;/home&#39;&gt;Home&lt;/Link&gt;
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+                    &lt;div className=&quot;col-xs-6&quot;&gt;
+                        &lt;div className=&quot;panel&quot;&gt;
+                            &lt;div className=&quot;panel-body&quot;&gt;
+                                &#123;/*注册路由*/&#125;
+                                &lt;Route path=&quot;/home&quot; component=&#123;Home&#125;/&gt;
+                                &lt;Route path=&quot;/about&quot; component=&#123;About&#125;/&gt;
+                            &lt;/div&gt;
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        );
+    &#125;
+&#125;
+
+export default App;
+</code></pre>
+<p>基本的使用</p>
+<p>之前说过hash模式的router#后面的 都不会作为资源发送给服务器</p>
+<p><strong>路由组件和一般组件的区别</strong></p>
+<p>一般组件的props，如果父组件不传递，就不会收到东西 </p>
+<p>但是路由组件就会默认传递一些东西</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240312161902484.png" alt="image-20240312161902484"></p>
+<p>总结</p>
+<p><strong>1.写法不同</strong></p>
+<p>​		一般组件：<Demo/></p>
+<p>​		路由组件：<Demo path='路径' component={引入的组件}></p>
+<p><strong>2.一般存放的位置不同</strong></p>
+<p><strong>3.接收到的props不同</strong></p>
+<p>​		一般组件：写组件标签传递什么，就能收到什么</p>
+<p>​		路由组件：接收到三个固定的属性，如下</p>
+<ol>
+<li><p><strong>history</strong>: </p>
+</li>
+<li><ol>
+<li><strong>action</strong>: “PUSH”</li>
+<li><strong>block</strong>: <em>ƒ block(prompt)</em></li>
+<li><strong>createHref</strong>: <em>ƒ createHref(location)</em></li>
+<li><strong>go</strong>: <em>ƒ go(n)</em></li>
+<li><strong>goBack</strong>: <em>ƒ goBack()</em></li>
+<li><strong>goForward</strong>: <em>ƒ goForward()</em></li>
+<li><strong>length</strong>: 16</li>
+<li><strong>listen</strong>: <em>ƒ listen(listener)</em></li>
+<li><strong>location</strong>: {pathname: ‘&#x2F;about’, search: ‘’, hash: ‘’, state: undefined, key: ‘5r9fyc’}</li>
+<li><strong>push</strong>: <em>ƒ push(path, state)</em></li>
+<li><strong>replace</strong>: <em>ƒ replace(path, state)</em></li>
+</ol>
+</li>
+<li><p><strong>location</strong>: </p>
+</li>
+<li><ol>
+<li><strong>hash</strong>: “”</li>
+<li><strong>key</strong>: “5r9fyc”</li>
+<li><strong>pathname</strong>: “&#x2F;about”</li>
+<li><strong>search</strong>: “”</li>
+<li><strong>state</strong>: undefined</li>
+</ol>
+</li>
+<li><p><strong>match</strong>: </p>
+</li>
+<li><ol>
+<li><strong>isExact</strong>: true</li>
+<li><strong>params</strong>: {}</li>
+<li><strong>path</strong>: “&#x2F;about”</li>
+<li><strong>url</strong>: “&#x2F;about”</li>
+</ol>
+</li>
+</ol>
+<p>其中我们发现这里面的history里面的location和loca是一样的</p>
+<ol>
+<li><strong>history</strong>: 里面常用的有：go，goback，goForward,push,replace</li>
+</ol>
+<p>​	<strong>2.location:</strong> 里面的pathname,search，state</p>
+<p>​	<strong>3.match</strong>:里的params，path， url</p>
+<p> 之前的案列实现动态active的效果</p>
+<pre><code class="js">                            &lt;NavLink className=&quot;list-group-item&quot; to=&#39;/about&#39;&gt;About&lt;/NavLink&gt;
+                            &lt;NavLink className=&quot;list-group-item&quot; to=&#39;/home&#39;&gt;Home&lt;/NavLink&gt;
+</code></pre>
+<p>但是这样的默认的是向类名里面加入active</p>
+<p>如果拟引入其他的框架，不是bootscrap，又可以高亮效果不是active，此时就需要属性</p>
+<pre><code class="js">    &lt;NavLink activeClassName=&#39;demo&#39; className=&quot;list-group-item&quot; to=&#39;/about&#39;&gt;About&lt;/NavLink&gt;
+                            &lt;NavLink activeClassName=&#39;demo&#39; className=&quot;list-group-item&quot; to=&#39;/home&#39;&gt;Home&lt;/NavLink&gt;
+</code></pre>
+<p>这样追加的类名是你自己定义的</p>
+<p>不过在6版本的router里面取消了activeClassname的属性</p>
+<p><strong>对Link进行二次封装</strong></p>
+<p>其实没啥用感觉，还增加代码量</p>
+<pre><code class="js">import MyNavLink from &quot;./components/MyNavLink&quot;;    
+&lt;MyNavLink to=&quot;/about&quot; title=&quot;About&quot;&gt;About&lt;/MyNavLink&gt;
+                            &lt;MyNavLink to=&quot;/home&quot; title=&#39;Home&#39;&gt;Home&lt;/MyNavLink&gt;
+</code></pre>
+<pre><code class="js">import React, &#123;Component&#125; from &#39;react&#39;;
+import &#123;NavLink&#125; from &#39;react-router-dom&#39;
+
+class MyNavLink extends Component &#123;
+    render() &#123;
+        const &#123;to,title&#125; = this.props
+        return (
+            &lt;div&gt;
+                &lt;NavLink activeClassName=&#39;active&#39; className=&quot;list-group-item&quot; to=&#123;to&#125;&gt;&#123;title&#125;&lt;/NavLink&gt;
+            &lt;/div&gt;
+        );
+    &#125;
+&#125;
+
+export default MyNavLink;
+</code></pre>
+<p>我们不想通过在添加一个属性title来传递我的标签体的内容</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240312165631089.png" alt="image-20240312165631089"></p>
+<p>那应该怎么办？</p>
+<p>标签体也是一种特殊的标签属性，也可以通过props来传递</p>
+<p>打印一下刚才封装好的props</p>
+<pre><code class="js">class MyNavLink extends Component &#123;
+    render() &#123;
+        const &#123;to,title&#125; = this.props
+        console.log(this.props)
+        return (
+            &lt;div&gt;
+                &lt;NavLink activeClassName=&#39;active&#39; className=&quot;list-group-item&quot; to=&#123;to&#125;&gt;&#123;title&#125;&lt;/NavLink&gt;
+            &lt;/div&gt;
+        );
+    &#125;
+&#125;
+</code></pre>
+<p>我们发现</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240312170007025.png" alt="image-20240312170007025"></p>
+<p>标签体的内容在children的属性里</p>
+<p>所以就可以这么写</p>
+<pre><code class="js">    render() &#123;
+        const &#123;to,title&#125; = this.props
+        console.log(this.props)
+        return (
+            &lt;div&gt;
+                &lt;NavLink activeClassName=&#39;active&#39; className=&quot;list-group-item&quot; to=&#123;to&#125;&gt;&#123;this.props.children&#125;&lt;/NavLink&gt;
+            &lt;/div&gt;
+        );
+    &#125;
+</code></pre>
+<p>但是还有很简单的方法</p>
+<p><strong>刚才说过标签体里面的内容是一种特殊的标签属性，就是children，我们就可以在children属性里面加入标签体的内容</strong></p>
+<p>就像这样</p>
+<pre><code class="js">                &lt;NavLink activeClassName=&#39;active&#39; className=&quot;list-group-item&quot; to=&#123;to&#125; children=&#123;children&#125;&gt;&lt;/NavLink&gt;
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240312171256736.png" alt="image-20240312171256736"></p>
+<p>现在有一个疑问，如果我们在注册路由的时候，给一个地址绑定多个组件那么会怎么样</p>
+<pre><code class="js">                                &lt;Route path=&quot;/home&quot; component=&#123;Home&#125;/&gt;
+                                &lt;Route path=&quot;/home&quot; component=&#123;Test&#125;/&gt;
+</code></pre>
+<p>答案是追加的，两个都会生效，代码执行的过程的中，当监测到路由变化到home，就会匹配对应的路由。当匹配玩第一个以后，还会继续匹配，所以这样就会出现效率问题。如果有很多的路由，就会一直向下匹配，直到没有</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240312172226589.png" alt="image-20240312172226589"></p>
+<p>使用switch就不会匹配一个就不会继续下面继续匹配了</p>
+<pre><code class="js">                                &lt;Switch&gt;
+                                    &lt;Route path=&quot;/home&quot; component=&#123;Home&#125;/&gt;
+                                    &lt;Route path=&quot;/home&quot; component=&#123;Test&#125;/&gt;
+                                    &lt;Route path=&quot;/about&quot; component=&#123;About&#125;/&gt;
+                                &lt;/Switch&gt;
+</code></pre>
+<p>使用switch包裹</p>
+<p>现在有个问题</p>
+<pre><code class="js"> &lt;div&gt;
+                &lt;div className=&quot;row&quot;&gt;
+                    &lt;div className=&quot;col-xs-offset-2 col-xs-8&quot;&gt;
+                        &lt;div className=&quot;page-header&quot;&gt;&lt;h2&gt;React Router Demo&lt;/h2&gt;&lt;/div&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+                &lt;div className=&quot;row&quot;&gt;
+                    &lt;div className=&quot;col-xs-2 col-xs-offset-2&quot;&gt;
+                        &lt;div className=&quot;list-group&quot;&gt;
+                            &#123;/*原生的html里面使用a标签跳转不同的页面*/&#125;
+                            &#123;/*&lt;a className=&quot;list-group-item&quot; href=&quot;./about.html&quot;&gt;About&lt;/a&gt;*/&#125;
+                            &#123;/*&lt;a className=&quot;list-group-item active&quot; href=&quot;./home.html&quot;&gt;Home&lt;/a&gt;*/&#125;
+                            &#123;/*在react里面使用路由链接切换组件*/&#125;
+                            &lt;MyNavLink to=&quot;/wang/about&quot; title=&quot;About&quot;&gt;About&lt;/MyNavLink&gt;
+                            &lt;MyNavLink to=&quot;/wang/home&quot; title=&#39;Home&#39;&gt;Home&lt;/MyNavLink&gt;
+                            &#123;/*&lt;NavLink activeClassName=&#39;active&#39; className=&quot;list-group-item&quot; to=&#39;/about&#39;&gt;About&lt;/NavLink&gt;*/&#125;
+                            &#123;/*&lt;NavLink activeClassName=&#39;active&#39; className=&quot;list-group-item&quot; to=&#39;/home&#39;&gt;Home&lt;/NavLink&gt;*/&#125;
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+                    &lt;div className=&quot;col-xs-6&quot;&gt;
+                        &lt;div className=&quot;panel&quot;&gt;
+                            &lt;div className=&quot;panel-body&quot;&gt;
+                                &#123;/*注册路由*/&#125;
+                                &lt;Switch&gt;
+                                    &lt;Route path=&quot;/wang/home&quot; component=&#123;Home&#125;/&gt;
+                                    &lt;Route path=&quot;/wang/about&quot; component=&#123;About&#125;/&gt;
+                                &lt;/Switch&gt;
+                            &lt;/div&gt;
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+</code></pre>
+<p>这里面的路由</p>
+<pre><code>/wang/about
+</code></pre>
+<p>使用这个我们就会发现问题</p>
+<p>当我们刷新的时候</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240313195857185.png" alt="image-20240313195857185"></p>
+<p>组件的样式消失了</p>
+<p>因为刷新的时候我们的地址</p>
+<p>我们请求的bootstrap的地址</p>
+<pre><code>http://localhost:3000/wang/css/bootstrap.css
+正常的是
+http://localhost:3000/css/bootstrap.css
+</code></pre>
+<p>这就是样式消息的原因</p>
+<p>有三种解决方法</p>
+<p>第一种</p>
+<pre><code class="html">    &lt;link rel=&quot;stylesheet&quot; href=&quot;./css/bootstrap.css&quot;&gt;
+    把这个改为,删掉点
+     &lt;link rel=&quot;stylesheet&quot; href=&quot;/css/bootstrap.css&quot;&gt;
+</code></pre>
+<p>原因是.&#x2F;是从当前的路径开始找，我们访问</p>
+<pre><code>/wang/about，当前路径就认为是wang，所以就会出现这个问题
+</code></pre>
+<p>第二种使用,这个%PUBLIC_URL%就是绝对的路径</p>
+<pre><code> &lt;link rel=&quot;stylesheet&quot; href=&quot;%PUBLIC_URL%/css/bootstrap.css&quot;&gt;
+</code></pre>
+<p><strong>%PUBLIC_URL%这个只有在React里可以使用</strong></p>
+<p>第三种，</p>
+<p>我们使用Hash的router</p>
+<pre><code class="js">import &#123;HashRouter&#125; from &#39;react-router-dom&#39;
+
+
+ReactDOM.render(
+    &lt;HashRouter&gt;
+        &lt;App/&gt;
+    &lt;/HashRouter&gt;
+    ,document.getElementById(&#39;root&#39;))
+</code></pre>
+<p>因为Hash外层的#后面的路径只会当最前端的资源，所以不会记住</p>
+<p>这里提示一下，包管理器不要混合的用，容易造成包的丢失</p>
+<p>路由的精准匹配和模糊匹配</p>
+<p>当我们</p>
+<pre><code class="js">                            &lt;MyNavLink to=&quot;/about&quot; title=&quot;About&quot;&gt;About&lt;/MyNavLink&gt;
+                            &lt;MyNavLink to=&quot;/home/a/b&quot; title=&#39;Home&#39;&gt;Home&lt;/MyNavLink&gt;
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+                    &lt;div className=&quot;col-xs-6&quot;&gt;
+                        &lt;div className=&quot;panel&quot;&gt;
+                            &lt;div className=&quot;panel-body&quot;&gt;
+                                &#123;/*注册路由*/&#125;
+                                &lt;Switch&gt;
+                                    &lt;Route path=&quot;/home&quot; component=&#123;Home&#125;/&gt;
+                                    &lt;Route path=&quot;/about&quot; component=&#123;About&#125;/&gt;
+</code></pre>
+<p>这里访问home，会正常的显示，这就是路由的模糊匹配</p>
+<p>如果反过来的话就不行了，</p>
+<pre><code>匹配的规则就是
+to=&quot;/home/a/b&quot; 会先向下匹配home
+</code></pre>
+<p>那如果我们想要开启精准匹配呢？</p>
+<p>使用exact</p>
+<p>在这里开启精准的匹配</p>
+<pre><code class="js">                            &lt;MyNavLink to=&quot;/about&quot; title=&quot;About&quot;&gt;About&lt;/MyNavLink&gt;
+                            &lt;MyNavLink to=&quot;/home/a/b&quot; title=&#39;Home&#39;&gt;Home&lt;/MyNavLink&gt;
+          
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+                    &lt;div className=&quot;col-xs-6&quot;&gt;
+                        &lt;div className=&quot;panel&quot;&gt;
+                            &lt;div className=&quot;panel-body&quot;&gt;
+                                &#123;/*注册路由*/&#125;
+                                &lt;Switch&gt;
+                                    &lt;Route exact=&#123;true&#125; path=&quot;/home&quot; component=&#123;Home&#125;/&gt;
+                                    &lt;Route exact=&#123;true&#125; path=&quot;/about&quot; component=&#123;About&#125;/&gt;
+                                &lt;/Switch&gt;
+</code></pre>
+<p>这样模糊匹配就会失效，必须要完美匹配</p>
+<p>总结</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240313202838547.png" alt="image-20240313202838547"></p>
+<p>严格匹配不要缩编乱开</p>
+<p><strong>重定向</strong></p>
+<p>Redirect放在注册路由的最下方，当上面的路由匹配上就会走Redirect的</p>
+<pre><code class="js">                                &#123;/*注册路由*/&#125;
+                                &lt;Switch&gt;
+                                    &lt;Route exact=&#123;true&#125; path=&quot;/home&quot; component=&#123;Home&#125;/&gt;
+                                    &lt;Route exact=&#123;true&#125; path=&quot;/about&quot; component=&#123;About&#125;/&gt;
+                                    &lt;Redirect to=&quot;/home&quot;&gt;&lt;/Redirect&gt;
+                                &lt;/Switch&gt;
+</code></pre>
+<p>这样当我们打开浏览器，访问‘&#x2F;’，的时候就会重定向到home里面</p>
+<p><strong>嵌套路由（多级路由）</strong></p>
+<pre><code class="js"> &lt;div&gt;
+                &lt;h3&gt;我是Home的内容&lt;/h3&gt;
+                &lt;div&gt;
+                    &lt;ul className=&quot;nav nav-tabs&quot;&gt;
+                        &lt;li&gt;
+                            &lt;MyNavLink to=&#39;/home/news&#39;&gt;News&lt;/MyNavLink&gt;
+                        &lt;/li&gt;
+                        &lt;li&gt;
+                            &lt;MyNavLink to=&#39;/home/message&#39;&gt;message&lt;/MyNavLink&gt;
+                        &lt;/li&gt;
+                    &lt;/ul&gt;
+                    &lt;Switch&gt;
+                        &#123;/*注册路由*/&#125;
+                        &lt;Route path=&#39;/home/news&#39; component=&#123;News&#125;&gt;&lt;/Route&gt;
+                        &lt;Route path=&#39;/home/message&#39; component=&#123;Message&#125;&gt;&lt;/Route&gt;
+                    &lt;/Switch&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+</code></pre>
+<p>嵌套路由的基本的使用，注意前面的注册路由的，不要使用精准匹配</p>
+<p>因为，</p>
+<pre><code>&lt;MyNavLink to=&#39;/home/news&#39;&gt;News&lt;/MyNavLink&gt;
+</code></pre>
+<p>当我们访问&#x2F;home&#x2F;news的时候，这里的路由的匹配规则是，先去最先注册的路由的地方去匹配</p>
+<p>就会到这里</p>
+<pre><code class="js">                                    &lt;Route exact path=&quot;/home&quot; component=&#123;Home&#125;/&gt;
+                                    &lt;Route  path=&quot;/about&quot; component=&#123;About&#125;/&gt;
+                                    &lt;Redirect to=&quot;/about&quot;&gt;&lt;/Redirect&gt;
+</code></pre>
+<p>这样就模糊匹配到了home，这样home组件才不会丢，然后到home主页，就继续匹配，如果开启了开启了严格模式，</p>
+<pre><code class="js"> &lt;Route exact path=&quot;/home&quot; component=&#123;Home&#125;/&gt;
+</code></pre>
+<p>这样就不会模糊匹配到home主页就会向后面走</p>
+<p>最后走向Redirect</p>
+<pre><code class="js"> &lt;Redirect to=&quot;/about&quot;&gt;&lt;/Redirect&gt;
+</code></pre>
+<p>实现在home组件里面重定向到news</p>
+<pre><code class="js">                        &lt;Route path=&#39;/home/news&#39; component=&#123;News&#125;&gt;&lt;/Route&gt;
+                        &lt;Route path=&#39;/home/message&#39; component=&#123;Message&#125;&gt;&lt;/Route&gt;
+                        &lt;Redirect to=&#39;/home/news&#39;&gt;&lt;/Redirect&gt;
+</code></pre>
+<p>当我们home组件挂载的时候，&#x2F;home就回去匹配，没有匹配到就会到news</p>
+<p>总的来说</p>
+<p>注意精准模式，还要带上父级路由的路径，路由的匹配的是按照注册组件的顺序， 不限于当前组件</p>
+<p><strong>向路由组件传递参数数据</strong></p>
+<p>第一种params参数</p>
+<p>注意这里的模板字符串，模板字符串是js的，所以需要加上{}</p>
+<pre><code class="js">            &lt;div&gt;
+                &lt;ul&gt;
+                    &#123;
+                        this.state.messageArr.map((item)=&gt;&#123;
+                            return (
+                                &lt;li key=&#123;item.id&#125;&gt;
+                                    &#123;/*params参数*/&#125;
+                                    &lt;Link to=&#123;`/home/message/detail/$&#123;item.id&#125;/$&#123;item.title&#125;`&#125;&gt;&#123;item.title&#125;&lt;/Link&gt;
+                                &lt;/li&gt;
+                            )
+                        &#125;)
+                    &#125;
+                &lt;/ul&gt;
+                &lt;hr/&gt;
+                &#123;/*声明接收params参数*/&#125;
+                &lt;Route path=&#39;/home/message/detail/:id/:title&#39; component=&#123;Detail&#125; &gt;&lt;/Route&gt;
+            &lt;/div&gt;
+</code></pre>
+<p>我们传递的组件</p>
+<p>在props里面的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240313215538654.png" alt="image-20240313215538654"></p>
+<p>match里面</p>
+<p>然后在子路由组件里面</p>
+<pre><code class="js">class Detail extends Component &#123;
+    render() &#123;
+        const &#123;match:&#123;params&#125;&#125; = this.props
+        console.log(params)
+        return (
+            &lt;ul&gt;
+                &lt;li&gt;ID:t&lt;/li&gt;
+                &lt;li&gt;TITLE:&lt;/li&gt;
+                &lt;li&gt;CONTENT:&lt;/li&gt;
+            &lt;/ul&gt;
+        );
+    &#125;
+&#125;
+</code></pre>
+<p>这里的params就是我们传递的参数</p>
+<p>2.传递search参数</p>
+<p>携带参数的形式有点像query参数形式</p>
+<p>在这里</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240313220744952.png" alt="image-20240313220744952"></p>
+<p>没有给你对象，需要你自己整理成对象</p>
+<p>需要使用</p>
+<pre><code class="js">import QueryString from &#39;query-string&#39;
+</code></pre>
+<p>这个库就可以实现，urlencoded的和对象的相互转换，就是我上面说 的</p>
+<p>这样就会转为urlencoded的形式</p>
+<pre><code class="js">        let obj = &#123;name:111,age:19&#125;
+        console.log(QueryString.stringify(obj))
+</code></pre>
+<p>这样转为对向的形式</p>
+<pre><code class="js">        let obj = &#123;name:111,age:19&#125;
+        console.log(QueryString.stringify(obj))
+        let res = QueryString.stringify(obj)
+        console.log(QueryString.parse(res))
+</code></pre>
+<p>和内置的JSON的方法类似</p>
+<pre><code class="js">这样就可以实现了
+        console.log(this.props)
+        const search = this.props.location.search
+        console.log(QueryString.parse(search))//&#123;id: &#39;002&#39;, title: &#39;消息二&#39;&#125;
+        const &#123;id,title&#125;=QueryString.parse(search)
+        console.log(id,title)
+        return (
+            &lt;ul&gt;
+                &lt;li&gt;ID:&#123;id&#125;&lt;/li&gt;
+                &lt;li&gt;TITLE:&#123;title&#125;&lt;/li&gt;
+                &lt;li&gt;CONTENT:&lt;/li&gt;
+            &lt;/ul&gt;
+        );
+</code></pre>
 
     </div>
     
