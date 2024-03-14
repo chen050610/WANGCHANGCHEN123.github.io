@@ -3339,6 +3339,136 @@ to=&quot;/home/a/b&quot; 会先向下匹配home
             &lt;/ul&gt;
         );
 </code></pre>
+<p>总结：<br>3.传递state参数</p>
+<p>之前的参数都是在地址栏上，prams和search参数地址栏上都有显示</p>
+<p>state参数地址栏是隐藏的</p>
+<p>state参数的基本使用</p>
+<pre><code class="js">                                    &lt;Link to=&#123;&#123;
+                                        pathname:'/home/message/detail',
+                                        state:&#123;id:item.id,title:item.title&#125;
+                                    &#125;&#125;&gt;&#123;item.title&#125;&lt;/Link&gt;
+                &lt;Route path=&#39;/home/message/detail/&#39; component=&#123;Detail&#125; &gt;&lt;/Route&gt;
+</code></pre>
+<p>注意上面的to后面的要写成对象 的形式，参数如上面的例子</p>
+<p>在注册的时候，不用向param一样</p>
+<p>接收的话</p>
+<p>我们发现参数在location里面的state</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240314142920162.png" alt="image-20240314142920162"></p>
+<pre><code class="js">        const &#123;state&#125; = this.props.location
+        console.log(this.props)
+        return (
+            &lt;ul&gt;
+                &lt;li&gt;ID:&#123;state.id&#125;&lt;/li&gt;
+                &lt;li&gt;TITLE:&#123;state.title&#125;&lt;/li&gt;
+                &lt;li&gt;CONTENT:&lt;/li&gt;
+            &lt;/ul&gt;
+        );
+</code></pre>
+<p>这样就可以了</p>
+<p>但是这种用法也会有问题，因为他的数据没有放在地址栏里面，所以他是通过一些操作，把数据是在缓存里面的，如果我们清除存储刷新，就会报错</p>
+<p>所以我们在接收的时候可以默认指定空兑对象</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240314143523690.png" alt="image-20240314143523690"></p>
+<p>这里回忆一下es6的Null判断运算符和链式判断运算符</p>
+<p>NUll判断符</p>
+<pre><code class="js">const headerText = response.settings.headerText || &#39;Hello, world!&#39;;
+//下面的写法、
+const headerText = response.settings.headerText ?? &#39;Hello, world!&#39;;
+</code></pre>
+<p>这样如果前面的数据是0或者false就不会出现问题</p>
+<p>链式判断运算符</p>
+<pre><code class="js">const firstName = (message
+  &amp;&amp; message.body
+  &amp;&amp; message.body.user
+  &amp;&amp; message.body.user.firstName) || &#39;default&#39;;
+  //
+  const firstName = message?.body?.user?.firstName || &#39;default&#39;;
+</code></pre>
+<p>这样写起来更加方便</p>
+<p>之前前面的两种也可以使用对象的形式，只能用pathname，</p>
+<p>说实话，这样是更加麻烦了</p>
+<p><strong>push和replace</strong></p>
+<p>浏览器默认是push</p>
+<p>开启replace</p>
+<p>需要这样，和vue里面打开replace的方法一样</p>
+<pre><code class="js">&lt;Link replace to=&#123;&#123;
+    pathname:'/home/message/detail',
+    state:&#123;id:item.id,title:item.title&#125;
+&#125;&#125;&gt;&#123;item.title&#125;&lt;/Link
+</code></pre>
+<p>这样跳转到</p>
+<pre><code>/home/message/detail
+</code></pre>
+<p>就是replace的模式</p>
+<p><strong>编程式路由的导航</strong></p>
+<p>实现</p>
+<pre><code class="js">    pushShow  = (id,title)=&gt;&#123;
+        this.props.history.push(`/home/message/detail/$&#123;id&#125;/$&#123;title&#125;`)
+    &#125;
+    replaceShow = (id,title)=&gt;&#123;
+        // console.log(this.props)
+        this.props.history.replace(`/home/message/detail/$&#123;id&#125;/$&#123;title&#125;`)
+    &#125;
+     &lt;Link to=&#123;`/home/message/detail/$&#123;item.id&#125;/$&#123;item.title&#125;`&#125;&gt;&#123;item.title&#125;&lt;/Link&gt;&amp;nbsp;
+                                    &lt;button  onClick=&#123;()=&gt;this.pushShow(item.id,item.title)&#125;&gt;push&lt;/button&gt;&amp;nbsp;
+                                    &lt;button onClick=&#123;()=&gt;this.replaceShow(item.id,item.title)&#125;&gt;replace&lt;/button&gt;
+</code></pre>
+<p>传递params参数</p>
+<p>传递search参数也还是和原来的一样</p>
+<p>但是传递state需要改变下</p>
+<pre><code class="js">      this.props.history.replace(`/home/message/detail/`,&#123;id:id,title:title&#125;)
+</code></pre>
+<p>后面加上state的数据</p>
+<p>history里面的还有几个api控制前进后退</p>
+<pre><code class="js">goBack()
+goForward()
+</code></pre>
+<pre><code class="js">    go = ()=&gt;&#123;
+        this.props.history.goForward()
+    &#125;
+    back = ()=&gt;&#123;
+        this.props.history.goBack()
+    &#125;
+      &lt;button  onClick=&#123;()=&gt;this.pushShow(item.id,item.title)&#125;&gt;push&lt;/button&gt;&amp;nbsp;
+                                    &lt;button onClick=&#123;()=&gt;this.replaceShow(item.id,item.title)&#125;&gt;replace&lt;/button&gt;
+</code></pre>
+<p>还有一个</p>
+<pre><code>go(n)//这个api接收到数字，表示前进几步，里面还可以写负值
+</code></pre>
+<p>总结</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240314153413005.png" alt="image-20240314153413005"></p>
+<p>但是这些props都是在路由组件里面可以获取的到，那么非路由组件怎么获取的到？</p>
+<p>我们在非路由组件里面可以这么写</p>
+<pre><code class="js">import React, &#123;Component&#125; from &#39;react&#39;;
+import &#123;withRouter&#125; from &#39;react-router-dom&#39;
+
+class Title extends Component &#123;
+    go = ()=&gt;&#123;
+
+    &#125;
+    back = ()=&gt;&#123;
+
+    &#125;
+    render() &#123;
+        console.log(this.props)
+        return (
+            &lt;div&gt;
+                &lt;h3&gt;我是Home的内容&lt;/h3&gt;
+                &lt;button onClick=&#123;this.go&#125;&gt;前进&lt;/button&gt;
+                &lt;button onClick=&#123;this.back&#125;&gt;前进&lt;/button&gt;
+            &lt;/div&gt;
+        );
+    &#125;
+&#125;
+
+export default withRouter(Title);
+</code></pre>
+<pre><code class="js">withRouter(Title)
+</code></pre>
+<p>这样加工完，这个组件的props里面就有路由组件的props的一些属性和方法，这样就可以使用了 </p>
+<p><strong>withRouter</strong>返回是一个新的组件，</p>
+<p><strong>BrowerRouter和HashRouter的区别</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240314181004398.png" alt="image-20240314181004398"></p>
+<p>因为hashrouter没有保存state数据到本地的api所以就会导致state参数的丢失</p>
 
     </div>
     
