@@ -3469,6 +3469,252 @@ export default withRouter(Title);
 <p><strong>BrowerRouter和HashRouter的区别</strong></p>
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240314181004398.png" alt="image-20240314181004398"></p>
 <p>因为hashrouter没有保存state数据到本地的api所以就会导致state参数的丢失</p>
+<p>还是BrowerRouter的多一点</p>
+<h2 id="ui-antd组件库学习"><a href="#ui-antd组件库学习" class="headerlink" title="ui-antd组件库学习"></a>ui-antd组件库学习</h2><p>React组件库andt</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240314183712146.png" alt="image-20240314183712146"></p>
+<p>安装</p>
+<pre><code class="bash"> pnpm i antd
+</code></pre>
+<p>基本使用</p>
+<pre><code class="js">import &#123; Button &#125; from &#39;antd&#39;
+&lt;Button type=&quot;primary&quot;&gt;Primary Button&lt;/Button&gt;
+</code></pre>
+<p>和之前的vue组件库element的ui库使用差不多</p>
+<p>样式的按需引入</p>
+<p>使用的时候直接去搜吧</p>
+<p>这里讲的版本太低了</p>
+<h2 id="redux"><a href="#redux" class="headerlink" title="redux"></a>redux</h2><p>这个比较重要</p>
+<p>管理状态的库</p>
+<p>作用：集中管理react应用中多个组件的共享的状态</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240314190651374.png" alt="image-20240314190651374"></p>
+<p>就和vue里面的pinia和vuex的功能是一样的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240314191213787.png" alt="image-20240314191213787"></p>
+<p>工作流程</p>
+<p>原理图</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/redux%E5%8E%9F%E7%90%86%E5%9B%BE.png" alt="redux原理图"></p>
+<p>简略的讲一下：</p>
+<p>这里的Action Creation是将组件里面的操作封装成对象，对象里的type是操作，data是操作的数据</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240314192748218.png" alt="image-20240314192748218"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240314192903178.png" alt="image-20240314192903178"></p>
+<p>安装</p>
+<pre><code class="bash">pnpm i redux
+pnpm i redux@4.0.5
+</code></pre>
+<p>现在学习下面这个版本的</p>
+<p>处理对应的reducer的文件</p>
+<p>目录结构</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240314203905064.png" alt="image-20240314203905064"></p>
+<pre><code class="js">//该文件是创建为Count服务的reducer,reducer本质就是一个函数
+//会接受到两个参数,之前的数据,还有动作类行
+const initState = 0
+export default function countReducer(preState=initState,action)&#123;
+    // if (preState == undefined) preState = 0 也可以使用形参的默认值进行初始化.当preState为undefined的时候就会为0
+    const &#123;type,data&#125; = action
+    switch (type) &#123;
+        case &#39;increment&#39;:
+            return preState += data
+        case &#39;decrement&#39;:
+            return preState -= data
+        default:
+            //初始化
+             return preState
+    &#125;
+&#125;
+</code></pre>
+<p>上面说过，reducer里面进行初始化和修改状态，初始化状态可以使用形参的默认值</p>
+<p>在store文件里面</p>
+<pre><code class="js">//
+import &#123;createStore&#125; from &#39;redux&#39;
+// 引入为count服务的reducer
+import countReducer from &#39;./count_reducer&#39;
+const store =createStore(countReducer)
+export default store
+</code></pre>
+<p>上面初始化以后，我们就可以</p>
+<p>在count组件里面读到这个数据</p>
+<pre><code class="js">import store  from &quot;../../redux/store&quot;;
+ &lt;h1&gt;当前求和为&#123;store.getState()&#125;&lt;/h1&gt;
+</code></pre>
+<p>这样获取的值就是上面reducer里面返回的值，在初始化的时候，store里面会主动调用count，如果我们开始没有初始化</p>
+<pre><code class="js">export default function countReducer(preState,action)&#123;
+    console.log(preState,action)
+    // if (preState == undefined) preState = 0 也可以使用形参的默认值进行初始化.当preState为undefined的时候就会为0
+    const &#123;type,data&#125; = action
+    switch (type) &#123;
+        case &#39;increment&#39;:
+            return preState += data
+        case &#39;decrement&#39;:
+            return preState -= data
+        default:
+            //初始化
+             return preState
+    &#125;
+&#125;
+</code></pre>
+<p>打印出来的是</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240314204703012.png" alt="image-20240314204703012"></p>
+<p>注意</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240314205320707.png" alt="image-20240314205320707"></p>
+<p>实现代码</p>
+<pre><code class="js">import React, &#123;Component&#125; from &#39;react&#39;;
+//引入store
+import store  from &quot;../../redux/store&quot;;
+class Count extends Component &#123;
+    state = &#123;
+        count:0
+    &#125;
+    componentDidMount() &#123;
+        //检测redux里的状态的变化,主要变化,就会render
+        // 只要rendex的状态发生改变就会调用这个回调
+        store.subscribe(()=&gt;&#123;
+            //store只会保存数据不会在熏染页面,再重新渲染一下页面,这里的setState就重新熏染一下页面,哪怕没有熏染数据
+            this.setState(&#123;&#125;)
+        &#125;
+        )
+    &#125;
+
+    increment = ()=&gt;&#123;
+        const &#123;value&#125; =  this.selectNumber
+        //通知redux加上value
+        store.dispatch(&#123;type:&#39;increment&#39;,data: value*1 &#125;,)
+    &#125;
+    decrement = ()=&gt;&#123;
+        const &#123;value&#125; =  this.selectNumber
+        const &#123;count &#125; = this.state
+        store.dispatch(&#123; type:&#39;decrement&#39;,date:count - value*1&#125;)
+
+    &#125;
+    incrementOfOdd = ()=&gt;&#123;
+        const &#123;value&#125; =  this.selectNumber
+        const &#123;count &#125; = store.getState()
+        if (count % 2 !=0 )&#123;
+            store.dispatch(&#123;type:&#39;increment&#39;,data: value*1 &#125;,)
+        &#125;
+    &#125;
+    incrementAsync = ()=&gt;&#123;
+        const &#123;value&#125; =  this.selectNumber
+        const &#123;count &#125; = this.state
+        setTimeout(()=&gt;&#123;
+            store.dispatch(&#123;type:&#39;increment&#39;,data: value*1 &#125;,)
+        &#125;,500)
+
+    &#125;
+    render() &#123;
+        return (
+            &lt;div&gt;
+                &lt;h1&gt;当前求和为&#123;store.getState()&#125;&lt;/h1&gt;
+                &lt;select ref=&#123;c =&gt; this.selectNumber = c&#125;&gt;
+                    &lt;option value=&quot;1&quot;&gt;1&lt;/option&gt;
+                    &lt;option value=&quot;2&quot;&gt;2&lt;/option&gt;
+                    &lt;option value=&quot;3&quot;&gt;3&lt;/option&gt;
+                &lt;/select&gt;&amp;nbsp;
+                &lt;button onClick=&#123;this.increment&#125;&gt;+&lt;/button&gt;&amp;nbsp;
+                &lt;button onClick=&#123;this.decrement&#125;&gt;-&lt;/button&gt;&amp;nbsp;
+                &lt;button onClick=&#123;this.incrementOfOdd&#125;&gt;当前求和为奇数再加&lt;/button&gt;&amp;nbsp;
+                &lt;button onClick=&#123;this.incrementAsync&#125;&gt;异步加&lt;/button&gt;
+            &lt;/div&gt;
+        );
+    &#125;
+&#125;
+
+export default Count;
+</code></pre>
+<p>reducer里面的e</p>
+<pre><code class="js">//该文件是创建为Count服务的reducer,reducer本质就是一个函数
+//会接受到两个参数,之前的数据,还有动作类行
+const initState = 0
+export default function countReducer(preState = initState,action)&#123;
+        console.log(preState,action)
+    // if (preState == undefined) preState = 0 也可以使用形参的默认值进行初始化.当preState为undefined的时候就会为0
+    const &#123;type,data&#125; = action
+    switch (type) &#123;
+        case &#39;increment&#39;:
+            return preState += data
+        case &#39;decrement&#39;:
+            return preState -= data
+        default:
+            //初始化
+             return preState
+    &#125;
+&#125;
+</code></pre>
+<p>store里的</p>
+<pre><code class="js">//
+import &#123;createStore&#125; from &#39;redux&#39;
+// 引入为count服务的reducer
+import countReducer from &#39;./count_reducer&#39;
+
+const store =createStore(countReducer)
+
+export default store
+</code></pre>
+<p>说实话真的麻烦</p>
+<p>其实重新熏染页面可以直接在index里面写</p>
+<pre><code class="js">    componentDidMount() &#123;
+        //检测redux里的状态的变化,主要变化,就会render
+        // 只要rendex的状态发生改变就会调用这个回调
+        store.subscribe(()=&gt;&#123;
+            //store只会保存数据不会在熏染页面,再重新渲染一下页面,这里的setState就重新熏染一下页面,哪怕没有熏染数据
+            this.setState(&#123;&#125;)
+        &#125;
+        )
+    &#125;
+</code></pre>
+<p>在index里面写</p>
+<pre><code class="js">import React from &quot;react&quot;;
+import ReactDOM from &quot;react-dom&quot;;
+import App from &#39;./app&#39;
+import store from &quot;./redux/store&quot;;
+
+
+store.subscribe(()=&gt;&#123;
+    ReactDOM.render(
+        &lt;App/&gt;
+        ,document.getElementById(&#39;root&#39;))
+&#125;)
+</code></pre>
+<p>这样store里面的数据一更改吗，就会熏染整个页面</p>
+<p>上面是redux的精简的版本</p>
+<p>这个更是单状态的管理工具</p>
+<p>上面的总结一下</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240314212040793.png" alt="image-20240314212040793"></p>
+<p>现在写一个完整版</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240314212252828.png" alt="image-20240314212252828"></p>
+<p>恢复一下ActionCreation的功能，上面的我们是自己封装成action对象</p>
+<p>，这个的功能就是封装成action</p>
+<p>这里的复习一下</p>
+<pre><code class="js">const fuc = () =&gt; &#123;data:1&#125;
+console.log(fuc())//undefined
+</code></pre>
+<p>因为程序执行机会把返回的对象的{}当作函数的{}，所以可以这样</p>
+<pre><code class="js">const fuc = () =&gt; (&#123;data:1&#125;)
+console.log(fuc())//&#123; data: 1 &#125;
+</code></pre>
+<p>下面的actionCreation</p>
+<pre><code class="js">//该文件专门为Count组件生成action对象
+
+export function createIncrementAction (data) &#123;
+    return  &#123;type:&#39;increment&#39;,data&#125;
+&#125;
+
+export function createDecrementAction (data) &#123;
+    return  &#123;type:&#39;decrement&#39;,data&#125;
+&#125;
+</code></pre>
+<pre><code class="js">    import &#123;createIncrementAction,createDecrementAction&#125; from &#39;../../redux/count_action&#39;
+
+increment = ()=&gt;&#123;
+        const &#123;value&#125; =  this.selectNumber
+        //通知redux加上value
+        store.dispatch(createIncrementAction(value*1))
+    &#125;
+</code></pre>
+<p>我们有时候会定义常量的文件放着把action写错</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240314214624316.png" alt="image-20240314214624316"></p>
+<pre><code class="js">//该模块定义action里面的type的值
+export const INCREMENT = &#39;increment&#39;
+export const DECREMENT = &#39;decrement&#39;
+</code></pre>
 
     </div>
     
