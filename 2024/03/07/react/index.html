@@ -3715,6 +3715,485 @@ increment = ()=&gt;&#123;
 export const INCREMENT = &#39;increment&#39;
 export const DECREMENT = &#39;decrement&#39;
 </code></pre>
+<p><strong>异步action</strong></p>
+<p>action有两个类型</p>
+<p>一个是同步的action，是对象的形式</p>
+<p>一个是异步的action，是函数的形式</p>
+<p>之前我们做定时器，我们等待的时间是在组件的里面等着</p>
+<pre><code class="js">    incrementAsync = ()=&gt;&#123;
+        const &#123;value&#125; =  this.selectNumber
+        const &#123;count &#125; = this.state
+        setTimeout(()=&gt;&#123;
+            store.dispatch(&#123;type:&#39;increment&#39;,data: value*1 &#125;,)
+        &#125;,500)
+    &#125;
+</code></pre>
+<p>如果我们不想在这里等</p>
+<p>在createaction里面等待</p>
+<p>实现如下</p>
+<p>需要安装中间件</p>
+<pre><code class="bash">pnpm i redux-thunk@2.3.0
+</code></pre>
+<p>原位置的定时器</p>
+<pre><code class="js">    incrementAsync = ()=&gt;&#123;
+        const &#123;value&#125; =  this.selectNumber
+        const &#123;count &#125; = this.state
+        store.dispatch(createIncrementAsyncAction(value*1,500))
+
+    &#125;
+</code></pre>
+<p>createaction的里面</p>
+<pre><code class="js">export function createIncrementAction (data) &#123;
+    return  &#123;type:&#39;increment&#39;,data&#125;
+&#125;
+export function createIncrementAsyncAction (data,time) &#123;
+    return  ()=&gt;&#123;
+        setTimeout(()=&gt;&#123;&#123;
+            store.dispatch(createIncrementAction(data))
+        &#125;&#125;,time)
+    &#125;
+&#125;
+</code></pre>
+<p>但是只是这样写是不行的，我们开始store只会接受state的对象的形式，不会接收一个函数，</p>
+<p>开始我们给store</p>
+<pre><code class="js">store.dispatch(createIncrementAsyncAction(value*1,500))
+</code></pre>
+<p>分配给一个函数但是store里面，但是store里买呢只会接受到对象的形式，</p>
+<p>所以就要中间件让store帮你调用这个函数</p>
+<p>调用完以后</p>
+<pre><code class="js">store.dispatch(createIncrementAction(data))
+</code></pre>
+<p>就会给store里面分配一个对象</p>
+<p>这个中间件需要这样引入</p>
+<p>在store的里面</p>
+<pre><code class="js">//applyMiddleware用于执行中间件，createStore创建store
+import &#123;createStore,applyMiddleware&#125; from &#39;redux&#39;
+// 引入为count服务的reducer
+import countReducer from &#39;./count_reducer&#39;
+//用于支持异步的action
+import thunk from &#39;redux-thunk&#39;
+
+const store =createStore(countReducer,applyMiddleware(thunk))
+
+export default store
+</code></pre>
+<p>总结</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240315112150941.png" alt="image-20240315112150941"></p>
+<p>之前我们引入的第三方库redux，现在我们引入facebook出的’react-redux</p>
+<p>react-redux的原理图</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/react-redux%E6%A8%A1%E5%9E%8B%E5%9B%BE.png" alt="react-redux模型图"></p>
+<p>这里面的讲解</p>
+<p>ui组件里面调用不了redux的api，只能通过容器总火箭获取，然后通过prop所传递给ui组件，传递的都是redux里面的状态	</p>
+<p>先说一下基本的使用</p>
+<p>首先创建外壳组件</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240315121010850.png" alt="image-20240315121010850"></p>
+<pre><code class="js">//容器组件，需要借助实现容器组件
+
+//先引入ui组件库
+import CountUi from &quot;../../components/Count&quot;;
+
+//链接ui&#39;组件和容器组件
+import &#123;connect&#125; from &#39;react-redux&#39;
+
+//connnec是个函数，返回值也是一个函数
+const CountContainer =connect()(CountUi)//最后返回的就会创建一个容器组件
+
+export default CountContainer
+</code></pre>
+<p>上面是连接容器组件和ui’组件库</p>
+<p>但是怎么链接外壳和store呢？</p>
+<p>我们注册Count组件这次注册的应该是外壳组件，而不是ui组件</p>
+<p>所以在app里面</p>
+<pre><code class="js">import React, &#123;Component&#125; from &#39;react&#39;;
+//引入容器组件
+import Count from &quot;./containers/Count&quot;;
+//引入redux的store
+import store from &quot;./redux/store&quot;;
+class App extends Component &#123;
+    render() &#123;
+        return (
+            &lt;div&gt;
+                &lt;Count store=&#123;store&#125;&gt;&lt;/Count&gt;
+            &lt;/div&gt;
+        );
+    &#125;
+&#125;
+
+export default App;
+</code></pre>
+<p>如果连接store就要，需要使用props的方法向容器组件里面传递store</p>
+<p>上面实现了连接，那怎么把数据放在ui组件的里面</p>
+<p>验证容器组件和ui组件的是父子的关系</p>
+<p>在开发者工具可以看出来</p>
+<p>搞不懂这个设置为什么这么复杂</p>
+<p>下面通过容器组件将状态里的数据传递给ui组，并且绑定对应的事件</p>
+<p>容器组件</p>
+<pre><code class="js">//容器组件，需要借助实现容器组件
+
+//先引入ui组件库
+import CountUi from &quot;../../components/Count&quot;;
+//链接ui&#39;组件和容器组件
+import &#123;connect&#125; from &#39;react-redux&#39;
+//传递state
+const a = (state)=&gt;&#123;
+    return &#123;count:state&#125;   //这里等价于 &lt;CountUi n=&#123;900&#125;/&gt;返回值的对象啊就相当于props
+&#125;
+//传递操作状态的方法
+const b = (dispatch)=&gt;&#123;
+    return &#123;increment : (value)=&gt;&#123;
+            dispatch(&#123;type:&#39;increment&#39;,data:value&#125;)
+            &#125;&#125;
+&#125;
+//connnec是个函数，返回值也是一个函数，这里再说一下，第一次connect调用的时候传递两个参数，而且还得是个函数
+const CountContainer =connect(a,b)(CountUi)//最后返回的就会创建一个容器组件
+
+export default CountContainer
+</code></pre>
+<p>讲解一下</p>
+<p><strong>connect第一次调用需要两个需要两个参数，两个都是需要函数的形式，并且需要把数据和函数返回出来，第一个参数是传递state，这样就可以在ui组件里读到我需要的数据，使用this.props.count就可以读到，上面a函数的参数就是使用store.getStore获取的数据，这里面的第二个函数的参数就是store.dispacth的方法，通过把第二个函数传递给ui组件，ui组件在调用这个函数，就会通知redux进行操作</strong></p>
+<p>这里面的</p>
+<pre><code class="js">&#123;type:&#39;increment&#39;,data:value&#125;
+</code></pre>
+<p>可以替换成我们封装的那个ceateAction的文件</p>
+<p>总结下</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240315164133473.png" alt="image-20240315164133473"></p>
+<p>容器组件</p>
+<pre><code class="js">//容器组件，需要借助实现容器组件
+//先引入ui组件库
+import CountUi from &quot;../../components/Count&quot;;
+//链接ui&#39;组件和容器组件
+import &#123;connect&#125; from &#39;react-redux&#39;
+import &#123;createIncrementAction,createDecrementAction&#125; from &quot;../../redux/count_action&quot;;
+
+const mapStateToProps = (state)=&gt;&#123;
+    return &#123;count:state&#125;   //这里等价于 &lt;CountUi n=&#123;900&#125;/&gt;返回值的对象啊就相当于props
+&#125;
+//传递操作状态的方法
+const mapDispatchToProps = (dispatch)=&gt;&#123;
+    return &#123;
+        increment : (value)=&gt;&#123;
+            dispatch(createIncrementAction(value))
+            &#125;,
+        decrement : (value)=&gt;&#123;
+            dispatch(createDecrementAction(value))
+        &#125;,
+    &#125;
+&#125;
+//connnec是个函数，返回值也是一个函数，这里再说一下，第一次connect调用的时候传递两个参数，而且还得是个函数
+const CountContainer =connect(mapStateToProps,mapDispatchToProps)(CountUi)//最后返回的就会创建一个容器组件
+
+export default CountContainer
+</code></pre>
+<p>ui组件</p>
+<pre><code class="js">import React, &#123;Component&#125; from &#39;react&#39;;
+
+class Count extends Component &#123;
+    state = &#123;
+        count:0
+    &#125;
+    increment = ()=&gt;&#123;
+        const &#123;value&#125; =  this.selectNumber
+        //通知redux加上value
+        this.props.increment(value*1)
+    &#125;
+    decrement = ()=&gt;&#123;
+        const &#123;value&#125; =  this.selectNumber
+        const &#123;count &#125; = this.state
+        this.props.decrement(value*1 )
+    &#125;
+    incrementOfOdd = ()=&gt;&#123;
+        const &#123;value&#125; =  this.selectNumber
+    &#125;
+    incrementAsync = ()=&gt;&#123;
+        const &#123;value&#125; =  this.selectNumber
+        const &#123;count &#125; = this.state
+
+    &#125;
+    render() &#123;
+        console.log(&#39;ui组件接收到的props&#39;,this.props)
+        return (
+            &lt;div&gt;
+                &lt;h1&gt;当前求和为&#123;this.props.count&#125;&lt;/h1&gt;
+                &lt;select ref=&#123;c =&gt; this.selectNumber = c&#125;&gt;
+                    &lt;option value=&quot;1&quot;&gt;1&lt;/option&gt;
+                    &lt;option value=&quot;2&quot;&gt;2&lt;/option&gt;
+                    &lt;option value=&quot;3&quot;&gt;3&lt;/option&gt;
+                &lt;/select&gt;&amp;nbsp;
+                &lt;button onClick=&#123;this.increment&#125;&gt;+&lt;/button&gt;&amp;nbsp;
+                &lt;button onClick=&#123;this.decrement&#125;&gt;-&lt;/button&gt;&amp;nbsp;
+                &lt;button onClick=&#123;this.incrementOfOdd&#125;&gt;当前求和为奇数再加&lt;/button&gt;&amp;nbsp;
+                &lt;button onClick=&#123;this.incrementAsync&#125;&gt;异步加&lt;/button&gt;
+            &lt;/div&gt;
+        );
+    &#125;
+&#125;
+
+export default Count;
+</code></pre>
+<p>我们可以优化一下代码</p>
+<pre><code class="js">import CountUi from &quot;../../components/Count&quot;;
+import &#123;connect&#125; from &#39;react-redux&#39;
+import &#123;createIncrementAction,createDecrementAction&#125; from &quot;../../redux/count_action&quot;;
+export default  connect(
+    state=&gt; (&#123; count:state &#125;),
+    dispatch =&gt;(&#123;       
+        increment : value=&gt; dispatch(createIncrementAction(value)),
+        decrement : (value)=&gt; dispatch(createDecrementAction(value)&#125;)
+
+)(CountUi)
+</code></pre>
+<p><strong>上面是代码层面的优化，传递方法的那个优化，代码里面只有一个return，suoy省略{}和return，但是它返回的是一个对象的形式，为了放着把对象的{}当作函数体，需要使用（）包裹</strong></p>
+<p>下面是api层面的优化</p>
+<pre><code class="js">import CountUi from &quot;../../components/Count&quot;;
+import &#123;connect&#125; from &#39;react-redux&#39;
+import &#123;createIncrementAction,createDecrementAction&#125; from &quot;../../redux/count_action&quot;;
+export default connect(
+    state =&gt; (&#123; count:state &#125;),
+    &#123;
+    increment :  createIncrementAction,
+    decrement :  createDecrementAction
+&#125;
+)(CountUi)
+</code></pre>
+<p>操作其实是这样的</p>
+<p><strong>我们传递给ui组件increment和decrement，这两个东东是什么呢？分别是createIncrementAction和createDecrementAction,这两个是函数，因为我们在createAction里面定义了，然乎我们通过在ui组件使用this.props.decrement(value<em>1 )和this.props.increment(value</em>1)调用以后，就会返回action对象，之前redux就会自动分发自动调用dispatch</strong></p>
+<p>之前redux里面数据更新需要从新调用render熏染</p>
+<pre><code class="js">store.subscribe(()=&gt;&#123;
+    ReactDOM.render(
+        &lt;App/&gt;
+        ,document.getElementById(&#39;root&#39;))
+&#125;)
+</code></pre>
+<p>但是当我们使用react—redux的以后</p>
+<p>我们就不用写这个了 </p>
+<p>全是connect的作用，connect就会连接容器组件和redux，检测数据变化，重新熏染</p>
+<pre><code class="js">export default connect(
+    state =&gt; (&#123; count:state &#125;),
+    &#123;
+    increment :  createIncrementAction,
+    decrement :  createDecrementAction
+&#125;
+)(CountUi)
+</code></pre>
+<p>还有当我们在给容器组件传递store的时候</p>
+<pre><code class="js">import React, &#123;Component&#125; from &#39;react&#39;;
+import Count from &quot;./containers/Count&quot;;
+//引入redux的store
+import store from &quot;./redux/store&quot;;
+class App extends Component &#123;
+    render() &#123;
+        return (
+            &lt;div&gt;
+                &lt;Count store=&#123;store&#125;&gt;&lt;/Count&gt;
+            &lt;/div&gt;
+        );
+    &#125;
+&#125;
+
+export default App;
+</code></pre>
+<p>使用</p>
+<pre><code class="js">&lt;Count store=&#123;store&#125;&gt;&lt;/Count&gt;
+</code></pre>
+<p>但是如果有很多的容器组件就要传递很多次</p>
+<p>我们可以在index.js里</p>
+<p>这样</p>
+<pre><code class="js">import React from &quot;react&quot;;
+import ReactDOM from &quot;react-dom&quot;;
+import App from &#39;./app&#39;
+import store from &quot;./redux/store&quot;;
+import &#123; Provider &#125; from &#39;react-redux&#39;
+
+ReactDOM.render(
+    &lt;Provider store=&#123;store&#125;&gt;
+        &lt;App/&gt;
+    &lt;/Provider&gt;
+
+    ,document.getElementById(&#39;root&#39;))
+</code></pre>
+<p>这样容器组件都不用使用 了</p>
+<p>下面继续优化</p>
+<p>我们可以把ui组件和容器组件整合在一起</p>
+<p>我们就可以这么写</p>
+<pre><code class="js">import &#123;connect&#125; from &#39;react-redux&#39;
+import &#123;createIncrementAction,createDecrementAction&#125; from &quot;../../redux/count_action&quot;;
+import React, &#123;Component&#125; from &#39;react&#39;;
+//定义ui组件
+class Count extends Component &#123;
+    state = &#123;
+        count:0
+    &#125;
+    increment = ()=&gt;&#123;
+        const &#123;value&#125; =  this.selectNumber
+        //通知redux加上value
+        this.props.increment(value*1)
+    &#125;
+    decrement = ()=&gt;&#123;
+        const &#123;value&#125; =  this.selectNumber
+        const &#123;count &#125; = this.state
+        this.props.decrement(value*1 )
+    &#125;
+    incrementOfOdd = ()=&gt;&#123;
+        const &#123;value&#125; =  this.selectNumber
+    &#125;
+    incrementAsync = ()=&gt;&#123;
+        const &#123;value&#125; =  this.selectNumber
+        const &#123;count &#125; = this.state
+
+    &#125;
+    render() &#123;
+        console.log(&#39;ui组件接收到的props&#39;,this.props)
+        return (
+            &lt;div&gt;
+                &lt;h1&gt;当前求和为&#123;this.props.count&#125;&lt;/h1&gt;
+                &lt;select ref=&#123;c =&gt; this.selectNumber = c&#125;&gt;
+                    &lt;option value=&quot;1&quot;&gt;1&lt;/option&gt;
+                    &lt;option value=&quot;2&quot;&gt;2&lt;/option&gt;
+                    &lt;option value=&quot;3&quot;&gt;3&lt;/option&gt;
+                &lt;/select&gt;&amp;nbsp;
+                &lt;button onClick=&#123;this.increment&#125;&gt;+&lt;/button&gt;&amp;nbsp;
+                &lt;button onClick=&#123;this.decrement&#125;&gt;-&lt;/button&gt;&amp;nbsp;
+                &lt;button onClick=&#123;this.incrementOfOdd&#125;&gt;当前求和为奇数再加&lt;/button&gt;&amp;nbsp;
+                &lt;button onClick=&#123;this.incrementAsync&#125;&gt;异步加&lt;/button&gt;
+            &lt;/div&gt;
+        );
+    &#125;
+&#125;
+
+
+export default connect(
+    state =&gt; (&#123; count:state &#125;),
+    &#123;
+    increment :  createIncrementAction,
+    decrement :  createDecrementAction
+&#125;
+)(Count)
+</code></pre>
+<p>总结一下</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240315175734911.png" alt="image-20240315175734911"></p>
+<p>如何共享到其他的组件</p>
+<h3 id="实现多个组件的共享数据"><a href="#实现多个组件的共享数据" class="headerlink" title="实现多个组件的共享数据"></a>实现多个组件的共享数据</h3><p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240315210414679.png" alt="image-20240315210414679"></p>
+<p>多个组件的共享的目录，目录写成这样</p>
+<p>而且我们的store的组件里面也需要改变</p>
+<pre><code class="js">//applyMiddleware用于执行中间件，createStore创建store,combineReducers合并多个reducer
+import &#123;createStore,applyMiddleware,combineReducers&#125; from &#39;redux&#39;
+// 引入为count服务的reducer
+import countReducer from &#39;./reducer/count&#39;
+//使用person的信息
+import personReducer from &#39;./reducer/person&#39;
+//用于支持异步的action
+import thunk from &#39;redux-thunk&#39;
+
+//汇总所有的render作为一个总的
+const allReducers = combineReducers(&#123;
+    count:countReducer,
+    person:personReducer
+&#125;)
+
+const store =createStore(allReducers,applyMiddleware(thunk))
+
+export default store
+</code></pre>
+<p>这里的combineReducers就可以把多个reducer联合到一起，然后写成对象的形式</p>
+<p>当我们在外壳组件传递给数据给ui组件，就需要</p>
+<pre><code class="js">export default connect(
+    allState =&gt; (&#123; count:allState.count,personInfo : allState.person &#125;),
+    &#123;
+    increment :  createIncrementAction,
+    decrement :  createDecrementAction
+&#125;
+)(Count)
+</code></pre>
+<p>这里面的allState就是刚才写成对象的</p>
+<h4 id="纯函数"><a href="#纯函数" class="headerlink" title="纯函数"></a>纯函数</h4><p>之前我们在实现person的案例里面</p>
+<p>在reducer里使用解构的方法进行向数据添加对象</p>
+<pre><code class="js">export default function (perState = initState,action)&#123;
+    const &#123;type,data&#125; = action
+    switch (type)&#123;
+        case ADD_PERSON:
+            return [data,...perState]
+        default:
+            return perState
+    &#125;
+&#125;
+</code></pre>
+<p>上面的实现方法是正确的</p>
+<p>但是 下面这样写</p>
+<pre><code class="js">export default function (perState = initState,action)&#123;
+    const &#123;type,data&#125; = action
+    switch (type)&#123;
+        case ADD_PERSON:
+            perState.unshift(data)
+            return perState
+        default:
+            return perState
+    &#125;
+&#125;
+</code></pre>
+<p>这样写就当我们添加数据，页面没有显示，但是我们打印一下</p>
+<pre><code class="js">export default function (perState = initState,action)&#123;
+    const &#123;type,data&#125; = action
+    switch (type)&#123;
+        case ADD_PERSON:
+            perState.unshift(data)
+            console.log(perState)
+            return perState
+        default:
+            return perState
+    &#125;
+&#125;
+</code></pre>
+<p>上面的输出是正常的，添加是成功的</p>
+<p>原因是因为，</p>
+<p><strong>当我们执行操作以后 ，redux会对当前返回的值会和之前的值做判断，因为上面的数据类型是数组，当我们使用unshift的方法，是不会更改数组的地址的地址，底层做的是浅比较，一样的就不会更新了，不一样的就会更新了，使用[data,…perState]，就会创建一个新的数据</strong></p>
+<p>如果这么写的话,就不是纯函数l了</p>
+<pre><code class="js">export default function (perState = initState,action)&#123;
+    const &#123;type,data&#125; = action
+    switch (type)&#123;
+        case ADD_PERSON:
+            perState.unshift(data)
+            return perState
+        default:
+            return perState
+    &#125;
+&#125;
+</code></pre>
+<p><strong>什么是纯函数</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240315212848794.png" alt="image-20240315212848794"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240315212953523.png" alt="image-20240315212953523"></p>
+<p>如果我们传递的相同的值，但是函数返回的值却不一样，这就不是纯函数</p>
+<p>比如：随机数</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240315213058730.png" alt="image-20240315213058730"></p>
+<p>纯函数的原则</p>
+<p>1.不能改变参数数据</p>
+<p>上面的</p>
+<pre><code class="js">  perState.unshift(data)
+</code></pre>
+<p>就是修改参数的值，违背了纯函数的原则</p>
+<p>2.不能产品副作用</p>
+<p>就比如网络请求（因为不确定性太大，有时候就会失败）</p>
+<p>3.不可以调用随机数函数和时间戳的函数</p>
+<p> <strong>redux里面的reducers必须是一个纯函数</strong></p>
+<p><strong>redux的开发者工具</strong></p>
+<p>如果想让开发者模式工作</p>
+<p>1.下载</p>
+<pre><code class="js">pnpm  i redux-devtools-extension
+</code></pre>
+<p>2.在store里</p>
+<pre><code class="js">//引入开发者
+import &#123;composeWithDevTools&#125; from &#39;redux-devtools-extension&#39;
+</code></pre>
+<p>本来，composeWithDevTools应该放在下面的第二个参数的位置，但是我们使用了applyMiddleware(thunk)，如果没有使用thunk的话就可以直接写，但是现在存在</p>
+<pre><code class="js">const store =createStore(allReducers,applyMiddleware(thunk))
+</code></pre>
+<p>就像下面写</p>
+<pre><code class="js">const store =createStore(allReducers,composeWithDevTools(applyMiddleware(thunk)))
+</code></pre>
+<p>这样的我们的图标就亮了</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240315214448802.png" alt="image-20240315214448802"></p>
+<p>1.state这里面保存着我们全部的state</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240315214718472.png" alt="image-20240315214718472"><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240315214845193.png" alt="image-20240315214845193"></p>
+<p>这里的dispatch就可以自己尝试dispatch</p>
 
     </div>
     
