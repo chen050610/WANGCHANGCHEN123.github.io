@@ -3619,7 +3619,7 @@ class Count extends Component &#123;
 
 export default Count;
 </code></pre>
-<p>reducer里面的e</p>
+<p>reducer里面的</p>
 <pre><code class="js">//该文件是创建为Count服务的reducer,reducer本质就是一个函数
 //会接受到两个参数,之前的数据,还有动作类行
 const initState = 0
@@ -4194,6 +4194,674 @@ import &#123;composeWithDevTools&#125; from &#39;redux-devtools-extension&#39;
 <p>1.state这里面保存着我们全部的state</p>
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240315214718472.png" alt="image-20240315214718472"><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240315214845193.png" alt="image-20240315214845193"></p>
 <p>这里的dispatch就可以自己尝试dispatch</p>
+<p>redux结束</p>
+<h2 id="react的扩展"><a href="#react的扩展" class="headerlink" title="react的扩展"></a>react的扩展</h2><p><strong>setState</strong></p>
+<p>setState有两种写法</p>
+<pre><code class="js">class Demo extends Component &#123;
+    state = &#123;
+        sum:0,
+    &#125;
+    add = ()=&gt;&#123;
+        const sum = this.state.sum
+        this.setState(&#123;sum:sum+1&#125;,)
+        console.log(&#39;@&#39;,sum)
+    &#125;
+    render() &#123;
+        return (
+            &lt;div&gt;
+                &lt;h1&gt;当前的和为&#123;this.state.sum&#125;&lt;/h1&gt;
+                &lt;button onClick=&#123;this.add&#125;&gt;加一 &lt;/button&gt;
+            &lt;/div&gt;
+        );
+    &#125;
+&#125;
+</code></pre>
+<p>之前我们setState是这样写的</p>
+<p>在上面的代码我们可以验证setState是一个异步的函数</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240316025328727.png" alt="image-20240316025328727"></p>
+<p>所以状态的更新是异步的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240316025432324.png" alt="image-20240316025432324"></p>
+<p>那我们如何拿到最新的值？</p>
+<p>在setState后面加上回调</p>
+<p>回调执行的时机是在页面更新完毕，这样获取的sum就是更新完毕的，之前的没在回调里面写，setstate是一个异步的任务，所以先去执行后面的语句</p>
+<pre><code class="js">import React, &#123;Component&#125; from &#39;react&#39;;
+
+class Demo extends Component &#123;
+    state = &#123;
+        sum:0,
+    &#125;
+    add = ()=&gt;&#123;
+        const sum = this.state.sum
+        this.setState(&#123;sum:sum+1&#125;,()=&gt;&#123;
+            console.log(&#39;回调里面的sum&#39;,this.state.sum)
+        &#125;)
+        console.log(&#39;@&#39;,this.state.sum)
+    &#125;
+    render() &#123;
+        return (
+            &lt;div&gt;
+                &lt;h1&gt;当前的和为&#123;this.state.sum&#125;&lt;/h1&gt;
+                &lt;button onClick=&#123;this.add&#125;&gt;加一 &lt;/button&gt;
+            &lt;/div&gt;
+        );
+    &#125;
+&#125;
+
+export default Demo;
+</code></pre>
+<p>这样就可以</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240316092546917.png" alt="image-20240316092546917"></p>
+<p>相当于vue里面的nexttick</p>
+<p>第二种写法，</p>
+<p>函数式的写法</p>
+<p>或者写成这样</p>
+<pre><code class="js">this.setState(()=&gt;&#123;
+    return &#123;sum:9999&#125;
+&#125;)
+</code></pre>
+<p>点击以后直接变成9999</p>
+<p>而且还能该函数的参数能够接收到两个参数</p>
+<pre><code class="js">        this.setState((state,props)=&gt;&#123;
+            console.log(state) //&#123;sum: 0&#125;
+            console.log(props) //&#123;a: 1&#125;
+            return &#123;sum:9999&#125;
+        &#125;)
+</code></pre>
+<p>state组件里的状态，props是组件传过来的值，我感觉没有用啊，使用this也能获取到啊</p>
+<p>这个函数式的形式适用于定时器的修改state参数</p>
+<p><strong>layLoad</strong></p>
+<p>懒加载</p>
+<p>用的时候在加载。不用的时候就不会加载了</p>
+<p>一般使用在路由的身上</p>
+<p>比如说当我们进入</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240316094609168.png" alt="image-20240316094609168"></p>
+<p>主页的时候，还没有使用about组建和home组件，但是他们也已经加载出来了</p>
+<p>，然后之后使用这些组件走的浏览器的本地存储</p>
+<p>基本的使用</p>
+<p>1.我们需要使用lazy，使用下面的方法导入组件</p>
+<pre><code class="js">import React, &#123;Component,lazy,Suspense&#125; from &#39;react&#39;;
+const Home = lazy(()=&gt;import(&#39;./components/LazyLoad/Home&#39;))
+const About = lazy(()=&gt;import(&#39;./components/LazyLoad/Home&#39;))
+</code></pre>
+<p>2.在注册路由的地方包裹Suspense，并且指定没有加载出来，我们显示那哪个组件，为了方便回调里我直接写html 了</p>
+<pre><code class="js">                                &lt;Suspense fallback=&#123;&lt;h1&gt;loading....&lt;/h1&gt;&#125;&gt;
+                                    &lt;Route path=&quot;/home&quot; component=&#123;Home&#125;/&gt;
+                                    &lt;Route path=&quot;/about&quot; component=&#123;About&#125;/&gt;
+                                &lt;/Suspense&gt;
+</code></pre>
+<p>这样就是先懒加载了</p>
+<p>尝试一下</p>
+<p>当我们直接访问主页的时候，没有使用组件</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240316095908319.png" alt="image-20240316095908319"></p>
+<p>没有发现请求我们的组件的资源</p>
+<p>当我们使用组件的时候</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240316100002104.png" alt="image-20240316100002104"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240316100103871.png" alt="image-20240316100103871">这个时候才会加载出来，这样就是先懒加载了</p>
+<p>我们在尝试一下</p>
+<pre><code class="js">&lt;Suspense fallback=&#123;&lt;h1&gt;loading....&lt;/h1&gt;&#125;&gt;
+    &lt;Route path=&quot;/home&quot; component=&#123;Home&#125;/&gt;
+    &lt;Route path=&quot;/about&quot; component=&#123;About&#125;/&gt;
+&lt;/Suspense&gt;
+</code></pre>
+<p>没有加载出来回调试一下</p>
+<p>网速慢一点</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240316100224686.png" alt="image-20240316100224686"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240316100246040.png" alt="image-20240316100246040"></p>
+<p>组件没有加载出来就可以显示这个</p>
+<p><strong>而且记住,Suspense里的fallback指定的回调的组件一定不要使用懒加载的形式引入，回调的组件应该在和整张页面一起加载出来的</strong></p>
+<p><strong>Hooks</strong></p>
+<p>让你在函数组件使用state和其他的组件特性</p>
+<p>之前说过，函数组件不能使用this和实例对象的，不能使用生命周期和this什么的</p>
+<p>但是现在有hooks，就可以实现了</p>
+<p>三个常用的Hooks</p>
+<p>1.React.useState()</p>
+<pre><code class="js">function Count()&#123;
+    const a = React.useState()
+    console.log(a) //a是一个数组，第一个就是state，第二个更新state的方法
+    function add()&#123;
+        console.log(&#39;jia&#39;)
+    &#125;
+    return (
+        &lt;div&gt;
+            &lt;h1&gt;当前求和为&#123;&#125;&lt;/h1&gt;
+            &lt;button onClick=&#123;add&#125;&gt;点我加一&lt;/button&gt;
+        &lt;/div&gt;
+    )
+&#125;
+</code></pre>
+<p>然后我们可以赋初始值,使用对象 的解构</p>
+<pre><code class="js">    const [a,b] = React.useState(0)
+    console.log(a,b)//
+</code></pre>
+<p>结果</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240316101641354.png" alt="image-20240316101641354"></p>
+<p>下面就可以实现了 </p>
+<pre><code class="js">function Count()&#123;
+    const [count,setCount] = React.useState(0)
+    function add()&#123;
+        setCount(count+1)
+    &#125;
+    return (
+        &lt;div&gt;
+            &lt;h1&gt;当前求和为&#123;count&#125;&lt;/h1&gt;
+            &lt;button onClick=&#123;add&#125;&gt;点我加一&lt;/button&gt;
+        &lt;/div&gt;
+    )
+&#125;
+</code></pre>
+<p>我们观察代码</p>
+<p><strong>其实是有个问题的，当我们修改count的时候，就会重新调用Count，然后但是当我们执行到 const [count,setCount] &#x3D; React.useState(0）那不就是再次重新赋值count为0，但是事实不是这样，因为react官方底层做了处理的，不会出现这个问题不会因为再次调用覆盖掉</strong> </p>
+<p>第二种写法</p>
+<pre><code class="js">    function add()&#123;
+        // setCount(count+1)
+        setCount((count)=&gt;&#123;
+            return count+1
+        &#125;)
+    &#125;
+</code></pre>
+<p>如果状态一多，就得写很多次</p>
+<pre><code class="js">const [name,setName] = React.useState(&#39;王昌晨&#39;)
+const [count,setCount] = React.useState(0)
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240316102318260.png" alt="image-20240316102318260"></p>
+<p><strong>React.useEffect</strong></p>
+<p>有点相当于生命周期钩子，有点复杂，下面的</p>
+<p>后面的回调函数的调用实际是，当组件挂载完毕调用，组件更新的时候调用，state里面的数据全部都会监测</p>
+<pre><code class="js">    React.useEffect(()=&gt;&#123;
+    &#125;)
+</code></pre>
+<p>后面第二个参数是一个空数组，调用的时机只有在页面挂载完毕以后调用，</p>
+<pre><code class="js">    React.useEffect(()=&gt;&#123;
+    &#125;,[])
+</code></pre>
+<p>数据里面有state的属性，调用的实际就是组件挂在完毕，还有更新count的状态的时候调用</p>
+<pre><code class="js">    const [count,setCount] = React.useState(0)
+        React.useEffect(()=&gt;&#123;
+    &#125;,[count])
+</code></pre>
+<p>总结一下</p>
+<p><strong>如果第二个参数没有写，就会监视全部的state，如果第二个参数的是空数组，就会只有在挂载的时候执行</strong></p>
+<p>在写的时候出现一些问题</p>
+<pre><code class="js">const [count,setCount] = React.useState(0)   
+React.useEffect(()=&gt;&#123;
+        setInterval(()=&gt;&#123;
+            console.log(&#39;@&#39;,count)
+            setCount(count+1)
+            console.log(count)
+        &#125;,1000)
+    &#125;,[])
+</code></pre>
+<p>上面这段代码，有问题</p>
+<p>页面只会一直显示1，并不会一直增加</p>
+<p>原因是因为：</p>
+<p><strong>当我们组件挂载时候，调用定时器，因为state更新数据是异步的，而且在定时器的回调函数中直接访问外部的<code>count</code>变量时，可能会遇到闭包的问题，所以一直获取的是旧的count，所以这个count一直都是0</strong></p>
+<p>所以可以使用回调函数</p>
+<pre><code class="js">    React.useEffect(()=&gt;&#123;
+        setInterval(()=&gt;&#123;
+            setCount(count=&gt; count + 1)
+        &#125;,1000)
+    &#125;,[])
+</code></pre>
+<p>继续</p>
+<pre><code class="js">function Count()&#123;
+    const [count,setCount] = React.useState(0)
+    function add()&#123;
+        setCount((count)=&gt;&#123;
+            return count+1
+        &#125;)
+    &#125;
+    React.useEffect(()=&gt;&#123;
+        const a= setInterval(()=&gt;&#123;
+            setCount(count=&gt; count + 1)
+        &#125;,1000)
+        return ()=&gt;&#123;//返回的函数相当于componentWillUnmount
+            console.log(11)
+        &#125;
+    &#125;,[])
+    function unmount()&#123;
+        ReactDOM.unmountComponentAtNode(document.getElementById(&#39;root&#39;))//卸载组件
+    &#125;
+    return (
+        &lt;div &gt;
+            &lt;h1&gt;当前求和为&#123;count&#125;&lt;/h1&gt;
+            &lt;button onClick=&#123;add&#125;&gt;点我加一&lt;/button&gt;
+            &lt;button onClick=&#123;unmount&#125;&gt;卸载组件&lt;/button&gt;
+        &lt;/div&gt;
+    )
+&#125;
+</code></pre>
+<p>React.useEffect里面的回调的返回的的函数相当于<strong>componentWillUnmount</strong></p>
+<p>再卸载之前调用</p>
+<p>最后一个hook</p>
+<p><strong>Ref Hook</strong></p>
+<p>在函数组件里面使用createRef提示信息</p>
+<pre><code class="js">function Count()&#123;
+    const [count,setCount] = React.useState(0)
+    function add()&#123;
+        setCount((count)=&gt;&#123;
+            return count+1
+        &#125;)
+    &#125;
+    React.useEffect(()=&gt;&#123;
+        const a= setInterval(()=&gt;&#123;
+            setCount(count=&gt; count + 1)
+        &#125;,1000)
+        return ()=&gt;&#123;//返回的函数相当于componentWillUnmount
+            clearInterval(a)
+        &#125;
+    &#125;,[])
+    function unmount()&#123;
+        ReactDOM.unmountComponentAtNode(document.getElementById(&#39;root&#39;))//卸载组件
+    &#125;
+    const myRef = React.createRef()
+    function show()&#123;
+        alert(myRef.current.value)
+    &#125;
+    return (
+        &lt;div &gt;
+            &lt;input type=&quot;text&quot; ref=&#123;myRef&#125;/&gt;
+            &lt;h1&gt;当前求和为&#123;count&#125;&lt;/h1&gt;
+            &lt;button onClick=&#123;add&#125;&gt;点我加一&lt;/button&gt;
+            &lt;button onClick=&#123;unmount&#125;&gt;卸载组件&lt;/button&gt;
+            &lt;button onClick=&#123;show&#125;&gt;点我提示信息&lt;/button&gt;
+        &lt;/div&gt;
+    )
+&#125;
+</code></pre>
+<p>其实这里的createRef可以使用useRef进行替换</p>
+<pre><code class="js">    const myRef = React.useRef()
+</code></pre>
+<p>也是好用的</p>
+<p>总结</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240316174744026.png" alt="image-20240316174744026"></p>
+<p><strong>Frament</strong></p>
+<p>这个就是一个标签</p>
+<p>相当于之前的vue需要一个根元素，就可以使用template，而且这样也不会影响层级结构，这个Frament就相当于template</p>
+<pre><code class="js">import React, &#123;Component,Fragment&#125; from &#39;react&#39;;
+
+class Demo extends Component &#123;
+    render() &#123;
+        return (
+            &lt;Fragment&gt;
+                &lt;h1&gt;演示&lt;/h1&gt;
+            &lt;/Fragment&gt;
+        );
+    &#125;
+&#125;
+</code></pre>
+<p>很简单，其实我们要实现这个原理，直接包裹一个空标签也行</p>
+<pre><code class="js">class Demo extends Component &#123;
+    render() &#123;
+        return (
+            &lt;&gt;
+                &lt;h1&gt;演示&lt;/h1&gt;
+            &lt;/&gt;
+        );
+    &#125;
+&#125;
+</code></pre>
+<p>这两个标签的区别，就是Fragment有key属性，如果参与遍历就差需要Fragment</p>
+<p><strong>context</strong></p>
+<p>实现组件之间的通信</p>
+<p><strong>适用于组组件和后代组件的的通信</strong></p>
+<p>操作</p>
+<p>1.创建Context容器对象</p>
+<p>注意要开头首字母要大些，因为最后要当作标签</p>
+<pre><code class="js">const UserNameContext = React.createContext()
+</code></pre>
+<p>我们可以在结构一下,下面代码应该全局定义，然后再在后面使用Provider进行包裹将需要传递的值写在value属性里，</p>
+<pre><code class="js">const UserNameContext = React.createContext()
+const &#123;Provider&#125; = UserNameContext
+
+ render() &#123;
+        return (
+            &lt;div&gt;
+               &lt;h3&gt;A组件，用户名为&#123;this.state.name&#125;&lt;/h3&gt;
+                &lt;hr/&gt;
+                &lt;Provider value=&#123;this.state.name&#125;&gt;
+                    &lt;B/&gt;
+                &lt;/Provider&gt;
+            &lt;/div&gt;
+        );
+    &#125;
+</code></pre>
+<p>2如何接收？经过上面的操作就可以传到后代的组件，但是接收必须声明一下，要不然接收到的是空的，下面就可以接收到了，注意contextType名字是固定的，不能更改，而且前面使用static进行包裹</p>
+<pre><code class="js">class B extends Component &#123;
+    static contextType = UserNameContext
+    render() &#123;
+        console.log(this.context)
+        return (
+            &lt;div&gt;
+                &lt;h3&gt;B组件，接收到的用户名为&#123;&#125;&lt;/h3&gt;
+                &lt;hr/&gt;
+                &lt;C&gt;&lt;/C&gt;
+            &lt;/div&gt;
+        );
+    &#125;
+&#125;
+</code></pre>
+<p>之前我们写过redux页使用Provider，，底层的原理也是这样的</p>
+<p>如果要传递多个数据呢？</p>
+<p>可以写成对象的形式</p>
+<pre><code class="js">                &lt;Provider value=&#123;&#123;name:this.state.name,age:this.state.age&#125;&#125;&gt;
+                    &lt;B/&gt;
+                &lt;/Provider&gt;
+</code></pre>
+<p>然后使用接收就可以 了</p>
+<p>但是上面的方法局限性很大,如果后代组件是函数式组件没有this我们就可以使用第二种方法</p>
+<pre><code class="js">const &#123;Provider,Consumer&#125; = UserNameContext
+</code></pre>
+<p>然后在函数组件就就可以这样接收,value救赎你传递的值</p>
+<pre><code class="js">function C()&#123;
+    return (
+        &lt;div&gt;
+            &lt;h3&gt;C组件，接收到的用户名为:&lt;/h3&gt;
+            &lt;Consumer&gt;
+                &#123;
+                    value =&gt; &#123;
+                        return value.name
+                    &#125;
+                &#125;
+            &lt;/Consumer&gt;
+        &lt;/div&gt;
+    )
+&#125;
+</code></pre>
+<p><strong>组件的优化</strong></p>
+<pre><code class="js">class Parent extends Component &#123;
+    state = &#123;carName:&#39;奔驰c63&#39;&#125;
+    changeCar = ()=&gt;&#123;
+        this.setState(&#123;carName:&#39;迈巴赫&#39;&#125;)
+&#125;
+    render() &#123;
+        console.log(&#39;parent-render&#39;)
+        return (
+            &lt;div&gt;
+                &lt;h4&gt;我是Parent组件&lt;/h4&gt;
+                &lt;strong&gt;我的车是&#123;this.state.carName&#125;&lt;/strong&gt;&lt;br/&gt;
+                &lt;button onClick=&#123;this.changeCar&#125;&gt;点我换车&lt;/button&gt;
+                &lt;hr/&gt;
+                &lt;Child /&gt;
+            &lt;/div&gt;
+        );
+    &#125;
+&#125;
+class Child extends Component &#123;
+    render() &#123;
+        console.log(&#39;child-render&#39;)
+        return (
+            &lt;div&gt;
+                &lt;h3&gt;我是Child组件&lt;/h3&gt;
+                &#123;/*&lt;h3&gt;我接到的车为&#123;this.props.carName&#125;&lt;/h3&gt;*/&#125;
+            &lt;/div&gt;
+        );
+    &#125;
+&#125;
+</code></pre>
+<p>这段代码，当父组件数据更新重新调用render，组件的render也会调用</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240316192247293.png" alt="image-20240316192247293"></p>
+<p>这样就不太好，子组件还会更新</p>
+<p>component存在两个问题</p>
+<p>1.当执行setstate时，即使不改变数据，组件也会render</p>
+<p>2.如果当前组件render（），子组件也会跟这render，这样效率低</p>
+<p>例</p>
+<pre><code class="js">    changeCar = ()=&gt;&#123;
+        this.setState(&#123;&#125;)
+&#125;
+</code></pre>
+<p>这样不会影响state里的数据，但是还会重新熏染</p>
+<p>效率高的方法</p>
+<p><strong>只有当组件的state或者props发生真正的改变才可以重新调用render</strong></p>
+<p>原理是因为</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240316192917469.png" alt="image-20240316192917469"></p>
+<p>解决</p>
+<pre><code class="js">    shouldComponentUpdate(nextProps, nextState, nextContext) &#123;
+        console.log(nextProps,nextState)//接下要变化的目标的props和state
+    &#125;
+</code></pre>
+<p>所以我们可以做判断</p>
+<pre><code class="js">    shouldComponentUpdate(nextProps, nextState, nextContext) &#123;
+        if (this.state.carName === nextState.carName)&#123;return false&#125;
+        else return true
+    &#125;
+</code></pre>
+<p>下面的代码就可以优化这个问题</p>
+<pre><code class="js">import React, &#123;Component&#125; from &#39;react&#39;;
+
+class Parent extends Component &#123;
+    state = &#123;carName:&#39;奔驰c63&#39;&#125;
+    changeCar = ()=&gt;&#123;
+        this.setState(&#123;carName:&#39;迈巴赫&#39;&#125;)
+&#125;
+    shouldComponentUpdate(nextProps, nextState, nextContext) &#123;
+        if (this.state.carName === nextState.carName)&#123;return false&#125;
+        else return true
+    &#125;
+
+    render() &#123;
+        console.log(&#39;parent-render&#39;)
+        return (
+            &lt;div&gt;
+                &lt;h4&gt;我是Parent组件&lt;/h4&gt;
+                &lt;strong&gt;我的车是&#123;this.state.carName&#125;&lt;/strong&gt;&lt;br/&gt;
+                &lt;button onClick=&#123;this.changeCar&#125;&gt;点我换车&lt;/button&gt;
+                &lt;hr/&gt;
+                &lt;Child carName=&#39;奔驰&#39;/&gt;
+            &lt;/div&gt;
+        );
+    &#125;
+&#125;
+class Child extends Component &#123;
+    //只有当父组件穿过的来的props和上次的不一样才会render
+    shouldComponentUpdate(nextProps, nextState, nextContext) &#123;
+        // if(this.props.carName === nextProps.carName)&#123;
+        //     return false
+        // &#125;  else   return true
+        return !this.props.carName === nextProps.carName
+    &#125;
+    render() &#123;
+        console.log(&#39;child-render&#39;)
+        return (
+            &lt;div&gt;
+                &lt;h3&gt;我是Child组件&lt;/h3&gt;
+                &#123;/*&lt;h3&gt;我接到的车为&#123;this.props.carName&#125;&lt;/h3&gt;*/&#125;
+            &lt;/div&gt;
+        );
+    &#125;
+&#125;
+
+export default Parent;
+</code></pre>
+<p>那如果判断很多个怎么办</p>
+<p>开发的话是不需要手动写阀门的</p>
+<p>在react提供PureComponent</p>
+<p>继承与这个</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240316195351776.png" alt="image-20240316195351776"></p>
+<p>这样阀门的逻辑就不用写 了</p>
+<p>但是还有一个问题 </p>
+<p>如果我们使用carName但是却这样写了</p>
+<pre><code class="js">    changeCar = ()=&gt;&#123;
+        const obj = this.state
+        obj.carName= &#39;hahah&#39;
+        this.setState(obj)
+        // this.setState(&#123;carName:&#39;迈巴赫&#39;&#125;)
+&#125;
+</code></pre>
+<p>触发这个函数但还是没有render，因为这个是地址的引用，地址没有改变，对比是浅对比，这就是之前说过不适用push和unshift的方法在redux的reducer的里面</p>
+<p>总结一下</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240316200229344.png" alt="image-20240316200229344"></p>
+<p><strong>render props</strong></p>
+<p><strong>相当于vue*里面的插槽</strong></p>
+<p>父组件</p>
+<pre><code class="js">&lt;div&gt;
+    &lt;h3&gt;Parent组件&lt;/h3&gt;
+    &lt;hr/&gt;
+    &lt;A id=&#123;1&#125;&gt;Hello&lt;/A&gt;
+&lt;/div&gt;
+</code></pre>
+<p>子组件</p>
+<pre><code class="js">console.log(this.props)//&#123;id: 1, children: &#39;Hello&#39;&#125;
+</code></pre>
+<p>之前说过标签体内容是特别的标签属性</p>
+<p>我们在A标签也可以包裹其他组件的内容</p>
+<pre><code class="JS">Parent组件
+render() &#123;
+        return (
+            &lt;div&gt;
+                &lt;h3&gt;Parent组件&lt;/h3&gt;
+                &lt;hr/&gt;
+                &lt;A id=&#123;1&#125;&gt;
+                    &lt;B/&gt;
+                &lt;/A&gt;
+            &lt;/div&gt;
+        );
+A组件
+ render() &#123;
+        return (
+            &lt;div&gt;
+                &lt;h3&gt;A组件&lt;/h3&gt;
+                &lt;h2&gt;&#123;this.props.children&#125;&lt;/h2&gt;
+            &lt;/div&gt;
+        );
+    &#125;
+B组件
+ render() &#123;
+        return (
+            &lt;div&gt;
+                &lt;h3&gt;B组件&lt;/h3&gt;
+            &lt;/div&gt;
+        );
+    &#125;
+</code></pre>
+<p>这样效果</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240316201752870.png" alt="image-20240316201752870"></p>
+<p>所以形成会关系这种方法也是可以的</p>
+<p>如果我们想把A组件的state传递给B组件，还是按照这种写法</p>
+<p>那应该怎么传</p>
+<p>可以向下面这样</p>
+<p>我们就可以这么写,非常的巧妙，能看懂，不解释了</p>
+<pre><code class="js">import React, &#123;Component&#125; from &#39;react&#39;;
+
+class Parent extends Component &#123;
+    render() &#123;
+        return (
+            &lt;div&gt;
+                &lt;h3&gt;Parent组件&lt;/h3&gt;
+                &lt;hr/&gt;
+                &lt;A render=&#123;(name)=&gt;&lt;B name=&#123;name&#125;/&gt;&#125;&gt;&lt;/A&gt;
+            &lt;/div&gt;
+        );
+    &#125;
+&#125;
+class A extends Component &#123;
+    state = &#123;name:&#39;tom&#39;&#125;
+    render() &#123;
+        return (
+            &lt;div&gt;
+                &lt;h3&gt;A组件&lt;/h3&gt;
+                &lt;hr/&gt;
+                &#123;this.props.render(this.state.name)&#125;
+            &lt;/div&gt;
+        );
+    &#125;
+&#125;
+class B extends Component &#123;
+    render() &#123;
+        return (
+            &lt;div&gt;
+                &lt;h3&gt;B组件&lt;/h3&gt;
+                &lt;h3&gt;名字为:&#123;this.props.name&#125;&lt;/h3&gt;
+            &lt;/div&gt;
+        );
+    &#125;
+&#125;
+
+export default Parent;
+</code></pre>
+<p>这样就更接近插槽的技术了</p>
+<p>总结这两种方法</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240316202842295.png" alt="image-20240316202842295"></p>
+<p><strong>错误边界</strong></p>
+<p>打包以后的文件怎么运行？</p>
+<p>1.使用express</p>
+<p>2.使用第三方的库：<strong>server</strong></p>
+<p>安装</p>
+<pre><code class="js">pnpm i serve
+</code></pre>
+<p>然后指定哪个文件夹作为根目录</p>
+<pre><code class="js">serve build
+</code></pre>
+<p>这样就可以了</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240316203808974.png" alt="image-20240316203808974"></p>
+<p>错误边界的意思</p>
+<p><strong>当我们子组件发生错误，不会影响我们父组件的展示</strong></p>
+<p>操作的地方在容易错误组件的父组件</p>
+<p>例</p>
+<pre><code class="js">class Child extends Component &#123;
+    state = &#123;
+        users:[
+            &#123;id:&#39;001&#39;,name:&#39;tom&#39;,age:18&#125;,
+            &#123;id:&#39;002&#39;,name:&#39;jack&#39;,age:18&#125;,
+            &#123;id:&#39;003&#39;,name:&#39;peiqi&#39;,age:18&#125;,
+            &#123;id:&#39;004&#39;,name:&#39;tom&#39;,age:18&#125;,
+        ]
+    &#125;
+    render() &#123;
+        return (
+            &lt;div&gt;
+                &lt;h2&gt;Child组件&lt;/h2&gt;
+                &lt;ul&gt;
+                    &#123;
+                        this.state.users.map((item)=&gt;&#123;
+                            return (
+                                &lt;li key=&#123;item.id&#125;&gt;
+                                    &#123;item.name&#125;---&#123;item.age&#125;
+                                &lt;/li&gt;
+                            )
+                        &#125;)
+                    &#125;
+                &lt;/ul&gt;
+            &lt;/div&gt;
+        );
+    &#125;
+&#125;
+</code></pre>
+<p>这是正常的子组件如果我把users改为字符串，这样整个页面就会报错</p>
+<p>在父组件就可以这么写</p>
+<pre><code class="js">class Parent extends Component &#123;
+    state = &#123;
+        hasError:null
+    &#125;
+    //如果parent任意的子组件发生了错误都会调用这个钩子
+    static getDerivedStateFromError(error)&#123;
+        console.log(error)
+        return &#123;hasError:error&#125;
+    &#125;
+    render() &#123;
+        return (
+            &lt;div&gt;
+                &lt;h2&gt;Parent组件&lt;/h2&gt;
+                &lt;hr/&gt;
+                &#123;this.state.hasError ? &lt;h2&gt;加载失败&lt;/h2&gt; : &lt;Child/&gt;&#125;
+            &lt;/div&gt;
+        );
+    &#125;
+&#125;
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240316205354398.png" alt="image-20240316205354398"></p>
+<p><strong>这就是错误边界</strong></p>
+<p>其实我们能够做的更好</p>
+<pre><code class="js">//组件熏染出错，就会调用   
+componentDidCatch(error, errorInfo) &#123;
+        console.log(&#39;熏染出错&#39;)
+        // 一般这里做记录做错误次数，反馈给服务器
+    &#125;
+</code></pre>
+<p>这个钩子是错误的时候调用，然后就可以在这里记录错误的次数</p>
+<p>注意</p>
+<p><strong>上面的钩子只能捕获声明周期产生的错误，例如上面的演示就是render（）出的错</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240316205912906.png" alt="image-20240316205912906"></p>
+<p>组件通信的总结</p>
 
     </div>
     
