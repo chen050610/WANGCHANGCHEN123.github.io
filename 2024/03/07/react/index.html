@@ -4862,6 +4862,345 @@ componentDidCatch(error, errorInfo) &#123;
 <p><strong>上面的钩子只能捕获声明周期产生的错误，例如上面的演示就是render（）出的错</strong></p>
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240316205912906.png" alt="image-20240316205912906"></p>
 <p>组件通信的总结</p>
+<p><strong>React Router6</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240317100540654.png" alt="image-20240317100540654"></p>
+<p>发生了一点的改变</p>
+<p>安装</p>
+<pre><code class="js"> pnpm i react-router-dom@6
+</code></pre>
+<p>发生的改变，switch被替换成Routes，component的属性被替换成element，这个Routes是必须使用的，如果不使用就会报错，</p>
+<pre><code class="js">import &#123;NavLink,Route,Routes&#125; from &#39;react-router-dom&#39;
+//在注册路由的时候
+                                &lt;Routes&gt;
+                                    &lt;Route path=&quot;/about&quot; element=&#123;&lt;About/&gt;&#125;/&gt;
+                                    &lt;Route path=&quot;/home&quot; element=&#123;&lt;Home/&gt;&#125;/&gt;
+                                &lt;/Routes&gt;
+</code></pre>
+<p>之前说过一种情况，这个匹配规则还是和switch是一样的，匹配到以后就不会再匹配了</p>
+<pre><code class="js">    &lt;Routes&gt;
+                                    &lt;Route path=&quot;/about&quot; element=&#123;&lt;About/&gt;&#125;/&gt;
+                                    &lt;Route path=&quot;/about&quot; element=&#123;&lt;Home/&gt;&#125;/&gt;
+                                    &lt;Route path=&quot;/home&quot; element=&#123;&lt;Home/&gt;&#125;/&gt;
+                                &lt;/Routes&gt;
+</code></pre>
+<p><strong>重定向的写法</strong></p>
+<p>之前的重定向最后的使用Redirect进行重定向现在使用</p>
+<p>有点麻烦</p>
+<pre><code class="js">import &#123;NavLink,Route,Routes,Navigate&#125; from &#39;react-router-dom&#39;
+                                &lt;Routes&gt;
+                                    &lt;Route path=&quot;/about&quot; element=&#123;&lt;About/&gt;&#125;/&gt;
+                                    &lt;Route path=&quot;/home&quot; element=&#123;&lt;Home/&gt;&#125;/&gt;
+                                    &lt;Route path=&quot;/&quot; element=&#123;&lt;Navigate to=&#123;&#39;/home&#39;&#125;/&gt;&#125;/&gt;
+                                &lt;/Routes&gt;
+</code></pre>
+<p>只要熏染Navigate就会引起视图的切换</p>
+<p>例子</p>
+<pre><code class="js">import React, &#123;Component&#125; from &#39;react&#39;;
+import &#123;Navigate&#125; from &#39;react-router-dom&#39;
+
+function Home ()&#123;
+    const [sum,setSum] = React.useState(0)
+    const add = ()=&gt;&#123;
+        setSum(2)
+    &#125;
+    return (
+        &lt;div&gt;
+            &lt;h3&gt;Home组件&lt;/h3&gt;
+            &#123;sum === 2 ? &lt;Navigate to=&#123;&#39;/about&#39;&#125;&gt;&lt;/Navigate&gt; : &lt;h3&gt;当前的sum值为&#123;sum&#125;&lt;/h3&gt;&#125;
+            &lt;button onClick=&#123;add&#125;&gt;点我变为2&lt;/button&gt;
+        &lt;/div&gt;
+    )
+&#125;
+
+export default Home;
+</code></pre>
+<p>当我们sum为2的时候就会跳转到about</p>
+<p>而且Navigate还有replace的的属性</p>
+<pre><code class="js">   &#123;sum === 2 ? &lt;Navigate replace to=&#123;&#39;/about&#39;&#125;&gt;&lt;/Navigate&gt; : &lt;h3&gt;当前的sum值为&#123;sum&#125;&lt;/h3&gt;&#125;
+</code></pre>
+<p>总结一下</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240317103844979.png" alt="image-20240317103844979"></p>
+<p><strong>之前高亮效果的activeClassname的属性不能使用了</strong></p>
+<p>现在规定自定义追加的类名，在类名里面要使用函数的形式</p>
+<pre><code class="js"> &lt;NavLink className=&#123;(value)=&gt;&#123;
+                                console.log(value)&#125;&#125; to=&#39;/about&#39;&gt;About&lt;/NavLink&gt;
+</code></pre>
+<p>我们通过上面就可以发现函数的执行时机，当我们刚熏染组件的时候会调用，当跳转到这个路由也会调用，当离开这个路由也会调用</p>
+<p>而且里面的isActive也会跟着变化</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240317104700516.png" alt="image-20240317104700516"></p>
+<p>这样就可以了</p>
+<pre><code class="js">                            &lt;NavLink className=&#123;(&#123;isActive&#125;)=&gt;&#123;
+                                return isActive ? &#39;list-group-item active&#39; : &#39;list-group-item&#39;
+                                &#125;&#125; to=&#39;/about&#39;&gt;About&lt;/NavLink&gt;
+</code></pre>
+<p>或者更简单点</p>
+<pre><code class="js">function computedClassName(&#123;isActive&#125;)&#123;
+    return isActive ? &#39;list-group-item active&#39; : &#39;list-group-item&#39;
+&#125;
+                  &lt;NavLink className=&#123;computedClassName&#125; to=&#39;/about&#39;&gt;About&lt;/NavLink&gt;
+</code></pre>
+<p>在学习的时候发现一个注意点</p>
+<p>只要NavLink可以写成上面的这样，发现Link标签实现不了上面的效果</p>
+<p>所以还是这样写</p>
+<pre><code class="js">    function computedClassName(&#123;isActive&#125;)&#123;
+        return isActive ? &#39;list-group-item active&#39; : &#39;list-group-item&#39;
+    &#125;
+                            &lt;div className=&quot;list-group&quot;&gt;
+                            &lt;NavLink className=&#123;computedClassName&#125; to=&#39;/about&#39;&gt;About&lt;/NavLink&gt;
+                            &lt;NavLink className=&#123;computedClassName&#125; to=&#39;/home&#39;&gt;Home&lt;/NavLink&gt;
+                        &lt;/div&gt;
+</code></pre>
+<p><strong>路由表的使用</strong></p>
+<p>我们发现</p>
+<pre><code class="js">                                &lt;Routes&gt;
+                                    &lt;Route path=&quot;/about&quot; element=&#123;&lt;About/&gt;&#125;/&gt;
+                                    &lt;Route path=&quot;/home&quot; element=&#123;&lt;Home/&gt;&#125;/&gt;
+                                    &lt;Route path=&quot;/&quot; element=&#123;&lt;Navigate to=&#123;&#39;/home&#39;&#125;/&gt;&#125;/&gt;
+                                &lt;/Routes&gt;
+</code></pre>
+<p>这些内容大致一样，只是路由和组件不一样，我们就可以使用路由表注册路由</p>
+<p>使用如下，现在代码都是函数式组件</p>
+<pre><code class="js">import &#123;NavLink,Route,Routes,Navigate,Link,useRoutes&#125; from &#39;react-router-dom&#39;
+    const element = useRoutes([
+        &#123;path:&#39;/about&#39;,element:&lt;About/&gt;&#125;,
+        &#123;path:&#39;/home&#39;,element:&lt;Home/&gt;&#125;,
+        &#123;path:&#39;/&#39;,element:&lt;Navigate to=&#123;&#39;/home&#39;&#125;/&gt;&#125;,
+    ])
+    //在之前注册路由的地方
+        &#123;element&#125;
+</code></pre>
+<p>这样就实现了和之前的效果，一般把路由表封装在一个文件里里面</p>
+<pre><code class="js">import Home from &#39;../components/Home&#39;
+import About from &#39;../components/About&#39;
+import &#123;Navigate&#125; from &quot;react-router-dom&quot;;
+import React from &quot;react&quot;;
+import &#123;useRoutes&#125; from &quot;react-router-dom&quot;;
+
+export default
+    [
+        &#123;path:&#39;/about&#39;,element:&lt;About/&gt;&#125;,
+        &#123;path:&#39;/home&#39;,element:&lt;Home/&gt;&#125;,
+        &#123;path:&#39;/&#39;,element:&lt;Navigate to=&#123;&#39;/home&#39;&#125;/&gt;&#125;,
+    ]
+</code></pre>
+<pre><code class="js">import routes from &#39;./Routes/index
+const element = useRoutes(routes)
+</code></pre>
+<p><strong>嵌套路由</strong></p>
+<p>基本使用</p>
+<p>我们子级路由的注册可以在路由表里面，这可以写成这样</p>
+<p>注意这里的路径，注意子路由的path不用跟上父级路由，而且不能加‘&#x2F;’</p>
+<pre><code class="js">import Home from &#39;../components/Home&#39;
+import About from &#39;../components/About&#39;
+import Message from &quot;../components/Message&quot;;
+import News from &quot;../components/News&quot;
+import &#123;Navigate&#125; from &quot;react-router-dom&quot;;
+import React from &quot;react&quot;;
+import &#123;useRoutes&#125; from &quot;react-router-dom&quot;;
+
+export default
+    [
+        &#123;path:&#39;/about&#39;,element:&lt;About/&gt;&#125;,
+        &#123;path:&#39;/home&#39;,element:&lt;Home/&gt;,children:[
+                &#123;path:&#39;message&#39;,element:&lt;Message/&gt;&#125;,
+                &#123;path:&#39;news&#39;,element:&lt;News/&gt;&#125;
+            ]&#125;,
+        &#123;path:&#39;/&#39;,element:&lt;Navigate to=&#123;&#39;/home&#39;&#125;/&gt;&#125;,
+    ]
+</code></pre>
+<p>在父级路由之前注册路由的地方</p>
+<pre><code class="js">import React, &#123;Component&#125; from &#39;react&#39;;
+import &#123;NavLink,Outlet &#125; from &quot;react-router-dom&quot;;
+function Home ()&#123;
+    return (
+        &lt;div&gt;
+            &lt;h3&gt;Home组件&lt;/h3&gt;
+            &lt;div&gt;
+                &lt;ul className=&quot;nav nav-tabs&quot;&gt;
+                    &lt;li&gt;
+                        &lt;NavLink to=&#39;/home/news&#39;&gt;News&lt;/NavLink&gt;
+                    &lt;/li&gt;
+                    &lt;li&gt;
+                        &lt;NavLink to=&#39;/home/message&#39;&gt;message&lt;/NavLink&gt;
+                    &lt;/li&gt;
+                &lt;/ul&gt;
+                &#123;/*指定路由组件呈现的路径*/&#125;
+                &lt;Outlet&gt;&lt;/Outlet&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    )
+&#125;
+</code></pre>
+<p>引入Outlet相当于vue里面的router-view</p>
+<p>还有一个注意点</p>
+<pre><code class="js">  &lt;NavLink to=&#39;/home/news&#39;&gt;News&lt;/NavLink&gt;
+</code></pre>
+<p>这里面的跳转连接可以写成上面这个样子，或者写成下面这个样子，这样的效果是一样的，而且注意不要写’&#x2F;‘</p>
+<pre><code class="js">  &lt;NavLink to=&#39;news&#39;&gt;News&lt;/NavLink&gt;
+</code></pre>
+<p>或者这么写,在当前的路径添加</p>
+<pre><code class="js">  &lt;NavLink to=&#39;./news&#39;&gt;News&lt;/NavLink&gt;
+</code></pre>
+<p>还有一个问题</p>
+<p>我们发现</p>
+<p>当我们点击子路由的时候，父级路由的也会亮</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240317114934884.png" alt="image-20240317114934884"></p>
+<p>如果不想这样的话在父级路由的添加end属性</p>
+<pre><code class="js">                            &lt;NavLink className=&#123;computedClassName&#125; to=&#39;/about&#39;&gt;About&lt;/NavLink&gt;
+                            &lt;NavLink className=&#123;computedClassName&#125; to=&#39;/home&#39; end&gt;Home&lt;/NavLink&gt;
+</code></pre>
+<p><strong>路由传参</strong></p>
+<p>params传参</p>
+<p>传参的地方</p>
+<pre><code class="js">&lt;li key=&#123;item.id&#125;&gt;&lt;Link to=&#123;`detail/$&#123;item.username&#125;/$&#123;item.age&#125;`&#125;&gt;&#123;item.username&#125;&lt;/Link&gt;&lt;/li&gt;
+</code></pre>
+<p>注册路由的地方</p>
+<pre><code class="js">//需要占位
+&#123;path:&#39;message&#39;,element:&lt;Message/&gt;,children:[
+                        &#123;path:&#39;detail/:username/:age&#39;,element:&lt;Detail/&gt;&#125;
+                    ]&#125;,
+</code></pre>
+<p>因为我们现在是函数式的组件，所以我们this，所以就需要使用钩子，</p>
+<p>这样获取的a就是就是params参数对象</p>
+<pre><code class="js">import &#123;useParams&#125; from &quot;react-router-dom&quot;;
+
+const Detail = () =&gt; &#123;
+    const a = useParams()
+    console.log(a)
+    return (
+        &lt;div&gt;
+            &lt;ul&gt;&lt;/ul&gt;
+        &lt;/div&gt;
+    );
+&#125;;
+</code></pre>
+<p>之前我们获取params使用props里面的match获得的</p>
+<p>，我们也有match的钩子，不过需要把路径给补上</p>
+<pre><code class="js">import &#123;useParams,useMatch&#125; from &quot;react-router-dom&quot;;
+    const a = useMatch(&#39;/home/message/detail/:username/:age&#39;)
+    console.log(a)
+</code></pre>
+<p>结果里就有</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240317122141763.png" alt="image-20240317122141763"></p>
+<p><strong>search参数</strong></p>
+<p>这个参数获取有点麻烦的其他的还好。注册路由的时候不用占位</p>
+<pre><code class="js">&lt;li key=&#123;item.id&#125;&gt;&lt;Link to=&#123;`detail?username=$&#123;item.username&#125;&amp;age=$&#123;item.age&#125;`&#125;&gt;&#123;item.username&#125;&lt;/Link&gt;&lt;/li&gt;
+</code></pre>
+<p>接收的时候,这个useSearchParams有点像useState，返回一个数组，第一个是传过来的数据，第二个是修改数据的方法，获取数据我们还有使用数组返回第一的get方法，这样就可以获取到相对应的值</p>
+<pre><code class="js">import &#123;useSearchParams&#125; from &quot;react-router-dom&quot;;
+const [user,setUser] = useSearchParams()
+console.log(user.get(&#39;username&#39;))
+</code></pre>
+<p>这样就可以实现了</p>
+<pre><code class="js">    const [user,setUser] = useSearchParams()
+    const username = user.get(&#39;username&#39;)
+    const age = user.get(&#39;age&#39;)
+    return (
+        &lt;div&gt;
+            &lt;ul&gt;&#123;username&#125;--&#123;age&#125;&lt;/ul&gt;
+        &lt;/div&gt;
+    );
+</code></pre>
+<p>修改数据的方法</p>
+<pre><code class="js">    const [user,setUser] = useSearchParams()
+    const username = user.get(&#39;username&#39;)
+    const age = user.get(&#39;age&#39;)   
+    const refeshUser  = ()=&gt;&#123;
+        setUser(&#39;username=哈哈&amp;age=18&#39;)
+    &#125;
+    return (
+        &lt;div&gt;
+            &lt;ul&gt;&#123;username&#125;--&#123;age&#125;&lt;/ul&gt;
+            &lt;button onClick=&#123;refeshUser&#125;&gt;更新search参数&lt;/button&gt;
+        &lt;/div&gt;
+    );
+&#125;;
+</code></pre>
+<p>或者使用useLoaction的钩子,注意这个不用向match一样写上路径</p>
+<pre><code class="js">    const a = useLocation()
+    console.log(a)
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240317123546393.png" alt="image-20240317123546393"></p>
+<p>最后还要借助第三方库query—string</p>
+<p>s<strong>tate参数</strong></p>
+<p>之前我们to里面写的是对象类型 的，这里面可以不用对象</p>
+<p>可以写成这样的，添加state参数</p>
+<pre><code class="js">    return (&lt;li key=&#123;item.id&#125;&gt;&lt;Link to=&#39;detail&#39; state=&#123;&#123;
+                                username:item.username,
+                                age:item.age
+                            &#125;&#125;&gt;&#123;item.username&#125;&lt;/Link&gt;&lt;/li&gt;)
+</code></pre>
+<p>获取的话我们可以使用useLocation进行获取</p>
+<p>因为location里面有search和state参数，params参数在match里面</p>
+<pre><code class="js">    const a = useLocation()
+    console.log(a)
+</code></pre>
+<p>我们就可以获取的到</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240317124340269.png" alt="image-20240317124340269"></p>
+<p>state只有这一种这个方法</p>
+<p><strong>编程式路由导航</strong></p>
+<p>之前使用props.history里的方法</p>
+<p>基本的使用</p>
+<pre><code class="js">import &#123;useNavigate&#125; from &quot;react-router-dom&quot;;
+    const getRoute = ()=&gt;&#123;
+        navigate(&#39;/home&#39;)
+    &#125;
+        return (
+        &lt;div&gt;
+        &#123;/*//     &lt;ul&gt;&#123;username&#125;--&#123;age&#125;&lt;/ul&gt;*/&#125;
+            &lt;button onClick=&#123;getRoute&#125;&gt;点我跳转到首页&lt;/button&gt;
+        &lt;/div&gt;
+    );
+</code></pre>
+<p>这样就可以跳转</p>
+<p>第二个参数是配置，这里面的第二个参数就是配置对象，注意这个配置对象里面只能传递state参数，其他参数的传递直接拼接在路径里面</p>
+<pre><code class="js">    const navigate = useNavigate()
+    const getRoute = ()=&gt;&#123;
+        navigate(&#39;/home&#39;,&#123;
+            replace:false,
+            state:&#123;
+                
+            &#125;
+        &#125;)
+    &#125;
+</code></pre>
+<p>之前非路由组件，使用withRouter进行包裹，就可以使用路由的方法</p>
+<p>在新版本中，有了useNavigate()，也可以非路由组件使用路由组件的方法</p>
+<pre><code class="js">import React from &#39;react&#39;;
+import &#123;useNavigate&#125; from &quot;react-router-dom&quot;;
+
+const Title = () =&gt; &#123;
+    const navigate = useNavigate()
+    function forward()&#123;
+
+        navigate(1)
+    &#125;
+    function back()&#123;
+
+        navigate(-1)
+    &#125;
+    return (
+        &lt;div&gt;
+            &lt;h1&gt;Home组件&lt;/h1&gt;
+            &lt;button onClick=&#123;forward&#125;&gt;前进&lt;/button&gt;
+            &lt;button onClick=&#123;back&#125;&gt;后退&lt;/button&gt;
+        &lt;/div&gt;
+    );
+&#125;;
+
+export default Title;
+</code></pre>
+<p>其他的钩子</p>
+<p>app被broserRoute包裹，旗下的所有子组件，都是返回的true，当脱离broserRouterj就是false</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240317130246830.png" alt="image-20240317130246830"></p>
+<p>返回值是返回值就是你通过什么方式进入这个页面的，pop是刷新进入这个组件</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240317130426356.png" alt="image-20240317130426356"></p>
+<p>输入</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240317130542276.png" alt="image-20240317130542276"></p>
+<p>解析路径的钩子</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240317130645778.png" alt="image-20240317130645778"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240317130705039.png" alt="image-20240317130705039"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240317130719631.png" alt="image-20240317130719631"></p>
 
     </div>
     
