@@ -1365,7 +1365,7 @@ const person2 = &#123;...person,name:&#39;王昌晨&#39;&#125;//在复制的同�
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240308145640245.png" alt="image-20240308145640245"></p>
 <p>所以在升级一下</p>
 <pre><code class="js">    class Demo extends React.Component &#123;
-        showData = ()=&gt;&#123;
+        showData = () =&gt;&#123;
             alert(this.refs.input1.value)//z这里拿到的就是真实的dom
         &#125;
         demo2 = ()=&gt;&#123;
@@ -1729,7 +1729,6 @@ obj[a]=&#39;tom&#39;//&#123;name:&#39;tom&#39;&#125;
       console.log(data)
       return (event)=&gt;&#123;
         console.log([data],event.target.value)
-
       &#125;
     &#125;
     // handleForm = (event)=&gt;&#123;
@@ -2633,7 +2632,6 @@ static getDerivedStateFromProps(props,state)&#123;
 <pre><code class="js">const &#123;createProxyMiddleware&#125; = require(&#39;http-proxy-middleware&#39;)
 
 
-
 module.exports = function (app)&#123;
     app.use(
         createProxyMiddleware(&#39;api1&#39;,&#123;//遇见api1的前缀就会触发该代理配置HOST就是请求的地址
@@ -2679,12 +2677,12 @@ app.use(cors())
 <p>和vue里面的mitt和pubsub的使用方法一样的</p>
 <p>这是消息的接收方</p>
 <p>这里的message就是前面的消息的名称，后面就是消息的数据</p>
-<pre><code class="js">        PubSub.subscribe(&#39;userInfo&#39;,(message,data)=&gt;&#123;
-            console.log(message,data)
-        &#125;)
+<pre><code class="js">PubSub.subscribe(&#39;userInfo&#39;,(message,data)=&gt;&#123;
+    console.log(message,data)
+&#125;)
 </code></pre>
 <p>这里是消息的发送方</p>
-<pre><code class="js">        PubSub.publish(&#39;userInfo&#39;,this.state.userInfo)
+<pre><code class="js"> PubSub.publish(&#39;userInfo&#39;,this.state.userInfo)
 </code></pre>
 <p>这里说一下我遇到的问题</p>
 <p>就是当我使用subscribe接收数据以后</p>
@@ -3667,6 +3665,10 @@ import App from &#39;./app&#39;
 import store from &quot;./redux/store&quot;;
 
 
+ ReactDOM.render(
+        &lt;App/&gt;
+        ,document.getElementById(&#39;root&#39;))
+
 store.subscribe(()=&gt;&#123;
     ReactDOM.render(
         &lt;App/&gt;
@@ -3939,7 +3941,6 @@ export default  connect(
     dispatch =&gt;(&#123;       
         increment : value=&gt; dispatch(createIncrementAction(value)),
         decrement : (value)=&gt; dispatch(createDecrementAction(value)&#125;)
-
 )(CountUi)
 </code></pre>
 <p><strong>上面是代码层面的优化，传递方法的那个优化，代码里面只有一个return，suoy省略{}和return，但是它返回的是一个对象的形式，为了放着把对象的{}当作函数体，需要使用（）包裹</strong></p>
@@ -4261,11 +4262,11 @@ export default Demo;
 </code></pre>
 <p>点击以后直接变成9999</p>
 <p>而且还能该函数的参数能够接收到两个参数</p>
-<pre><code class="js">        this.setState((state,props)=&gt;&#123;
-            console.log(state) //&#123;sum: 0&#125;
-            console.log(props) //&#123;a: 1&#125;
-            return &#123;sum:9999&#125;
-        &#125;)
+<pre><code class="js">    this.setState((state,props)=&gt;&#123;
+        console.log(state) //&#123;sum: 0&#125;
+        console.log(props) //&#123;a: 1&#125;
+        return &#123;sum:9999&#125;
+   &#125;)
 </code></pre>
 <p>state组件里的状态，props是组件传过来的值，我感觉没有用啊，使用this也能获取到啊</p>
 <p>这个函数式的形式适用于定时器的修改state参数</p>
@@ -4634,8 +4635,12 @@ class Parent extends Component &#123;
         this.setState(&#123;carName:&#39;迈巴赫&#39;&#125;)
 &#125;
     shouldComponentUpdate(nextProps, nextState, nextContext) &#123;
-        if (this.state.carName === nextState.carName)&#123;return false&#125;
-        else return true
+        if (this.state.carName === nextState.carName)
+        &#123;
+            return false
+        &#125;
+        else
+            return true
     &#125;
 
     render() &#123;
@@ -4784,7 +4789,7 @@ export default Parent;
 <p><strong>错误边界</strong></p>
 <p>打包以后的文件怎么运行？</p>
 <p>1.使用express</p>
-<p>2.使用第三方的库：<strong>server</strong></p>
+<p>2.使用第三方的库：<strong>serve</strong></p>
 <p>安装</p>
 <pre><code class="js">pnpm i serve
 </code></pre>

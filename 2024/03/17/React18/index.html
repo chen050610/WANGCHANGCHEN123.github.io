@@ -3,7 +3,7 @@
 <html lang="zh-Hans">
 <head>
     <meta charset="utf-8" />
-    <title>Tags: 学习计划 | 哈哈哈哈哈哈哈重生之我是兵王</title>
+    <title>React18 | 哈哈哈哈哈哈哈重生之我是兵王</title>
     <meta name="author" content="chenw" />
     <meta name="description" content="description" />
     <meta name="keywords" content="" />
@@ -39,6 +39,10 @@
 
 
 <script src="/js/lib/preview.js"></script>
+
+
+
+
 
 
 
@@ -152,171 +156,116 @@
 </transition>
 
         <div id="main" :class="loading ? 'into-enter-from': 'into-enter-active'">
-            <div id="archives">
-    
-    <div class="categories-tags">
-        
-        
-        
-        <span>
-            <a href="/tags/axios/" style="background: #00bcd4">
-                <span class="icon">
-                    <i class="fa-solid fa-tags fa-fw"></i>
-                </span>
-                axios
-            </a>
-        </span>
-        
-        
-        
-        <span>
-            <a href="/tags/git%E7%9A%84%E5%AD%A6%E4%B9%A0/" style="background: #ffa2c4">
-                <span class="icon">
-                    <i class="fa-solid fa-tags fa-fw"></i>
-                </span>
-                git的学习
-            </a>
-        </span>
-        
-        
-        
-        <span>
-            <a href="/tags/React%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/" style="background: #03a9f4">
-                <span class="icon">
-                    <i class="fa-solid fa-tags fa-fw"></i>
-                </span>
-                React项目实战
-            </a>
-        </span>
-        
-        
-        
-        <span>
-            <a href="/tags/typescript/" style="background: #00bcd4">
-                <span class="icon">
-                    <i class="fa-solid fa-tags fa-fw"></i>
-                </span>
-                typescript
-            </a>
-        </span>
-        
-        
-        
-        <span>
-            <a href="/tags/js%E8%BF%9B%E9%98%B6/" style="background: #00a596">
-                <span class="icon">
-                    <i class="fa-solid fa-tags fa-fw"></i>
-                </span>
-                js进阶
-            </a>
-        </span>
-        
-        
-        
-        <span>
-            <a href="/tags/promise%E4%BD%BF%E7%94%A8/" style="background: #03a9f4">
-                <span class="icon">
-                    <i class="fa-solid fa-tags fa-fw"></i>
-                </span>
-                promise使用
-            </a>
-        </span>
-        
-        
-        
-        <span>
-            <a href="/tags/vue3%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5/" style="background: #00bcd4">
-                <span class="icon">
-                    <i class="fa-solid fa-tags fa-fw"></i>
-                </span>
-                vue3项目实践
-            </a>
-        </span>
-        
-        
-        
-        <span>
-            <a href="/tags/%E5%AD%A6%E4%B9%A0%E8%AE%A1%E5%88%92/" style="background: linear-gradient(120deg, #9abbf7 0%, #ffbbf4 100%)">
-                <span class="icon">
-                    <i class="fa-solid fa-tags fa-fw"></i>
-                </span>
-                学习计划
-            </a>
-        </span>
-        
-        
-        
-        
-        
-        <span>
-            <a href="/tags/webpack/" style="background: #03a9f4">
-                <span class="icon">
-                    <i class="fa-solid fa-tags fa-fw"></i>
-                </span>
-                webpack
-            </a>
-        </span>
-        
-        
-        
-        <span>
-            <a href="/tags/PS3/" style="background: #ff7d73">
-                <span class="icon">
-                    <i class="fa-solid fa-tags fa-fw"></i>
-                </span>
-                PS3
-            </a>
-        </span>
-        
-        
-        
-        <span>
-            <a href="/tags/Games/" style="background: #03a9f4">
-                <span class="icon">
-                    <i class="fa-solid fa-tags fa-fw"></i>
-                </span>
-                Games
-            </a>
+            <div class="article">
+    <div>
+        <h1>React18</h1>
+    </div>
+    <div class="info">
+        <span class="date">
+            <span class="icon">
+                <i class="fa-solid fa-calendar fa-fw"></i>
+            </span>
+            2024/3/17
         </span>
         
         
     </div>
     
-    <div class="timeline">
-        <div class="timeline-tail"></div>
-        <div class="timeline-content">
-            <div class="item-time">2024/2/2</div>
-            <a href="/2024/02/02/%E5%AD%A6%E4%B9%A0%E8%AE%A1%E5%88%92/">
-                <h3>学习计划log</h3>
-            </a>
-            <div class="info">
+    <div class="content" v-pre>
+        <p>摘要</p>
+<span id="more"></span>
+
+<p>内容</p>
+<h1 id="React18"><a href="#React18" class="headerlink" title="React18"></a>React18</h1><p><strong>React的特点</strong></p>
+<p>1.虚拟DOM</p>
+<p>2.声明式</p>
+<p>3.基于组件</p>
+<p>4.支持服务器端渲染</p>
+<p>5.快速，简单，易学</p>
+<p><strong>脚手架快速创建项目</strong></p>
+<pre><code class="bash">create-react-app react_project
+</code></pre>
+<p>有些改变</p>
+<pre><code class="js">我们在引入ReactDOM时候
+import ReactDOM from &#39;react-dom/client&#39;
+//这次应该引入的式客户端，这样控制台就不会报错
+</code></pre>
+<p>这个改完以后</p>
+<p>之前的这样的熏染就使用不了，</p>
+<pre><code class="js">const div = React.createElement(&#39;div&#39;,[],&#39;我是王昌晨&#39;)
+//用于创建react根元素
+ReactDOM.render(&lt;div&gt;&lt;/div&gt;,document.getElementById(&#39;root&#39;))
+</code></pre>
+<p>需要向下面这样写，这样次啊能成功熏染</p>
+<pre><code class="js">import ReactDOM from &#39;react-dom/client&#39;
+
+const div = React.createElement(&#39;div&#39;,[],&#39;我是王昌晨&#39;)
+//获取React根元素对象
+const root = ReactDOM.createRoot(document.getElementById(&#39;root&#39;))
+//使用render进行熏染
+root.render(div)
+</code></pre>
+<p><strong>组件编码</strong>（现在多基于函数组件的开发）</p>
+<p>函数式组件的渲染的过程</p>
+<pre><code class="js">import React, &#123;Component&#125; from &#39;react&#39;;
+import ReactDOM from &#39;react-dom/client&#39;
+
+function App()&#123;
+    return (
+        &lt;div&gt;函数式组件&lt;/div&gt;
+    )
+&#125;
+
+//获取React根元素对象
+const root = ReactDOM.createRoot(document.getElementById(&#39;root&#39;))
+//使用render进行熏染
+root.render(&lt;App&gt;&lt;/App&gt;)
+</code></pre>
+<p>函数式组件，类组件方法的定义还是一样</p>
+<p>类组件</p>
+<pre><code class="js">class ABout extends Component &#123;
+    render() &#123;
+        return (
+            &lt;div&gt;
                 
-                <span class="category">
-                    <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%A1%E5%88%92/">
-                        <span class="icon">
-                            <i class="fa-solid fa-bookmark fa-fw"></i>
-                        </span>
-                        学习计划
-                    </a>
-                </span>
-                
-                
-                <span class="tags">
-                    <span class="icon">
-                        <i class="fa-solid fa-tags fa-fw"></i>
-                    </span>
-                    
-                    
-                    <span class="tag">
-                        
-                        <a href="/tags/%E5%AD%A6%E4%B9%A0%E8%AE%A1%E5%88%92/" style="color: #00a596">学习计划</a>
-                    </span>
-                    
-                </span>
-                
-            </div>
-        </div>
+            &lt;/div&gt;
+        );
+    &#125;
+&#125;
+</code></pre>
+<p><strong>事件</strong></p>
+<p>之前说过</p>
+<pre><code class="js">onCilck后面只能加回调，不能加上代码，但是原生的可以实现，vue里面也是可以的
+</code></pre>
+<p>之前取消事件的默认行为</p>
+<p>之前在原生的里面可以这样写，但是在React里面是不好用的</p>
+<pre><code class="js">                   const demo = ()=&gt;&#123;
+        return false
+    &#125;
+               &lt;a href=&quot;https://baidu.com&quot; onClick=&#123;demo&#125;&gt;提交&lt;/a&gt;
+</code></pre>
+<p>在React里面使用事件对象</p>
+<pre><code class="js">    const demo = (event)=&gt;&#123;
+        event.preventDefault()//取消事件的默认行为
+        event.stopPropagation()//取消事件的冒泡
+    &#125;
+</code></pre>
+<p><strong>函数式组件的props</strong></p>
+<pre><code class="js">//传递
+&lt;Logs month=&quot;4&quot; day=&#39;20&#39; message=&#39;hahaha&#39;&gt;&lt;/Logs&gt;
+//接收
+const Logs = (props) =&gt; &#123;
+        console.log(props) //&#123;month: &#39;4&#39;, day: &#39;20&#39;, message: &#39;hahaha&#39;&#125;
+&#125;
+</code></pre>
+
     </div>
+    
+    
+    
+    
+    
+    
     
 </div>
 
@@ -348,6 +297,12 @@
         
     </div>
     <script src="/js/main.js"></script>
+    
+    
+
+
+
+
     
 <script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
 </html>

@@ -1,0 +1,460 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <meta charset="utf-8" />
+    <title>Java | 哈哈哈哈哈哈哈重生之我是兵王</title>
+    <meta name="author" content="chenw" />
+    <meta name="description" content="description" />
+    <meta name="keywords" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+	<canvas id="fireworks" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 32767"></canvas>
+	<script src="https://cdn.staticfile.org/animejs/3.2.1/anime.min.js"></script>
+	<script src="/js/fireworks.min.js"></script>
+	<canvas id="background" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: -1"></canvas>
+	<script src="/js/background.min.js"></script>
+	<div id="cursor"></div>
+	<link rel="stylesheet" href="/css/cursor.min.css">
+	<script src="/js/cursor.min.js"></script>
+    <link rel="icon" href="/images/avatar.jpg" />
+    <link rel="preconnect" href="https://cdn.staticfile.org" />
+<script src="https://cdn.staticfile.org/vue/3.3.7/vue.global.prod.min.js"></script>
+<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/6.4.2/css/all.min.css" />
+<link rel="preconnect" href="https://fonts.loli.net" />
+<link rel="preconnect" href="https://gstatic.loli.net" crossorigin />
+<link rel="stylesheet" href="https://fonts.loli.net/css2?family=Fira+Code:wght@400;500;600;700&family=Lexend:wght@400;500;600;700;800;900&family=Noto+Sans+SC:wght@400;500;600;700;800;900&display=swap" />
+<script> const mixins = {}; </script>
+
+<script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+
+
+<script src="https://cdn.staticfile.org/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdn.staticfile.org/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></script>
+<link
+    rel="stylesheet"
+    href="https://cdn.staticfile.org/highlight.js/11.9.0/styles/github.min.css"
+/>
+<script src="/js/lib/highlight.js"></script>
+
+
+
+<script src="/js/lib/preview.js"></script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/main.css" />
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+    <div id="layout">
+        <transition name="fade">
+            <div id="loading" v-show="loading">
+                <div id="loading-circle">
+                    <h2>LOADING</h2>
+                    <p>加载过慢请开启缓存 浏览器默认开启</p>
+                    <img src="/images/loading.gif" />
+                </div>
+            </div>
+        </transition>
+        <div id="menu" :class="{ hidden: hiddenMenu, 'menu-color': menuColor}">
+    <nav id="desktop-menu">
+        <a class="title" href="/">
+            <span>哈哈哈哈哈哈哈重生之我是兵王</span>
+        </a>
+        
+        <a href="/">
+            <i class="fa-solid fa-house fa-fw"></i>
+            <span>&ensp;Home</span>
+        </a>
+        
+        <a href="/about">
+            <i class="fa-solid fa-id-card fa-fw"></i>
+            <span>&ensp;About</span>
+        </a>
+        
+        <a href="/archives">
+            <i class="fa-solid fa-box-archive fa-fw"></i>
+            <span>&ensp;Archives</span>
+        </a>
+        
+        <a href="/categories">
+            <i class="fa-solid fa-bookmark fa-fw"></i>
+            <span>&ensp;Categories</span>
+        </a>
+        
+        <a href="/tags">
+            <i class="fa-solid fa-tags fa-fw"></i>
+            <span>&ensp;Tags</span>
+        </a>
+        
+    </nav>
+    <nav id="mobile-menu">
+        <div class="title" @click="showMenuItems = !showMenuItems">
+            <i class="fa-solid fa-bars fa-fw"></i>
+            <span>&emsp;哈哈哈哈哈哈哈重生之我是兵王</span>
+        </div>
+        <transition name="slide">
+            <div class="items" v-show="showMenuItems">
+                
+                <a href="/">
+                    <div class="item">
+                        <div style="min-width: 20px; max-width: 50px; width: 10%">
+                            <i class="fa-solid fa-house fa-fw"></i>
+                        </div>
+                        <div style="min-width: 100px; max-width: 150%; width: 20%">Home</div>
+                    </div>
+                </a>
+                
+                <a href="/about">
+                    <div class="item">
+                        <div style="min-width: 20px; max-width: 50px; width: 10%">
+                            <i class="fa-solid fa-id-card fa-fw"></i>
+                        </div>
+                        <div style="min-width: 100px; max-width: 150%; width: 20%">About</div>
+                    </div>
+                </a>
+                
+                <a href="/archives">
+                    <div class="item">
+                        <div style="min-width: 20px; max-width: 50px; width: 10%">
+                            <i class="fa-solid fa-box-archive fa-fw"></i>
+                        </div>
+                        <div style="min-width: 100px; max-width: 150%; width: 20%">Archives</div>
+                    </div>
+                </a>
+                
+                <a href="/categories">
+                    <div class="item">
+                        <div style="min-width: 20px; max-width: 50px; width: 10%">
+                            <i class="fa-solid fa-bookmark fa-fw"></i>
+                        </div>
+                        <div style="min-width: 100px; max-width: 150%; width: 20%">Categories</div>
+                    </div>
+                </a>
+                
+                <a href="/tags">
+                    <div class="item">
+                        <div style="min-width: 20px; max-width: 50px; width: 10%">
+                            <i class="fa-solid fa-tags fa-fw"></i>
+                        </div>
+                        <div style="min-width: 100px; max-width: 150%; width: 20%">Tags</div>
+                    </div>
+                </a>
+                
+            </div>
+        </transition>
+    </nav>
+</div>
+<transition name="fade">
+    <div id="menu-curtain" @click="showMenuItems = !showMenuItems" v-show="showMenuItems"></div>
+</transition>
+
+        <div id="main" :class="loading ? 'into-enter-from': 'into-enter-active'">
+            <div class="article">
+    <div>
+        <h1>Java</h1>
+    </div>
+    <div class="info">
+        <span class="date">
+            <span class="icon">
+                <i class="fa-solid fa-calendar fa-fw"></i>
+            </span>
+            2024/3/22
+        </span>
+        
+        
+    </div>
+    
+    <div class="content" v-pre>
+        <p>摘要</p>
+<span id="more"></span>
+
+<p>内容</p>
+<h1 id="Java"><a href="#Java" class="headerlink" title="Java"></a>Java</h1><p>跨平台是java语言的趋势</p>
+<p>java还是主流的编程语言</p>
+<p>Java的各个版本</p>
+<p>1.JavaSE：标准版，定位在个人计算机的应用，</p>
+<p>2.JavaEE:企业版，定位在服务器</p>
+<p>3.JavaME：微型版</p>
+<p><strong>Java的运行机制</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240322205212089.png" alt="image-20240322205212089"></p>
+<p>Java既是编译型语言，又是解释性</p>
+<p>例如 python就是解释性语言，直接通过python的解释器直接去运行</p>
+<p><strong>什么是JVM？</strong></p>
+<p>用于执行字节码虚拟计算机，跨平台的差异就是通过JVM</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240322205502948.png" alt="image-20240322205502948"></p>
+<p>java提供不同平台的虚拟机</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240322205534797.png" alt="image-20240322205534797"></p>
+<p><strong>开发人员我们一般使用JDK，因为我们需要编译和运行</strong></p>
+<p><strong>一般java的游戏，就直接运行，只下载JRE就可以了</strong></p>
+<p>创建的Java项目写在</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240322213121539.png" alt="image-20240322213121539"></p>
+<p>简单的Java代码</p>
+<pre><code class="Java">public class Hello &#123;
+    public static void main(String[] args) &#123;
+        System.out.println(&quot;你好&quot;);
+    &#125;
+&#125;
+</code></pre>
+<p>在运行的时候，会自动帮你进行编译</p>
+<p><strong>生成的java的编译的以后的文件在</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240322213530098.png" alt="image-20240322213530098"></p>
+<p>Java的基础语法</p>
+<pre><code class="java">public class Hello &#123;
+    public static void main(String[] args) &#123;
+        System.out.println(&quot;你好&quot;);
+    &#125;
+&#125;
+</code></pre>
+<ul>
+<li><p>主函数 &amp;  程序的入口</p>
+</li>
+<li><p>文件名</p>
+<pre><code>一个文件中只能有一个public的类，并且文件名必须和public的类名保持一致
+如果文件中有多个类，文件名与public的类名保持一致
+如果文件中有多个类 且无public类，文件名抗日一是任意的类
+</code></pre>
+</li>
+<li><p>类名 首字母大写，驼峰的命名</p>
+</li>
+<li><p>类修饰符  public,default</p>
+</li>
+<li><p>类中的成员修饰符：public,private,protected,default</p>
+</li>
+<li><p>静态成员：无需实例化就可以直接调用</p>
+<pre><code class="java">class Person  &#123;
+    public static void  f1()&#123;
+        //static静态的方法，无需实例就可以调用，也就只可以类调用
+        System.out.println(&quot;111&quot;);
+    &#125;
+&#125;
+
+public class Hello &#123;
+    public static void main(String[] args) &#123;
+        System.out.println(&quot;你好&quot;);
+        Person.f1();//111
+    &#125;
+&#125;
+</code></pre>
+<ul>
+<li><p>实例方法：需要实例以后在调用</p>
+<pre><code class="java">class Person  &#123;
+    public  void  f1()&#123;
+        System.out.println(&quot;111&quot;);
+    &#125;
+&#125;
+
+public class Hello &#123;
+    public static void main(String[] args) &#123;
+        System.out.println(&quot;你好&quot;);
+        Person person = new Person();//实例对象的写法是这样的
+        person.f1();//对象调用
+    &#125;
+&#125; 
+</code></pre>
+</li>
+</ul>
+</li>
+<li><p>void代表方法没有返回值</p>
+<pre><code class="java">    public static void main(String[] args) &#123;
+        System.out.println(&quot;你好&quot;);
+        Person person = new Person();//实例对象的写法是这样的
+        person.f1();//对象调用
+    &#125;
+</code></pre>
+</li>
+<li><p>参数,需要限制类型</p>
+<pre><code>class Person  &#123;
+    public  void  f1(string a , int b)&#123;
+        System.out.println(&quot;111&quot;);
+    &#125;
+&#125;
+
+public class Hello &#123;
+    public static void main(String[] args) &#123;
+        System.out.println(&quot;你好&quot;);
+        Person person = new Person();//实例对象的写法是这样的
+        person.f1(&#39;aaaa&#39;,123);//对象调用
+    &#125;
+&#125; 
+</code></pre>
+<p><strong>注释</strong></p>
+<pre><code>//单行注释
+/*
+多行注释
+*/
+</code></pre>
+</li>
+</ul>
+<p><strong>变量和常量</strong></p>
+<pre><code class="java">public static void main(String[] args) &#123;
+    System.out.println(&quot;你好&quot;);
+    String name = &quot;name&quot;;
+    int number = 5;
+    int a ;
+    a= 18;
+    //常量
+    final int size = 18;
+&#125;
+</code></pre>
+<p>不像js的动态语言，我们需要对数据的类型做出限制</p>
+<p><strong>输入和输出</strong></p>
+<p>输入需要外部的包，</p>
+<pre><code class="java">public class Hello &#123;
+    public static void main(String[] args) &#123;
+        //引入的Scanner相当于一个类，System.in感觉时使用系统命令获取输入
+        Scanner input  = new Scanner(System.in);
+        String text  =  input.nextLine();
+        //输出
+        System.out.println(text);
+    &#125;
+&#125;
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240322220405957.png" alt="image-20240322220405957"></p>
+<p>输出语句的不同</p>
+<pre><code class="java">        //输出
+        System.out.println(text);//输出最后会带换行
+        System.out.print(text);//输出最后不带换行
+</code></pre>
+<p><strong>条件语句</strong></p>
+<pre><code class="java">public class Hello &#123;
+    public static void main(String[] args) &#123;
+        System.out.print(&quot;&quot;);
+        int age  = 19 ;
+        if (age &lt; 18)&#123;
+            System.out.println(&quot;少年&quot;);
+        &#125; else if (age&gt;= 18 &amp;&amp; age &lt; 24)&#123;
+            System.out.println(&quot;青年&quot;);
+        &#125; else &#123;
+            System.out.println(&quot;老年&quot;);
+        &#125;
+    &#125;
+&#125;
+</code></pre>
+<p><strong>switch case语句</strong></p>
+<pre><code class="java">        System.out.print(&quot;&quot;);
+        int age  = 19 ;
+        switch (age)&#123;
+            case 19:
+                System.out.println(&quot;1111&quot;);
+                break;
+        &#125;
+</code></pre>
+<p><strong>循环语句</strong></p>
+<pre><code class="java">public class Hello &#123;
+    public static void main(String[] args) &#123;
+        int count = 0 ;
+        while (count &lt; 3)&#123;
+            System.out.println(count);
+            count++;
+        &#125;
+    &#125;
+&#125;
+</code></pre>
+<p><strong>do while循环</strong></p>
+<p>至少执行一次</p>
+<pre><code class="java">public class Hello &#123;
+    public static void main(String[] args) &#123;
+        int count = 0 ;
+        do &#123;
+            System.out.println(count);
+            count++;
+        &#125; while (count &lt; 3);
+    &#125;
+&#125;
+</code></pre>
+<p><strong>For循环</strong></p>
+<pre><code class="java">        int count = 0 ;
+        for (int i = 0 ; i &lt; 3 ; i++)&#123;
+            System.out.println(i);
+        &#125;
+</code></pre>
+<p><strong>数据类型</strong></p>
+<p><strong>整数类型</strong></p>
+<pre><code>byte 一个字节
+short 2个字节
+int 4个字节
+long 8个字节
+</code></pre>
+<p>强制类型转化，大的类型往小的范围可能就会出错</p>
+<pre><code class="java">byte i = 32 ; 
+int a = (int) i;
+</code></pre>
+<p><strong>字符</strong></p>
+<p>字符串的方法</p>
+<pre><code class="java">        char  a = &#39;x&#39;;
+        char  b = &#39;y&#39;;//字符只能用单引号
+        String c = &quot;hahahaha&quot; ;
+
+        String d = new String(&quot;王昌晨&quot;);
+
+        char[] f = &#123;&#39;w&#39;,&#39;c&#39;,&#39;g&#39;&#125;;
+        System.out.println(f);
+</code></pre>
+<pre><code class="java">        String name = &quot;wangchangchen&quot;;
+        int count = name.length();//获取字符的长度
+        for (int i = 0; i &lt; count; i++) &#123;
+            char item = name.charAt(i);//获取当前位置的字符
+        &#125;
+        String a = name.trim();//去掉空白
+        String[] b= name.split(&quot;c&quot;);//分割，返回的是数组
+        String c= name.replace(&quot;w&quot;,&quot;d&quot;);//代换
+        String d = name.substring(2,5);//切片
+        boolean f = name.equals(&quot;wangchangchen&quot;);//进行字符串的比较
+        boolean g = name.contains(&quot;ang&quot;);//数组中是否包含
+        String k = name.concat(&quot;ahhah&quot;);//在后面进行拼接
+</code></pre>
+
+    </div>
+    
+    
+    
+    
+    
+    
+    
+</div>
+
+            <footer id="footer">
+    <div id="footer-wrap">
+        <div>
+            &copy;
+            2022 - 2024 哈哈哈哈哈哈哈重生之我是兵王
+            <span id="footer-icon">
+                <i class="fa-solid fa-font-awesome fa-fw"></i>
+            </span>
+            &commat;chenw
+        </div>
+        <div>
+            Based on the <a target="_blank" rel="noopener" href="https://hexo.io">Hexo Engine</a> &amp;
+            <a target="_blank" rel="noopener" href="https://github.com/theme-particlex/hexo-theme-particlex">ParticleX Theme</a>
+        </div>
+        
+    </div>
+</footer>
+
+        </div>
+        
+        <transition name="fade">
+            <div id="preview" ref="preview" v-show="previewShow">
+                <img id="preview-content" ref="previewContent" />
+            </div>
+        </transition>
+        
+    </div>
+    <script src="/js/main.js"></script>
+    
+    
+
+
+
+
+    
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
