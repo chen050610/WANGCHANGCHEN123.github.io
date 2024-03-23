@@ -891,6 +891,290 @@ public class Hello &#123;
 <li>private，只能在当前的类中访问</li>
 <li>protected，只有在当前的类和当前的类的子类可以调用</li>
 </ul>
+<h2 id="基础的补充"><a href="#基础的补充" class="headerlink" title="基础的补充"></a>基础的补充</h2><p><strong>递归</strong></p>
+<p>例子计算阶乘</p>
+<ul>
+<li><p>定义递归头 什么时候不调用自身的方法</p>
+</li>
+<li><p>递归体：什么时候调用自身的方法</p>
+<pre><code class="Java">public class Helper &#123;
+    public static long func(int n)&#123;
+        if (n == 1)&#123;
+            return 1;
+        &#125; else &#123;
+            return n * func(n - 1);
+        &#125;
+    &#125;;
+    public static void main(String[] args) &#123;
+        System.out.println(func(3));
+    &#125;
+&#125;
+</code></pre>
+</li>
+</ul>
+<p><strong>内存分析</strong></p>
+<p>栈主要放的是main方法的代码，堆里面放着的是类，里面有类的属性，方法保存在方法区</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240323203251941.png" alt="image-20240323203251941"></p>
+<p><strong>注意一点，实例对象的时候没有构造函数。默认的赋值是0和null，属性值的显性初始化‘，就是在类里面不通过构造器，而是通过 a &#x3D; 11,这样初始化</strong></p>
+<p><strong>构造器</strong></p>
+<ul>
+<li>构造器通过new关键字调用</li>
+<li>构造器虽然有返回值，但是在定义的构造器的时候不能定义构造器的返回类型，不能return在构造里面使用</li>
+<li>构造器的名称和类名保持一致</li>
+<li>如果没有构造器，会默认的定义一个无参的构造方法</li>
+</ul>
+<p>Java<strong>虚拟机内存分析</strong></p>
+<p>虚拟机栈的特点</p>
+<p><strong>每一个方法调用都会创建一个栈帧，虚拟机为每一个线程创建一个栈，栈属于线程的私有，不能实现线程的共享，栈的特点是先进后出，后进先出</strong></p>
+<p><strong>堆的特点</strong></p>
+<ul>
+<li><p>用于存储创好的对象和数组</p>
+</li>
+<li><p>只有一个堆，被所有的线程共享</p>
+</li>
+<li><p>栈是一个不连续的内存共享</p>
+</li>
+<li><p>堆被所有的线程所共享 ，堆会被分为年生带和老年代，用于垃圾的回收</p>
+</li>
+</ul>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240323203251941.png" alt="image-20240323203251941"></p>
+<p><strong>垃圾回收的算法</strong></p>
+<ul>
+<li>引用计数法：堆中的每个对象都对应一个引用计数器，当引用指向这个对象，引用加一，当为0 的时候java进行回收，缺点就是循环引用就会导致清空不了</li>
+</ul>
+<p>例子，这样的引入的值一直不为0这样就不会清楚<img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240323210136655.png" alt="image-20240323210136655"></p>
+<ul>
+<li>引用可达法：程序把所有的引用关系看做一张图，从一个节点的Gc Root开始，寻找引用的节点以后，继续寻找这个节点的引用节点吗，当所有的节点寻找完毕以后，剩余的节点则被认为是没有被引用的节点</li>
+</ul>
+<p><strong>通用的分代垃圾回收机制</strong></p>
+<p>永久代就是我刚在的方法区，存放一些常量什么的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240323211008599.png" alt="image-20240323211008599"></p>
+<p>this<strong>的关键字</strong></p>
+<ul>
+<li>普通方法，this总是指向调用该方法的对象</li>
+<li>构造方法，this指向正要初始化的对象</li>
+<li>this（）调用重载的构造方法，避免相同的初始化代码，但只能在构造方法里面使用，并且必须位于构造方法的第一位</li>
+<li>this不能用于静态方法（其实向上面的图，static放在方法去里面，只能方法区里面去引入堆里面的东西，显然是不行的）</li>
+</ul>
+<pre><code class="java">package utils;
+class Person1 &#123;
+    Person1()&#123;
+        //this这里是对象的地址
+        System.out.println(&quot;正在初始化对象&quot;+this);//正在初始化对象utils.Person1@682a0b20
+    &#125;
+&#125;
+
+public class Helper &#123;
+    public static void main(String[] args) &#123;
+        Person1 xiaoming = new Person1();
+
+    &#125;
+&#125;
+</code></pre>
+<p>通过this构造</p>
+<pre><code class="Java">package utils;
+class Person1 &#123;
+    public String name;
+    public int age;
+    Person1(String name , int age)&#123;
+//        name = name  //这样因为作用域的问题
+        this.name = name ;
+        this.age = age ;
+        //this这里是对象的地址
+        System.out.println(&quot;正在初始化对象&quot;+this);//正在初始化对象utils.Person1@682a0b20
+    &#125;
+&#125;
+
+public class Helper &#123;
+    public static void main(String[] args) &#123;
+        Person1 xiaoming = new Person1(&quot;wang&quot;,18);
+        System.out.println(xiaoming.name); //wang
+        System.out.println(xiaoming.age);  //18
+    &#125;
+&#125;
+</code></pre>
+<p>this（），还可以带参数</p>
+<pre><code class="Java">package utils;
+class Person1 &#123;
+    public String name;
+    public int age;
+    Person1()&#123;
+        System.out.println(&quot;wwww&quot;);//wwww
+    &#125;;
+    Person1(String name , int age)&#123;
+        //this()调用无参构造器，而且必须位于第一行
+        this();
+        this.name = name ;
+        this.age = age ;
+        System.out.println(&quot;正在初始化对象&quot;+this);//正在初始化对象utils.Person1@682a0b20
+    &#125;
+&#125;
+
+public class Helper &#123;
+    public static void main(String[] args) &#123;
+        Person1 xiaoming = new Person1(&quot;wang&quot;,18);
+        System.out.println(xiaoming.name); //wang
+        System.out.println(xiaoming.age);  //18
+    &#125;
+&#125;
+</code></pre>
+<p><strong>static关键字</strong></p>
+<p>这里面的代码</p>
+<p>代码的开始定义一个静态的name，但是在构造器里面，有使用了name，就导致实例对象里面也有name的属性 了</p>
+<pre><code class="java">package utils;
+class Person1 &#123;
+    static String name;
+    Person1(String a)&#123;
+    name = a ;
+    &#125;
+&#125;
+
+public class Helper &#123;
+    public static void main(String[] args) &#123;
+        Person1 shuai = new Person1(&quot;nini&quot;);
+        
+        System.out.println(shuai.name);//nini
+        System.out.println(Person1.name);//nini
+    &#125;
+&#125;
+</code></pre>
+<p>正确给静态的属性赋值的方法，调用的时机在类被加载的时候。</p>
+<pre><code class="java">package utils;
+public class Helper &#123;
+    static String name;
+    static &#123;
+        System.out.println(&quot;执行初始化的工作&quot;);//执行初始化的工作
+        name = &quot;王昌晨&quot;;
+        printName();
+
+    &#125;
+    public static void printName()&#123;
+        System.out.println(name);//王昌晨
+    &#125;
+    public static void main(String[] args) &#123;
+    &#125;
+&#125;
+</code></pre>
+<p>敲的时候出现一些问题，问了一下ai</p>
+<pre><code class="java">package utils;
+public class Helper &#123;
+    static String name;
+    static &#123;
+        System.out.println(&quot;执行初始化的工作&quot;);//执行初始化的工作
+        name = &quot;王昌晨&quot;;
+        printName();
+    &#125;
+    public static void printName()&#123;
+        System.out.println(name);//王昌晨
+    &#125;
+    public static void main(String[] args) &#123;
+        Helper p = new Helper();
+        System.out.println(p.name);/**
+        虽然 name 属性被声明为 static，但是在 main 方法中通过实例对象访问静态属性 name 是合法的，这是因为静态成员虽然属于类而不属于实例对象，但在 Java 中仍然可以通过实例对象访问静态成员。
+
+当你使用实例对象访问静态成员时，实际上是通过该实例对象来引用静态成员，编译器会在后台进行转换，将实例对象替换为对应的类名。因此，尽管最佳实践是通过类名直接访问静态成员，但是通过实例对象访问静态成员在语法上是合法的。
+
+所以，在你的代码中，虽然在 main 方法中通过实例对象 p 访问静态属性 name，实际上会被转换为 Helper.name，因此可以正常访问并输出静态属性 name 的值。**/
+    &#125;
+&#125;
+</code></pre>
+<p>静态初始化 的执行顺序</p>
+<pre><code>因为所有的类都继承Object
+*上溯到Object类，先执行Object的静态初始化模块，在向下执行子类的静态初始化块，直至类的静态初始化
+*构造方法的执行顺序也是一样的，这就是为什么在子类的构造器里面的super的方法
+</code></pre>
+<p><strong>包机制</strong></p>
+<ul>
+<li><p>用于管理类和类重名的问题</p>
+</li>
+<li><p>Java中常见的包	</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240323220021699.png" alt="image-20240323220021699"></p>
+</li>
+</ul>
+<p>导入的报名重名</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240323220302005.png" alt="image-20240323220302005"></p>
+<p>最好写齐路径</p>
+<p>下面不会全部导入，会先检查用到这个文件的哪些类，然后再导入</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240323220335026.png" alt="image-20240323220335026"></p>
+<p><strong>静态导入</strong></p>
+<p>导入包下面的所有的静态的属性</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240323220509419.png" alt="image-20240323220509419"></p>
+<p><strong>方法的重写</strong></p>
+<p><strong>三个要点</strong></p>
+<ul>
+<li><p>1.方法名，形参，形参列表相同</p>
+</li>
+<li><p>2.返回值类型和声明异常类型，子类小于父类</p>
+<pre><code class="Java">package utils;
+class Person &#123;
+    public Person func()&#123;
+        System.out.println(&quot;1111&quot;);
+        return new Person();
+    &#125;
+&#125;
+
+class Li extends Person&#123;
+    public Li func()&#123;
+        System.out.println(&quot;222&quot;);
+        return new Li();
+    &#125;
+&#125;
+
+public class Helper &#123;
+
+    public static void main(String[] args) &#123;
+        
+    &#125;
+&#125;
+</code></pre>
+</li>
+<li><p>3.访问权限，子类大于等于父类</p>
+</li>
+</ul>
+<p><strong>final关键字</strong></p>
+<ul>
+<li><p>修饰变量</p>
+</li>
+<li><p>修饰方法：该方法不可以被子类重写，但是可以重载</p>
+<pre><code class="java">public final void study()&#123;&#125;
+</code></pre>
+</li>
+<li><p>修饰类：修饰类不能被继承，比如：Math,String</p>
+<pre><code class="java">public final class A &#123;&#125;
+</code></pre>
+</li>
+</ul>
+<p><strong>组合</strong></p>
+<p><strong>除了继承，组合也能实现代码的复用，组合的核心是将父类对象作为子类的属性</strong></p>
+<pre><code class="Java">package utils;
+class Person &#123;
+    public String name;
+    public int age;
+    Person()&#123;
+        name = &quot;hahaha&quot;;
+        age = 18;
+    &#125;
+    public Person func()&#123;
+        System.out.println(&quot;1111&quot;);
+        return new Person();
+    &#125;
+&#125;
+
+class Li &#123;
+    Person chen = new Person();
+    Li()&#123;
+        System.out.println(chen.age);
+        System.out.println(chen.name);
+    &#125;
+&#125;
+
+public class Helper &#123;
+
+    public static void main(String[] args) &#123;
+        Li li = new Li();
+    &#125;
+&#125;
+</code></pre>
 
     </div>
     
