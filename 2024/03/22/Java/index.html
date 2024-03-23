@@ -293,6 +293,8 @@ public class Hello &#123;
 </li>
 </ul>
 <p><strong>变量和常量</strong></p>
+<pre><code>final相当于js里的const
+</code></pre>
 <pre><code class="java">public static void main(String[] args) &#123;
     System.out.println(&quot;你好&quot;);
     String name = &quot;name&quot;;
@@ -377,7 +379,7 @@ public class Hello &#123;
 </code></pre>
 <p><strong>数据类型</strong></p>
 <p><strong>整数类型</strong></p>
-<pre><code>byte 一个字节
+<pre><code>byte 1个字节
 short 2个字节
 int 4个字节
 long 8个字节
@@ -410,6 +412,485 @@ int a = (int) i;
         boolean g = name.contains(&quot;ang&quot;);//数组中是否包含
         String k = name.concat(&quot;ahhah&quot;);//在后面进行拼接
 </code></pre>
+<p><strong>数组</strong></p>
+<pre><code class="java">        int[] arr =new int[3];//定义三个数字的数组
+        arr[0]=123;
+        arr[1]=234;
+        arr[2]=456;
+        System.out.println(Arrays.toString(arr));
+
+
+        String[] arr2 =new String[]&#123;&quot;hahah&quot;,&quot;hahah&quot;,&quot;ahah&quot;&#125;;
+        System.out.println(Arrays.toString(arr2));
+
+        String[] arr3 = &#123;&quot;haah&quot;,&quot;agaga&quot;,&quot;haha&quot;&#125;;
+        System.out.println(Arrays.toString(arr3));
+
+        for (int i = 0; i &lt; arr3.length; i++) &#123;
+            System.out.println(arr3[i]);
+        &#125;
+</code></pre>
+<p>注意：<strong>数组里面的个数一旦确定，不可以更改，类似于python里面的元组</strong></p>
+<p><strong>对象</strong></p>
+<ul>
+<li><p>Java中所有的类也是默认继承基类Object这个类的，所以用基类可以反之子类的类型，下面这样写是不会报错的，因为String的类继承了Object的类</p>
+<pre><code class="java">        String a = &quot;haha&quot;;
+        Object b = &quot;haha&quot;;
+        Object c = new String(&quot;haaha&quot;);
+</code></pre>
+<p>所以我们就可以常见任意类型的数组，所以要以后声明的数组是混合类型的就可以这样写</p>
+<pre><code class="java">        Object[] arr = new Object[]&#123;&quot;java&quot;,11111,2222,&quot;lkcd&quot;&#125;;
+        System.out.println(Arrays.toString(arr));//[java, 11111, 2222, lkcd]
+</code></pre>
+</li>
+</ul>
+<p>Object类型的字符串</p>
+<pre><code class="java">        String v1 = new String(&quot;hahaha&quot;);
+        v1.toUpperCase();
+        System.out.println(v1);
+
+        Object v2  = &quot;hahaha&quot;;
+//只有强制类型转换以后才可以使用字符串的方法
+        String data = (String)v2;
+        data.toUpperCase()
+</code></pre>
+<p>传参的参数的类型未知，我们就可以这样写</p>
+<pre><code class="java">    public static void func(Object a) &#123;
+        System.out.println(a);
+        if (a instanceof String) System.out.printf(&quot;String&quot;);
+        if (a instanceof Integer) System.out.println(&quot;int&quot;);
+    &#125;
+
+    public static void main(String[] args) &#123;
+        String v1 = new String(&quot;hahaha&quot;);
+        v1.toUpperCase();
+        System.out.println(v1);
+
+        Object v2  = &quot;hahaha&quot;;
+        String data = (String)v2;
+        data.toUpperCase();
+        func(&quot;hahahha&quot;);
+    &#125;
+</code></pre>
+<ul>
+<li>Java这种所有的类都继承Object，Object代指所有的类型</li>
+</ul>
+<p><strong>List系列</strong></p>
+<ul>
+<li>在Java中List不属于一种类型，在Java中List<strong>是一个接口</strong>，接口下面有两个常见的类型 （目的就是存放的动态的数据，可以添加删除）</li>
+<li>ArrayList，（连续的内存地址的存储，里面放着的是内存地址而且内部还会自动扩容,可以添加，当超过的容量，创建新的内存地址，然后在保存）。</li>
+<li>LinkedLink：（基于链表实现的，链表存储的）</li>
+</ul>
+<pre><code class="java">        ArrayList arr = new ArrayList();
+        arr.add(&quot;hahaha&quot;);
+        System.out.println(arr.getClass());//class java.util.ArrayLis
+        System.out.println(arr);//[hahaha]
+</code></pre>
+<pre><code class="java">        LinkedList arr = new LinkedList();
+        arr.add(&quot;hahaha&quot;);
+        System.out.println(arr.getClass());//class java.util.LinkedList
+        System.out.println(arr);//[hahaha]
+</code></pre>
+<p>用起来都是一样的，就是存储的方式不同,刚才提到list是一个接口，接口下面有如上的数据类型</p>
+<ul>
+<li><p>接口:使用来约束实现他的类，约束它里面的成员必须有什么，定义有点像TS</p>
+<pre><code class="java">interface List&#123;
+    public void add(Object)//不写具体的实现
+&#125;
+//这个类实现接口List，此时这里必须有add的方法
+class ArrayList implements  List &#123;
+   public void add(Object data)&#123;
+       //实现添加数据的代码
+   &#125;
+&#125;
+</code></pre>
+<pre><code class="java">**我们用接口名称代指实现接口的类也是可以的**       
+        List arr = new LinkedList();
+        arr.add(&quot;hahaha&quot;);
+        System.out.println(arr.getClass());//class java.util.LinkedList
+        System.out.println(arr);//[hahaha]
+</code></pre>
+<p>创建的时候指定类型</p>
+<pre><code class="java">    public static void main(String[] args) &#123;
+        List&lt;String&gt; arr = new LinkedList&lt;String&gt;();
+        arr.add(&quot;hahaha&quot;);
+        arr.add(1111);//这一行报错
+        System.out.println(arr.getClass());//class java.util.LinkedList
+        System.out.println(arr);//[hahaha]
+    &#125;
+</code></pre>
+<p><strong>默认的是Object，里面的类型可以混着</strong></p>
+</li>
+<li><p>获取列表的方法和属性</p>
+<pre><code class="Java">    public static void main(String[] args) &#123;
+        List&lt;String&gt; arr = new LinkedList&lt;String&gt;();
+        arr.add(&quot;hahaha&quot;);
+        System.out.println(arr.getClass());//class java.util.LinkedList
+        System.out.println(arr);//[hahaha]
+        System.out.println(arr.get(0));//获取列表里的值
+
+        arr.set(0,&quot;123&quot;);
+        System.out.println(arr);//[123]
+
+        arr.add(&quot;456&quot;);
+        arr.remove(&quot;123&quot;);
+        System.out.println(arr);//[456]
+        arr.remove(0);
+        System.out.println(arr);//[]
+
+        System.out.println(arr.size());//0
+
+        arr.add(&quot;2112&quot;);
+        System.out.println(arr.contains(&quot;2112&quot;));//true
+
+        arr.add(&quot;9999&quot;);
+        for (Object item : arr)&#123;
+            System.out.println(item);//2112,9999
+        &#125;
+
+        for (int i = 0; i &lt; arr.size(); i++) &#123;
+            Object item = arr.get(i);
+            System.out.println(item);//2112,9999
+        &#125;
+
+    &#125;
+</code></pre>
+</li>
+<li><p>通过迭代器进行遍历</p>
+<pre><code class="java">        List&lt;Object&gt; arr = new LinkedList&lt;&gt;(Arrays.asList(&quot;123&quot;,&quot;456&quot;,&quot;789&quot;));//快速创建一个，就不用一个一个添加了
+        Iterator it = arr.iterator();
+        while (it.hasNext())&#123;
+            System.out.println(it.hasNext()); //判断指向当前的数据是否为空
+            Object item = it.next();
+            System.out.println(item); //获取当前指向的数据
+        &#125;
+</code></pre>
+</li>
+</ul>
+<p><strong>Set系列</strong></p>
+<p>主要还是去重</p>
+<p>Set还是一个接口，常见的实现这两个接口有两个类，用于实现不重复多元素的集合</p>
+<ul>
+<li>HashSet ，去重，无序，</li>
+<li>TreeSet，去重，内部会默认的排序（ascii,uncode）,不同类型的不能比较</li>
+</ul>
+<pre><code class="java">        HashSet s  = new HashSet&lt;&gt;();
+        s.add(&quot;111&quot;);
+        s.add(&quot;111&quot;);
+        s.add(&quot;2222&quot;);
+        System.out.println(s);//[111, 2222]
+</code></pre>
+<p>简单的创建，<strong>注意这里的add外层包裹的是双括号</strong></p>
+<pre><code class="java">        HashSet a = new HashSet()&#123;
+            &#123;
+                add(&quot;1111&quot;);
+                add(&quot;222&quot;);
+            &#125;;
+        &#125;;
+        System.out.println(a);//[222, 1111]
+</code></pre>
+<p>通过集合我们就可以实现交并差，使用的方法和列表的实现差不多</p>
+<pre><code class="java">        Set a = new HashSet&lt;&gt;()&#123;&#123;
+            add("java");
+            add("666");
+            add("B站");
+        &#125;&#125;;
+        Set b = new HashSet() &#123;&#123;
+             add("B站");
+             add("A站");
+             add("C站");&#125;&#125;;
+        Set c = new HashSet();
+        c.addAll(a);//向空的集合添加，或者取并集
+        System.out.println(c);//[java, 666, B站]
+
+        //交集
+        c.retainAll(b);//交集,这个返回值是布尔
+        System.out.println(c);;//[B站]
+
+        //并集
+        c.addAll(a);
+        System.out.println(a);//[java, 666, B站]
+
+        //差集
+        c.removeAll(a); //c-a
+        System.out.println(c);//[]
+
+        //差集
+        b.removeAll(a); //b-a
+        System.out.println(b);//[C站, A站]
+
+        //循环
+        for (Object item : a)&#123;
+            System.out.println(item);//java     666       B站
+        &#125;
+
+        Iterator it = a.iterator();
+        while(it.hasNext())&#123;
+            System.out.println(it.next());//java  666   B站
+        &#125;
+</code></pre>
+<p><strong>Map系列</strong></p>
+<p>Map是一个接口，常见实现这个接口有两个类，用于存储键值对</p>
+<ul>
+<li>HashMap : 无序；</li>
+<li>Treepmap: 有序，根据key进行排序</li>
+</ul>
+<pre><code class="java">用法和之前的set和list的差不多
+        Map a = new HashMap&lt;&gt;();
+        a.put(&quot;name&quot; , &quot;demo&quot;);
+        a.put(&quot;age&quot; , &quot;18&quot;);
+        System.out.println(a);//&#123;name=demo, age=18&#125;
+
+
+        Map&lt;String,String&gt; b = new HashMap&lt;String,String&gt;();
+        b.put(&quot;name&quot; , &quot;demo&quot;);
+        b.put(&quot;age&quot; , &quot;18&quot;);
+        System.out.println(b);//&#123;name=demo, age=18&#125;
+
+
+        //可以向setu快速的创建
+        HashMap c = new HashMap&lt;&gt;()&#123;
+            &#123;
+                put(&quot;name&quot;,&quot;wang&quot;);
+                put(&quot;age&quot;,&quot;18&quot;);
+            &#125;
+        &#125;;
+        System.out.println(c);
+</code></pre>
+<pre><code class="java">        Map a = new HashMap&lt;&gt;();
+        a.put(&quot;name&quot; , &quot;demo&quot;);
+        a.put(&quot;age&quot; , &quot;18&quot;);
+        System.out.println(a);//&#123;name=demo, age=18&#125;
+
+
+        Map&lt;String,String&gt; b = new HashMap&lt;String,String&gt;();
+        b.put(&quot;name&quot; , &quot;demo&quot;);
+        b.put(&quot;age&quot; , &quot;18&quot;);
+        System.out.println(b);//&#123;name=demo, age=18&#125;
+
+
+        //可以向setu快速的创建
+        HashMap c = new HashMap&lt;&gt;()&#123;
+            &#123;
+                put(&quot;name&quot;,&quot;wang&quot;);
+                put(&quot;age&quot;,&quot;18&quot;);
+            &#125;
+        &#125;;
+        System.out.println(c);
+
+        System.out.println(c.size());
+
+        System.out.println(c.get(&quot;name&quot;));
+
+        c.replace(&quot;name&quot;,&quot;chen&quot;);
+        System.out.println(c);
+
+        //没有迭代器，但是可以通过下面这个样子实现
+        Set&lt;Map.Entry&lt;String,String&gt;&gt; d = c.entrySet();
+        System.out.println(d);//[&quot;name=chen&quot;, &quot;age=18&quot;]
+        Iterator it = d.iterator();
+        while (it.hasNext())&#123;
+             Map.Entry&lt;String,String&gt; e = (Map.Entry&lt;String, String&gt;)it.next();//在转为map
+            System.out.println(e);//name=chen   age=18
+            String k = e.getKey();//获取键名
+            String l = e.getValue();//获取值
+        &#125;
+
+        //简单的写法
+        Set r = b.entrySet();
+        Iterator it2 = r.iterator();
+        while (it2.hasNext())&#123;
+            Map.Entry o = (Map.Entry)it2.next();
+            System.out.println(o);
+        &#125;
+</code></pre>
+<p>Map的EntrySet方法会获得实体，转为Set就可以使用迭代器</p>
+<p><strong>类和面向对象</strong></p>
+<ul>
+<li>基本使用</li>
+</ul>
+<pre><code class="java">class Person &#123;
+    public String name;
+    public Integer age;
+    //构造方法
+    public Person()&#123;
+        this.name = &quot;chen&quot;;
+        this.age = 18 ;
+    &#125;
+    //一个类中可以有多个构造方法，但是保证参数的不同的才可以
+    public Person(String name)&#123;
+        this.name = name;
+        this.age = 18 ;
+    &#125;
+    public Person(String name , int age)&#123;
+        this.name = name;
+        this.age = age ;
+    &#125;
+
+    //方法的重载
+    public void doSomething ()&#123;
+        System.out.println(&quot;做一些事情&quot;);
+    &#125;
+    public void doSomething(String what)&#123;
+        System.out.println(what);
+    &#125;
+    public void doSomething(String what , int age)&#123;
+        System.out.println(age);
+        System.out.println(this.name);
+    &#125;
+&#125;
+</code></pre>
+<ul>
+<li><p>静态成员</p>
+<pre><code class="java">class Person &#123;
+    //静态变量,只能通过类的方法进行访问
+    public static String content = &quot;爱笑&quot;;
+
+    //静态方法
+    public static void func()&#123;
+        System.out.println(&quot;你好&quot;);
+    &#125;
+&#125;   
+</code></pre>
+</li>
+</ul>
+<p><strong>本质上静态的属于类，非静态的属于实例</strong></p>
+<ul>
+<li><p>继承， Java只能支持单继承，之前的pyhton和Js都是支持多继承的，Java的一个类只能继承一个父类</p>
+<pre><code class="java">import java.lang.reflect.Array;
+import java.util.*;
+
+class Person &#123;
+    public String name;
+    public Integer age;
+    public Person(String name , int age)&#123;
+        this.name = name;
+        this.age = age ;
+    &#125;
+&#125;
+class Cool extends Person &#123;
+    public String email;
+    public  Cool(String name, int age ,String email)&#123;
+        super(name, age);//使用父类的构造方法
+        this.email = email;
+    &#125;
+&#125;
+public class Hello &#123;
+    public static void main(String[] args) &#123;
+        Cool man = new Cool(&quot;wang&quot;,188,&quot;344455&quot;);
+        System.out.println(man.email);//34455
+        System.out.println(man.name);//wang
+        System.out.println(man.age);//188
+    &#125;
+&#125;
+</code></pre>
+</li>
+</ul>
+<p><strong>接口</strong></p>
+<p>作用</p>
+<ul>
+<li>约束：实现他的类</li>
+<li>泛指实现他的类</li>
+</ul>
+<pre><code class="Java">//实现其他的类
+interface IMessage &#123;
+    public void send();
+&#125;
+
+class WeChat implements IMessage&#123;
+    public void send()&#123;
+        System.out.println(&quot;发送&quot;);
+    &#125;;
+&#125;
+</code></pre>
+<pre><code class="java">//实现泛指其他的类，调用函数func，参数的类型设置类实现的接口，这样就可以传实现接口的类
+interface IMessage &#123;
+    public void send();
+&#125;
+
+class WeChat implements IMessage&#123;
+    public void send()&#123;
+        System.out.println(&quot;发送微信&quot;);
+    &#125;;
+&#125;
+
+class  DingDing implements IMessage&#123;
+    public void send()&#123;
+        System.out.println(&quot;发送钉钉&quot;);
+    &#125;;
+&#125;
+
+
+public class chen1 &#123;
+    public static void func(IMessage a)&#123;
+        a.send();
+    &#125;
+    public static void main(String[] args) &#123;
+        WeChat a = new WeChat();
+        func(a);
+    &#125;
+&#125;
+</code></pre>
+<p><strong>注意</strong></p>
+<p><strong>Java中不支持多继承，但是可以支持多接口</strong></p>
+<p><strong>抽象</strong></p>
+<p><strong>抽象类，既能实现接口又能实现继承</strong></p>
+<pre><code class="Java">abstract class Person1 &#123;
+    //继承的子类必须有实现这个函数
+    public abstract void func(String name);
+    //子类也能继承这个方法
+    public void func2()&#123;
+        System.out.println(22222);
+    &#125;
+&#125;
+class Hututu extends Person1 &#123;
+    public void func(String name)&#123;
+        System.out.println(name);
+    &#125;
+&#125;
+
+
+public class chen1 &#123;
+    public static void main(String[] args) &#123;
+        Hututu hututu  = new Hututu();
+        hututu.func(&quot;hututu&quot;);//hututu
+        hututu.func2();//22222
+    &#125;
+&#125;
+</code></pre>
+<p><strong>包的概念</strong></p>
+<p>新建包的文件</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240323165138897.png" alt="image-20240323165138897"></p>
+<p>代码</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240323165157520.png" alt="image-20240323165157520"></p>
+<p>再在其他的地方导入</p>
+<pre><code class="java">import java.lang.reflect.Array;
+import java.util.*;
+import utils.Helper;//导入包
+public class Hello &#123;
+    public static void main(String[] args) &#123;
+        //调用包的里面的类的静态方法
+        System.out.println(Helper.func());//hahahaha
+    &#125;
+&#125;
+</code></pre>
+<p><strong>包中类的修饰符</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240323165801124.png" alt="image-20240323165801124"></p>
+<ul>
+<li><p>public，公共（任意人能调用包中的）</p>
+</li>
+<li><p>default，只能在当前包中调用</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240323170034173.png" alt="image-20240323170034173"></p>
+</li>
+</ul>
+<p>这个只能在同一个包中调用，</p>
+<p><strong>类修饰符</strong></p>
+<p>之前学过</p>
+<ul>
+<li>public，所有都可以访问</li>
+<li>private，只能在当前的类中访问</li>
+<li>protected，只有在当前的类和当前的类的子类可以调用</li>
+</ul>
 
     </div>
     
