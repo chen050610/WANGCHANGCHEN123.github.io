@@ -1175,6 +1175,436 @@ public class Helper &#123;
     &#125;
 &#125;
 </code></pre>
+<p><strong>Object类的详解</strong></p>
+<ul>
+<li>Object是所有类的父类</li>
+<li>IDEA的快捷键<ul>
+<li>类结构试图 alt+7</li>
+<li>查看类的源码 ctrl+左键</li>
+<li>自动生成构造器，get，set，equai方法 alt+insert</li>
+<li>查看错误 alt+enter</li>
+<li>快捷键常见代码片段<ul>
+<li>main public static void main</li>
+<li>sout System.out.printf()</li>
+<li>soutm  System.out.printf（描述所在类中的，所在的方法）</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<pre><code class="java">        System.out.println(&quot;Person.func&quot;);//Person类里的func函数
+</code></pre>
+<p><strong>Object的equals方法</strong></p>
+<pre><code>== 比较双方是否相同，普通的数据类型判断值，引用类型的判断的是地址
+equals默认的比较两个对象地址是否相同
+</code></pre>
+<p>我们可以重写equal方法实现判断其他的</p>
+<p><strong>super关键字</strong></p>
+<ul>
+<li><p>可以看作父类对象的引用，可以通过super来访问父类中被子类覆盖的方法和属性</p>
+</li>
+<li><p>使用super调用普通方法，语句没有位置限制，可以在子类中随意的调用</p>
+</li>
+<li><p>在一个类中，若是构造方法的第一行没有调用super或者是this；Java默认调用super含义是调用父类无参数的构造方法</p>
+<pre><code class="java">package utils;
+class Person &#123;
+    public String name;
+    public int age;
+    public  void func()&#123;
+        name = &quot;wang&quot;;
+        age = 18;
+        System.out.println(&quot;Person_age&quot;+age);
+    &#125;
+&#125;
+
+class xiao extends Person&#123;
+    public String name;
+    public int age;
+    public void func()&#123;
+        super.func();
+        age = 19;
+        System.out.println(&quot;xiao_age&quot;+age);
+        System.out.println(age);
+        System.out.println(super.age);
+    &#125;
+&#125;
+
+public class Helper &#123;
+
+    public static void main(String[] args) &#123;
+        xiao he = new xiao();
+        he.func();
+    &#125;
+&#125;
+</code></pre>
+</li>
+</ul>
+<p><strong>程序的执行顺序</strong></p>
+<p>构造方法的第一句总是super来调用父类的构造方法，，所以一直相声追溯，知道object</p>
+<p><strong>封装</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240324094833900.png" alt="image-20240324094833900"></p>
+<ul>
+<li><p>属性一般使用private访问权限，一般在开发中，我们把类中的属性都设为私有属性，然后通过相应的get和set的方法进行修改和读取。这些方法是public修饰（注意boolen类型的get方法是is开头）</p>
+</li>
+<li><p>方法：一些只用本类的辅助性方法可以用private修饰，希望其他类调用方法用public</p>
+<pre><code class="java">//快速生成的get阿set的方法用 alt+insert
+package utils;
+class Person &#123;
+    private String name;
+    private int  age;
+    private Boolean man;
+
+    public String getName() &#123;
+        return name;
+    &#125;
+
+    public void setName(String name) &#123;
+        this.name = name;
+    &#125;
+
+    public int getAge() &#123;
+        return age;
+    &#125;
+
+    public void setAge(int age) &#123;
+        this.age = age;
+    &#125;
+
+    public Boolean getMan() &#123;
+        return man;
+    &#125;
+
+    public void setMan(Boolean man) &#123;
+        this.man = man;
+    &#125;
+&#125;
+
+public class Helper &#123;
+
+    public static void main(String[] args) &#123;
+    &#125;
+&#125;
+</code></pre>
+</li>
+</ul>
+<p><strong>多态的要点</strong></p>
+<ul>
+<li>多态方法 的多态，不是属性</li>
+<li>多态的存在三个条件，继承，方法重写，父类指向子类对象</li>
+<li>父类引用子类的对象。用父类引用调用子类重写的方法</li>
+</ul>
+<pre><code class="Java">package utils;
+class Animal&#123;
+
+    public void shout ()&#123;
+        System.out.println(&quot;叫一声&quot;);
+    &#125;
+&#125;
+class Dog extends Animal&#123;
+    public void shout()&#123;
+        System.out.println(&quot;汪汪&quot;);
+    &#125;
+&#125;
+
+class Cat extends Animal&#123;
+    public void shout()&#123;
+        System.out.println(&quot;喵喵&quot;);
+    &#125;
+&#125;
+
+public class Helper &#123;
+     public static void diao(Animal animal)&#123;//这里实现父类引用子类对象Animal animal
+        animal.shout();
+    &#125;
+
+    public static void main(String[] args) &#123;
+        Dog dog = new Dog();
+        diao(dog);
+    &#125;
+&#125;
+</code></pre>
+<p><strong>再补充点</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240324101703654.png" alt="image-20240324101703654"></p>
+<ul>
+<li><code>animal</code> 是 <code>Animal</code> 类型的引用，但是在运行时却指向了 <code>Dog</code> 类的实例，因此调用 <code>shout()</code> 方法时会调用 <code>Dog</code> 类中的 <code>shout()</code> 方法。希望这个解释能够帮助到你！如果有任何疑问，请随时提出。</li>
+<li><code>Animal</code> 类型的引用 <code>dog</code> 指向了 <code>Dog</code> 类的实例，然后尝试调用 <code>shout1()</code> 方法，但是 <code>Animal</code> 类并没有定义 <code>shout1()</code> 方法，因此编译器会报错</li>
+</ul>
+<p><strong>对象的转型</strong></p>
+<ul>
+<li><p>向上转型：就是刚下上面说过的父类引用子类对象</p>
+<pre><code>Animal是父类
+Dog是子类
+Animal dog = new Dog();//父类引用子类对象
+</code></pre>
+</li>
+<li><p>向下转型</p>
+<pre><code class="Java">package utils;
+class Animal&#123;
+
+    public void shout ()&#123;
+        System.out.println(&quot;叫一声&quot;);
+    &#125;
+&#125;
+class Dog extends Animal&#123;
+    public void shout()&#123;
+        System.out.println(&quot;汪汪&quot;);
+    &#125;
+    public void shout1()&#123;
+        System.out.println(&quot;汪汪&quot;);
+    &#125;
+&#125;
+
+public class Helper &#123;
+     public static void diao(Animal animal)&#123;//这里实现父类引用子类对象Animal animal
+        animal.shout();
+    &#125;
+
+    public static void main(String[] args) &#123;
+         Animal animal = new Dog();//自动向上转型为Animal
+        animal.shout();//汪汪
+        animal.shout1();//代码错误，因为animal没有shout
+        ((Dog) animal).shout1();//向下转型
+
+    &#125;
+&#125;
+</code></pre>
+</li>
+</ul>
+<p><strong>转型前后都是一个对象</strong></p>
+<p><strong>接口定义静态方法和默认方法</strong></p>
+<p>默认方法用default修饰</p>
+<pre><code class="Java">public interface Test &#123;
+    void printInfo();
+    default void moren()&#123;
+        System.out.println(&quot;默认方法&quot;);
+    &#125;
+&#125;
+class Testclass implements Test&#123;
+    @Override
+    public void printInfo() &#123;
+
+    &#125;
+&#125;
+</code></pre>
+<p>静态的方法，<strong>注意接口的静态方法和子类一点关系也没有，不会有父子类的那样的关系，接口的静态方法只能通过接口进行调用和实现接口的类没有一点关系</strong></p>
+<pre><code class="java">public interface Test &#123;
+    void printInfo();
+    default void moren()&#123;
+        System.out.println(&quot;默认方法&quot;);
+    &#125;
+    public static void func()&#123;
+        System.out.println(&quot;hahaha&quot;);
+    &#125;
+&#125;
+class Testclass implements Test&#123;
+    @Override
+    public void printInfo() &#123;
+        Test.func();//hahaha
+        Testclass.func();//报错	
+    &#125;
+    
+&#125;
+</code></pre>
+<p>字符串的一些api</p>
+<pre><code class="java">String s1=&quot;core Java&quot;;
+String s2=&quot;core Java&quot;;
+s1.charAt()//查看下标为几 的字符
+s1.length();
+s1.equals(s2)//检查相等
+s1.equalIgnoreCase(s2);//忽略大小写
+s1.indexOf(&quot;Java&quot;);//字符串是否包含Java，位置，如果没有返回-1
+s1.replace(&#39;&#39;,&#39;&amp;&#39;);//将空格替换成&amp;
+s1.substring(4,7);
+s1.substring(4)//提取字符串从4到字符串结尾
+</code></pre>
+<p><strong>内部类</strong></p>
+<ul>
+<li>内部类提供更好的封装，只能外部类直接访问，不允许同一个包其他类直接访问</li>
+<li>内部类可以直接访问外部类的私有属性，内部类被当作其他外部类成员，但外部类不能访问内部类的属性</li>
+</ul>
+<p>		</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240324104900955.png" alt="image-20240324104900955"></p>
+<p><strong>非静态内部类</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240324105114585.png" alt="image-20240324105114585"></p>
+<pre><code class="java">package utils;
+class Outer &#123;
+    private String name = &quot;王昌晨&quot;;
+    public void show()&#123;
+        System.out.println(&quot;Outer_name&quot;+name);
+        //在外部类实例内部类
+        Inner a = new Inner();
+    &#125;
+    public class Inner&#123;
+        private String name = &quot;兵王&quot;;
+        public void show()&#123;
+            System.out.println(&quot;Inner_name&quot;+name);
+            System.out.println(Outer.this.name);//访问外部类
+            Outer.this.show();
+        &#125;
+    &#125;
+&#125;
+
+public class Helper &#123;
+    public static void main(String[] args) &#123;
+        //外部类实例
+        Outer out = new Outer();
+        //内部类的实例
+        Outer.Inner inner  = new Outer().new Inner();
+    &#125;
+&#125;
+</code></pre>
+<p><strong>静态内部类</strong></p>
+<ul>
+<li>静态内部类可以访问外部类的静态成员，不能直接访问外部类的普通成员</li>
+<li>静态内部类可以看作外部类的一个静态成员</li>
+</ul>
+<pre><code class="Java">package utils;
+class Outer &#123;
+    private String name = &quot;王昌晨&quot;;
+    private static int a = 1;
+    private static int b = 3;
+    public void show()&#123;
+        System.out.println(&quot;Outer_name&quot;+name);
+        //在外部类实例内部类
+        Inner a = new Inner();
+    &#125;
+    public static class Inner&#123;
+        private String name = &quot;兵王&quot;;
+        public void show()&#123;
+            System.out.println(&quot;Inner_name&quot;+name);
+//            可以直接访问外部的成员的静态属性和方法
+            System.out.println(a);//1
+            System.out.println(b);//3
+
+        &#125;
+    &#125;
+&#125;
+
+public class Helper &#123;
+    public static void main(String[] args) &#123;
+        //外部类实例
+        Outer out = new Outer();
+
+        //静态类这么实例
+        Outer.Inner a = new Outer.Inner();
+        a.show();
+
+    &#125;
+&#125;
+</code></pre>
+<p><strong>匿名的匿名类</strong></p>
+<ul>
+<li>适用于那种只需要使用一次的类，b比如：键盘监听操作等，</li>
+</ul>
+<p>如下面的这段代码，我们如果想要调用Person里的B方法，必须需要传入实现接口A的对象，需要在写一个实现A接口的类，有点麻烦，可以写匿名类</p>
+<pre><code class="Java">package utils;
+class Person &#123;
+    public void B(A f)&#123;
+        f.func();
+    &#125;
+&#125;
+interface A &#123;
+    void func();
+&#125;
+class B implements A&#123;
+    @Override
+    public void func() &#123;
+        System.out.println(&quot;hahaha&quot;);
+    &#125;
+&#125;
+
+public class Helper &#123;
+    public static void main(String[] args) &#123;
+        Person h = new Person();
+        h.B(new B());
+    &#125;
+&#125;
+</code></pre>
+<pre><code class="Java">package utils;
+class Person &#123;
+    public void B(A f)&#123;
+        f.func();
+    &#125;
+&#125;
+interface A &#123;
+    void func();
+&#125;
+public class Helper &#123;
+    public static void main(String[] args) &#123;
+        Person h = new Person();
+        //直接new A就会有代码提示，下面的就是实力一个实现接口A的类
+        h.B(new A() &#123;
+            @Override
+            public void func() &#123;
+                System.out.println(&quot;hehehe&quot;);
+            &#125;
+        &#125;);
+    &#125;
+&#125;
+</code></pre>
+<p><strong>方法的内部类</strong></p>
+<ul>
+<li>只能在方法里面使用</li>
+<li><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240324111801398.png" alt="image-20240324111801398"></li>
+</ul>
+<p><strong>数组</strong></p>
+<ul>
+<li>数组是相同数据类型的有序集合</li>
+<li>长度是确定的</li>
+<li>元素类型是相同 的</li>
+<li>数组对象是引用类型</li>
+</ul>
+<p>内存分析</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240324113002955.png" alt="image-20240324113002955"></p>
+<p><strong>静态初始化</strong></p>
+<ul>
+<li>除了通过new的关键字，还可以通过定义数组的同时就为数组分配空间并且赋值</li>
+</ul>
+<pre><code class="Java">package utils;
+class Person &#123;
+&#125;
+public class Helper &#123;
+    public static void main(String[] args) &#123;
+        int[] a = &#123;1,2,3&#125;;
+        Person[] b = &#123;new Person(),new Person()&#125;;
+    &#125;
+&#125;
+</code></pre>
+<p><strong>动态初始化</strong></p>
+<pre><code class="Java">package utils;
+class Person &#123;
+&#125;
+public class Helper &#123;
+        int[] c = new int[3];
+        c[0] = 1;
+        c[1] = 2;
+        c[2] = 3;
+    &#125;
+&#125;
+</code></pre>
+<p><strong>默认初始化</strong></p>
+<pre><code class="Java">package utils;
+class Person &#123;
+&#125;
+public class Helper &#123;
+    public static void main(String[] args) &#123;
+    int d[] = new int[2];//默认[0,0]
+    boolean[] b = new boolean[2];//默认[false,false]
+
+&#125;
+</code></pre>
+<p><strong>数组的两个遍历</strong></p>
+<ul>
+<li><p>使用For循环</p>
+</li>
+<li><p>for-each专门用于数组和集合所有的元素,在循环的过程中只能读取不能修改数组的值，for-each 仅用于简单的遍历，操作不了索引</p>
+<pre><code class="Java">String[] ss = &#123;&quot;aa&quot;,&quot;bb&quot;,&quot;cc&quot;,&quot;dd&quot;&#125;;
+for(String item : ss)&#123;
+    System.out.println(item);
+&#125;
+</code></pre>
+</li>
+</ul>
 
     </div>
     
