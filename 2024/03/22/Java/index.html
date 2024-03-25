@@ -2181,6 +2181,190 @@ Fu fu = new zi();--&gt;理解成大数据类型接受一个小数据类型的数
 左右两边类型不一样，就会出现类型转换异常
 可以使用instanceOf进行判断然后再类型转换
 </code></pre>
+<p><strong>String补充</strong></p>
+<pre><code class="Java">String s1 = &quot;10&quot;;
+String s2 = &quot;10&quot;;
+String s3 = new String(&quot;10&quot;);
+System.out.println(s1 == s2);//true
+System.out.println(s1 == s3);//false
+System.out.println(s2 == s3);//false
+</code></pre>
+<p>内存的分析</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240325194042492.png" alt="image-20240325194042492"></p>
+<pre><code class="Java">String a = new String(&quot;abc&quot;);//共有几个对象？ 一个new本身，一个abc
+String b = new String(&quot;abc&quot;)//共创建今儿个对象？  如果之前没有创建abc，那么就会创建两个，有的话就只会创建new的对象，把abc之恶共享过来即可
+</code></pre>
+<p>内存分析</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240325194436987.png" alt="image-20240325194436987"></p>
+<pre><code class="Java">        String s = &quot;HelloWorld&quot;;
+        String s1 = &quot;Hello&quot;;
+        String s2 = &quot;World&quot;;
+        String s4 = &quot;Hello&quot;+&quot;World&quot;;
+        String s5 = s1 + &quot;World&quot;;
+        String s6 = &quot;Hello&quot;+s2;
+        String s7 = s1+s2;
+        System.out.println(s == s4);//true
+        System.out.println(s == s5);//false
+        System.out.println(s == s6);//false
+        System.out.println(s == s7);//false
+</code></pre>
+<p>为什么会出现上面的问题，直接反编译以后就能知道结果了</p>
+<p><strong>String的常用的方法</strong></p>
+<p><strong>注意在Java中String不是基本数据类型，而是一个类，</strong></p>
+<p><strong>如果我们使用&#x3D;&#x3D;比较，之前说过当&#x3D;&#x3D; 比较引用的数据类型，比较的是地址，所以我们使用equals比较内容，</strong></p>
+<pre><code>equals();比较字符串的内容
+equalsIgnorecase();忽略大小写的
+</code></pre>
+<p>或者使用</p>
+<pre><code class="Java">        String s2 = &quot;10&quot;;
+        String s3 = new String(&quot;10&quot;);
+        System.out.println(Objects.equals(s2,s3));//true
+</code></pre>
+<p>底层的源码，这个可以有效的防止防止空指针</p>
+<pre><code class="Java">public static boolean equals(Object a, Object b) &#123;
+    return (a == b) || (a != null &amp;&amp; a.equals(b));
+&#125;
+</code></pre>
+<p>比如说</p>
+<pre><code class="Java">String s2 = null;
+String s3 = new String(&quot;10&quot;);
+s2.equals(s3);//这一行就会报错
+System.out.println(Objects.equals(s2,s3));
+</code></pre>
+<p>这样就会报错空指针异常</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240325200556819.png" alt="image-20240325200556819"></p>
+<pre><code>*length()//
+*concat()//拼接返回一个新的字符串
+*charAt()//根据索引获取响应的字符
+*indexOf(String s);//返回字符串在大字符串第一次出现的位置
+*subString(int begin);//从开始索引截到最后
+*sunStrin(int begin, int end);//记住左闭右开
+</code></pre>
+<pre><code>toCharArray();//转为char数组
+getBytes();//将字符串转为字节数组
+replace(String s1, String s2);//替换
+getBytes(String charsetName);//按照编码格式将字符串转为Bytes数组
+</code></pre>
+<pre><code>split(String regex)//分割
+</code></pre>
+<pre><code>contains()//
+endwiths()
+startsWith()
+toLowerCase()
+toUpperCase()
+trim()
+</code></pre>
+<p><strong>StringBuilder</strong></p>
+<ul>
+<li>介绍<ul>
+<li>一个可变的字符序列，此类提供一个和StringBuffer兼容的APi，但是线程不同步，但是效率高</li>
+</ul>
+</li>
+<li>作用<ul>
+<li>拼接字符串</li>
+</ul>
+</li>
+<li>之前的拼接为什不行，为什么用StringBuilder拼接？<ul>
+<li>因为之前string的拼接，每拼接一次就会产生一个新的字符串对象，就是上面举的例子,如果拼接过多占用堆的内存</li>
+<li>StringBuilder底层自带一个缓冲区（没有被final修饰的bytes数组）拼接字符串以后都会在这个缓冲区保存，在拼接的过程中不会随意产生新对象</li>
+</ul>
+</li>
+</ul>
+<pre><code class="java">    String s = &quot;HelloWorld&quot;;
+    String s1 = &quot;Hello&quot;;
+    String s2 = &quot;World&quot;;
+    String s4 = &quot;Hello&quot;+&quot;World&quot;;
+    String s5 = s1 + &quot;World&quot;;
+    String s6 = &quot;Hello&quot;+s2;
+    String s7 = s1+s2;
+    System.out.println(s == s4);//true
+    System.out.println(s == s5);//false
+    System.out.println(s == s6);//false
+    System.out.println(s == s7);//false
+</code></pre>
+<ul>
+<li>特点<ul>
+<li>自带缓冲区，默认的长度为16，没有final修饰所以是可变的，如果超过16了，数组会自动的扩容，<ul>
+<li>创建一个新长度的数组，将老数组的元素复制到新数组的里面，在将新数组的地址值重新赋给老数组</li>
+<li>默认每次扩容老数组的2倍+2</li>
+<li>如果超过2倍+2的，那么直接创建等大的内存</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>两种创建方法</p>
+<pre><code class="Java">StringBuilder sb  = new StringBuilder();
+sb.append(&quot;wei3588559&quot;);
+
+StringBuilder sb2 = new StringBuilder(&quot;wei3588559&quot;);
+</code></pre>
+<p>append用来拼接字符串，返回一个StringBuilder</p>
+<pre><code class="Java">StringBuilder sb2 = new StringBuilder(&quot;wei3588559&quot;);
+StringBuilder sb3=sb2.append(&quot;haha&quot;);
+System.out.println(sb2);//wei3588559haha
+System.out.println(sb3);//wei3588559haha
+System.out.println(sb3 == sb2);//true
+</code></pre>
+<p>我们还可以链式调用</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240325204030828.png" alt="image-20240325204030828"></p>
+<p>reserve(),反转用法和append一样</p>
+<p>toString（）：将StringBuilder对象转为String对象，为了可以使用String的方法</p>
+<p>判断回文内容</p>
+<pre><code class="Java">    public static void main(String[] args)  &#123;
+        Scanner input  = new Scanner(System.in);
+        String data = input.nextLine();
+        StringBuilder str = new StringBuilder(data);
+        str.reverse();
+        String str2 = str.toString();//将StringBuilder转为String对象
+        if (data.equals(str2))&#123;//注意这里的比较一定是字符串的对象，不能呢和是string和stringbuilder的比较，这样内容一样也是false
+            System.out.println(&quot;是回文数&quot;);
+        &#125; else &#123;
+            System.out.println(&quot;不是回文数&quot;);
+        &#125;
+    &#125;
+</code></pre>
+<p>补充字符的equals方法</p>
+<p>比较的时候一定比较的是字符串</p>
+<pre><code class="Java">    public boolean equals(Object anObject) &#123;
+        if (this == anObject) &#123;
+            return true;
+        &#125;
+        return (anObject instanceof String aString)
+                &amp;&amp; (!COMPACT_STRINGS || this.coder == aString.coder)
+                &amp;&amp; StringLatin1.equals(value, aString.value);
+    &#125;
+</code></pre>
+<pre><code>定义一个数组，以[元素1，元素2...],用StringBuilder拼接
+</code></pre>
+<p>String拼接的效率满，而且拼接一次就会产生一个新的字符串对象</p>
+<p>StringBuilder和StringBuffer:</p>
+<p>​	1.相同点：拼接的效率比StringBuffer高</p>
+<p>​						但是线程不安全</p>
+<p>​	2.Stringbuffer：效率比较低，线程安全</p>
+<p><strong>Math类</strong></p>
+<ul>
+<li><p>特点：他的构造方法私有了</p>
+<ul>
+<li>方法都是静态的直接类名调用就可以</li>
+</ul>
+</li>
+<li><p>数学工具类</p>
+<pre><code>Math.abs(-10)//10
+static int abs(int a) --&gt;求参数的绝对值
+static double ceil(double a) --&gt;向上取整
+static double floor(double a) --&gt;向下取整
+static long round(double a) --&gt;四舍五入
+static int max(int a , int b) --&gt;最大值
+static int min(int a , int b) --&gt;最小值
+</code></pre>
+</li>
+</ul>
+<p><strong>BigInteger</strong></p>
+<pre><code>操作数据的时候，将来的数据很大，大到比long还大，这种称为对象
+作用:操作大的数字
+BigInteger(String value)
+</code></pre>
 
     </div>
     
