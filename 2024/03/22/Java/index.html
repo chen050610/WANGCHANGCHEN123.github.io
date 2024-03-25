@@ -1326,7 +1326,7 @@ public class Helper &#123;
 <p><strong>再补充点</strong></p>
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240324101703654.png" alt="image-20240324101703654"></p>
 <ul>
-<li><code>animal</code> 是 <code>Animal</code> 类型的引用，但是在运行时却指向了 <code>Dog</code> 类的实例，因此调用 <code>shout()</code> 方法时会调用 <code>Dog</code> 类中的 <code>shout()</code> 方法。希望这个解释能够帮助到你！如果有任何疑问，请随时提出。</li>
+<li><code>animal</code> 是 <code>Animal</code> 类型的引用，但是在运行时却指向了 <code>Dog</code> 类的实例，因此调用 <code>shout()</code> 方法时会调用 <code>Dog</code> 类中的 <code>shout()</code> 方法。</li>
 <li><code>Animal</code> 类型的引用 <code>dog</code> 指向了 <code>Dog</code> 类的实例，然后尝试调用 <code>shout1()</code> 方法，但是 <code>Animal</code> 类并没有定义 <code>shout1()</code> 方法，因此编译器会报错</li>
 </ul>
 <p><strong>对象的转型</strong></p>
@@ -1484,7 +1484,6 @@ public class Helper &#123;
     public static void main(String[] args) &#123;
         //外部类实例
         Outer out = new Outer();
-
         //静态类这么实例
         Outer.Inner a = new Outer.Inner();
         a.show();
@@ -1605,6 +1604,583 @@ for(String item : ss)&#123;
 </code></pre>
 </li>
 </ul>
+<p><strong>异常</strong></p>
+<ul>
+<li><p>代码出现不正常的状态，异常是一个一个的类</p>
+<p><strong>Throwable下面的两个子类</strong></p>
+<ul>
+<li>Error:错误，代码出现重大的错误</li>
+<li>Exception：异常：代码出现小问题，异常分为两类<ul>
+<li>编译时期异常，代码一些写一编译就暴红了（语法错误除外），Exception以及子类（除了RountimeException之外）</li>
+<li>运行时期异常：RountimeException和他的子类，写代码不暴红，运行的时期爆红了<img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240325143129953.png" alt="image-20240325143129953"></li>
+</ul>
+</li>
+</ul>
+<p>实例</p>
+<p><strong>错误</strong></p>
+</li>
+<li><pre><code class="Java">package execption;
+
+public class Demo &#123;
+    public static void main(String[] args) &#123;
+        method();
+    &#125;
+
+    public static void method() &#123;
+        method();
+    &#125;
+&#125;
+</code></pre>
+<p>控制台报错</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240325143434765.png" alt="image-20240325143434765"></p>
+</li>
+</ul>
+<p><strong>运行时期异常</strong></p>
+<pre><code class="Java">    public static void main(String[] args) &#123;
+        int[] a= &#123;1,2,3&#125;;
+        System.out.println(a[4]);
+    &#125;
+</code></pre>
+<p>编译器没有飘红</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240325143605424.png" alt="image-20240325143605424"></p>
+<p>运行的时候</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240325143635501.png" alt="image-20240325143635501"></p>
+<p>发现是他的子类，所以是运行时期异常</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240325143710714.png" alt="image-20240325143710714"></p>
+<p><strong>编译时期异常</strong></p>
+<p>下面的例子</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240325144118255.png" alt="image-20240325144118255"></p>
+<p>代码没有错，但是编译时期飘红 了，</p>
+<p><strong>注意</strong></p>
+<ul>
+<li>编译时期飘红不是因为我们的代码写错 了</li>
+<li>是因为该方法的底层给我们抛了一个错误，所以我们一调用这个方法一编译就飘红了</li>
+</ul>
+<p>异常出现的过程</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240325145239439.png" alt="image-20240325145239439"></p>
+<p><strong>创建异常对象</strong></p>
+<p>创建异常对象只是为了后面学习如何处理异常</p>
+<ul>
+<li>1.关键字：throw：把异常对象显示出来</li>
+<li>2.格式throw new 异常</li>
+</ul>
+<p>例</p>
+<pre><code class="Java">package execption;
+
+public class Demo1 &#123;
+    public static void main(String[] args) &#123;
+        String s = &quot;a.txt1&quot;;
+        method(s);
+
+    &#125;
+    public static void method(String s)&#123;
+        if (! s.endsWith(&quot;.txt&quot;))&#123;
+            //故意创建异常对象，用throw说明这出有异常
+            throw new NullPointerException();//这里出现异常没有人处理就会往上面抛，最后都没有人处理交给虚拟机，虚拟机终止程序，打印异常信息
+            /**
+             Exception in thread &quot;main&quot; java.lang.NullPointerException
+             at execption.Demo1.method(Demo1.java:12)
+             at execption.Demo1.main(Demo1.java:6)**/
+        &#125;
+        System.out.println(&quot;执行&quot;);
+    &#125;
+&#125;
+</code></pre>
+<p><strong>异常处理的两种方法</strong></p>
+<ul>
+<li>throws：在方法参数和方法体之间的位置写<ul>
+<li>格式：throws 异常</li>
+<li>将异常往上面</li>
+</ul>
+</li>
+</ul>
+<p>例子</p>
+<pre><code class="Java">package execption;
+
+import java.io.FileNotFoundException;
+
+public class Democracy
+&#123;
+    public static void main(String[] args)  &#123;
+        String s = &quot;1.txt&quot;;
+        add(s);
+        delete(s);
+        
+    &#125;
+
+    private static void delete(String s) &#123;
+        System.out.println(&quot;删除&quot;);
+    &#125;
+
+    private static void add(String s)  &#123;
+        if (! s.endsWith(&quot;.txt&quot;))&#123;
+            //故意创建异常
+            throw new FileNotFoundException(&quot;文件找不到&quot;);
+        &#125;
+        System.out.println(&quot;增加&quot;);
+    &#125;
+&#125;
+</code></pre>
+<p>直接new异常会报错，因为他是编译时期异常</p>
+<p>所以使用throws向上抛，这样就可以了，这个异常处理的过程还是和默认的一样，最终还是往上面抛，最后给虚拟机，<strong>这样也会有问题，当一个出现我问题的时候，例如当add出现问题，程序就不会往下面走去到delete</strong></p>
+<pre><code class="Java">package execption;
+
+import java.io.FileNotFoundException;
+
+public class Democracy
+&#123;
+    public static void main(String[] args) throws FileNotFoundException &#123;
+        String s = &quot;1.txt&quot;;
+        add(s);
+        delete(s);
+        
+    &#125;
+
+    private static void delete(String s) &#123;
+        System.out.println(&quot;删除&quot;);
+    &#125;
+
+    private static void add(String s) throws FileNotFoundException  &#123;
+        if (! s.endsWith(&quot;.txt&quot;))&#123;
+            //故意创建异常
+            throw new FileNotFoundException(&quot;文件找不到&quot;);
+        &#125;
+        System.out.println(&quot;增加&quot;);
+    &#125;
+&#125;
+</code></pre>
+<p>多个异常可以这样写</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240325151526466.png" alt="image-20240325151526466"></p>
+<ul>
+<li><p>如果throws的多个异常之间有一个子父类的继承关系，我们直接可以throws 父类的异常</p>
+</li>
+<li><p>所以根据上面，有多个异常我们可以直接抛出他们最终的父类Exception</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240325151726630.png" alt="image-20240325151726630"></p>
+</li>
+</ul>
+<p><strong>第二种方法</strong></p>
+<p><strong>try catch</strong></p>
+<ul>
+<li><p>格式</p>
+<pre><code class="java">try &#123;
+//可能出现的异常的代码
+    
+&#125; catch(异常 对象名)&#123;
+    //处理异常的代码（把异常打印在控制台）--》将来将开发会把异常信息保存在日志文件中（用于查询）
+&#125;
+</code></pre>
+<p>实例</p>
+<p><strong>当我们程序出现异常，会被catch捕获到，然后在输出异常，然后继续往下面走</strong></p>
+<pre><code class="Java">package execption;
+
+import java.io.FileNotFoundException;
+
+public class Democracy
+&#123;
+    public static void main(String[] args)&#123;
+        String s = &quot;1.txt1&quot;;
+        try &#123;
+            add(s);
+        &#125; catch (FileNotFoundException e)&#123;
+            System.out.println(e);//java.io.FileNotFoundException: 文件找不到
+        &#125;
+        delete(s);//删除
+    &#125;
+
+    private static void delete(String s) &#123;
+        System.out.println(&quot;删除&quot;);
+    &#125;
+
+    private static void add(String s) throws FileNotFoundException  &#123;
+        if (! s.endsWith(&quot;.txt&quot;))&#123;
+            //故意创建异常
+            throw new FileNotFoundException(&quot;文件找不到&quot;);
+        &#125;
+        System.out.println(&quot;增加&quot;);
+    &#125;
+&#125;
+</code></pre>
+</li>
+</ul>
+<p>控制台的输出结果</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240325152527183.png" alt="image-20240325152527183"></p>
+<p><strong>注意</strong>这段代码只捕获了FileNotFoundException的错误，但是没有捕获数组的那个错误，此时这个try catch是失效了</p>
+<pre><code class="java">        try &#123;
+            add(s);
+            int[] a = null;
+            System.out.println(a.length);
+        &#125; catch (FileNotFoundException e)&#123;
+            System.out.println(e);//java.io.FileNotFoundException: 文件找不到
+        &#125;
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240325152924929.png" alt="image-20240325152924929"></p>
+<p><strong>有一个发现，当我们的add方法错误以后，直接就去走catch，这样       System.out.println(1111);这段代码就不会执行</strong></p>
+<pre><code class="java">    public static void main(String[] args)&#123;
+        String s = &quot;1.txt1&quot;;
+        try &#123;
+            add(s);
+            System.out.println(1111);
+        &#125; catch (FileNotFoundException e)&#123;
+            System.out.println(e);//java.io.FileNotFoundException: 文件找不到
+        &#125;
+        delete(s);//删除
+    &#125;
+</code></pre>
+<p>catch多个异常的格式，使用多个catch</p>
+<pre><code class="Java">package execption;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+public class Democracy
+&#123;
+    public static void main(String[] args)&#123;
+        String s = &quot;1.txt1&quot;;
+        try &#123;
+            add(s);
+            System.out.println(1111);
+        &#125; catch (FileNotFoundException e)&#123;
+            System.out.println(e);//java.io.FileNotFoundException: 文件找不到
+        &#125; catch (IOException e)&#123;
+            System.out.println(e);
+        &#125;
+        delete(s);//删除
+    &#125;
+
+    private static void delete(String s) &#123;
+        System.out.println(&quot;删除&quot;);
+    &#125;
+
+    private static void add(String s) throws IOException ,FileNotFoundException &#123;
+        if (! s.endsWith(&quot;.txt&quot;))&#123;
+            //故意创建异常
+            throw new FileNotFoundException(&quot;文件找不到&quot;);
+        &#125;
+        if (s==null)&#123;
+            throw new IOException(&quot;Io异常&quot;);
+        &#125;
+        System.out.println(&quot;增加&quot;);
+    &#125;
+&#125;
+</code></pre>
+<p><strong>如果异常的有父子关系，直接用父类也是可以的</strong></p>
+<p><strong>不知道的话，我们直接catch Exception</strong></p>
+<p>我们还可以打印详细的</p>
+<p>cu错误的信息打印在控制台，使用printStackTrace的方法</p>
+<pre><code class="Java">        try &#123;
+            add(s);
+            System.out.println(1111);
+        &#125; catch (FileNotFoundException e)&#123;
+            e.printStackTrace();
+        &#125; catch (IOException e)&#123;
+            System.out.println(e);
+        &#125;
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240325181330429.png" alt="image-20240325181330429"></p>
+<p><strong>finally关键字</strong></p>
+<pre><code>注意和final区别开
+1.代表的是不管是否触发了异常，都会执行的代码块
+特殊情况：如果前面有代码System.exit(0)这个作用是终止Java虚拟机
+2.使用配合try catch放在trycatch后面
+</code></pre>
+<p>例子</p>
+<pre><code class="Java">try &#123;
+    add(s);
+    System.out.println(2222);
+&#125; catch (FileNotFoundException e)&#123;
+    e.printStackTrace();
+&#125; catch (IOException e)&#123;
+    System.out.println(e);
+&#125; finally &#123;
+    System.out.println(1111);
+&#125;
+</code></pre>
+<p>之前说过try里面发生错误以后直接进入catch，然后就不会输出22222，</p>
+<p>但是finally不管你有没有异常都会执行 的</p>
+<p>下面将一些问题</p>
+<ul>
+<li>正常我们程序发生异常走进catch里面，里面有一个return,但是我们程序的执行顺序是先走的是finally，然后是catch里的内容</li>
+</ul>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240325182306317.png" alt="image-20240325182306317"></p>
+<ul>
+<li><p>所以我们在finally里面加上return，那么就会直接离开这个函数也不会执行catch里面的内容了</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240325182506837.png" alt="image-20240325182506837"></p>
+</li>
+</ul>
+<p>注意执行的顺序</p>
+<p><strong>try代码块，发现错误然后到finally，然后到catch里面的代码</strong></p>
+<p><strong>finally的使用场景</strong></p>
+<ul>
+<li>关闭资源<ul>
+<li>原因：如果没有使用 了，GC回收机制，用来回收堆内存的垃圾，释放内存，但是有一些对象GC回收不了，例如：连接对象（mysql）,io流对象，socket对象，这些GC回收不了，就需要我们手动进行回收，将来不能回收的对象new完以后，后续的操作不管异常还是好的，都要关闭</li>
+</ul>
+</li>
+</ul>
+<p><strong>抛异常的注意的事项</strong></p>
+<ul>
+<li><p>如果父类中的方法抛出了异常，那么子类的重写以后要不要抛？</p>
+<pre><code>子类重写的方法可以抛也可以不抛
+</code></pre>
+</li>
+<li><p>如果父类中的方法没有抛异常，那么子类重写方法的可不可以抛异常？</p>
+</li>
+</ul>
+<pre><code>子类重写的方法不可以抛异常
+</code></pre>
+<p><strong>try catch和throws的使用时机</strong></p>
+<ul>
+<li><p>1.如果处理异常之后还要继续执行代码，那么就要使用try catch</p>
+</li>
+<li><p>2.如果方法之间是递进的调用，可以先throws，但是到最后用try catch做一个统一的错误处理</p>
+</li>
+</ul>
+<p>比如说页面的架构，到后面一定使用这三个架构</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240325184146232.png" alt="image-20240325184146232"></p>
+<p>编译时期的异常是必须要处理</p>
+<p>运行时期的异常没有必要处理，需要更改代码了</p>
+<p><strong>自定义异常</strong></p>
+<p>简单的创建方法</p>
+<pre><code class="Java">public class Demo2 &#123;
+    public static void main(String[] args) throws LoginUserException &#123;
+        String username = &quot;root&quot;;
+
+        Scanner input  = new Scanner(System.in);
+        System.out.println(&quot;请输入您要登录的用户名:&quot;);
+        String name = input.next();
+
+        if (name.equals(username))&#123;
+            System.out.println(&quot;登录失败&quot;);
+        &#125; else &#123;
+            throw new LoginUserException();
+        &#125;
+
+
+    &#125;
+&#125;
+</code></pre>
+<p>然后我们需要去定义一个LoginUserException类，而且还要继承Exception</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240325185420455.png" alt="image-20240325185420455"></p>
+<p>这样就可以了</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240325185441928.png" alt="image-20240325185441928"></p>
+<p>我们就还可以自定义异常的原因</p>
+<pre><code class="Java">throw new LoginUserException(&quot;账号或密码错误&quot;);
+            -------------------------------
+使用构造方法
+public class LoginUserException extends Exception &#123;
+    public LoginUserException() &#123;
+    &#125;
+    public LoginUserException(String message) &#123;
+        super(message);
+    &#125;
+&#125;
+            
+            
+            
+</code></pre>
+<p>这样就可以了</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240325190118158.png" alt="image-20240325190118158"></p>
+<p>设置异常的原因</p>
+<p><strong>打印异常信息的三个方法</strong></p>
+<pre><code>Throwable的方法
+          try &#123;
+                throw new LoginUserException(&quot;账号或密码错误&quot;);
+            &#125; catch (Exception e)&#123;
+                //异常加错误的原因，之前说过打印你一个对象默认调用了tostring的方法
+                System.out.println(e);//execption.LoginUserException: 账号或密码错误
+                System.out.println(e.toString());//execption.LoginUserException: 账号或密码错误
+                System.out.println(e.getMessage());//账号或密码错误          只获取异常的信息
+                e.printStackTrace();//飘红，信息完整
+            &#125;
+</code></pre>
+<p><strong>说一下scanner的</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240325185812928.png" alt="image-20240325185812928"></p>
+<p><strong>Object类</strong></p>
+<p><strong>toString方法</strong></p>
+<p>类的源码</p>
+<pre><code class="Java">    public String toString() &#123;
+        return getClass().getName() + &quot;@&quot; + Integer.toHexString(hashCode());
+    &#125;
+</code></pre>
+<p>示例</p>
+<pre><code class="Java">package _object;
+
+public class Person &#123;
+    private String name;
+    private int age;
+
+    public Person() &#123;
+    &#125;
+
+    public Person(String name) &#123;
+        this.name = name;
+    &#125;
+
+    public Person(int age) &#123;
+        this.age = age;
+    &#125;
+
+    public Person(String name, int age) &#123;
+        this.name = name;
+        this.age = age;
+    &#125;
+
+    public String getName() &#123;
+        return name;
+    &#125;
+
+    public int getAge() &#123;
+        return age;
+    &#125;
+
+    public void setName(String name) &#123;
+        this.name = name;
+    &#125;
+
+    public void setAge(int age) &#123;
+        this.age = age;
+    &#125;
+&#125;
+</code></pre>
+<pre><code class="Java">package _object;
+
+public class Test &#123;
+    public static void main(String[] args) &#123;
+        Person p1= new Person(&quot;王昌晨&quot;,18);
+        System.out.println(p1);//_object.Person@3b07d329
+        System.out.println(p1.toString());//_object.Person@3b07d329
+    &#125;
+
+&#125;
+</code></pre>
+<p><strong>总结</strong></p>
+<pre><code>注意：
+*如果没有重写object里的tostrig的方法，直接输出对象名会默认的调用tostring方法，tostring的方法会返回对象的地址值
+</code></pre>
+<p>有些问题</p>
+<pre><code class="Java">        List a = new ArrayList();
+        a.add(&quot;张三&quot;);
+        a.add(&quot;王五&quot;);
+        a.add(&quot;李四&quot;);
+        System.out.println(a.toString());//[张三, 王五, 李四]
+</code></pre>
+<ul>
+<li>输出的不是地址值,是因为重写了tostring的方法</li>
+</ul>
+<p>所以我们还可以重写tostring的方法在我们自己的类里面</p>
+<pre><code class="java">    public String toString ()&#123;
+        return name + age;
+    &#125;
+</code></pre>
+<p>快速生成toString的方法</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240325104744357.png" alt="image-20240325104744357"></p>
+<p><strong>Object的equals方法</strong></p>
+<p>源代码</p>
+<pre><code class="java">    public boolean equals(Object obj) &#123;
+        return (this == obj);
+    &#125;
+</code></pre>
+<p>返回的是boolean类型，比较的是两个地址值是否相等</p>
+<pre><code class="java">        System.out.println(p1.equals(p2));//false
+        System.out.println(p1.equals(p1));//true
+</code></pre>
+<p>底层的原理</p>
+<pre><code>    public boolean equals(Object obj) &#123;
+        return (this == obj);
+    &#125;
+    -----------------------------------------
+    System.out.println(p1.equals(p2));//false
+    *当p1调用obj的时候,这个this就是指向的p1，==在引用类型的比较的是地址值，在基础数据类型是比较数据的值
+</code></pre>
+<p>注意还是重写的问题</p>
+<pre><code class="java">//我们使用实例的方法创建字符串
+String name = new String(&quot;name&quot;);
+String name1 = new String(&quot;name&quot;);
+System.out.println(name.equals(name1));//true
+因为String的equals的重写了，比较的是值
+</code></pre>
+<p>下面是重写的代码</p>
+<pre><code class="Java">    public boolean equals(Object anObject) &#123;
+        if (this == anObject) &#123;
+            return true;
+        &#125;
+        return (anObject instanceof String aString)
+                &amp;&amp; (!COMPACT_STRINGS || this.coder == aString.coder)
+                &amp;&amp; StringLatin1.equals(value, aString.value);
+    &#125;
+</code></pre>
+<p>我们也可以在重写一下</p>
+<p>这是快捷键重写以后的</p>
+<pre><code class="java">    @Override
+    public boolean equals(Object o) &#123;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Person person = (Person) o;
+        return age == person.age &amp;&amp; Objects.equals(name, person.name);
+    &#125;
+
+    @Override
+    public int hashCode() &#123;
+        return Objects.hash(name, age);
+    &#125;
+</code></pre>
+<pre><code class="Java">System.out.println(p1.equals(p2))
+//当我们传入p2的时候，重写的类用父类引用子类 object 0 = p2;
+//如果想要获取p2的里面的属性和方法需要向下转型
+//        if (o == null || getClass() != o.getClass()) return false;这一步在判断传入的对象类型是否是当当前的类，如果传入一个字符串对象的话，强转就会出现问题
+ //      if (this == o) return true;如果传入的是自己那么肯定是相等的，返回true
+</code></pre>
+<p><strong>Object的clone的方法</strong></p>
+<pre><code>1.作用:复制一个属性值一样的新对象
+2.使用:需要被克隆的对象实现cloneable的接口
+        重写clone
+</code></pre>
+<p>过程</p>
+<pre><code class="Java">Person的类实现public class Person implements Cloneable
+重写clone方法    @Override
+    protected Object clone() throws CloneNotSupportedException &#123;
+        return super.clone();
+    &#125;
+    在主函数里面调用
+            public static void main(String[] args) throws CloneNotSupportedException &#123;
+        Person p = new Person(&quot;wang&quot;,18);
+        Object o = p.clone();//克隆一个新对象,地址不一样，属性值是一样的
+        Person p1 = (Person) o;
+        System.out.println(p1.equals(p));//true
+
+    &#125;
+</code></pre>
+<p><strong>在复习一下多态</strong></p>
+<ul>
+<li><p>不要从字面形式上理解多态的这两个子，要从形式上掌握</p>
+</li>
+<li><p>要知道多态的好处，多态的前提</p>
+<pre><code>前提
+a.必须有字符类的继承或者接口实现关系
+b.必须有方法的重写（没有重写，多态没有意义）
+c.父类引用指向子类对象
+Fu fu = new zi();--&gt;理解成大数据类型接受一个小数据类型的数据，比如 double b = 10;
+注意：
+    多态下不能直接调用子类的特有功能
+</code></pre>
+</li>
+</ul>
+<p><strong>多态的好处</strong></p>
+<pre><code>1.问题描述
+    如果不使用多态，使用原始的方法new对象，既能调用子类重写的父类的方法，还能调用自己特有的成员，但是多态的new的对象只能调用子类重写的，不能调用子类的特有的成员那为什么还要用多态？
+2.多态方式和原始方式new对象的优缺点
+    原始方式:
+        优点:既能调用重写的，还能调用父类非私有的，还能调用自己特有的
+        缺点:扩展性差，就像之前的讲的，传递的参数可以写成父类
+    多态方法:
+        优点:扩展性强
+        缺点:不能调用子类特有的功能
+</code></pre>
+<p><strong>多态的转型</strong></p>
+<p>向上转型以后调用子类的特有的功能就要使用向下转型</p>
+<pre><code>转型是出现的问题
+左右两边类型不一样，就会出现类型转换异常
+可以使用instanceOf进行判断然后再类型转换
+</code></pre>
 
     </div>
     
