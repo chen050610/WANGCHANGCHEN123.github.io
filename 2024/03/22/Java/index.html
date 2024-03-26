@@ -1611,8 +1611,8 @@ for(String item : ss)&#123;
 <ul>
 <li>Error:错误，代码出现重大的错误</li>
 <li>Exception：异常：代码出现小问题，异常分为两类<ul>
-<li>编译时期异常，代码一些写一编译就暴红了（语法错误除外），Exception以及子类（除了RountimeException之外）</li>
-<li>运行时期异常：RountimeException和他的子类，写代码不暴红，运行的时期爆红了<img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240325143129953.png" alt="image-20240325143129953"></li>
+<li>编译时期异常，代码一些写一编译就暴红了（语法错误除外），Exception以及子类（除了RuntimeException之外）</li>
+<li>运行时期异常：RuntimeException和他的子类，写代码不暴红，运行的时期爆红了<img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240325143129953.png" alt="image-20240325143129953"></li>
 </ul>
 </li>
 </ul>
@@ -2364,7 +2364,319 @@ static int min(int a , int b) --&gt;最小值
 <pre><code>操作数据的时候，将来的数据很大，大到比long还大，这种称为对象
 作用:操作大的数字
 BigInteger(String value)
+方法
+    add(BigInteger value);//加
+    subtract(BigInteger value)//减
+    multiply(BigInteger value) //×
+    divide(BigInteger value)//  除
 </code></pre>
+<p><strong>BigDecimal</strong></p>
+<p>floor的数据直接参加运算会出现精度损失的问题</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240326124121160.png" alt="image-20240326124121160"></p>
+<pre><code>**BigDecimal**解决精度损失的问题
+构造方法
+BigDEcimal(Stirng value) --&gt;value一定是数字的字符串
+常用的方法
+static BigDecimal valueOf(doubt value) --&gt;此方法 初始化小数可以传doule的数据
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240326124552341.png" alt="image-20240326124552341"></p>
+<p><strong>Date类</strong></p>
+<pre><code class="Java">表示时间
+        Date time = new Date();
+        System.out.println(time);//Tue Mar 26 14:28:03 CST 2024
+//有参的，从时间原点开始放
+        Date time2 = new Date(10000l);
+        System.out.println(time2);//Thu Jan 01 08:00:10 CST 1970
+//方法，设置时间
+        Date time = new Date();
+        time.setTime(10000l);
+        System.out.println(time);//Thu Jan 01 08:00:10 CST 1970
+</code></pre>
+<p><strong>Calendar类</strong></p>
+<pre><code class="Java">1.概述:日历类，抽象类
+2.获取的calendar里面的方法：
+    static Calendar getInstance();
+    ---------------------------------------
+     Calendar calendar = Calendar.getInstance();
+     System.out.println(calendar);
+</code></pre>
+<pre><code class="java">
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        System.out.println(year);//2004
+
+        calendar.set(Calendar.YEAR,2008);
+        System.out.println(calendar.get(Calendar.YEAR));//2008
+
+     //的
+        System.out.println(time1);//Thu Mar 26 14:44:44 CST 2009
+</code></pre>
+<p><strong>日期格式化类SimpleDateFormat</strong></p>
+<pre><code>格式化日期
+2.构造
+simpleDateFormat(String pattern);//pattern代表模式，注意字母的大小写不要改变，但是中间的连接符是可以改变的
+例如
+    yyyy--MM--dd HH:mm:ss
+</code></pre>
+<p>格式的字母表示</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240326144906530.png" alt="image-20240326144906530"></p>
+<p>使用</p>
+<pre><code class="java">        Date time = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat(&quot;yyyy-MM-dd HH:mm:ss&quot;);
+        System.out.println(sdf.format(time) );
+//sdf.format(time)将Date对象按照符合日期对格式的字符串
+        System.out.println(sdf.parse(time2));//Tue Mar 26 14:56:55 CST 2024     parse的作用将格式化以后的转为date对象
+注意因为parse方法底层抛了一个异常,所以我们还要往上面抛
+</code></pre>
+<p><strong>JDK8新日期类</strong></p>
+<p><strong>LocalDate本地时间</strong></p>
+<pre><code class="Java">        //通过LocalDate.now();创建对象
+        LocalDate ld = LocalDate.now();
+        System.out.println(ld);//2024-03-26
+
+//自己设置时间
+        LocalDate time = LocalDate.of(2000,3,30);
+        System.out.println(time);
+</code></pre>
+<p><strong>LocalDateTime类</strong></p>
+<pre><code>和上面的用法一样只不过更加精确
+</code></pre>
+<pre><code class="java">获取各个字段
+        LocalDateTime time = LocalDateTime.now();
+        System.out.println(time.getYear());//2024
+        System.out.println(time.getMonth());//MARCH
+        System.out.println(time.getMonthValue());//3
+        System.out.println(time.getDayOfMonth());//
+
+//设置
+        LocalDate time2 =LocalDate.EPOCH.withYear(2000);
+        System.out.println(time2);//2000-01-01
+---------------------------------------------
+    设置月份
+        LocalDate time2 =LocalDate.EPOCH.withYear(2000);
+        LocalDate time3=time2.withMonth(5);
+        System.out.println(time3);//2000-05-01
+--------------------------------------------------
+    //我们可以将上面设置成链式调用
+       LocalDate time2 =LocalDate.EPOCH.withYear(2000).withMonth(5);
+        System.out.println(time2);//2000-05-01
+</code></pre>
+<p>每次使用都会返回一个新的LocalDate对象</p>
+<pre><code class="Java">偏移量
+    //Plus是向日期大的偏移
+        LocalDate time2 =LocalDate.EPOCH.withYear(2000).withMonth(5).plusYears(1);
+        System.out.println(time2);//2000-05-01
+//minus是像日期小的偏移
+        LocalDate time2 =LocalDate.EPOCH.withYear(2000).withMonth(5).minusYears(1);
+        System.out.println(time2);//1999-05-01
+</code></pre>
+<p><strong>Period计算日期之间的偏差</strong></p>
+<pre><code class="Java">static Period between(LocalDate d1, LocalDate d2)
+----------------------------------------------------
+        LocalDate d1 = LocalDate.of(2022,12,12);
+        LocalDate d2 = LocalDate.of(2022,12,13);
+        Period p =Period.between(d1,d2);
+        System.out.println(p.getDays());//1
+        System.out.println(p.getYears());//0
+        System.out.println(p.getMonths());//0
+</code></pre>
+<p><strong>Duration计算偏差</strong></p>
+<p>计算LocalDateTime的偏差</p>
+<pre><code>static Duration between(Temporal startInclusive,Temporal endInclusive)//--&gt;计算时间差
+Temporal是接口，实现类有LocalDate和LocalDateTime,所以参数可以是
+实现对象，注意需要传递LocalDateTime,因为Duration是计算精确时间的
+
+利用duration计算相差
+toDays();
+toHours();
+toMinutes();
+toMillis();//毫秒
+</code></pre>
+<pre><code class="java">        LocalDateTime d1 = LocalDateTime.of(2022,12,12,10,10,10,10);
+        LocalDateTime d2 = LocalDateTime.of(2022,12,13,10,10,10,10);
+        Duration duration  = Duration.between(d1,d2);
+        System.out.println(duration.toDays());//1
+        System.out.println(duration.toHours());//24
+        System.out.println(duration.toMillis());//86400000
+        System.out.println(duration.toMinutes());//1440
+</code></pre>
+<p><strong>注意这个计算不是直接减，而是根据时间</strong></p>
+<p><strong>DateTimeFormatter日期格式化类</strong></p>
+<pre><code>static DateTimeFormatter ofPattern (String pattern)--&gt;获取对象
+方法：
+String format(TemporalAccessor temporal)-&gt;将日期规则按照指定规则转为字符产
+TemporalAccessor parse(CharSequence text) --&gt;和上面的相反
+
+
+TemporalAccessor是一个接口子接口有Temporal，之前说过他的实现类有LocalDate和LocalDateTime,，所以可以传他们
+CharSequence是string接口
+</code></pre>
+<p>使用</p>
+<pre><code class="Java">DateTimeFormatter dtf = DateTimeFormatter.ofPattern(&quot;yyyy-MM-dd HH:mm:ss&quot;);
+LocalDateTime time = LocalDateTime.now();
+System.out.println(time);
+System.out.println(dtf.format(time));//2024-03-26 15:59:11
+
+如果想将TemporalAccessor转为我们常见的LocalDateTime日期对象，就需要用到LocalDateTime里面的静态方法
+    static LocalDateTime from (TemporalAccessor temporal)
+    
+    //所以把日期的字符串转为localdatetime
+        TemporalAccessor temporalAccessor = dtf.parse(dtf.format(time));
+        LocalDateTime localDateTime = LocalDateTime.from(temporalAccessor);
+        System.out.println(localDateTime);
+    
+    
+</code></pre>
+<p><strong>System工具类</strong></p>
+<pre><code>系统相关类
+特点
+    构造私有，不能使用构造方法new对象
+    方法都是静态的
+使用
+    static long currentTimeMillis()//返回毫秒为单位的当前时间
+        long i= System.currentTimeMillis();
+        System.out.println(i);//1711452549818
+    static void exit(int status)//终止当前的虚拟机
+        System.exit(0);
+    static void arraycopy(object src ,int srcPos , Object dest ,int desPos,int length) //数组的复制 
+    src:原数组
+    srcPos:从原数组的哪个索引开始复制
+    dest:目标数组
+    destPos:从目标数组的哪个位置开始粘贴
+    length:复制的长度
+    
+</code></pre>
+<pre><code class="java">       int[] arr = &#123;1,2,3,4,5,6&#125;;
+        int[] arr2 = new int[10];
+        System.arraycopy(arr,0,arr2,0,5);
+        for (int i = 0; i &lt; arr2.length; i++) &#123;
+            System.out.println(arr2[i]);
+        &#125;
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240326193738250.png" alt="image-20240326193738250"></p>
+<p>有一个快捷键，这样快速生成遍历数组的方法</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240326193809404.png" alt="image-20240326193809404"></p>
+<p><strong>Arrays数组工具类</strong></p>
+<p><strong>记住，没有重写的数组的toString，打印数组是数组的地址值，所以需要toString的方法，和对象一样，使用对象 的toString的方法，只会打印对象的地址值，只有在对象的里面重写toString才可以</strong></p>
+<pre><code>构造私有，方法静态
+使用：类名直接调用
+    static String toString(int[] a)//按照格式打印数组元素
+    static int binarySearch(int[] a, int key) //二分查找
+    static void sort(int[] a)//升序排列
+    static int[] copyOf(int[] orginal ,int newLength)//数组的扩容
+</code></pre>
+<pre><code class="Java">        int[] a = &#123;1,2,3,4,5&#125;;
+        System.out.println(Arrays.toString(a));//[1, 2, 3, 4, 5]
+        int[] b = &#123;1,2,5,3,21,1&#125;;
+        Arrays.sort(b);
+        System.out.println(Arrays.toString(b));//[1, 1, 2, 3, 5, 21]
+
+//二分查找前提是升序，传过去的一定是升序玩的数组
+        int[] b = &#123;1,2,5,3,21,1&#125;;
+        Arrays.sort(b);
+        System.out.println(Arrays.binarySearch(b,2));//2
+//数组的扩容
+        int[] b = &#123;1,2,5,3,21,1&#125;;
+        int[] c = Arrays.copyOf(b,10);
+        System.out.println(Arrays.toString(c));//[1, 2, 5, 3, 21, 1, 0, 0, 0, 0]
+</code></pre>
+<p>**包装类	**</p>
+<pre><code>就是基本数据类型对应的类（包装类），我们需要将基本数据类型转为包装类，从而让基本的数据类型拥有类的特性
+为什么要学包装类？
+    特点的场景。比如要调用方法传递包装类
+    包装类转为基本数据类型，因为包装类不能使用+ - 等
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240326195728471.png" alt="image-20240326195728471"></p>
+<p>比如</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240326200154630.png" alt="image-20240326200154630"></p>
+<p>这里面需要Integer的类，就需要包装</p>
+<p>但是我们传递一个基本数据类型，没有报错为什么？</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240326200255602.png" alt="image-20240326200255602"></p>
+<p><strong>因为这部操作虚拟机会帮你自动类型转换，转为Integer类</strong></p>
+<p><strong>Interger包装类</strong></p>
+<pre><code>概述：Interger是int的包装类
+使用:构造方法：
+Interger(int value);
+Interger(String value)
+例如
+        Integer i = new Integer(1);
+        Integer j = new Integer(&quot;10&quot;);
+        System.out.println(i);//1
+        System.out.println(j);//10
+</code></pre>
+<p>上面过时了</p>
+<pre><code>1.装箱：将基本数据类型转为包装类
+2.方法:Integer里的方法
+static Integer valueOf(int i)
+static Integer valueOf(String s)
+这些操作叫做装箱
+拆箱：将包装类转为基本的数据类型
+ 方法
+ int intValue()
+         Integer i = new Integer(1);
+         int k = i.intValue();
+</code></pre>
+<ul>
+<li>拆箱和装箱很多时候都是自动完成的</li>
+<li><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240326202631150.png" alt="image-20240326202631150"></li>
+</ul>
+<p>这一步就是在自动装箱</p>
+<p>反编译就可以看出来</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240326202824007.png" alt="image-20240326202824007"></p>
+<p>提问</p>
+<pre><code class="Java">        Integer i = 100;//自动装箱
+        Integer j  =100;
+        System.out.println(i == j);//比较的是地址 //true
+
+        Integer k  =128;
+        Integer l = 128;
+        System.out.println(k == l);//false
+</code></pre>
+<p>这是为什么？	</p>
+<p>底层的源码</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240326203411680.png" alt="image-20240326203411680"></p>
+<pre><code>100在这个范围以内，所以直接返回这个数组里面的数据，所以i和j同时指向数组里面的同一个元素
+但是128不在这个范围以内，所以直接新建一个新的对象，所以两个k和l不是同一个对象，这个范围是在-128到127数组里面装着-128到127Integer对象
+</code></pre>
+<p><strong>基本数据类型往String转</strong></p>
+<pre><code>1.拼接
+    int a  = 1;
+    String b = a + &#39;&#39;;	 
+2.String的静态方法
+static String valueOf(int i)
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240326204541033.png" alt="image-20240326204541033"></p>
+<ul>
+<li>在实际开发中如何定义一个标准的Javabean</li>
+</ul>
+<pre><code>定义javabean的时候一般会将基本的数据类型变成包装类的类型
+</code></pre>
+<p>​	比如</p>
+<pre><code class="java">public class User &#123;
+    private Integer uid;
+    private String name;
+    private String password;
+    public User(Integer uid, String name, String password) &#123;
+        this.uid = uid;
+        this.name = name;
+        this.password = password;
+    &#125;
+
+    public User(String password) &#123;
+        this.password = password;
+    &#125;
+
+    public User(Integer uid) &#123;
+        this.uid = uid;
+    &#125;
+&#125;
+</code></pre>
+<pre><code>1.如果uid为Integer型(因为是对象没有值是null)，默认值为null
+2.将来javabean中的数据和数据库联系起来，我们可以将javabean中数据添加到表中，如果uid为主键自增此时的sql语句不用我们单独维护赋值，添加sql语句就可以这样写；
+insert into user(uid,username,password) values (null,&#39;1&#39;,&#39;1&#39;)
+3.到时候，我们需要将javabean中封装的数据放在sql语句里面，uid能够自增，而且javabean为包装类型，默认值为null，这样不用单独维护uid的值，也不用给javabean中赋值，然后保存在数据库里面，咱们就可以使用uid的默认值
+</code></pre>
+<p><strong>多线程</strong></p>
 
     </div>
     
