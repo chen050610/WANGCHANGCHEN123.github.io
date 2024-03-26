@@ -2677,6 +2677,34 @@ insert into user(uid,username,password) values (null,&#39;1&#39;,&#39;1&#39;)
 3.到时候，我们需要将javabean中封装的数据放在sql语句里面，uid能够自增，而且javabean为包装类型，默认值为null，这样不用单独维护uid的值，也不用给javabean中赋值，然后保存在数据库里面，咱们就可以使用uid的默认值
 </code></pre>
 <p><strong>多线程</strong></p>
+<p>基础知识</p>
+<pre><code>进程:在内存中执行的应用程序
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240326212838603.png" alt="image-20240326212838603"></p>
+<p>这里一个一个都是进程</p>
+<pre><code>线程:进程中最小的执行单元
+线程的作用:负责进程程序的运行
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240326213347771.png" alt="image-20240326213347771"></p>
+<p>使用场景，耗时操作就需要多线程</p>
+<p>  我们同时同时就可以多件事，这样的话提高了cpu的利用率 </p>
+<p><strong>并发和并行</strong></p>
+<pre><code>并行:在同一时刻，有多个执行在多个Cpu上同时运行
+比如:多个厨师在同时炒多个菜
+</code></pre>
+<pre><code>并发:在同一时刻，有多个指令在单个Cpu上交替找执行
+比如：一个厨师在同时超多个菜
+</code></pre>
+<p>就是之前说过的同步和异步的概念</p>
+<pre><code>细节：
+1.之前的cpu是单核，但是在执行多个程序好像是在同时执行，原因是CPU在多个线程之间做高速切换，比如2和4线程，那么CPU可以同时运行4个线程，此时不用切换，但是如果超过了，cPU就要切换了，cpu执行程序的时候，既有并发既有并行
+</code></pre>
+<p>CPU<strong>的调度</strong></p>
+<pre><code>分时调度:是让所有的线程轮流CPU使用权，并且平均分配每个线程占用CPU的时间片
+抢占调度:多个线程轮流抢占CPU的使用权，哪个线程抢到了，哪个线程先执行，优先级高的纪律比较大，
+</code></pre>
+<p>我们JAVA就是抢占式调度</p>
+<p><strong>主线程</strong></p>
 
     </div>
     
