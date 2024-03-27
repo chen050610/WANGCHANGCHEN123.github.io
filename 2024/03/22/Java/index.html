@@ -2821,10 +2821,107 @@ public class Test &#123;
 <p><strong>Thread的其他的方法</strong></p>
 <pre><code class="Java">void setPriority(int newPriority) -&gt;线程的优先级，优先级越高的线程，抢到cpu使用率几率越大，
 int getPriority()	-&gt;获取线程的优先级
-void setDaemon(boolean on) -&gt;设置守护线程
+void setDaemon(boolean on) -&gt;设置守护线程,当非守护线程执行完毕，守护线程就要结束
 static void yield() -&gt;礼让线程让当前的线程让出cpu的使用权
-void join() -&gt; c
+void join() -&gt; 插入线程或者插队线程
 </code></pre>
+<pre><code>默认的优先级是5；
+最小的优先级是1；
+最大的优先级是10;
+</code></pre>
+<pre><code class="Java">MyThread myThread = new MyThread();
+myThread.setName(&quot;线程1&quot;);
+MyThread myThread1 = new MyThread();
+myThread1.setName(&quot;线程2&quot;);
+
+
+System.out.println(myThread1.getPriority());//5
+System.out.println(myThread.getPriority());//5
+myThread1.setPriority(1);
+myThread.setPriority(10);
+
+myThread1.start();
+myThread.start();
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240327221022276.png" alt="image-20240327221022276"></p>
+<p>守护线程的使用</p>
+<pre><code class="Java">package lianxi_Thread;
+
+public class Test &#123;
+    public static void main(String[] args)&#123;
+        MyThread1 myThread1 = new MyThread1();
+        myThread1.setName(&quot;线程1&quot;);
+        MyThread2 myThread2 = new MyThread2();
+        myThread2.setName(&quot;线程2&quot;);
+        myThread1.setDaemon(true);
+        myThread1.start();
+        myThread2.start();
+    &#125;
+&#125;
+</code></pre>
+<pre><code class="Java">package lianxi_Thread;
+
+public class MyThread1 extends Thread&#123;
+    @Override
+    public void run() &#123;
+        for (int i = 0; i &lt; 100; i++) &#123;
+            System.out.println(getName()+&quot;:Thread&quot;+i);
+        &#125;
+    &#125;
+&#125;
+</code></pre>
+<pre><code class="java">package lianxi_Thread;
+
+public class MyThread2 extends Thread&#123;
+    @Override
+    public void run() &#123;
+        for (int i = 0; i &lt; 10; i++) &#123;
+            System.out.println(getName()+&quot;:Thread&quot;+i);
+        &#125;
+    &#125;
+&#125;
+</code></pre>
+<pre><code>守护线程设置100次循环，非守护线程设置10次，当我们的非守护线程执行完以后，守护线程就会停止
+注意
+守护线程不是立马结束的，当非守护线程执行完，会通知守护线程，这需要一点时间
+</code></pre>
+<p>使用场景</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240327222327738.png" alt="image-20240327222327738"></p>
+<p><strong>礼让线程</strong></p>
+<pre><code>如果两个线程一起执行，可能执行一会a,在执行一会b，或者可能线程a执行完线程b在执行，那么如果我们想要均衡点，尽量让两个线程交替执行
+</code></pre>
+<pre><code class="Java">package lianxi_Thread;
+
+public class MyThread1 extends Thread&#123;
+    @Override
+    public void run() &#123;
+        for (int i = 0; i &lt; 10; i++) &#123;
+            System.out.println(getName()+&quot;:Thread&quot;+i);
+            Thread.yield();
+        &#125;
+    &#125;
+&#125;
+</code></pre>
+<p><strong>注意只是尽可能的平衡，不是绝对的你来我往</strong></p>
+<p><strong>插入线程</strong></p>
+<p>就是插队</p>
+<pre><code class="java">package lianxi_Thread;
+
+public class Test &#123;
+    public static void main(String[] args) throws InterruptedException &#123;
+        MyThread1 myThread1 = new MyThread1();
+        myThread1.setName(&quot;线程1&quot;);
+
+        myThread1.start();
+        //表示把myThread1插入到当前的线程的前面。myThread1插在main线程之前
+        myThread1.join();
+        for (int i = 0; i &lt; 5; i++) &#123;
+            System.out.println(&quot;main&quot;+i);
+        &#125;
+    &#125;
+&#125;
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240327223353863.png" alt="image-20240327223353863"></p>
 
     </div>
     
