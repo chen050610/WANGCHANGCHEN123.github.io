@@ -2155,9 +2155,9 @@ System.out.println(name.equals(name1));//true
 </li>
 <li><p>要知道多态的好处，多态的前提</p>
 <pre><code>前提
-a.必须有字符类的继承或者接口实现关系
-b.必须有方法的重写（没有重写，多态没有意义）
-c.父类引用指向子类对象
+    a.必须有字符类的继承或者接口实现关系
+    b.必须有方法的重写（没有重写，多态没有意义）
+    c.父类引用指向子类对象
 Fu fu = new zi();--&gt;理解成大数据类型接受一个小数据类型的数据，比如 double b = 10;
 注意：
     多态下不能直接调用子类的特有功能
@@ -2212,13 +2212,13 @@ String b = new String(&quot;abc&quot;)//共创建今儿个对象？  如果之�
 <p><strong>String的常用的方法</strong></p>
 <p><strong>注意在Java中String不是基本数据类型，而是一个类，</strong></p>
 <p><strong>如果我们使用&#x3D;&#x3D;比较，之前说过当&#x3D;&#x3D; 比较引用的数据类型，比较的是地址，所以我们使用equals比较内容，</strong></p>
-<pre><code>equals();比较字符串的内容
-equalsIgnorecase();忽略大小写的
+<pre><code>equals();//比较字符串的内容
+equalsIgnorecase();//忽略大小写的
 </code></pre>
 <p>或者使用</p>
-<pre><code class="Java">        String s2 = &quot;10&quot;;
-        String s3 = new String(&quot;10&quot;);
-        System.out.println(Objects.equals(s2,s3));//true
+<pre><code class="Java">    String s2 = &quot;10&quot;;
+    String s3 = new String(&quot;10&quot;);
+    System.out.println(Objects.equals(s2,s3));//true
 </code></pre>
 <p>底层的源码，这个可以有效的防止防止空指针</p>
 <pre><code class="Java">public static boolean equals(Object a, Object b) &#123;
@@ -2238,14 +2238,14 @@ System.out.println(Objects.equals(s2,s3));
 *charAt()//根据索引获取响应的字符
 *indexOf(String s);//返回字符串在大字符串第一次出现的位置
 *subString(int begin);//从开始索引截到最后
-*sunStrin(int begin, int end);//记住左闭右开
+*sunString(int begin, int end);//记住左闭右开
 </code></pre>
 <pre><code>toCharArray();//转为char数组
 getBytes();//将字符串转为字节数组
 replace(String s1, String s2);//替换
 getBytes(String charsetName);//按照编码格式将字符串转为Bytes数组
 </code></pre>
-<pre><code>split(String regex)//分割
+<pre><code>split(String regex);//分割
 </code></pre>
 <pre><code>contains()//
 endwiths()
@@ -2337,7 +2337,7 @@ System.out.println(sb3 == sb2);//true
 </code></pre>
 <pre><code>定义一个数组，以[元素1，元素2...],用StringBuilder拼接
 </code></pre>
-<p>String拼接的效率满，而且拼接一次就会产生一个新的字符串对象</p>
+<p>String 拼接的效率满，而且拼接一次就会产生一个新的字符串对象</p>
 <p>StringBuilder和StringBuffer:</p>
 <p>​	1.相同点：拼接的效率比StringBuffer高</p>
 <p>​						但是线程不安全</p>
@@ -2570,7 +2570,6 @@ System.out.println(dtf.format(time));//2024-03-26 15:59:11
         int[] b = &#123;1,2,5,3,21,1&#125;;
         Arrays.sort(b);
         System.out.println(Arrays.toString(b));//[1, 1, 2, 3, 5, 21]
-
 //二分查找前提是升序，传过去的一定是升序玩的数组
         int[] b = &#123;1,2,5,3,21,1&#125;;
         Arrays.sort(b);
@@ -2625,7 +2624,7 @@ static Integer valueOf(String s)
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240326202824007.png" alt="image-20240326202824007"></p>
 <p>提问</p>
 <pre><code class="Java">        Integer i = 100;//自动装箱
-        Integer j  =100;
+        Integer j = 100;
         System.out.println(i == j);//比较的是地址 //true
 
         Integer k  =128;
@@ -2705,6 +2704,127 @@ insert into user(uid,username,password) values (null,&#39;1&#39;,&#39;1&#39;)
 </code></pre>
 <p>我们JAVA就是抢占式调度</p>
 <p><strong>主线程</strong></p>
+<p>就是main方法</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240327205244012.png" alt="image-20240327205244012"></p>
+<p><strong>创建线程</strong></p>
+<p><strong>第一种方法：继承Threads的类</strong></p>
+<pre><code>1.定义一个类，继承Thread
+2.重写run方法，在run方法中设置线程任务（所谓的线程任务指的就是此线程要执行 的具体代码）
+3.创建自定义线程类的对象
+4.调用Thread里的start的方法，开启线程，虚拟机自动调用run方法
+</code></pre>
+<p>例如</p>
+<pre><code class="java">package lianxi_Thread;
+
+public class MyThread extends Thread&#123;
+    @Override
+    public void run() &#123;
+        for (int i = 0; i &lt; 5; i++) &#123;
+            System.out.println(&quot;Thread执行&quot;+i);
+        &#125;
+    &#125;
+&#125;
+</code></pre>
+<pre><code class="Java">package lianxi_Thread;
+
+public class Test &#123;
+    public static void main(String[] args) &#123;
+        //创建线程对象
+        MyThread myThread = new MyThread();
+//        调用start方法，开启线程，虚拟机自动调用run方法
+        myThread.start();
+        //主线程的任务
+        for (int i = 0; i &lt; 5; i++) &#123;
+            System.out.println(&quot;main&quot;+i);
+        &#125;
+
+    &#125;
+&#125;
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240327210425055.png" alt="image-20240327210425055"></p>
+<p>输出和cpu的调度有关，哪个抢到执行权</p>
+<p><strong>如果不开启线程，就是按照顺序执行的</strong></p>
+<p><strong>多线程的运行原理</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240327210754267.png" alt="image-20240327210754267"></p>
+<p>当我们调用start的方法以后，就会在栈空间执行写在run方法里面的代码</p>
+<p>注意</p>
+<p><strong>start方法调用一次就可以</strong></p>
+<p><strong>Thread的方法</strong></p>
+<pre><code>void start() -&gt;开启线程自动调用run方法
+void run() -&gt;设置线程任务，线程任务写在这里
+String getName() -&gt;获取线程名字
+void setName() -&gt;设置名字
+static Thread currentThread() -&gt;获取正在执行的线程对象（此方法在哪个线程使用，获取的就是哪个线程对象）
+static void sleep(long mills) -&gt;线程睡眠，设置时间，这个时间段里面，这个线程不会执行
+</code></pre>
+<p>例如</p>
+<pre><code class="Java">package lianxi_Thread;
+
+public class MyThread extends Thread&#123;
+    @Override
+    public void run() &#123;
+        for (int i = 0; i &lt; 100; i++) &#123;
+            System.out.println(getName()+&quot;Thread&quot;+i);
+        &#125;
+    &#125;
+&#125;
+</code></pre>
+<pre><code class="java">package lianxi_Thread;
+
+public class Test &#123;
+    public static void main(String[] args) &#123;
+        //创建线程对象
+        MyThread myThread = new MyThread();
+//        调用start方法，开启线程，虚拟机自动调用run方法
+        myThread.setName(&quot;haha&quot;);
+        myThread.start();
+        for (int i = 0; i &lt; 100; i++) &#123;
+            System.out.println(Thread.currentThread().getName()+&quot;main&quot;+i);
+        &#125;
+
+    &#125;
+&#125;
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240327212139128.png" alt="image-20240327212139128"></p>
+<p><strong>前面就是我们的线程的名字</strong></p>
+<p><strong>Thread.sleep</strong></p>
+<pre><code class="Java">        MyThread myThread = new MyThread();
+//        调用start方法，开启线程，虚拟机自动调用run方法
+        myThread.setName(&quot;haha&quot;);
+        myThread.start();
+        try &#123;
+            Thread.sleep(1000);
+        &#125; catch (Exception e)&#123;
+            System.out.println(e);
+        &#125;
+        for (int i = 0; i &lt; 100; i++) &#123;
+            System.out.println(Thread.currentThread().getName()+&quot;main&quot;+i);
+        &#125;
+</code></pre>
+<p>这里面还有一个问题</p>
+<p>在其他的线程里面，不能使用throws向上抛出异常</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240327212844355.png" alt="image-20240327212844355"></p>
+<p>但是在主线程，可以抛出异常</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240327212921665.png" alt="image-20240327212921665"></p>
+<p>原因之前说过</p>
+<pre><code class="java">public class MyThread extends Thread&#123;
+    @Override
+    public void run() &#123;
+        for (int i = 0; i &lt; 100; i++) &#123;
+            Thread.sleep(1000);
+            System.out.println(getName()+&quot;Thread&quot;+i);
+        &#125;
+    &#125;
+&#125;
+//因为上面run方法是重写父类的，但是父类没有抛这个异常，子类就不可以，所以只能使用try catch
+</code></pre>
+<p><strong>Thread的其他的方法</strong></p>
+<pre><code class="Java">void setPriority(int newPriority) -&gt;线程的优先级，优先级越高的线程，抢到cpu使用率几率越大，
+int getPriority()	-&gt;获取线程的优先级
+void setDaemon(boolean on) -&gt;设置守护线程
+static void yield() -&gt;礼让线程让当前的线程让出cpu的使用权
+void join() -&gt; c
+</code></pre>
 
     </div>
     
