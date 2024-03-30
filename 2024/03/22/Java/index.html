@@ -439,8 +439,8 @@ int a = (int) i;
         Object c = new String(&quot;haaha&quot;);
 </code></pre>
 <p>所以我们就可以常见任意类型的数组，所以要以后声明的数组是混合类型的就可以这样写</p>
-<pre><code class="java">        Object[] arr = new Object[]&#123;&quot;java&quot;,11111,2222,&quot;lkcd&quot;&#125;;
-        System.out.println(Arrays.toString(arr));//[java, 11111, 2222, lkcd]
+<pre><code class="java">Object[] arr = new Object[]&#123;&quot;java&quot;,11111,2222,&quot;lkcd&quot;&#125;;
+System.out.println(Arrays.toString(arr));//[java, 11111, 2222, lkcd]
 </code></pre>
 </li>
 </ul>
@@ -3616,7 +3616,7 @@ void schedule(TimeTask task,Data firstTime,long period)
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240329173026063.png" alt="image-20240329173026063"></p>
 <p>这样每隔2秒就会执行</p>
 <ul>
-<li>这里面的timer就相当于js里面的setTimenterval</li>
+<li>这里面的timer就相当于js里面的setTimenter</li>
 </ul>
 <p><strong>复习</strong></p>
 <p><strong>集合</strong></p>
@@ -3891,11 +3891,36 @@ System.out.println(xiyou);//[猪八戒, haha, 孙悟空, 沙僧, 白龙马]
  前面的Colection的方法都试用
  void add(int index,)
  E remove(int index)//根据索引移除
- E set(int index ,E element)//将指定的索引位置上的元素，修改为后面的元素,返回值s替换的元素
+ E set(int index ,E element)//将指定的索引位置上的元素，修改为后面的元素,返回值是替换的元素
  E Get(int index,E element) //根据索引获取元素
 </code></pre>
 <p>遍历的快捷键</p>
 <pre><code>集合名+fori
+</code></pre>
+<p>但是还有一个问题</p>
+<p>remove可以根据索引进行删除,如果这样就会出现歧义，remove可以根据索引删除</p>
+<pre><code class="java">        ArrayList&lt;Integer&gt; list1 = new ArrayList&lt;&gt;();
+        list1.add(1);
+        list1.remove(1);
+</code></pre>
+<p>就会出现越界异常</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240330211721790.png" alt="image-20240330211721790"></p>
+<ul>
+<li><p>注意如果传递整数2在remove，remove就会默认根据索引值进行删除，我们解决这个可以把他包装成包装类</p>
+<p>例如</p>
+<pre><code class="Java">ArrayList&lt;Integer&gt; list1 = new ArrayList&lt;&gt;();
+list1.add(1);
+Integer a = 1;
+list1.remove(a);
+System.out.println(list1);//[]
+</code></pre>
+</li>
+</ul>
+<p>或者</p>
+<pre><code class="java">ArrayList&lt;Integer&gt; list1 = new ArrayList&lt;&gt;();
+list1.add(1);
+list1.remove(Integer.valueOf(1));
+System.out.println(list1);//[]
 </code></pre>
 
     </div>
