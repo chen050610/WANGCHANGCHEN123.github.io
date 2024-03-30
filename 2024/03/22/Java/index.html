@@ -2922,6 +2922,981 @@ public class Test &#123;
 &#125;
 </code></pre>
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240327223353863.png" alt="image-20240327223353863"></p>
+<p><strong>第二种方法实现Runnable接口</strong></p>
+<pre><code>1.因为Thread里面的run方法是实现Runnable接口，所以我们直接实现Runnable的接口就可以了
+</code></pre>
+<pre><code>创建类，实现Runnable接口
+重写Run方法，设置线程任务
+利用Thread的构造方法，Thread有一个这样得到构造函数Thread(Runnable target),将自定义的类作为参数传递到Thread构造中
+调用Thread的start的方法，虚拟机自动调用run
+</code></pre>
+<p>例子</p>
+<pre><code class="Java">package wei_Runnable;
+
+public class MyRunnable implements Runnable &#123;
+    @Override
+    public void run() &#123;
+        for (int i = 0; i &lt; 10; i++) &#123;
+         System.out.println(Thread.currentThread().getName()+i);
+        &#125;
+    &#125;
+&#125;
+</code></pre>
+<pre><code class="java">package wei_Runnable;
+
+public class Test &#123;
+    public static void main(String[] args) &#123;
+        MyRunnable r = new MyRunnable();
+        Thread t =  new Thread(r);
+        
+        t.start();
+        
+        for (int i = 0; i &lt; 10; i++) &#123;
+            System.out.println(Thread.currentThread().getName()+i);
+        &#125;
+    &#125;
+&#125;
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240328083338637.png" alt="image-20240328083338637"></p>
+<p><strong>两种方式的区别</strong></p>
+<pre><code>继承的Thread的只能支持单继承，有继承的局限性，
+实现接口，既可以继承父类还可以实现接口
+</code></pre>
+<p><strong>第三种方式匿名内部类创建多线程</strong></p>
+<pre><code>严格的来说不是第三种方法，而是匿名内部类是建立在实现Runnable的接口的基础上
+</code></pre>
+<pre><code class="java">        new Thread(new Runnable() &#123;
+            @Override
+            public void run() &#123;
+                for (int i = 0; i &lt; 10; i++) &#123;
+                    System.out.println(Thread.currentThread().getName()+i);
+                &#125;
+            &#125;
+        &#125;).start();
+</code></pre>
+<pre><code class="java">        Thread t1 = new Thread(new Runnable() &#123;
+            @Override
+            public void run() &#123;
+                for (int i = 0; i &lt; 10; i++) &#123;
+                    System.out.println(Thread.currentThread().getName()+i);
+                &#125;
+            &#125;
+        &#125;);
+        t1.start()
+</code></pre>
+<p>如果想取名</p>
+<pre><code class="java">Thread(Runnable a, String name);使用这个构造函数
+</code></pre>
+<p><strong>线程安全问题</strong></p>
+<pre><code>当多个线程访问一个资源的时候，就是之前解释为什么Js是单线程，就是因为害怕，多个线程操作同一个dom元素，就会出现问题
+</code></pre>
+<p>例如</p>
+<pre><code class="java">package wei_Runnable;
+
+public class  MyRunnable implements Runnable &#123;
+    int ticket = 100;
+
+    @Override
+    public void run() &#123;
+        while (true)&#123;
+            if (ticket &gt; 0)&#123;
+                System.out.println(Thread.currentThread().getName()+&quot;买了&quot;+ticket+&quot;票&quot;);
+                ticket--;
+            &#125;
+        &#125;
+    &#125;
+&#125;
+</code></pre>
+<pre><code class="java">package wei_Runnable;
+
+public class Test &#123;
+    public static void main(String[] args) &#123;
+        MyRunnable r = new MyRunnable();
+        Thread t1 =  new Thread(r,&quot;张三&quot;);
+        Thread t2 =  new Thread(r,&quot;李四&quot;);
+        Thread t3 =  new Thread(r,&quot;王五&quot;);
+
+        t1.start();
+        t2.start();
+        t3.start();
+    &#125;
+&#125;
+</code></pre>
+<p>执行，我们就发现，三个线程访问同一个资源发生了问题</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240328085213139.png" alt="image-20240328085213139"></p>
+<pre><code>原因：CPU在多个线程做告诉切换导致的
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240328085439813.png" alt="image-20240328085439813"></p>
+<ul>
+<li>我们把这个三个线程当作小红，小蓝和小绿，当我们小红抢到执行权，输出以后，还没有执行ticket–，就因为cpu的高速切换，导致小红停在那里，然后小兰执行，此时的票还是100；</li>
+</ul>
+<p>解决这个问题。<strong>抽象一点，我们可以上锁</strong></p>
+<p><strong>使用同步代码块</strong></p>
+<pre><code class="java">格式
+synchronized(任意对象)&#123;
+    线程出现不安全的地方
+&#125;
+2.任意对象就是我们的锁对象
+3.执行特点，一个线程拿到锁以后，会进入到同步代码块，再次期间，其他的线程拿不到锁，就进不去同步代码块，需要等待执行的线程，执行完毕以后，出了同步代码块执行，相当于释放锁，等待的线程才能抢到锁
+</code></pre>
+<p>例如</p>
+<pre><code class="java">public class  MyRunnable implements Runnable &#123;
+    int ticket = 100;
+    Object o = new Object();
+
+    @Override
+    public void run() &#123;
+        while (true)&#123;
+            synchronized (o)&#123;
+                if (ticket &gt; 0)&#123;
+                    System.out.println(Thread.currentThread().getName()+&quot;买了&quot;+ticket+&quot;票&quot;);
+                    ticket--;
+                &#125;
+            &#125;
+        &#125;
+    &#125;
+&#125;
+</code></pre>
+<pre><code>随便创建一个对象，然后把有线程问题的代码放在里面
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240328091016832.png" alt="image-20240328091016832"></p>
+<p>这样就不会出现买同一张的票的情况</p>
+<p>注意</p>
+<pre><code class="java">            synchronized (new Object())&#123;
+                if (ticket &gt; 0)&#123;
+                    System.out.println(Thread.currentThread().getName()+&quot;买了&quot;+ticket+&quot;票&quot;);
+                    ticket--;
+                &#125;
+</code></pre>
+<pre><code>不能直接在这里面创建锁对象，只能有一个锁对象，每当我们，创建线程，调用run方法，就会出来一个新的锁对象，记住只能有一个锁
+</code></pre>
+<p><strong>解决方法二 	普通同步方法</strong></p>
+<p>1.非静态的</p>
+<pre><code>格式
+    修饰符 synchronize 返回值类型 方法名(参数)&#123;
+    方法体
+    return 结果
+    &#125;
+    默认的锁对象是this
+</code></pre>
+<p>例子</p>
+<pre><code class="java">package wei_Runnable;
+
+public class  MyRunnable implements Runnable &#123;
+    int ticket = 100;
+
+    @Override
+    public void run() &#123;
+        while (true)&#123;
+            try &#123;
+                Thread.sleep(100);
+            &#125; catch (InterruptedException e) &#123;
+                throw new RuntimeException(e);
+            &#125;
+            func();
+        &#125;
+    &#125;
+    public synchronized void func()&#123;
+        if (ticket &gt; 0)&#123;
+            System.out.println(Thread.currentThread().getName()+&quot;买了&quot;+ticket+&quot;票&quot;);
+            ticket--;
+        &#125;
+    &#125;
+&#125;
+</code></pre>
+<p>2.静态的同步方法</p>
+<pre><code>格式
+修饰符 static sychronized 返回值类型 方法(参数)&#123;
+    方法体
+    return 结果
+&#125;
+默认锁:class对象
+</code></pre>
+<pre><code class="java">package wei_Runnable;
+
+public class  MyRunnable implements Runnable &#123;
+    static int ticket = 100;
+
+    @Override
+    public void run() &#123;
+        while (true)&#123;
+            try &#123;
+                Thread.sleep(100);
+            &#125; catch (InterruptedException e) &#123;
+                throw new RuntimeException(e);
+            &#125;
+            func();
+        &#125;
+    &#125;
+    public static synchronized void func()&#123;
+        if (ticket &gt; 0)&#123;
+            System.out.println(Thread.currentThread().getName()+&quot;买了&quot;+ticket+&quot;票&quot;);
+            ticket--;
+        &#125;
+    &#125;
+&#125;
+</code></pre>
+<p>之前说过StringBuilder是线程不安全的，StringBuffer是线程安全的</p>
+<p>因为StringBuffer的底层源码</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240328092416232.png" alt="image-20240328092416232"></p>
+<p>都是同步方法</p>
+<p><strong>死锁</strong></p>
+<pre><code>指两个或者两个以上的线程在执行的过程中由于竞争同步锁，而产生的一种堵塞的情况；如果没有外力的作用，他们将无法继续执行下去，这种情况叫做死锁
+</code></pre>
+<p>就是如下图的情况</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240328135449157.png" alt="image-20240328135449157"></p>
+<p>例子</p>
+<p>创建两个锁对象</p>
+<pre><code class="java">package sisuo;
+
+public class Lock1 &#123;
+    public static Lock1 lock1 = new Lock1();
+&#125;
+</code></pre>
+<pre><code class="java">package sisuo;
+
+public class Lock2 &#123;
+    public static Lock2 lock2 = new Lock2();
+&#125;
+</code></pre>
+<pre><code class="java">package sisuo;
+
+public class DieLock implements Runnable &#123;
+    private Boolean flag;
+
+    public DieLock(Boolean flag) &#123;
+        this.flag = flag;
+    &#125;
+
+    @Override
+    public void run() &#123;
+        if (flag)&#123;
+            synchronized (Lock1.lock1)&#123;
+                System.out.println(&quot;if...Lock1&quot;);
+                synchronized (Lock2.lock2)&#123;
+                    System.out.println(&quot;else...Lock2&quot;);
+                &#125;
+            &#125;
+        &#125; else &#123;
+            synchronized (Lock2.lock2)&#123;
+                System.out.println(&quot;if...Lock2&quot;);
+                synchronized (Lock1.lock1)&#123;
+                    System.out.println(&quot;else...Lock1&quot;);
+                &#125;
+            &#125;
+        &#125;
+    &#125;
+&#125;
+</code></pre>
+<pre><code class="java">package sisuo;
+
+public class Test &#123;
+    public static void main(String[] args) &#123;
+        DieLock dieLock1 = new DieLock(true);
+        DieLock dieLock2 = new DieLock(false);
+
+        new Thread(dieLock1).start();
+        new Thread(dieLock2).start();
+    &#125;
+&#125;
+</code></pre>
+<p>这是我们发现死锁了 </p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240328141112921.png" alt="image-20240328141112921"></p>
+<pre><code class="java">解释一下
+当开启我们的两个线程，第一个线程进入
+                synchronized (Lock1.lock1)&#123;
+                System.out.println(&quot;if...Lock1&quot;);
+                synchronized (Lock2.lock2)&#123;
+                    System.out.println(&quot;else...Lock2&quot;);
+                &#125;
+            
+   第二个线程进入
+                   synchronized (Lock2.lock2)&#123;
+                System.out.println(&quot;if...Lock2&quot;);
+                synchronized (Lock1.lock1)&#123;
+                    System.out.println(&quot;else...Lock1&quot;);
+                &#125;
+            &#125;
+    但是第一个线程要进入我们的锁二的时候，锁二的执行权还在第二个线程，第二个线程必须得进入锁一才可以继续运行，这是就出现这个问题
+</code></pre>
+<ul>
+<li>其实如果线程一执行的抢到执行权快的话，有可能把两个锁都给拿到</li>
+</ul>
+<pre><code>锁嵌套尽量要避免
+</code></pre>
+<p><strong>线程的生命周期</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240328142105507.png" alt="image-20240328142105507"></p>
+<p>sleep和wait的区别</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240328142544754.png" alt="image-20240328142544754"></p>
+<p>wait和notify</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240328142857290.png" alt="image-20240328142857290"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240328142905586.png" alt="image-20240328142905586"></p>
+<p>而且注意</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240328143038677.png" alt="image-20240328143038677"></p>
+<p><strong>等待唤醒</strong></p>
+<pre><code>void wait()//线程等待过程中会释放锁，需要其他的其他的线程使用notify方法将其唤醒
+void notify()//线程等待唤醒；如果有多条，随机唤醒一条
+void notifyAll( )//唤醒所有的等待的线程
+而且这些方法需要使用锁对象调用，所以需要用到同步代码块，而且必须是同一个锁对象
+</code></pre>
+<p>案例</p>
+<pre><code>要求一个线程生产包子，一个线程吃包子，但是不能连续生产和消费，只能造一个吃一个
+</code></pre>
+<pre><code class="java">package baozipu;
+
+public class Baozipu &#123;
+    private int count;
+    private boolean flag;
+
+    public Baozipu(int count, Boolean flag) &#123;
+        this.count = count;
+        this.flag = flag;
+    &#125;
+
+    public Baozipu(Boolean flag) &#123;
+        this.flag = flag;
+    &#125;
+
+    public Baozipu(int count) &#123;
+        this.count = count;
+    &#125;
+
+    public Baozipu() &#123;
+    &#125;
+
+    public void getCount() &#123;
+        System.out.println(&quot;消费了&quot;+count+&quot;包子&quot;);
+    &#125;
+
+    public void setCount() &#123;
+        count++;
+        System.out.println(&quot;生产了&quot;+count+&quot;包子&quot;);
+    &#125;
+
+    public Boolean getFlag() &#123;
+        return flag;
+    &#125;
+
+    public void setFlag(Boolean flag) &#123;
+        this.flag = flag;
+    &#125;
+&#125;
+</code></pre>
+<pre><code class="java">package baozipu;
+
+public class Consumer implements Runnable &#123;
+    private Baozipu baozipu;
+
+    public Consumer(Baozipu baozipu) &#123;
+        this.baozipu = baozipu;
+    &#125;
+
+    @Override
+    public void run() &#123;
+        while(true)&#123;
+            try &#123;
+                Thread.sleep(100);
+            &#125; catch (InterruptedException e) &#123;
+                throw new RuntimeException(e);
+            &#125;
+            //如果没有包子等待，让出线程给生产者
+            synchronized (baozipu)&#123;
+                if (baozipu.getFlag() == false)&#123;
+                    try &#123;
+                        baozipu.wait();
+                    &#125; catch (InterruptedException e) &#123;
+                        throw new RuntimeException(e);
+                    &#125;
+                &#125;
+                //flag为false证明没有包子
+                baozipu.getCount();
+                //设置包子噗没有包子了
+                baozipu.setFlag(false);
+                //唤醒生产线程
+                baozipu.notify();
+
+            &#125;
+        &#125;
+    &#125;
+&#125;
+</code></pre>
+<pre><code class="java">package baozipu;
+
+public class Product implements Runnable&#123;
+    private Baozipu baozipu;
+
+    public Product(Baozipu baozipu) &#123;
+        this.baozipu = baozipu;
+    &#125;
+
+    @Override
+    public void run() &#123;
+        while(true)&#123;
+            try &#123;
+                Thread.sleep(100);
+            &#125; catch (InterruptedException e) &#123;
+                throw new RuntimeException(e);
+            &#125;
+            //如果有包子让出线程给消费者
+            synchronized (baozipu)&#123;
+                if (baozipu.getFlag() == true)&#123;
+                    try &#123;
+                        baozipu.wait();
+                    &#125; catch (InterruptedException e) &#123;
+                        throw new RuntimeException(e);
+                    &#125;
+                &#125;
+                //flag为false证明没有包子，生产包子
+                baozipu.setCount();
+                //生产完证明有包子
+                baozipu.setFlag(true);
+                //唤醒生产线程
+                baozipu.notify();
+
+            &#125;
+        &#125;
+    &#125;
+&#125;
+</code></pre>
+<pre><code class="java">package baozipu;
+
+public class Test &#123;
+    public static void main(String[] args) &#123;
+        Baozipu baozipu = new Baozipu();
+
+        Product product = new Product(baozipu);
+        Consumer consumer = new Consumer(baozipu);
+
+
+        new Thread(product).start();
+        new Thread(consumer).start();
+    &#125;
+&#125;
+</code></pre>
+<p><strong>第二中解决线程不安全Lock锁</strong></p>
+<pre><code>1.Lock是一个接口
+2.实现类:ReaentrantLock
+3.方法:
+lock() //获得锁
+unlock()//释放锁
+</code></pre>
+<p>使用</p>
+<pre><code class="java">package wei_Runnable;
+
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+public class  MyRunnable implements Runnable &#123;
+    static int ticket = 100;
+    Lock lock = new ReentrantLock();
+    @Override
+    public void run() &#123;
+        while (true)&#123;
+            try &#123;
+                Thread.sleep(100);
+            &#125; catch (InterruptedException e) &#123;
+                throw new RuntimeException(e);
+            &#125;
+            //获得锁
+            lock.lock();
+            if (ticket &gt; 0) &#123;
+                System.out.println(Thread.currentThread().getName() + &quot;买了&quot; + ticket + &quot;票&quot;);
+                ticket--;
+            &#125;
+            lock.unlock();
+        &#125;
+    &#125;
+&#125;
+</code></pre>
+<p>不管我们if里面是否发生了错误，我们都应该执行释放锁，所以我们可以包裹try catch然后用finally放释放锁的</p>
+<p>有什么区别呢和synchronize</p>
+<pre><code>synchronize:不管是同步代码还是同步方法，都需要在结束一对&#123;&#125;之后，释放锁对象
+Lock,通过两个方法控制
+</code></pre>
+<p><strong>Callable接口</strong></p>
+<pre><code>之前实现多线程继承Thread或者实现Runnable
+第三种就是实现Callable接口
+方法
+ v call()-&gt;设置线程任务，类似于Run方法
+ call和run方法的区别
+ 相同点：都是设置线程任务的
+ 不同点：call方法有返回值，而且有异常可以throws
+         run方法没有返回值，而且有异常不可以throws
+&lt;V&gt;
+ 叫做泛型，用于指定我们操作什么类型的数据 ，而且尖括号里面只能写引用数据类型，如果泛型不写默认是Object的数据
+ 实习Callable方法接口的时候，指定泛型是什么类型，重写的call方法的返回值就是什么类型的
+ 
+ 
+ 获取call方法的会返回值：FutureTask
+ a.FutureTask&lt;V&gt;//实现一个接口FutureTask&lt;T&gt;
+ b.FutureTask&lt;V&gt;有一个方法
+     V get()//获取call的返回值 
+</code></pre>
+<p>使用</p>
+<pre><code class="java">package chenw_callable;
+
+import java.util.concurrent.Callable;
+
+public class MyCallable implements Callable&lt;Integer&gt; &#123;
+    @Override
+    public Integer call() throws Exception &#123;
+        return null;
+    &#125;
+&#125;
+</code></pre>
+<pre><code class="java">package chenw_callable;
+
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
+
+public class Test &#123;
+    public static void main(String[] args) throws ExecutionException, InterruptedException &#123;
+        MyCallable myCallable = new MyCallable();
+        FutureTask&lt;Integer&gt; integerFutureTask = new FutureTask&lt;&gt;(myCallable);
+        //创建Thread对象-》
+        Thread thread = new Thread(integerFutureTask);
+        thread.start();
+        //调用get方法获取call方法的返回值
+        System.out.println(integerFutureTask.get());
+    &#125;
+&#125;
+</code></pre>
+<p><strong>线程池</strong></p>
+<p><strong>实现多线程的方式之一</strong></p>
+<pre><code>之前来一个线程任务，就需要创建一个线程对象去执行,用完还要销毁线程对象,如果线程任务多了，就要需要频繁创建线程对象和销毁对象，这样耗费内存资源，所以我们线程对象能不能循环利用，用的时候直接拿线程对象，用完还回去 
+</code></pre>
+<pre><code>创建线程池对象，指定池子最多有多少条线程对象
+来了第一个线程任务，看池子中有没有线程对象，如果没有，创建线程对象，给现场任务用，用完还回去
+</code></pre>
+<p>使用</p>
+<pre><code>创建线程池:用具类-&gt;Excutors
+2.获取线程池对象Excutors中的静态方法
+static ExcutorService newFindedThreadPool(int nThreads)
+参数指定：指定线程池中最多的线程对象条数
+返回值ExecutorService是线程池，用来管理线程对象
+执行线程任务:ExecutorService 中的方法
+Future&lt;?&gt; submit(Runnable task)//提交一个runnable的任务
+Future&lt;?&gt; submit(callable&lt;T&gt; task)//提交一盒callable执行
+4.submit的返回值：future接口
+    用于接收run方法或者call方法的返回值，但是run方法没有返回值，所以可以不用Future接收，执行call方法需要Future进行接收
+     Future里面有一个
+     V get()，用于接受call方法的返回值
+     
+5.ExcutorService里面的方法：
+    void shutdown()  关闭线程池，不会接受新的线程任务
+</code></pre>
+<p>例子</p>
+<pre><code class="java">package wei_ThreadPool;
+
+public class MyRunnable implements Runnable&#123;
+    @Override
+    public void run() &#123;
+        System.out.println(Thread.currentThread().getName()+&quot;执行了&quot;);
+    &#125;
+&#125;
+</code></pre>
+<pre><code class="java">package wei_ThreadPool;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+public class Test &#123;
+    public static void main(String[] args) &#123;
+        ExecutorService es= Executors.newFixedThreadPool(2);
+        es.submit(new MyRunnable());
+        es.submit(new MyRunnable());
+        es.submit(new MyRunnable());
+        es.shutdown();//关闭线程池
+    &#125;
+&#125;
+</code></pre>
+<p>执行结果</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240329170346929.png" alt="image-20240329170346929"></p>
+<pre><code>因为我们创建两个线程，所以当我们提交的第三个任务以后，首先线程池里面的线程1，2分别就会执行任务1和任务2，当我们其中的一个任务执行完以后，那么执行完以后的线程就会执行任务三
+</code></pre>
+<p>使用callable的方法实现</p>
+<pre><code class="java">package wei_ThreadPool;
+
+import java.util.concurrent.Callable;
+
+public class MyCallable implements Callable &#123;
+    @Override
+    public Integer call() throws Exception &#123;
+        return 1;
+    &#125;
+&#125;
+</code></pre>
+<pre><code class="java">package wei_ThreadPool;
+
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
+public class Test1 &#123;
+    public static void main(String[] args) throws ExecutionException, InterruptedException &#123;
+        ExecutorService executorService = Executors.newFixedThreadPool(2);
+        Future&lt;Object&gt; future=executorService.submit(new MyCallable());//call方法就会有返回值，我们可以看使用Future进行接受
+        System.out.println(future.get());
+        System.out.println();
+
+    &#125;
+&#125;
+</code></pre>
+<pre><code>因为call方法有返回值，所以我们可以使用future进行接受	
+</code></pre>
+<pre><code>练习设置线程池为2，一个线程输出字符串，一个线程求总和
+</code></pre>
+<pre><code class="Java">package ThreadPool_pratice;
+
+import java.util.concurrent.Callable;
+
+public class PrintString implements Callable&lt;String&gt; &#123;
+    @Override
+    public String call() throws Exception &#123;
+        return &quot;那一夜你伤害了我&quot;;
+    &#125;
+&#125;
+</code></pre>
+<pre><code class="Java">package ThreadPool_pratice;
+
+import java.util.concurrent.Callable;
+
+public class PrintSum implements Callable&lt;Integer&gt; &#123;
+    @Override
+    public Integer call() throws Exception &#123;
+        int sum = 0;
+        for (int i = 0; i &lt; 100; i++) &#123;
+            sum +=i;
+        &#125;
+        return sum;
+    &#125;
+&#125;
+</code></pre>
+<pre><code class="java">package ThreadPool_pratice;
+
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
+public class Test &#123;
+    public static void main(String[] args) throws ExecutionException, InterruptedException &#123;
+        ExecutorService executorService = Executors.newFixedThreadPool(2);
+        Future&lt;String&gt; future1=executorService.submit(new PrintString());
+        Future&lt;Integer&gt; future2 = executorService.submit(new PrintSum());
+        System.out.println(future1.get());
+        System.out.println(future2.get());
+        executorService.shutdown();
+    &#125;
+&#125;
+</code></pre>
+<p><strong>定时器Timer</strong></p>
+<pre><code>构造
+ Timer();//空参构造
+方法
+void schedule(TimeTask task,Data firstTime,long period)
+    task:抽线类，是Runable的实现类
+    firstTime:从什么时间开始执行
+    period:每个多长时间执行一次，设置的是毫秒值
+</code></pre>
+<p>例子，使用匿名内部类</p>
+<pre><code class="java">public class Demo &#123;
+    public static void main(String[] args) &#123;
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() &#123;
+            @Override
+            public void run() &#123;
+                System.out.println(&quot;金莲对我说&quot;);
+            &#125;
+        &#125;,new Date(),2000);
+    &#125;
+&#125;
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240329173026063.png" alt="image-20240329173026063"></p>
+<p>这样每隔2秒就会执行</p>
+<ul>
+<li>这里面的timer就相当于js里面的setTimenterval</li>
+</ul>
+<p><strong>复习</strong></p>
+<p><strong>集合</strong></p>
+<p><strong>collection集合</strong></p>
+<p><strong>单列集合框架</strong></p>
+<pre><code>1.之前学过保存数据的有：变量，数组，但是数组定长，所以如果添加一个数据或者删除一个数据就要创建一个新的数组，所以学一个长度可变，就是集合
+集合的特点
+ 只能保存引入数据类型的数据（如果传入的是基本的数据类型，就会对应的包装成相应的包装类）
+ 长度是可变的
+ 集合有大量的方法
+分类
+    单列集合:一个元素就一个组成部分list.add(value)
+    双列集合：一个集合有两个部分构成:key和value，例如map.put(key,value)
+</code></pre>
+<ul>
+<li>单列集合的顶级接口是Collection接口</li>
+</ul>
+<p>  <img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240329181611468.png" alt="image-20240329181611468"></p>
+<ul>
+<li><p>list有三个实现类</p>
+<ul>
+<li>ArrayList:<ul>
+<li>元素是有序的，按照什么顺序存的输出也是什么顺序</li>
+<li>元素是可以重复的</li>
+<li>每一个元素都有对应的索引</li>
+<li>线程不安全</li>
+<li>底层数据结构是数组，但是长度是可变的</li>
+</ul>
+</li>
+<li>LikedList<ul>
+<li>元素有序</li>
+<li>元素可重复</li>
+<li>有索引</li>
+<li>线程不安全</li>
+<li>底层数据结构：双向链表</li>
+</ul>
+</li>
+<li>Vector<ul>
+<li>元素有序</li>
+<li>元素可以重复</li>
+<li>有索引</li>
+<li>线程安全 效率比较低</li>
+<li>底层数据结构：数组</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>set接口有三个实现类</p>
+<ul>
+<li>HashSet<ul>
+<li>元素无序</li>
+<li>元素唯一</li>
+<li>没有索引</li>
+<li>线程不安全</li>
+<li>底层数据结构哈希表</li>
+</ul>
+</li>
+<li>LikedSet(<strong>继承于HashSet</strong>)<ul>
+<li>继承与HashSet，其他的特点一致，但是他的元素是有序的</li>
+<li>有序的原因是：他的底层结构是哈希表加上双向链表</li>
+</ul>
+</li>
+<li>treeSet<ul>
+<li>可以对元素进行排序</li>
+<li>元素唯一</li>
+<li>没有索引</li>
+<li>线程不安全</li>
+<li>底层数据结构<ul>
+<li>红黑树</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>集合的框架</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240330161805160.png" alt="image-20240330161805160"></p>
+<ul>
+<li>LinkList本质上没有索引，但是java为其提供很多根据索引操作元素的方法</li>
+</ul>
+<p><strong>Collection接口</strong></p>
+<pre><code>1.单列集合的顶级接口
+2.使用:
+    Collection&lt;E&gt; 对象名 = new 实现类对象&lt;E&gt;()
+    E是泛型，决定集合中能够存储什么类型的数据，可以统一元素类型
+    泛型中只能写引用数据类型，如果不写默认Object，这样所有的数据类型都可以存储
+    注意之前说过，集合里面的数据类型是引用数据类型，就是因为泛型的原因
+    &lt;Integer&gt;这样存储的就数字
+这里的泛型的细节：
+    我们等号前面的泛型必须写，等号后面的泛型可以不写，jvm里面有一段话，可推导的代码，就可以省略
+常用代码
+    boolean add(E e):将给定的元素添加到当前集合中（我们一般调用add的时候，不用boolean，因为add一定成功）
+    boolean addAll(Colleaction&lt;? extend E&gt; c):将另一个集合元素添加到当前的集合中
+    void clear():清除集合中的所有元素
+    boolean contains(object o)//判断当前的集合是否有该元素
+    boolean isEmpty()判断当前集合是否有元素
+    boolean remove(object o)将指定的元素从集合中删去
+    int size()返回集合的元素个数
+    Object[] toArray()  将集合的元素储存在数组中
+</code></pre>
+<p>例子</p>
+<pre><code class="Java">package wei_Collection;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Objects;
+
+public class Test &#123;
+    public static void main(String[] args) &#123;
+        Collection&lt;String&gt; collection = new ArrayList&lt;&gt;();
+        collection.add(&quot;消炎&quot;);
+        collection.add(&quot;小云儿&quot;);
+        System.out.println(collection);//[消炎, 小云儿]
+
+        Collection&lt;String&gt; collection1 = new ArrayList&lt;&gt;();
+        collection1.add(&quot;zhang&quot;);
+        collection1.add(&quot;wu&quot;);
+        collection1.add(&quot;ji&quot;);
+        collection.addAll(collection1);
+        System.out.println(collection);//[消炎, 小云儿, zhang, wu, ji]
+
+        collection1.clear();
+        System.out.println(collection1);//[]
+
+        System.out.println(collection.contains(&quot;zhang&quot;));//true
+
+        System.out.println(collection1.isEmpty());//true
+
+        collection.remove(&quot;zhang&quot;);
+        System.out.println(collection);//[消炎, 小云儿, wu, ji]
+
+        System.out.println(collection.size());//4
+
+        Object[] arr = collection.toArray();
+        System.out.println(Arrays.toString(arr));//[消炎, 小云儿, wu, ji]
+    &#125;
+&#125;
+</code></pre>
+<p><strong>迭代器</strong></p>
+<pre><code>概述Interator
+主要作用：Collection中的方法获取
+Interator&lt;E&gt; interator()
+方法
+boolean hasNext() -&gt;判断集合有没有下一个元素
+E next() -&gt;获取下一个元素
+</code></pre>
+<pre><code class="java">        ArrayList&lt;String&gt; list = new ArrayList&lt;&gt;();
+        list.add(&quot;haha&quot;);
+        list.add(&quot;nihao&quot;);
+        Iterator&lt;String&gt; iterator = list.iterator();
+        while(iterator.hasNext())&#123;
+            System.out.println(iterator.next());//haha//nihao
+        &#125;
+</code></pre>
+<p><strong>迭代器迭代过程</strong></p>
+<p><strong>迭代器原理分析</strong></p>
+<pre><code class="Java">Iterator是一个接口，等号右边一定是他的实现类对象
+问题 Interator接受的到底是哪个实现类对象呢？-》ArrayList的是Itr对象
+    public Iterator&lt;E&gt; iterator() &#123;
+        return new Itr();
+    &#125;
+    private class Itr implements Iterator&lt;E&gt;
+</code></pre>
+<p><strong>并发修改异常</strong></p>
+<p><strong>ConcurrentModificationException</strong></p>
+<p>出现异常的原因</p>
+<pre><code class="java">ArrayList&lt;String&gt; xiyou = new ArrayList&lt;&gt;();
+xiyou.add(&quot;猪八戒&quot;);
+xiyou.add(&quot;孙悟空&quot;);
+xiyou.add(&quot;沙僧&quot;);
+xiyou.add(&quot;白龙马&quot;);
+Iterator&lt;String&gt; iterator1 = xiyou.iterator();
+while (iterator1.hasNext())&#123;
+    String item = iterator1.next();
+    if (Objects.equals(item,&quot;猪八戒&quot;))&#123;
+        xiyou.add(&quot;haha&quot;);
+    &#125;
+&#125;
+</code></pre>
+<p>这个出现的原因</p>
+<p>发现问题出现在这里</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240330192316090.png" alt="image-20240330192316090"></p>
+<p>我们查看一下底层的源码</p>
+<pre><code class="java">在我们执行
+        Iterator&lt;String&gt; iterator1 = xiyou.iterator();
+这句话的时候，下面的关键的代码
+    当我们创建迭代器对象的的时候初始化，实际操作次数和预期操作次数相等
+    modCount是实际操作次数
+    expectedModCount 是预期的操作次数
+    private class Itr implements Iterator&lt;E&gt; &#123;
+        int expectedModCount = modCount;
+        public E next() &#123;
+            checkForComodification();
+        &#125;
+        我们再看checkForComodification函数，这里在判断预期次数和实际次数是否相等，不相等抛出异常
+     final void checkForComodification() &#123;
+            if (modCount != expectedModCount)
+                throw new ConcurrentModificationException();
+        &#125;
+        再看add方法，这里面使得我们的实际的操作次数++，而且这个不会赋给预期操作次数，因为初始化的时候才会赋值，这样就就会使得我们的预期操作次数和实际操作次数不相等，
+     public boolean add(E e) &#123;
+        modCount++;
+        add(e, elementData, size);
+        return true;
+    &#125;
+</code></pre>
+<ul>
+<li>结论我们调用add方法，而add方法底层只给modcount++ 但是在调用next并没有给修改的后的modcount赋给expectmodcout导致这个问题</li>
+</ul>
+<p>解决的方法</p>
+<p>listInterator</p>
+<pre><code class="Java">ArrayList&lt;String&gt; xiyou = new ArrayList&lt;&gt;();
+xiyou.add(&quot;猪八戒&quot;);
+xiyou.add(&quot;孙悟空&quot;);
+xiyou.add(&quot;沙僧&quot;);
+xiyou.add(&quot;白龙马&quot;);
+ListIterator&lt;String&gt; iterator1 = xiyou.listIterator();
+while (iterator1.hasNext())&#123;
+    String item = iterator1.next();
+    if (Objects.equals(item,&quot;猪八戒&quot;))&#123;
+        iterator1.add(&quot;haha&quot;);
+    &#125;
+&#125;
+System.out.println(xiyou);//[猪八戒, haha, 孙悟空, 沙僧, 白龙马]
+</code></pre>
+<ul>
+<li>使用迭代器的时候不要修改数据的长度</li>
+</ul>
+<p><strong>数据结构</strong></p>
+<pre><code>数据结构是一种具有一定逻辑关系	，在计算机中应用某种储存结构，并且封装了相应操作的数据元素集合，他还包含三方面内容，逻辑关系，存储关系和操作
+</code></pre>
+<p><strong>为什么需要数据结构</strong></p>
+<pre><code>随着程序的变得更复杂还丰富，几百万的数据就会出现，面对这么打的数据进行搜素，插入，或者排序操作越来越慢，数据结构就是解决这种问题
+</code></pre>
+<p><strong>栈结构</strong></p>
+<pre><code>特点:
+    先进后出：例如手枪压子弹
+好处:
+</code></pre>
+<p><strong>队列</strong></p>
+<pre><code>特点：先进先出
+例如:过安检
+</code></pre>
+<p><strong>数组</strong></p>
+<pre><code>特点：有索引，所以查询快，增删慢
+查询快因为有索引，我们可以通过索引操作元素
+增删慢的原因
+    添加删除元素：创建新数组，将老数组复制到新数组
+</code></pre>
+<p><strong>链表</strong></p>
+<pre><code>在集合中涉及两种链表
+单项链表
+    节点：一个节点分为两部分
+    第一部分：数据域（存数据）
+    第二部分：指针域（保存下一个节点地址）
+    特点：前面的节点记录后面节点的地址，后面的节点地址不记录前面节点的地址
+双向链表
+    分为三部分
+    第一部分：指针域（保存上一个节点的地址）
+    第二个部分：数据域（保存的数据）
+    第三部分：指针域（保存下一个节点地址）
+    特点 查询慢增删快
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240330201444471.png" alt="image-20240330201444471"></p>
+<p><strong>List接口</strong></p>
+<pre><code>Collection的子接口
+常见的实现类
+    ArrayLink,LinkedList Vector
+方法
+ 前面的Colection的方法都试用
+ void add(int index,)
+ E remove(int index)//根据索引移除
+ E set(int index ,E element)//将指定的索引位置上的元素，修改为后面的元素,返回值s替换的元素
+ E Get(int index,E element) //根据索引获取元素
+</code></pre>
+<p>遍历的快捷键</p>
+<pre><code>集合名+fori
+</code></pre>
 
     </div>
     
