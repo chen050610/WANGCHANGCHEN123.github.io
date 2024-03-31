@@ -201,7 +201,6 @@
 <p>代码</p>
 <pre><code class="vue">&lt;script setup lang=&quot;ts&quot;&gt;
     import &#123;ref&#125; from &quot;vue&quot;;
-
     let name = ref(&#39;lina&#39;)
     let age = ref(18)
     function showMsg()&#123;
@@ -791,7 +790,7 @@ function showContent(news:newsInter)&#123;
 <p>就是把数据放在一个容器里面</p>
 <p>安装pinia</p>
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240208200432717.png" alt="image-20240208200432717"></p>
-<pre><code>import &#123;useCountStore&#125; from &#39;@/store/Count&#39;
+<pre><code>import &#123; useCountStore&#125; from &#39;@/store/Count&#39;
 
 let number = ref(1)
 const countStore = useCountStore()

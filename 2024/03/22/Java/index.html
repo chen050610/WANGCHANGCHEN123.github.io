@@ -3922,6 +3922,684 @@ list1.add(1);
 list1.remove(Integer.valueOf(1));
 System.out.println(list1);//[]
 </code></pre>
+<pre><code>ArrayList的构造方法
+    a.arrayList() 构造初始容量为10的空列表。不是在构造的时候，而是在add的时候
+    b.ArrayList(int initialCapacity) //指定初始容量
+</code></pre>
+<p><strong>LnkedList的使用</strong>	</p>
+<pre><code>LinkedList是实现List的接口
+底层的数据结构:双向链表：
+方法：有大量操作首尾元素的方法
+    public void addFirst(E e)将指定的元素插入此列表的开头
+    public void addLast(E e)将指定的元素插入此列表的末尾
+    public E getFirst()//返回此列表的第一个元素
+    public E getLast()//返回此列表的最后一个元素
+    public E removeFirst() 移除并且返回数组的第一个元素
+    public E removeLast() 移除并且返回数组的最后一个元素
+    public E pop()从此列表所表示的堆栈中弹出第一个元素
+    public void push(E e)将元素推入此列表所表示的堆栈中
+    public boolean isEmpty();如果此列表没有元素，那么返回true
+</code></pre>
+<p>使用</p>
+<pre><code class="java">        LinkedList&lt;String&gt; strings = new LinkedList&lt;&gt;();
+        strings.add(&quot;吕布&quot;);
+        strings.add(&quot;关羽&quot;);
+        strings.add(&quot;曹操&quot;);
+        System.out.println(strings);//[吕布, 关羽, 曹操]
+        strings.addFirst(&quot;刘备&quot;);
+        System.out.println(strings);//[刘备, 吕布, 关羽, 曹操]
+        Iterator&lt;String&gt; iterator2 = strings.iterator();
+        while (iterator2.hasNext())&#123;
+            System.out.println(iterator2.next());
+        &#125;
+        for (int i = 0; i &lt; strings.size(); i++) &#123;
+            System.out.println(strings.get(i));
+        &#125;
+</code></pre>
+<pre><code class="java">        LinkedList&lt;String&gt; strings1 = new LinkedList&lt;&gt;();
+        strings1.add(&quot;吕布&quot;);
+        strings1.add(&quot;关羽&quot;);
+        strings1.add(&quot;曹操&quot;);
+        System.out.println(strings1);//[吕布, 关羽, 曹操]
+        strings1.pop();
+        System.out.println(strings1);//[关羽, 曹操]删除第一个元素
+        strings1.push(&quot;haha&quot;);
+        System.out.println(strings1);//添加第一个元素[haha, 关羽, 曹操]
+</code></pre>
+<p><strong>增强for</strong></p>
+<p><strong>基本使用</strong></p>
+<p>格式for(元素类型 变量名:要遍历的集合名或者数组名){}</p>
+<p>快捷键</p>
+<pre><code>列表.for
+</code></pre>
+<pre><code class="java">        for (String s : strings1) &#123;
+            System.out.println(s);
+        &#125;
+</code></pre>
+<pre><code>增强for遍历集合的时候，底层实现原理为迭代器
+增强for遍历数组时候，底层实现原理为普通for
+</code></pre>
+<p><strong>集合工具类</strong></p>
+<pre><code>概述：集合工具类
+特点：
+    构造私有
+    方法都是静态的
+使用：类名直接调用
+</code></pre>
+<pre><code>static &lt;T&gt; void sort(list&lt;T&gt; list,Comparator&lt;? super T&gt; C)--》将集合中的数组按照指定的规则进行排序
+这里面的参数 Comparator比较器
+    方法:
+        int compare(T 01,T 02)
+        o1-o2 -&gt;升序
+        02-o1 -&gt;降序
+</code></pre>
+<pre><code class="java">ArrayList&lt;String&gt; list3 = new ArrayList&lt;&gt;();
+Collections.addAll(list3,&quot;zangsan&quot;,&quot;lisi&quot;,&quot;wangwu&quot;);//第一个为需要添加的列表
+System.out.println(list3);//[zangsan, lisi, wangwu]
+Collections.shuffle(list3);
+System.out.println(list3);//[lisi, zangsan, wangwu]
+
+ArrayList&lt;String&gt; list4 = new ArrayList&lt;&gt;();
+Collections.addAll(list4,&quot;b.wang&quot;,&quot;a.wang&quot;,&quot;c.wang&quot;);
+System.out.println(list4);//[b.wang, a.wang, c.wang]
+Collections.sort(list4);
+System.out.println(list4);//[a.wang, b.wang, c.wang],按照第一个字符的acill
+</code></pre>
+<p>如果我们对对象进行排序</p>
+<pre><code class="Java">新建一个Person的类
+        ArrayList&lt;Person&gt; peoples = new ArrayList&lt;&gt;();
+    Collections.addAll(peoples,new Person(&quot;wang&quot;,18),new Person(&quot;王昌晨&quot;,18));
+    Collections.sort(peoples);
+</code></pre>
+<p>这样就会报错</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240331153747135.png" alt="image-20240331153747135"></p>
+<p>我们对象的比较就可以这样写</p>
+<p>创建匿名类，然后重写compare方法，然后再根据类中的年龄进行升序排列</p>
+<pre><code class="java">ArrayList&lt;Person&gt; peoples = new ArrayList&lt;&gt;();
+Collections.addAll(peoples,new Person(&quot;wang&quot;,18),new Person(&quot;王昌晨&quot;,18));
+Collections.sort(peoples, new Comparator&lt;Person&gt;() &#123;
+    @Override
+    public int compare(Person o1, Person o2) &#123;
+        return o1.getAge()-o2.getAge();
+    &#125;
+&#125;);
+</code></pre>
+<pre><code class="Java">ArrayList&lt;Person&gt; peoples = new ArrayList&lt;&gt;();
+Collections.addAll(peoples,new Person(&quot;wang&quot;,18),new Person(&quot;王昌晨&quot;,13));
+Collections.sort(peoples, new Comparator&lt;Person&gt;() &#123;
+    @Override
+    public int compare(Person o1, Person o2) &#123;
+        return o1.getAge()-o2.getAge();
+    &#125;
+&#125;);
+System.out.println(peoples);//[wei__s.Person&#123;name=&#39;王昌晨&#39;, age=13&#125;, wei__s.Person&#123;name=&#39;wang&#39;, age=18&#125;]
+</code></pre>
+<p>或者我们在列表中的类实现compare接口</p>
+<pre><code class="java">package wei__s;
+
+public class Student implements Comparable&lt;Student&gt; &#123;
+    private String name;
+    private int age;
+
+    public Student(String name, int age) &#123;
+        this.name = name;
+        this.age = age;
+    &#125;
+
+    public Student(int age) &#123;
+        this.age = age;
+    &#125;
+
+    public Student(String name) &#123;
+        this.name = name;
+    &#125;
+    public Student() &#123;
+    &#125;
+
+    public int getAge() &#123;
+        return age;
+    &#125;
+
+    public void setAge(int age) &#123;
+        this.age = age;
+    &#125;
+
+    public String getName() &#123;
+        return name;
+    &#125;
+
+    public void setName(String name) &#123;
+        this.name = name;
+    &#125;
+
+    @Override
+    public String toString() &#123;
+        return &quot;wei__s.Stdent&#123;&quot; +
+                &quot;name=&#39;&quot; + name + &#39;\&#39;&#39; +
+                &quot;, age=&quot; + age +
+                &#39;&#125;&#39;;
+    &#125;
+
+    @Override
+    public int compareTo(Student o) &#123;
+        return this.age - o.age; //this-o升序，o - this是降序
+    &#125;
+&#125;
+</code></pre>
+<pre><code class="Java">ArrayList&lt;Student&gt; students = new ArrayList&lt;&gt;();
+Collections.addAll(students,new Student(&quot;许兴航&quot;,18),new Student(&quot;王昌晨&quot;,16));
+Collections.sort(students);
+System.out.println(students);//[wei__s.Stdent&#123;name=&#39;王昌晨&#39;, age=16&#125;, wei__s.Stdent&#123;name=&#39;许兴航&#39;, age=18&#125;]
+</code></pre>
+<p><strong>这样就不需要sort的第二个参数</strong></p>
+<pre><code>总结Collections的工具类
+addAll()//向列表添加多个元素
+shuff()//进行打乱排序
+sort()//进行排序，第二个参数可以是Comparable类的实现，进行排序规则
+</code></pre>
+<p>这里在复习一下js的排序</p>
+<pre><code class="java">基本用法：
+javascript
+let fruits = [&quot;Banana&quot;, &quot;Orange&quot;, &quot;Apple&quot;, &quot;Mango&quot;];
+fruits.sort();
+// fruits 现在是 [&quot;Apple&quot;, &quot;Banana&quot;, &quot;Mango&quot;, &quot;Orange&quot;]
+比较函数：
+如果要按照特定的顺序进行排序，或者对数字进行排序，可以提供一个比较函数。
+
+如果比较函数返回负值，则 a 在 b 前面。
+如果比较函数返回正值，则 b 在 a 前面。
+如果比较函数返回 0，则 a 和 b 保持不变。
+对数字进行排序：
+javascript
+let numbers = [4, 2, 5, 1, 3];
+numbers.sort(function(a, b) &#123;
+    return a - b;
+&#125;);
+// numbers 现在是 [1, 2, 3, 4, 5]
+对对象数组进行排序：
+javascript
+let students = [
+    &#123; name: &quot;Alice&quot;, age: 20 &#125;,
+    &#123; name: &quot;Bob&quot;, age: 25 &#125;,
+    &#123; name: &quot;Charlie&quot;, age: 18 &#125;
+];
+students.sort(function(a, b) &#123;
+    return a.age - b.age;
+&#125;);
+// students 现在是按照年龄升序排序的数组
+</code></pre>
+<p><strong>泛型</strong></p>
+<pre><code>泛型:&lt;&gt;
+作用；
+    统一数据类型，防止将来的数据转换异常
+注意
+    泛型中的数据类型必须是引用数据类型
+    如果泛型的数据类型不写的话。默认的数据类类型是object类型的
+</code></pre>
+<ul>
+<li>为什么使用<ul>
+<li>统一数据类型，防止数据转换异常</li>
+<li>定义带泛型的类，方法，将来使用的时候给泛型确定什么类型，泛型就会变成什么类型，凡是涉及泛型的都会变成的确定的代码，代码更加灵活</li>
+</ul>
+</li>
+</ul>
+<p><strong>定义含有泛型的类</strong></p>
+<pre><code>定义：
+public class 类名&lt;E&gt;&#123;
+
+&#125;
+
+在new对象的时候确定类型
+</code></pre>
+<p><strong>含有泛型的方法</strong></p>
+<pre><code>格式
+    修饰符 &lt;E&gt; 返回值类型 方法名(E e)
+什么时候确定类型
+    调用的时候确定类型
+</code></pre>
+<hr>
+<p><strong>现在说一下Java里的可变参</strong></p>
+<pre><code class="java">public class Main &#123;
+    public static void main(String[] args) &#123;
+        printNumbers(1, 2, 3);
+        printNumbers(4, 5, 6, 7, 8);
+        printNumbers(); // 无参数调用
+    &#125;
+    
+    public static void printNumbers(int... numbers) &#123;
+        System.out.println(&quot;Printing numbers:&quot;);
+        for (int number : numbers) &#123;
+            System.out.println(number);
+        &#125;
+    &#125;
+&#125;
+</code></pre>
+<hr></hr>
+
+<p>现在可以使用泛型的函数，例如实现addAll函数</p>
+<pre><code class="java">package wei_genericity;
+
+import java.util.ArrayList;
+
+public class Wei_addAll &#123;
+    public static &lt;E&gt; void AddAll(ArrayList&lt;E&gt; list,E...e)&#123;
+        for (E element : e) &#123;
+            list.add(element);
+        &#125;
+    &#125;
+&#125;
+</code></pre>
+<hr></hr>
+
+<pre><code class="java">package wei_genericity;
+
+import java.util.ArrayList;
+
+public class Test &#123;
+    public static void main(String[] args) &#123;
+        ArrayList&lt;String&gt; strings = new ArrayList&lt;&gt;();
+        Wei_addAll.AddAll(strings,&quot;wang&quot;,&quot;wwer&quot;,&quot;haha&quot;);
+        System.out.println(strings);//[wang, wwer, haha]
+    &#125;
+&#125;
+</code></pre>
+<hr></hr>
+
+<p><strong>含有泛型的接口</strong></p>
+<pre><code>格式:
+    public interface 接口名&lt;E&gt;&#123;
+    
+    &#125;
+什么时候确定类型
+    在实现类的时候还没有确定类型，只能在new实现类的时候确定类型 --》ArrayList
+</code></pre>
+<p><strong>在创建对象的确定类型</strong></p>
+<p>接口</p>
+<pre><code class="java">package wei_genericity;
+
+public interface MyList&lt;E&gt;  &#123;
+    public boolean add(E e);
+&#125;
+</code></pre>
+<p>实现类，注意类名的后面也要加泛型</p>
+<pre><code class="java">package wei_genericity;
+import java.util.Arrays;
+
+public class Wei_Interface&lt;E&gt; implements MyList&lt;E&gt; &#123;
+    Object[] obj = new Object[10];
+    int size;
+    @Override
+    public boolean add(E e)&#123;
+        obj[size] = e;
+        size ++;
+        return true;
+    &#125;
+    public E get(int index)&#123;return (E) obj[index];&#125;
+
+    @Override
+    public String toString() &#123;
+        return &quot;Wei_Interface&#123;&quot; +
+                &quot;obj=&quot; + Arrays.toString(obj) +
+                &quot;, size=&quot; + size +
+                &#39;&#125;&#39;;
+    &#125;
+&#125;
+</code></pre>
+<p>测试的主程序</p>
+<pre><code class="java">package wei_genericity;
+
+public class MyTest &#123;
+    public static void main(String[] args) &#123;
+        Wei_Interface&lt;String&gt; list = new Wei_Interface&lt;&gt;();
+        list.add(&quot;李家乐真帅&quot;);
+        list.add(&quot;李四真帅&quot;);
+        System.out.println(list.get(0));//李家乐真帅
+        System.out.println(list.get(1));//李四真帅
+    &#125;
+&#125;
+</code></pre>
+<p><strong>实现类的时候确定类型</strong></p>
+<p>接口</p>
+<pre><code class="java">package wei_genericity;
+
+public interface Myinter&lt;E&gt; &#123;
+    E next();
+&#125;
+</code></pre>
+<p>实现接口的类，在实现接口的时候确定类型</p>
+<pre><code class="java">package wei_genericity;
+
+public class Myscanner implements Myinter&lt;String&gt;  &#123;
+    @Override
+    public String next() &#123;
+        return &quot;王昌晨&quot;;
+    &#125;
+&#125;
+</code></pre>
+<pre><code class="java">        Myscanner myscanner = new Myscanner();
+        System.out.println(myscanner.next());//王昌晨
+</code></pre>
+<p><strong>泛型的通配符</strong></p>
+<p>当我们实现这样</p>
+<pre><code class="java">package wei_genericity;
+
+import java.util.ArrayList;
+import java.util.Collections;
+
+public class Test &#123;
+    public static &lt;E&gt; void method(ArrayList&lt;E&gt; list)&#123;
+        for (E e : list) &#123;
+            System.out.println(e);
+        &#125;
+    &#125;
+    public static void main(String[] args) &#123;
+ ArrayList&lt;String&gt; list1 = new ArrayList&lt;&gt;();
+        Collections.addAll(list1,&quot;wang&quot;,&quot;wangchang&quot;,&quot;wangchangchen&quot;);
+
+        ArrayList&lt;Integer&gt; list2 = new ArrayList&lt;&gt;();
+        Collections.addAll(list2,1,2,3,4);
+
+        method(list1);
+        method(list2);
+
+    &#125;
+&#125;
+</code></pre>
+<p>或者直接使用泛型的通配符</p>
+<pre><code class="java">package wei_genericity;
+
+import java.util.ArrayList;
+import java.util.Collections;
+
+public class Test &#123;
+    public static  void method(ArrayList&lt;?&gt; list)&#123;
+        for (Object o : list) &#123;
+            System.out.println(list);
+        &#125;
+    &#125;
+    public static void main(String[] args) &#123;
+        ArrayList&lt;String&gt; list1 = new ArrayList&lt;&gt;();
+        Collections.addAll(list1,&quot;wang&quot;,&quot;wangchang&quot;,&quot;wangchangchen&quot;);
+
+        ArrayList&lt;Integer&gt; list2 = new ArrayList&lt;&gt;();
+        Collections.addAll(list2,1,2,3,4);
+
+        method(list1);
+        method(list2);
+
+    &#125;
+&#125;
+</code></pre>
+<p><strong>泛型的上限和下限</strong></p>
+<pre><code>作用:规定泛型的范围
+上线:
+    格式:&lt;? extends 类型&gt;
+    含义：？只能接受extends后面的本类类型及子类类型
+下线
+    格式:&lt;? super 类型&gt;
+    含义:?只能接受super后面的本类类型以及父类类型
+</code></pre>
+<p>例如</p>
+<pre><code class="java">    public static void get1(Collection&lt;? extends Number&gt; collection)&#123;
+
+    &#125;
+    public static void get2(Collection&lt;? super Number&gt; collection)&#123;
+
+    &#125;
+————————————————————————————————————————————————-------------
+        ArrayList&lt;String&gt; list1 = new ArrayList&lt;&gt;();
+        ArrayList&lt;Integer&gt; list2 = new ArrayList&lt;&gt;();
+        ArrayList&lt;Object&gt; list3 = new ArrayList&lt;&gt;();
+        ArrayList&lt;Number&gt; list4 = new ArrayList&lt;&gt;();
+        /*
+        Integer -&gt; Number -&gt;Object
+        String -&gt;Object
+         */
+        get1(list2);
+        get1(list4);
+        get2(list3);
+</code></pre>
+<p>斗地主的案列</p>
+<pre><code class="java">package d_Poker;
+
+import java.util.ArrayList;
+import java.util.Collections;
+
+public class Poker &#123;
+    public static void main(String[] args) &#123;
+        //创建ArrayList集合 -》color-》专门存花色
+        ArrayList&lt;String&gt; colors = new ArrayList&lt;&gt;();
+        //专门存牌号
+        ArrayList&lt;String&gt; numbers = new ArrayList&lt;&gt;();
+        //专门存花色和牌号的组合
+        ArrayList&lt;String&gt; poker = new ArrayList&lt;&gt;();
+
+        Collections.addAll(colors,&quot;♣&quot;,&quot;♠&quot;,&quot;♦&quot;,&quot;♥&quot;);
+        for (int i = 2; i &lt;= 10; i++) &#123;
+            numbers.add(i+&quot;&quot;);
+        &#125;
+
+        Collections.addAll(numbers,&quot;J&quot;,&quot;Q&quot;,&quot;K&quot;,&quot;A&quot;);
+
+        for (String number : numbers) &#123;
+            for (String color : colors) &#123;
+                String pokerNumber  = color + number;
+                poker.add(pokerNumber);
+            &#125;
+            
+        &#125;
+        poker.add(&quot;大王&quot;);
+        poker.add(&quot;小王&quot;);
+
+        //打乱
+        Collections.shuffle(poker);
+
+        //发牌，创建四个集合分别代表三个玩家，以及一个存储一个底牌
+        ArrayList&lt;String&gt; p1 = new ArrayList&lt;&gt;();
+        ArrayList&lt;String&gt; p2 = new ArrayList&lt;&gt;();
+        ArrayList&lt;String&gt; p3 = new ArrayList&lt;&gt;();
+        ArrayList&lt;String&gt; dipai = new ArrayList&lt;&gt;();
+
+        //如果index为最后的三张,网dipai里面存
+        for (int i = 0; i &lt; poker.size(); i++) &#123;
+            String s=poker.get(i);
+            if (i&gt;=51)
+            &#123;
+                dipai.add(s);
+            &#125; else if (i%3 == 0)&#123;
+                p1.add(s);
+            &#125; else if (i%3==1)&#123;
+                p2.add(s);
+            &#125; else if(i%3 == 2)&#123;
+                p3.add(s);
+            &#125;
+        &#125;
+        System.out.println(p1);
+        System.out.println(p2);
+        System.out.println(p3);
+        System.out.println(dipai);
+    &#125;
+&#125;
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240331182743193.png" alt="image-20240331182743193"></p>
+<p><strong>红黑树</strong></p>
+<ul>
+<li><p>二叉树</p>
+<ul>
+<li>分支节点不能超过两个</li>
+<li><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240331194150090.png" alt="image-20240331194150090"></li>
+</ul>
+</li>
+<li><p>​	平衡树:</p>
+<ul>
+<li>左边的和右边的是相等的</li>
+<li><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240331194202420.png" alt="image-20240331194202420"></li>
+</ul>
+</li>
+<li><p>不平衡树</p>
+<ul>
+<li>左孩子和有孩子不相等</li>
+<li><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240331194257475.png" alt="image-20240331194257475"></li>
+</ul>
+</li>
+<li><p>排序树，查找树</p>
+<ul>
+<li>和根节点相比较，左边的数据比较小，右边的数据比较大</li>
+<li><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240331194412677.png" alt="image-20240331194412677"></li>
+</ul>
+</li>
+<li><p>红黑树</p>
+<ul>
+<li>数据的储存规则是和排序树一样的</li>
+<li><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240331194534758.png" alt="image-20240331194534758"></li>
+</ul>
+</li>
+</ul>
+<p>操作</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240331194736725.png" alt="image-20240331194736725"></p>
+<p>当我们这样储存的时候，因为要保持平衡，所以就需要旋转，这样查找我们的数据更加方</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240331194808072.png" alt="image-20240331194808072"></p>
+<p>集合加入chc红黑树的目的，<strong>就是提高查询效率</strong></p>
+<pre><code>HashSet集合
+    数据结构是hash表
+        在jdk8：哈希表 = 数组 + 链表
+        之后   哈希表 = 数组 + 链表 +红黑树
+        为了就是增快查询的效率
+</code></pre>
+<p><strong>Set集合</strong></p>
+<pre><code>Set接口并没有Colleaction接口进行功能型的扩充，没有进行扩充的方法
+所有的Set集合的底层这都是依靠Map实现
+</code></pre>
+<ul>
+<li>set和map是密切相关的</li>
+<li>Map的遍历需要先变成单列集合，只能变成set集合</li>
+</ul>
+<p><strong>HashSet集合的使用</strong></p>
+<pre><code>Hashset是set接口的实现类
+    特点
+        元素唯一
+        快速去重
+        无序
+        没有索引
+        也没有根据索引操作数据的方法，之前的list有get一些方法可以根据索引操作列表，但是在set里面没有这些方法
+        线程不安全
+    数据表结构
+        哈希表
+    
+方法：和collection一样
+    遍历
+        增强for
+        迭代器
+        普通for是不行的，因为根据不了索引来操作
+</code></pre>
+<pre><code class="java">        HashSet&lt;String&gt; set = new HashSet&lt;&gt;();
+        set.add(&quot;zhangsan&quot;);
+        set.add(&quot;zhangsan1&quot;);
+        set.add(&quot;zhangsan2&quot;);
+        set.add(&quot;zhangsan2&quot;);
+        set.add(&quot;zhangsan2&quot;);
+        set.add(&quot;zhangsan2&quot;);
+        System.out.println(set);//[zhangsan1, zhangsan2, zhangsan]
+</code></pre>
+<p>遍历的方法</p>
+<pre><code class="Java">Iterator&lt;String&gt; iterator = set.iterator();
+while(iterator.hasNext())&#123;
+    System.out.println(iterator.next());
+&#125;
+for (String s : set) &#123;
+    System.out.println(s);
+&#125;
+</code></pre>
+<p><strong>LinkedHashSet</strong></p>
+<pre><code>继承与HashSet，使用和HashSet差不多
+唯一的不同
+    元素是有序的
+数据的结构
+    哈希表+双向链表（这样就是有序的）
+使用:和HashSet一样
+</code></pre>
+<p><strong>哈希值</strong></p>
+<pre><code>概述:是由计算机算出一个十进制数,可以看作对象的地址值
+获取对象的哈希值，使用的是Object中的方法
+public native int hashCode()
+</code></pre>
+<pre><code class="java">        Person p1 = new Person(&quot;涛哥&quot;, 18);//Wei_Set.Person@3b07d329
+        Person p2 = new Person(&quot;王昌晨&quot;,17);//Wei_Set.Person@41629346
+        System.out.println(p1.toString());//Wei_Set.Person@3b07d329
+        System.out.println(p1.hashCode());//990368553
+        System.out.println(p2.toString());//Wei_Set.Person@41629346
+        System.out.println(p2.hashCode());//1096979270
+</code></pre>
+<p>我们看toString的底层源码，hashCode()获取对象的十进制的地址，toHexString再转为16进制</p>
+<pre><code class="java">    public String toString() &#123;
+        return getClass().getName() + &quot;@&quot; + Integer.toHexString(hashCode());
+    &#125;
+</code></pre>
+<p>所以就可以把hash值为作为地址</p>
+<p>有一个问题，本来这两个地址是不一样的，但是在String里面重写这个hashCode这个方法，比较的是内容的地址的hash值</p>
+<pre><code class="Java">        String name = &quot;abc&quot;;
+        String s = new String(&quot;abc&quot;);
+        System.out.println(name.hashCode());//96354
+        System.out.println(s.hashCode());//96354
+</code></pre>
+<p>我们也可以在自己类里面重写</p>
+<pre><code class="java">    public int hashCode() &#123;
+        return Objects.hash(name, age);
+    &#125;
+</code></pre>
+<hr></hr>
+
+<pre><code class="java">Person p1 = new Person(&quot;涛哥&quot;, 18);
+Person p2 = new Person(&quot;涛哥&quot;,18);
+System.out.println(p1.hashCode());//27639401
+System.out.println(p2.hashCode());//27639401
+</code></pre>
+<ul>
+<li><p>获取的地址值是对象属性的地址值，这样比较的就是</p>
+<pre><code>注意:重写的hashCode方法，那计算就是对象内容的hash值
+</code></pre>
+</li>
+<li><p>通常内容不同的字符串他的hash值不同，但是也还是会有相同的</p>
+<pre><code class="java">        String s3 = &quot;通话&quot;;
+        String s4 = &quot;重地&quot;;
+        System.out.println(s3.hashCode());//1179395
+        System.out.println(s4.hashCode());//1179395
+</code></pre>
+</li>
+</ul>
+<pre><code>总结
+    哈希值不一样，内容一定不一样
+    哈希值一样的，内容不一定一样
+</code></pre>
+<pre><code>如果不重写hasCode，默认计算对象的哈希值
+如果重写hashCode，计算的是对象内容的hash值
+</code></pre>
+<p>HashSet<strong>的存储去重的过程</strong></p>
+<pre><code class="java">        HashSet&lt;String&gt; set = new HashSet&lt;&gt;();
+        set.add(&quot;通话&quot;);
+        set.add(&quot;重地&quot;);
+        set.add(&quot;abc&quot;);
+        set.add(&quot;abc&quot;);
+        System.out.println(set);//[通话, 重地, abc]
+</code></pre>
+<ul>
+<li>计算元素的Hash值（重写hashCode方法）,再比较内容（重写equals方法）</li>
+<li>先比较hash’值，如果hash不一样，存</li>
+<li>如果hash值一样，在比较内容，如果一样不存去重复，不一样就存</li>
+</ul>
+<p>如果存储的自定义的内容呢？</p>
+<p>例如</p>
+<pre><code class="java">        HashSet&lt;Person&gt; people = new HashSet&lt;&gt;();
+        people.add(new Person(&quot;wang&quot;,18));
+        people.add(new Person(&quot;wang&quot;,18));
+        people.add(new Person(&quot;wang2&quot;,18));
+        System.out.println(people);
+--------------------------------------------
+    输出
+    [Person&#123;name=&#39;wang&#39;, age=18&#125;, Person&#123;name=&#39;wang2&#39;, age=18&#125;]
+</code></pre>
+<p><strong>上面的原因是因为Persom重写了hashCode和equals的方法，这样在比较的时候比较就是对象的内容和地址</strong></p>
+<p>如果不重写的时候，就会默认调用Object里的hashCode和equals</p>
 
     </div>
     
