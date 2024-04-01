@@ -4584,7 +4584,7 @@ System.out.println(p2.hashCode());//27639401
 </code></pre>
 <ul>
 <li>计算元素的Hash值（重写hashCode方法）,再比较内容（重写equals方法）</li>
-<li>先比较hash’值，如果hash不一样，存</li>
+<li>先比较hash值，如果hash不一样，存</li>
 <li>如果hash值一样，在比较内容，如果一样不存去重复，不一样就存</li>
 </ul>
 <p>如果存储的自定义的内容呢？</p>
@@ -4600,6 +4600,306 @@ System.out.println(p2.hashCode());//27639401
 </code></pre>
 <p><strong>上面的原因是因为Persom重写了hashCode和equals的方法，这样在比较的时候比较就是对象的内容和地址</strong></p>
 <p>如果不重写的时候，就会默认调用Object里的hashCode和equals</p>
+<p><strong>Map集合</strong></p>
+<ul>
+<li><p>双列集合</p>
+<pre><code>Map:双列集合的顶级接口
+hashmap
+    特点a.key唯一，value可以重复
+    无序
+    没有索引
+    线程不安全
+    可以存null键，null值
+    数据结构;哈希表
+LinkedHashMap
+    是继承于hashmap
+    是有序的，因为数据结构是哈希表+双向列表
+Hashtable
+    特点线程安全
+    数据结构哈希表
+    不可以存null值
+Properties
+    继承于HashSet配合于Io读取配置文件
+    线程安全
+    不能null键null值
+    数据结构hash表
+TreeMap
+    特点
+        key唯一，value可以重复
+        可以根据key进行排序
+        线程不安全
+        不可以存null键和null值
+        数据结构是红黑树
+</code></pre>
+</li>
+</ul>
+<p>总结一下是这个</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240401100731144.png" alt="image-20240401100731144"></p>
+<p><strong>Map的介绍</strong></p>
+<pre><code>概述是双列集合的顶级接口
+特点：都是由键值对构成
+</code></pre>
+<p><strong>实现类</strong></p>
+<p><strong>HashMap</strong></p>
+<pre><code>特点
+    无序
+    可以存null和null值
+    哈希表
+方法
+    V put(K key,V value)//添加元素，返返回的是被覆盖的value
+    V remove(K key)//根据索引删除元素，最后返回的是删除元素的value
+    V get(k key)//根据索引获取元素
+    boolean containKeys(K key)//是否包含某一个键
+    V[] values()//获取map里的所有键值
+</code></pre>
+<p>使用</p>
+<pre><code class="java">        HashMap&lt;String, String&gt; map = new HashMap&lt;&gt;();
+        String wang = map.put(&quot;1&quot;, &quot;wang&quot;);
+        System.out.println(wang);//null
+        String wang1 = map.put(&quot;1&quot;, &quot;wang1&quot;);//返回的覆盖的元素
+        System.out.println(wang1);//wang
+</code></pre>
+<pre><code class="java">HashMap&lt;String, String&gt; map = new HashMap&lt;&gt;();
+String wang = map.put(&quot;1&quot;, &quot;wang&quot;);
+System.out.println(wang);//null
+String wang1 = map.put(&quot;1&quot;, &quot;wang1&quot;);
+System.out.println(wang1);//wang
+map.put(&quot;2&quot;,&quot;haha&quot;);
+map.put(&quot;3&quot;,&quot;haha1&quot;);
+map.put(&quot;4&quot;,&quot;haha2&quot;);
+map.put(&quot;5&quot;,&quot;haha3&quot;);
+System.out.println(map);//&#123;1=wang1, 2=haha, 3=haha1, 4=haha2, 5=haha3&#125;
+String remove = map.remove(&quot;2&quot;);
+System.out.println(remove);//haha返回的值是删除的元素
+System.out.println(map);//&#123;1=wang1, 3=haha1, 4=haha2, 5=haha3&#125;
+
+System.out.println(map.get(&quot;1&quot;));//wang1
+System.out.println(map.containsKey(&quot;1&quot;));//true
+Collection&lt;String&gt; values = map.values();
+System.out.println(values);//[wang1, haha1, haha2, haha3]
+</code></pre>
+<p><strong>LinkedHashmap</strong></p>
+<pre><code>继承于Hashmap，使用和hashmap一样，但是是有序的，结构是hash表加双向列表
+</code></pre>
+<p><strong>Map的遍历方法</strong></p>
+<pre><code>KeySet()//获取map所有键值的集合
+</code></pre>
+<pre><code class="java">Set&lt;String&gt; set = map.keySet();//
+for (String s : set) &#123;
+    System.out.println(s+&quot;...&quot;+map.get(s));
+&#125;
+</code></pre>
+<p><strong>同时获取key和value</strong></p>
+<p>使用entrySet的方法</p>
+<pre><code class="java">        Set&lt;Map.Entry&lt;String, String&gt;&gt; entries = map.entrySet();//这里得到的是set集合
+        System.out.println(entries);//[1=wang1, 3=haha1, 4=haha2, 5=haha3]
+        for (Map.Entry&lt;String, String&gt; entry : entries) &#123;
+            System.out.println(entry.getKey());
+            System.out.println(entry.getValue());
+        &#125;
+</code></pre>
+<p><strong>Map存储自定义对象怎么去重</strong></p>
+<pre><code>其实原理是Set的原理是一样的，适应hashCode方法先比较地址，在使用equal
+</code></pre>
+<p>如果类里面没有重写equals和hashCode的方法</p>
+<pre><code class="java">        HashMap&lt;Person, String&gt; map = new HashMap&lt;&gt;();
+        //怎么保证key唯一
+        map.put(new Person(&quot;wang&quot;,16),&quot;haha&quot;);
+        map.put(new Person(&quot;wang&quot;,16),&quot;haha1&quot;);
+        map.put(new Person(&quot;wang&quot;,16),&quot;haha2&quot;);
+        System.out.println(map);
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240401104049222.png" alt="image-20240401104049222"></p>
+<p><strong>这样直接调用Object里面的hashCode，这样不同对象的地址肯定不一样，这样属性值相同的对象就去不了重</strong></p>
+<p><strong>当我们重写hashCode和equals以后，比较的就是对象属性的地值</strong></p>
+<p><strong>案例</strong></p>
+<p>统计字符串中各字符出现的次数</p>
+<pre><code class="java">package Wei_map;
+
+import java.util.HashMap;
+import java.util.Scanner;
+
+public class Wei_string &#123;
+    public static void main(String[] args) &#123;
+        Scanner scanner = new Scanner(System.in);
+        HashMap&lt;String, Integer&gt; map = new HashMap&lt;&gt;();
+        String s = scanner.next();
+        //获取字符串的每一个字符
+        char[] chars = s.toCharArray();
+        for (char aChar : chars) &#123;
+            String key = aChar+&quot;&quot;;
+            if (!map.containsKey(key))&#123;
+                map.put(key,1);
+            &#125; else &#123;
+                Integer value = map.get(key);
+                value++;
+                map.put(key,value);
+            &#125;
+        &#125;
+        System.out.println(map);
+    &#125;
+&#125;
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240401105016971.png" alt="image-20240401105016971"></p>
+<p>使用</p>
+<pre><code class="java">        Set&lt;Map.Entry&lt;String, Integer&gt;&gt; entries = map.entrySet();
+        for (Map.Entry&lt;String, Integer&gt; entry : entries) &#123;
+            System.out.println(entry.getKey()+&quot;...&quot;+entry.getValue());
+        &#125;
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240401105149785.png" alt="image-20240401105149785"></p>
+<p>还是斗地主案例</p>
+<ul>
+<li>注意map一般是无序的，但是如果是1，2，3，4，这样就会是有序的</li>
+</ul>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240401105542267.png" alt="image-20240401105542267"></p>
+<p>然后向下面这样的操作，这样分的poker就是有序的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240401105852869.png" alt="image-20240401105852869"></p>
+<pre><code class="java">package Wei_map;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+
+public class Wei_poker &#123;
+    public static void main(String[] args) &#123;
+        String[] colors = &quot;♣-♠-♦-♥&quot;.split(&quot;-&quot;);
+        String[] numbers = &quot;2-3-4-5-6-7-8-9-10-J-Q-K-A&quot;.split(&quot;-&quot;);
+        HashMap&lt;Integer, String&gt; poker = new HashMap&lt;&gt;();
+        ArrayList&lt;Integer&gt; list = new ArrayList&lt;&gt;();
+        list.add(0);
+        list.add(1);
+
+        int key = 2;
+        for (String number : numbers) &#123;
+            for (String color : colors) &#123;
+                String PokerNumber = color + number;
+                poker.put(key,PokerNumber);
+                list.add(key);
+                key++;
+            &#125;
+        &#125;
+
+        poker.put(0,&quot;大王&quot;);
+        poker.put(1,&quot;小王&quot;);
+        System.out.println(list);
+        Collections.shuffle(list);
+
+        ArrayList&lt;Integer&gt; p1 = new ArrayList&lt;&gt;();
+        ArrayList&lt;Integer&gt; p2 = new ArrayList&lt;&gt;();
+        ArrayList&lt;Integer&gt; p3 = new ArrayList&lt;&gt;();
+        ArrayList&lt;Integer&gt; dipai = new ArrayList&lt;&gt;();
+
+        for (int i = 0; i &lt; list.size(); i++) &#123;
+            Integer key1 = list.get(i);
+            if ( i &gt;= 51 )&#123;
+                dipai.add(key1);
+            &#125; else if (i%3==0)&#123;
+                p1.add(key1);
+            &#125; else if (i%3==1)&#123;
+                p2.add(key1);
+            &#125; else if (i%3==2)&#123;
+                p3.add(key1);
+            &#125;
+        &#125;
+        Collections.sort(p1);
+        Collections.sort(p2);
+        Collections.sort(p3);
+
+
+        LookPoker(&quot;王昌晨&quot;,p1,poker);
+        LookPoker(&quot;程国源&quot;,p2,poker);
+        LookPoker(&quot;李家乐&quot;,p3,poker);
+        LookPoker(&quot;底牌&quot;,dipai,poker);
+    &#125;
+
+    private static void LookPoker(String name, ArrayList&lt;Integer&gt; list, HashMap&lt;Integer, String&gt; poker) &#123;
+        System.out.print(name+&quot;:&quot;);
+        for (Integer integer : list) &#123;
+            String value = poker.get(integer);
+            System.out.print(value+&quot;&quot;);
+        &#125;
+        System.out.println();
+    &#125;
+&#125;
+</code></pre>
+<p><strong>哈希表的存储过程</strong></p>
+<p>哈希表有三部分组成</p>
+<p><strong>链表+数组+红黑树</strong></p>
+<p>存储的过程</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240401120307807.png" alt="image-20240401120307807"></p>
+<p>因为做完运算以后通话和重地的位置一样，然后在使用链表</p>
+<p>如果位置很多一样的，这样链表的长度很长，这样我们就需要用到红黑树</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240401120538692.png" alt="image-20240401120538692"></p>
+<ul>
+<li>细节，哈希表初始在长度16，但是是在第一次put 的时候初始化的</li>
+<li>哈希表中有一个加载因子，0.75F，含义是数组长度到达容量的75%就会扩容，扩容两倍</li>
+<li>如果链表长度到达8，并且数组的容量大于等于64的时候链表会自动转为红黑树</li>
+<li>如果删除元素，元素个数小于等于6了，红黑树会转为链表</li>
+</ul>
+<p>这样就会提高我们的性能</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240401121306279.png" alt="image-20240401121306279"></p>
+<p>哈希表的</p>
+<p><strong>TreeSet</strong></p>
+<pre><code>是set的实现类
+特点
+    对元素进行排序
+    没有索引
+    不能存null
+    线程不安全
+    元素唯一
+    数据结构红黑树
+</code></pre>
+<pre><code>构造
+ TreeSet()//无参构造器
+ TreeSet(Comparation)//如果集合里放的是自定义类型，就需要这个 了
+</code></pre>
+<p><strong>TreeMap</strong></p>
+<pre><code>对key进行排序
+数据结构：红黑树，
+构造方法
+    和TreeSet的一样
+</code></pre>
+<p><strong>HashTable</strong></p>
+<pre><code>概述
+    是map的实现类
+特点
+    key唯一，value可以重复
+    线程安全
+    不能存储null
+    哈希表
+基本使用和HashMap差不多
+区别是
+    HashMap线程不安全，还可以存储null
+</code></pre>
+<p><strong>Vetor集合</strong></p>
+<pre><code>概述
+    是LIst接口的实现类
+特点
+    有序，有索引
+    线程安全
+    数据结构，数组
+    
+</code></pre>
+<p>构造</p>
+<pre><code>vector()//构造一个为10的，标准的容量增量为0，
+Vector(int i,int j)//构造一个容量为i的列表，而且容量增量为j的
+这个空间的创建是在new对象的时候
+之前的ArrayList的都是再add的时候构造
+</code></pre>
+<p><strong>Properties属性集</strong></p>
+<pre><code>1.集合于io使用
+特点	
+    继承于hashTable
+    特点和hashTable差不多
+    Properties的key和value的类型，默认是String
+数据结构hash表
+特有的方法
+    Object setProperty(String key ,String value) --&gt;存键值对
+    String getProperty(String key) --&gt;根据key获取value
+    Set&lt;String&gt; stringPropertyNames()--&gt;获取所有的key保存起来再set里面，和之前的keySet一样
+    void load(InputStream inStream) --&gt;将流中的数据加载到propperties集合中（IO流部f）
+</code></pre>
 
     </div>
     
