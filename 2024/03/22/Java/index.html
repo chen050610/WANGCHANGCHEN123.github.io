@@ -5363,6 +5363,52 @@ try &#123;
 <ul>
 <li>再字符流里面必须要关流，如果不关就不会写进去，所以需要close或者flush</li>
 </ul>
+<p><strong>字节缓冲区</strong></p>
+<pre><code>为什么要学字节缓冲区
+    之前缩写FileOutputStream,FileInputStream，FillReader，FileWriter叫做基本类，其中FileInputStream和FileOutputStream的读写方法都是本地方法（方法声明上native）,本地方法是和系统和硬盘打交道的，也就是说这两个对象的读和写都是再硬盘上之间进行读写的，效率不高
+    缓冲流中底层带一个长度为8192的数组(缓冲区)，此时读和写都是在内存而不是再硬盘中完成的（在缓冲区直接完成），内存中的读写效率非常高
+    注意使用的时候将基础流包装成缓冲流，其实就是new对象的时候，传递基本流
+    
+    
+字节缓冲流	
+    a.BufferedOutputStream:字节缓冲输出流
+    构造BufferOutputStream(OutputStream out)
+    //OutputStream是抽象类，传递的应该是子类对象
+    使用和FileOutputStream 的使用是一样的
+    b.BufferedInputStream:字节缓冲输入流
+    构造BufferedInputStream(InputStream in)
+    使用:FileInputStream使用一样
+</code></pre>
+<p>正常的复制</p>
+<pre><code class="java">        long start  = System.currentTimeMillis();
+        FileInputStream fis = new FileInputStream(&quot;E:\\a\\1.png&quot;);
+        FileOutputStream fos = new FileOutputStream(&quot;E:\\a\\3.png&quot;);
+        int len;
+        byte[] bytes = new byte[1024];
+        while((len = fis.read(bytes)) !=-1)&#123;
+            fos.write(bytes,0,len);
+        &#125;
+        long end = System.currentTimeMillis();
+        System.out.println(end-start);//1
+        fos.close();
+        fis.close();
+</code></pre>
+<pre><code class="java">long start  = System.currentTimeMillis();
+FileInputStream fis = new FileInputStream(&quot;E:\\a\\1.png&quot;);
+FileOutputStream fos = new FileOutputStream(&quot;E:\\a\\3.png&quot;);
+BufferedInputStream bis = new BufferedInputStream(fis);
+BufferedOutputStream bos = new BufferedOutputStream(fos);
+int len;
+byte[] bytes = new byte[1024];
+while((len = bis.read(bytes)) !=-1)&#123;
+    bos.write(bytes,0,len);
+&#125;
+long end = System.currentTimeMillis();
+System.out.println(end-start);//1
+bos.close();
+bis.close();
+</code></pre>
+<p>效果有点不明显,大一点的文件是可以看见的</p>
 
     </div>
     
