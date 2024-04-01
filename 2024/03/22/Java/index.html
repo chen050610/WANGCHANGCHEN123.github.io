@@ -4898,8 +4898,471 @@ Vector(int i,int j)//构造一个容量为i的列表，而且容量增量为j的
     Object setProperty(String key ,String value) --&gt;存键值对
     String getProperty(String key) --&gt;根据key获取value
     Set&lt;String&gt; stringPropertyNames()--&gt;获取所有的key保存起来再set里面，和之前的keySet一样
-    void load(InputStream inStream) --&gt;将流中的数据加载到propperties集合中（IO流部f）
+    void load(InputStream inStream) --&gt;将流中的数据加载到propperties集合中（IO流部分）
 </code></pre>
+<p><strong>IO流</strong></p>
+<p><strong>File类</strong></p>
+<pre><code>计算机尝试
+1，以jog结尾的不一定是图片，还有可能是文件夹
+2.什么是文本文档？
+    用记事本打开，人能看懂的文件
+3.分隔符
+    路径名称分隔符
+    widows：\
+    Liunx:/
+    路径分隔符:一个路径和其他路径的分隔符
+    :
+</code></pre>
+<pre><code>File类
+概述
+    文件和目录(文件夹)的抽象表示、
+简介理解
+    我们再创建File对象的时候，需要传递一个路径，这个路径定在哪个文件上，我们的File就代表哪个对象
+        File file = new File(&quot;E:\etc\haha&quot;)
+</code></pre>
+<pre><code>File里的静态成员
+static String pathSeparator:与系统有关的分割符，为了方便，他被表示为一个字符串
+static String separator :和系统有关的默认名称分隔符，为了方便，他被表示为一个字符串
+</code></pre>
+<pre><code class="java">       几个路径之间的分隔符
+        String pathSeparator = File.pathSeparator;
+        System.out.println(pathSeparator);//;
+路径名称分隔符
+        String separator = File.separator;//\
+        System.out.println(separator);
+</code></pre>
+<p>注意，\是转义字符，需要写两个</p>
+<pre><code class="java">        String path = &quot;E:\\etc\\haha&quot;;
+</code></pre>
+<p>但是这样写，我们的程序只能在widows上面执行，因为这个路径只有再widos是反斜杠，但是再linux里面是正斜杠</p>
+<p>所以我们通常写路径通常这样写</p>
+<pre><code class="java">     String path = &quot;E:&quot;+File.separator+&quot;etc&quot;+File.separator+&quot;haha&quot;;
+</code></pre>
+<p>这样自动获取路径的分隔符</p>
+<p><strong>File的构造方法</strong></p>
+<pre><code>File(String parent ,String child)
+    parent:父路径
+    child:子路径
+最后拼接成完整的路径
+File(File parent,String child)
+    还是上面的一样，只不过父路径是file对象
+File(String Pathname)
+    直接传递路径
+</code></pre>
+<p>我们创建file对象的时候可以传递路径不存在的文件</p>
+<pre><code>File里面的方法
+String getAbsolutePath() --&gt;获取File的绝对路径--&gt;带盘符的路径
+String getPath() --&gt;获取的是封装路径-&gt;new对象的是什么路径这个就是什么
+String getName() --&gt;获取的是文件夹或者文件的名称
+long length() --&gt;获取文件的长度-》文件的字节数
+</code></pre>
+<p>使用</p>
+<pre><code class="java">File file = new File(&quot;E:\\a&quot;, &quot;1.png&quot;);
+File file1 = new File(&quot;1.txt&quot;);
+System.out.println(file);//E:\a\1.jpg
+System.out.println(file.getAbsoluteFile());//E:\a\1.jpg
+System.out.println(file.getPath());//E:\a\1.jpg
+System.out.println(file1.getPath());//1.txt
+System.out.println(file.getName());//1.jpg
+System.out.println(file.length());//147761
+</code></pre>
+<pre><code>File的创建方法
+    boolean createNewFile() -&gt;创建文件
+        如果要创建的文件之前有，创建失败，返沪false
+        如果要创建的文件之前没有，创建成功，返回true
+    boolean mkdirs() -&gt;创建文件夹，既可以创建多级还可以创建单级
+            如果要创建的文件之前有，创建失败，返沪false
+            如果要创建的文件之前没有，创建成功，返回true
+</code></pre>
+<pre><code class="java">       File file2 = new File(&quot;E:\\a\\1.txt&quot;);
+        boolean b = file2.createNewFile();
+        System.out.println(b);//true
+</code></pre>
+<pre><code class="java">        File file2 = new File(&quot;E:\\a\\haha\\hehehe&quot;);
+        boolean b = file2.mkdirs();
+        System.out.println(b);//true
+</code></pre>
+<p>这样以后就创建多级的文件夹</p>
+<p><strong>删除的方法</strong></p>
+<pre><code>boolean delete() -&gt;删除文件或者文件夹
+</code></pre>
+<pre><code class="java">File file2 = new File(&quot;E:\\a\\haha\\hehehe&quot;);
+boolean b = file2.mkdirs();
+System.out.println(b);//true
+System.out.println(file2.delete());//true
+</code></pre>
+<p>这样我们刚创建的hehehe就被删除了，</p>
+<ul>
+<li>注意delete慎用，如果删除文件是不走的回收站的</li>
+<li>而且删除文件夹，只能删除空文件夹，里面有文件的文件夹是删除不了的，而且也不走回收站</li>
+</ul>
+<p><strong>File类的判断方法</strong></p>
+<pre><code class="java">boolean isDirectory();//判断是否为文件夹
+boolean isFile(); //判断是否为文件
+boolean exists() //判断文件或者文件夹是否存在
+</code></pre>
+<p>非常的简单，所以跳过</p>
+<p><strong>File的遍历方法</strong></p>
+<pre><code class="java">String[] list();//遍历指定的文件夹，返回的是String数组
+File[] listFiles();//遍历文件夹，返回的是File类型的数组--》这个推荐使用
+</code></pre>
+<pre><code class="java">        File file3 = new File(&quot;E:\\a&quot;);
+        String[] list = file3.list();
+        System.out.println(Arrays.toString(list));//[1.png, 111, c++.md, haha, qqq]
+        File[] files = file3.listFiles();
+        System.out.println(Arrays.toString(files));//[E:\a\1.png, E:\a\111, E:\a\c++.md, E:\a\haha, E:\a\qqq]
+</code></pre>
+<ul>
+<li>下面的方法返回的是绝对路径</li>
+<li>上面的方法返回的是相对路径的</li>
+</ul>
+<p><strong>字节流</strong></p>
+<p><strong>IO流介绍以及输入输出以及流向的介绍</strong></p>
+<pre><code>单词
+    Output:输出
+    Input：输入
+    write：写数
+    read:读数据
+Io流
+    将一个设备上的数据传输到另外一个设备上,称为IO流技术
+为啥要学IO流?
+    之前学过集合和数组能够保存数据，但是只是临时的，达不到永久保存数据，需要永久保存，所以我们可以把数据保存在硬盘上
+    而且我们传入数据，必须要输入，输出动作
+</code></pre>
+<p><strong>IO流流向_针对se阶段的Io</strong></p>
+<pre><code>输入流:将数据从硬盘中读到内存中
+输出流:从内存写在硬盘上
+
+如果电脑通信的
+发数据:输出
+收数据:输入
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240401173727404.png" alt="image-20240401173727404"></p>
+<p><strong>IO流的分类</strong></p>
+<pre><code>字节流:万能流，一切都是由字节为基础的，复制一个文件和文件夹都是字节流
+
+    字节输出流:OutputStream 抽象类
+    字节输入流:InputStream 抽象类
+    
+字符流:专门操作文本文档
+
+    字符输出流:Writer 抽象类
+    字符输入流:Reader 抽象类
+</code></pre>
+<p><strong>OutputStream中的子类FileOutputStream 的介绍以及方法的简单介绍</strong></p>
+<pre><code>概述
+    字节输出流
+FileOutputStream：往硬盘上写数据
+构造
+    FileOutputStream(File file)
+    FileOutputStream(String name)
+</code></pre>
+<pre><code class="java">        FileOutputStream fos = new FileOutputStream(new File(&quot;E:\\a&quot;, &quot;1.txt&quot;));
+//特点	指定的文件如果没有自动创建
+            每执行一次，就会覆盖之前的文件
+</code></pre>
+<pre><code>方法
+    void write(int b)//一次写一个字节
+    void write(byte[] b)//一次写一个字节数组
+    void write(byte[] b,int off,int len)//一次写一个字节数组,写指定长度的
+    void close() //手动关闭，虚拟机不能关闭，需要手动关闭
+</code></pre>
+<pre><code class="java">        FileOutputStream fos = new FileOutputStream(new File(&quot;E:\\a&quot;, &quot;1.txt&quot;));
+        fos.write(97);
+        fos.close();
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240401175647305.png" alt="image-20240401175647305"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240401175740318.png" alt="image-20240401175740318"></p>
+<pre><code class="java">        FileOutputStream fos = new FileOutputStream(new File(&quot;E:\\a&quot;, &quot;1.txt&quot;));
+        byte[] bytes = &#123;97,98,99,100&#125;;
+        fos.write(bytes);
+        fos.close();
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240401175859686.png" alt="image-20240401175859686"></p>
+<p>下面的更加方便</p>
+<pre><code class="java">        FileOutputStream fos = new FileOutputStream(new File(&quot;E:\\a&quot;, &quot;1.txt&quot;));
+        byte[] bytes = &#123;97,98,99,100&#125;;
+        fos.write(&quot;wangchangchenzhenshuai&quot;.getBytes());
+        fos.close();
+</code></pre>
+<p><strong>如果不要覆盖怎么办？</strong></p>
+<p>追击内容</p>
+<pre><code>    FileOutputStream(String name,boolean append)//在构造的时候这样写
+    append为true的时候，就会追加
+</code></pre>
+<pre><code>注意
+    换行符
+        windows :\r\n -&gt;占两个字节
+        Liunx:\n
+        mac os:\r
+</code></pre>
+<pre><code class="java">        FileOutputStream fos1 = new FileOutputStream(new File(&quot;E:\\a&quot;, &quot;2.txt&quot;),true);
+        fos1.write(&quot;窗前明月光\r\n&quot;.getBytes());
+        fos1.write(&quot;疑似地上霜\r\n&quot;.getBytes());
+        fos.close();
+        fos1.close();
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240401180656238.png" alt="image-20240401180656238"></p>
+<p><strong>InputStream字节输入流[FileInputStream]的介绍和方法的使用</strong></p>
+<pre><code>概述
+    字节输入流InputStream,是一个抽象类
+    子类
+        FileInputStream
+作用
+    读数据，将数据从硬盘上读到内存上
+构造
+    FileInputStream(File file)
+    FileInputStream(String name)
+方法
+    int read()一次读取一个字节，返回的是读取的字节
+    int read(byte[] b) 一次读取一个字节数组，返回的是读取的读取的个数
+    int read(byte[] b,int off,int length)
+    void close()
+</code></pre>
+<p>一次读一个字节</p>
+<pre><code class="java">        FileInputStream fis = new FileInputStream(&quot;E:\\a\\2.txt&quot;);
+        int read = fis.read();
+        System.out.println(read);//231
+
+        int read2 = fis.read();
+        System.out.println(read2);//170
+</code></pre>
+<p>当我们读玩这个文件以后，读取的就是-1</p>
+<p>这样就可以连续读取</p>
+<pre><code class="java">        int len;
+        while ((len=fis.read())!=-1)&#123;
+            System.out.println(len);
+        &#125;
+        fis.close();
+</code></pre>
+<p>一个流对象，读完以后就不要再读了</p>
+<p>流对象关闭以后，就不要再读了</p>
+<p>读取的-1的问题</p>
+<pre><code>每一个文件的末尾，有一个看不见的结束标记
+而read()到达文件的末尾读到结束标记就会是-1
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240401184205502.png" alt="image-20240401184205502"></p>
+<pre><code class="java">FileInputStream fis = new FileInputStream(&quot;E:\\a\\2.txt&quot;);
+//创建的一个数组相当于临时储存区域，我们读取的内容就会保存在临时数组里面
+//长度定为多少就会读取到多少个，一般的长度为1024或者1024的整数倍
+byte[] bytes = new byte[2];
+int i = fis.read(bytes);
+System.out.println(i);//2
+System.out.println(new String(bytes,0,i));//ab
+
+int j = fis.read(bytes);
+System.out.println(j);//2
+System.out.println(new String(bytes,0,j));//cd
+
+int k = fis.read(bytes);
+System.out.println(k);//2
+System.out.println(new String(bytes,0,k));//e
+</code></pre>
+<p>当返回-1的时候，这时候已经读完 了</p>
+<pre><code class="java">        FileInputStream fis = new FileInputStream(&quot;E:\\a\\2.txt&quot;);
+        //创建的一个数组相当于临时储存区域，我们读取的内容就会保存在临时数组里面
+        //长度定为多少就会读取到多少个，一般的长度为1024或者1024的整数倍
+        byte[] bytes = new byte[2];
+        int length;
+        while ((length = fis.read(bytes))!=-1)&#123;
+            System.out.println(new String(bytes,0,length));
+        &#125;
+</code></pre>
+<p>注意再输出字符串的时候一定要指定长度</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240401185122597.png" alt="image-20240401185122597"></p>
+<p>因为读取的过程是这样的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240401185228130.png" alt="image-20240401185228130"></p>
+<pre><code>当我们读取前两个
+    a，再第一个b再第二个
+    以此类推
+    当我们读完cd以后，
+    c被e替换，但是d还在哪个位置，所以就会读到d
+</code></pre>
+<p><strong>文件的复制</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240401193916292.png" alt="image-20240401193916292"></p>
+<p>案例</p>
+<pre><code class="java">        //创建FileInputStream
+        FileInputStream fis = new FileInputStream(&quot;E:\\a\\1.png&quot;);
+//        2.创建fileOutputStream将读取的文件写在指定的位置上
+        FileOutputStream fos = new FileOutputStream(&quot;E:\\a\\2.png&quot;,true);
+        //可以一个字节的复制还可以一个数组的复制
+        byte[] bytes = new byte[1024];
+        int length;
+        while(( length = fis.read(bytes))!=-1)&#123;
+            fos.write(bytes,0,length);//读多少个写多少个防止到最后写进去多余的
+        &#125;
+        //先开的后关
+        fos.close();
+        fis.close();
+</code></pre>
+<p><strong>字符流</strong></p>
+<pre><code>之前我们使用字节流读取的文件的时候，我们没有写中文，读字母，一个字母1个字节，但是汉字再不同的版本字节不同
+</code></pre>
+<p>例如</p>
+<p>当我们读取</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240401195641859.png" alt="image-20240401195641859"></p>
+<p>utf—8一个汉字战3个字节</p>
+<p>如果我们这样读</p>
+<pre><code class="java">FileInputStream fis = new FileInputStream(&quot;E:\\a\\1.txt&quot;);
+byte[] bytes = new byte[2];
+int length;
+while((length = fis.read(bytes))!=-1)&#123;
+    System.out.println(new String(bytes,0,length));
+&#125;
+</code></pre>
+<p>这样的输出</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240401195739061.png" alt="image-20240401195739061"></p>
+<p>只有我们等于3的时候</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240401195814080.png" alt="image-20240401195814080"></p>
+<p>才能正常的打印</p>
+<p>所以就需要字符流读取</p>
+<p><strong>字符流</strong></p>
+<pre><code>utf-8，一个汉字占3个字节
+GBK,一个汉字占2个字节
+将文本文档按照字符操作
+注意
+    按照字符也需要编码一致，
+</code></pre>
+<p><strong>FileReader介绍以及使用</strong></p>
+<pre><code class="java">字符流专门操作文本文档，复制我们还是用字节流
+
+
+概述
+    字符流输入 -》Reader --》是一个抽象类
+    子类：FileReader
+作用
+    将文本文档的阿内容，读取到内存中
+构造
+    FileReader(File file)
+    FileReader(String path)
+方法
+    int read(); --&gt;一次读取一个字符，返回的是读取字符的int值，比如a就是97
+    int read(char[] cbuf) --》读取数组，返回的是读取的个数
+    int read(char[] cbuf,int off,int length)
+    void close() 
+</code></pre>
+<pre><code class="java">        FileReader fis = new FileReader(&quot;E:\\a\\1.txt&quot;);
+        System.out.println(fis.read());//20320你
+        System.out.println(fis.read());//22909好
+        System.out.println(fis.read());//-1
+</code></pre>
+<pre><code class="java">        System.out.println((char) fis.read());//你
+        System.out.println((char) fis.read());//好
+        System.out.println(fis.read());//-1
+</code></pre>
+<pre><code class="java">        FileReader fis = new FileReader(&quot;E:\\a\\1.txt&quot;);
+        char[] chars = new char[1];
+        System.out.println(fis.read(chars));//1
+        System.out.println(chars);//你
+        System.out.println(fis.read(chars));//1
+        System.out.println(chars);//好
+</code></pre>
+<pre><code class="java">        FileReader fis = new FileReader(&quot;E:\\a\\1.txt&quot;);
+        char[] chars = new char[1];
+        int len;
+        while((len = fis.read())!=-1)&#123;
+            System.out.println((char) len);
+        &#125;
+        fis.close();
+</code></pre>
+<p><strong>FileWriter</strong></p>
+<pre><code>字符输出流--》Writer--》抽象类
+子类
+    void write(int b)//一次写一个字节
+    void write(char[] b)//一次写一个字符数组
+    void write(char[] b,int off,int len)//一次写一个字符数组,写指定长度的
+    
+    相比之前的字节型输出流新型方法
+    void wrtie(String str),直接写字符串
+</code></pre>
+<ul>
+<li><strong>注意fileWriter底层自带一个缓冲区，我们写的数据会先保存再缓冲区，所以我们需要将缓冲区的数据刷到文件中，所以需要flush这个方法</strong></li>
+</ul>
+<pre><code class="java">        FileWriter fw = new FileWriter(&quot;E:\\a\\3.txt&quot;,true);
+//        fw.write(97);
+//        char[] a = &#123;&#39;你&#39;,&#39;好&#39;&#125;;
+//        fw.write(a);
+//        char[] b = &#123;&#39;王&#39;,&#39;昌&#39;,&#39;晨&#39;&#125;;
+//        fw.write(b,0,2);
+        fw.write(&quot;Hello&quot;);
+        fw.flush();
+</code></pre>
+<pre><code>flush():将缓冲区数据刷在文件中，流并没有关
+close():先刷新后关闭,后续流不能用了
+</code></pre>
+<p><strong>IO处理异常</strong></p>
+<pre><code>之前再练习的时候，我们处理io流异常的时候直接向上抛，这样并不好
+</code></pre>
+<p>我们之前说过再finnally进行流对象的关闭</p>
+<pre><code class="java">        try &#123;
+            FileWriter  fw = new FileWriter(&quot;E:\\a\\7.txt&quot;);
+            fw.write(&quot;你好\r\n&quot;);
+            fw.write(&quot;王昌晨\r\n&quot;);
+        &#125; catch (IOException e) &#123;
+            throw new RuntimeException(e);
+        &#125; finally &#123;
+            fw.close();
+        &#125;
+</code></pre>
+<p>但是很明显</p>
+<p>是飘红的，原因是因为作用域的问题</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240401204833553.png" alt="image-20240401204833553"></p>
+<p>我们可以往外面定义</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240401204954512.png" alt="image-20240401204954512"></p>
+<p>但是close也会出现异常了，我们还需要try catch整一下</p>
+<pre><code class="java">FileWriter fw = null;
+try &#123;
+    fw = new FileWriter(&quot;E:\\a\\7.txt&quot;);
+    fw.write(&quot;你好\r\n&quot;);
+    fw.write(&quot;王昌晨\r\n&quot;);
+&#125; catch (IOException e) &#123;
+    throw new RuntimeException(e);
+&#125; finally &#123;
+    try &#123;
+        fw.close();
+    &#125; catch (IOException e) &#123;
+        throw new RuntimeException(e);
+    &#125;
+&#125;
+</code></pre>
+<p>这样就可以了</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240401205111058.png" alt="image-20240401205111058"></p>
+<p>但是还有一些问题，当我们的只有fwnew出来以后才能close，如果new的时候发生错误，我们的fw还是null再去close就会有问题</p>
+<p>所以需要判断一下</p>
+<pre><code class="java">try &#123;
+    fw = new FileWriter(&quot;E:\\a\\7.txt&quot;);
+    fw.write(&quot;你好\r\n&quot;);
+    fw.write(&quot;王昌晨\r\n&quot;);
+&#125; catch (IOException e) &#123;
+    throw new RuntimeException(e);
+&#125; finally &#123;
+    if (fw!=null)&#123;
+        try &#123;
+            fw.close();
+        &#125; catch (IOException e) &#123;
+            throw new RuntimeException(e);
+        &#125;
+    &#125;
+&#125;
+</code></pre>
+<p><strong>JDk7以后Io流处理异常的新写法</strong></p>
+<pre><code>格式
+ try(io对象)&#123;
+ 可能出现的异常
+ &#125; catch()&#123;
+ 
+ &#125;
+ 这样格式的处理异常的代码，会自动关流，不用再使用finally再关流
+</code></pre>
+<pre><code class="java">try(FileWriter fileWriter = new FileWriter(&quot;E:\\a\\7.txt&quot;);)&#123;
+    fileWriter.write(&quot;hahaha&quot;);
+&#125; catch (Exception e)&#123;
+    e.printStackTrace();
+&#125;
+</code></pre>
+<ul>
+<li>再字符流里面必须要关流，如果不关就不会写进去，所以需要close或者flush</li>
+</ul>
 
     </div>
     
