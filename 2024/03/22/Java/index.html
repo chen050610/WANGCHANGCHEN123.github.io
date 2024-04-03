@@ -169,6 +169,19 @@
         </span>
         
         
+        <span class="tags">
+            <span class="icon">
+                <i class="fa-solid fa-tags fa-fw"></i>
+            </span>
+            
+            
+            <span class="tag">
+                
+                <a href="/tags/Java/" style="color: #ff7d73">Java</a>
+            </span>
+            
+        </span>
+        
     </div>
     
     <div class="content" v-pre>
@@ -2398,7 +2411,7 @@ static BigDecimal valueOf(doubt value) --&gt;此方法 初始化小数可以传d
     static Calendar getInstance();
     ---------------------------------------
      Calendar calendar = Calendar.getInstance();
-     System.out.println(calendar);
+     System.out.println( calendar );
 </code></pre>
 <pre><code class="java">
         Calendar calendar = Calendar.getInstance();
@@ -5239,7 +5252,7 @@ GBK,一个汉字占2个字节
     int read(); --&gt;一次读取一个字符，返回的是读取字符的int值，比如a就是97
     int read(char[] cbuf) --》读取数组，返回的是读取的个数
     int read(char[] cbuf,int off,int length)
-    void close() 
+    void close()
 </code></pre>
 <pre><code class="java">        FileReader fis = new FileReader(&quot;E:\\a\\1.txt&quot;);
         System.out.println(fis.read());//20320你
@@ -5409,6 +5422,845 @@ bos.close();
 bis.close();
 </code></pre>
 <p>效果有点不明显,大一点的文件是可以看见的</p>
+<pre><code>细节
+    使用缓冲流的时候，为啥只需要关闭缓冲流，不用单独关闭基本流
+        原因是缓冲流的的close的方法会自动关闭基本流的close方法
+    缓冲流底层有数组(缓冲区),都是在内存之间进行读写，那么缓冲流的读写过程是什么样的？
+        
+</code></pre>
+<p>​		</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240402145027870.png" alt="image-20240402145027870"></p>
+<ul>
+<li>在使用缓冲流的时候复制也是基于基本流的.先依靠基本流将数据放在缓冲流里面，每次都是读取8192个字节</li>
+</ul>
+<p><strong>字符缓冲流</strong></p>
+<pre><code>字符流的基本流是有缓冲区的，所以效率这一块是不太明显，但是有一些特有的方法
+</code></pre>
+<p><strong>字符缓冲流输出BufferWriter</strong></p>
+<pre><code>构造
+    BufferedWriter(Writer w)
+方法
+    和FileWriter一样，但是有一个特有的方法
+    newLine()  //换行
+</code></pre>
+<pre><code class="java">        BufferedWriter bw = new BufferedWriter(new FileWriter(&quot;E:\\a\\3.txt&quot;,true));
+        bw.write(&quot;窗前明月光&quot;);
+        bw.newLine();
+        bw.write(&quot;疑似地上霜&quot;);
+        bw.close();
+</code></pre>
+<p>这样写进去的内容就会有换行，不用使用\r\n</p>
+<p><strong>字符输入流</strong></p>
+<pre><code>构造
+ BufferReader(Reader r)
+方法
+ 和FileReader的使用一样
+特有的方法
+    String readLine() --&gt;一次读一行，如果读到结束的标志，返回的是null
+</code></pre>
+<pre><code class="java">        BufferedReader br = new BufferedReader(new FileReader(&quot;E:\\a\\3.txt&quot;));
+        String s;
+        while ((s=br.readLine())!=null)&#123;
+            System.out.println(s);//窗前明月光          疑似地上霜
+        &#125;
+</code></pre>
+<p><strong>字符编码</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240402151009458.png" alt="image-20240402151009458"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240402151352058.png" alt="image-20240402151352058"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240402151432187.png" alt="image-20240402151432187"></p>
+<pre><code>总结
+    想要不乱码，编码和解码遵循的规则(字符编码)要一致
+    UTF-8中一个汉字站3个字节
+    GbK一个汉字占2个字节
+编码是将文字转为字节
+解码是将字节转为文字
+</code></pre>
+<p><strong>转换流InputStreamReader</strong></p>
+<pre><code>字节流在读取中文再编码一致的情况下，也不要边读边看，因为字节都不准都不全，输出的内容也会可能出现乱码
+所以我们学习字符流，就不会出现乱码，但是如果编码不一致，字符流读取文本的内容，也会可能出现乱码
+</code></pre>
+<p>例如</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240402152104197.png" alt="image-20240402152104197"></p>
+<p>按照GBk进行保存</p>
+<p>然后我们在进行读取</p>
+<pre><code class="java">FileReader fr = new FileReader(&quot;E:\\1.txt&quot;);
+int data = fr.read();
+System.out.println((char) data);
+fr.close();
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240402152312588.png" alt="image-20240402152312588"></p>
+<p>这样我们使用字符流，也会出现乱码</p>
+<p>如果我们再读取的过程中指定编码这样就可以了</p>
+<pre><code>所以我们就需要转换流
+概述
+    是字节流通向字符流的桥梁-&gt;读数据
+构造
+     InputStreamReader(InputStream in,String  charsetName)
+     charsetName指定编码，不区分大小写
+作用
+    指定读取内容使用的编码
+用法
+    基本的用法和FileReader一致，
+</code></pre>
+<p>使用，这样我们就可以读取一样的,注意指定编码，不指定的话默认使用UTF</p>
+<pre><code class="java">InputStreamReader isr = new InputStreamReader(new FileInputStream(&quot;E:\\1.txt&quot;),&quot;GBK&quot;);
+int data = isr.read();
+System.out.println((char) data);
+</code></pre>
+<p><strong>转换流OutputStreamWriter</strong></p>
+<pre><code>概述
+    是字符流通向字节流的桥梁
+构造
+    OutputStreamWriter(OutputStream out,String charsetName)
+作用
+    按照指定编码规则存数据
+用法
+    和FileWriter的一致
+</code></pre>
+<p>使用，如果不指定还是默认的是utf-8</p>
+<pre><code class="java">OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(&quot;E:\\2.txt&quot;), &quot;GBK&quot;);
+osw.write(&quot;王昌晨真帅&quot;);
+osw.close();
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240402154058564.png" alt="image-20240402154058564"></p>
+<p><strong>序列化流</strong></p>
+<pre><code>比如说将来我们new一个对象，里面有属性值，属性的值也是算数据的，如果我们想把保存数据的对象保存再硬盘上，这时候就需要序列化流
+作用
+    读写对象
+两个对象
+    ObjectOutputStream() -&gt; 序列化流，-&gt;写对象的
+    ObjectInputStream()-&gt;反序列化流 -&gt;读对象的
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240402155056718.png" alt="image-20240402155056718"></p>
+<p>我们写进去的也是看不懂的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240402155139220.png" alt="image-20240402155139220"></p>
+<pre><code>注意
+    我们将对象序列化到文件中，我们打开文件是看不懂的，我们只需读回来的时候
+例如
+    当我们玩游戏的时候，英雄就可以有很多的属性，我们存档的时候，就可以存在文件中
+</code></pre>
+<p><strong>序列化流ObjectOutputStream</strong></p>
+<pre><code>作用:写对象
+构造:ObjectOutputStream(OutputStream out)
+方法
+    writeObject(Object obj)-&gt;写对象
+注意
+    想要将对象序列化到文件中 ,想要将对象写在文件里面，需要被写的对象实现serializable接口
+</code></pre>
+<p>例如</p>
+<pre><code class="java">package Wei_ObjectStream;
+
+import java.io.Serializable;
+import java.util.Objects;
+
+public class Person implements Serializable &#123;
+    private String name;
+    private Integer age;
+
+    public Person(String name) &#123;
+        this.name = name;
+    &#125;
+
+    public Person(int age) &#123;
+        this.age = age;
+    &#125;
+
+    public Person(String name, int age) &#123;
+        this.name = name;
+        this.age = age;
+    &#125;
+
+    public String getName() &#123;
+        return name;
+    &#125;
+
+    public void setName(String name) &#123;
+        this.name = name;
+    &#125;
+
+    public int getAge() &#123;
+        return age;
+    &#125;
+
+    public void setAge(int age) &#123;
+        this.age = age;
+    &#125;
+
+    @Override
+    public String toString() &#123;
+        return &quot;Person&#123;&quot; +
+                &quot;name=&#39;&quot; + name + &#39;\&#39;&#39; +
+                &quot;, age=&quot; + age +
+                &#39;&#125;&#39;;
+    &#125;
+
+    @Override
+    public boolean equals(Object o) &#123;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Person person = (Person) o;
+        return age == person.age &amp;&amp; Objects.equals(name, person.name);
+    &#125;
+
+    @Override
+    public int hashCode() &#123;
+        return Objects.hash(name, age);
+    &#125;
+&#125;
+</code></pre>
+<pre><code class="java">package Wei_ObjectStream;
+
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+
+public class Demo &#123;
+    public static void main(String[] args) throws IOException &#123;
+        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(&quot;E://a.txt&quot;));
+        Person person = new Person(&quot;王昌晨&quot;, 28);
+        oos.writeObject(person);
+        oos.close();
+
+    &#125;
+&#125;
+</code></pre>
+<p>效果</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240402160843180.png" alt="image-20240402160843180"></p>
+<p><strong>反序列化流ObjectInputStream</strong></p>
+<pre><code>作用:读对象
+构造
+    ObjectInputStream(InputStream in)
+方法
+readObject()	
+</code></pre>
+<p>使用</p>
+<pre><code class="java">ObjectInputStream ois = new ObjectInputStream(new FileInputStream(&quot;E:\\a.txt&quot;));
+Object o = ois.readObject();
+System.out.println(o);
+</code></pre>
+<p><strong>如果不想被序列化到文件里面</strong></p>
+<pre><code>使用transient 修饰成员变量
+</code></pre>
+<p><strong>问题</strong></p>
+<pre><code>反序列化的时候出现的问题
+问题描述
+    序列化以后，我们修改源码，然后我们没有序列化，直接反序列化，这样就会报错
+    就会出现序列号冲突的问题
+    原因是
+        
+</code></pre>
+<p><strong>原因的复现</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240402162302729.png" alt="image-20240402162302729"></p>
+<pre><code>当我们编译这个类文件就会生成一个class的文件，而且还会生成一个序列号，
+当我们序列化的时候就会将对象和类对应的序列号保存在文件里面，当我们反序列化的时候，文件的序列号号就会和class的文件中的序列号进行对比，如果一样反序列化成功，当我们修改的时候就会重新编译，这样导致序列号发生改变，我们没有将的新的序列号，这样反序列的时候就会失败出现异常
+</code></pre>
+<pre><code>解决
+    我们将序列号固定，不管更改都不会变
+    在被序列化的对象上加一个public static final long  的变量，然后赋值
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240402162930649.png" alt="image-20240402162930649"></p>
+<p>这样我们更改就不会出现问题</p>
+<ul>
+<li><p>将一个对象实现序列化接口，我们将来才能让这个对象变成二进制，在网络上传输，网络传输都是二进制的</p>
+<p>当我们序列化多个对象的时候</p>
+<pre><code class="java">Person person = new Person(&quot;王昌晨&quot;, 28);
+Person person1 = new Person(&quot;王昌晨&quot;, 22);
+Person person2 = new Person(&quot;王昌晨&quot;, 23);
+oos.writeObject(person);
+oos.writeObject(person1);
+oos.writeObject(person2);
+oos.close();
+</code></pre>
+</li>
+</ul>
+<pre><code class="java">        ObjectInputStream ois = new ObjectInputStream(new FileInputStream(&quot;E:\\b.txt&quot;));
+        Person o =(Person) ois.readObject();
+        Person o1 =(Person) ois.readObject();
+        Person o2 =(Person) ois.readObject();
+        System.out.println(o);
+        System.out.println(o1);
+        System.out.println(o2);
+        ois.close();
+</code></pre>
+<p>也可以连续的读出来</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240402163955406.png" alt="image-20240402163955406"></p>
+<p>我们也可以使用循环	那怎么控制循环的次数</p>
+<pre><code>解决
+    我们可以在序列化的时候，整一个列表，存储的要序列化的对象，然后就可以在序列化的时候传入列表
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240402164308622.png" alt="image-20240402164308622"></p>
+<pre><code>然后再反序列化的时候将集合反序列化即可
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240402164354826.png" alt="image-20240402164354826"></p>
+<p><strong>打印流PrintStream</strong></p>
+<pre><code>我们之前的
+System.out.println(&quot;Hello World&quot;)
+查看源码//System.out返回一个输出流对象，对象里面有一个println方法
+public static final PrintStream out = null;
+</code></pre>
+<pre><code>构造
+    PrintStream(String fileName);//参数是保存在哪里
+方法
+    println(); 原样输出自带换行的效果
+    print();不带换行
+</code></pre>
+<p>使用</p>
+<pre><code class="java">PrintStream ps = new PrintStream(&quot;3.txt&quot;);
+ps.print(&quot;wang&quot;);
+ps.print(&quot;changchen&quot;);
+ps.println(&quot;zhen&quot;);
+ps.println(&quot;shuai&quot;)
+</code></pre>
+<pre><code>改变流向
+
+
+    System.out.println() -&gt;本身是输出在控制台上
+    改变流向可以让输出语句从控制台输出变为往指定的流向的输出
+方法 System里面的方法
+    static void setOut(printStream out)--&gt;改变流向--&gt;让输出语句从控制台上输出到指定的文件里面
+    
+</code></pre>
+<p>例如</p>
+<p>通过 <code>System.setOut(ps)</code> 方法将标准输出流 <code>System.out</code> 重定向到了一个文件输出流 <code>ps</code>，该文件输出流将输出内容写入到文件 “3.txt” 中。这意味着，之后所有通过 <code>System.out.println()</code> 输出的内容都会被写入到文件 “3.txt” 中，而不会显示在控制台上</p>
+<pre><code class="java">PrintStream ps = new PrintStream(&quot;3.txt&quot;);
+
+//改变流向
+System.setOut(ps);
+
+
+
+System.out.println(&quot;haha&quot;);
+System.out.println(&quot;haha&quot;);
+System.out.println(&quot;nihao&quot;);
+ps.close();
+</code></pre>
+<p>这样以后</p>
+<p>控制台就不会输出内容，二四保存在我们指定的文件里面去</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240402172533397.png" alt="image-20240402172533397"></p>
+<p><strong>打印流的续写</strong></p>
+<pre><code>构造
+    PrintStream(OutputStream out) -&gt;可以依靠output实现续写的功能
+</code></pre>
+<pre><code class="java">    PrintStream ps = new PrintStream(new FileOutputStream(&quot;3,txt&quot;,true));
+    System.setOut(ps);
+    System.out.println(&quot;haha&quot;);
+    System.out.println(&quot;haha&quot;);
+    System.out.println(&quot;nihao&quot;);
+    ps.close();
+&#125;
+</code></pre>
+<p>这样我们每一次执行都会</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240402172928805.png" alt="image-20240402172928805"></p>
+<p>像我们的文件后面续写</p>
+<p><strong>ProPerties集合</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240402173350695.png" alt="image-20240402173350695"></p>
+<p>在io的使用场景</p>
+<pre><code>配合配置文件进行使用
+注意：不能将很多的硬数据放在源码里面，比如用户名和密码这些数据，因为将来更换，这样就会到源码修改，我们类和类之间都有练习，有可能会影响，我们可以将这些数据提取出来，直接去文件里改
+</code></pre>
+<pre><code>创建配置文件
+在模块下右键-》file-》取名为xxx.properties-》
+在xxx.properties写配置数据
+    key和value都是key=value的形式
+    key和value都是String,但是 不要加&quot;&quot;
+    每一个键值对写完需要换行
+    键值对之前不要写空格
+    键值对的不要写中文（这样会乱码，但是可以使用转换流转码）
+    
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240402174136370.png" alt="image-20240402174136370"></p>
+<p>然后解析</p>
+<pre><code class="java">        Properties properties = new Properties();
+        FileInputStream fis = new FileInputStream(&quot;jdbc.properties&quot;);
+        properties.load(fis);
+        System.out.println(properties);//&#123;jdbc.password=root, jdbc.username=root&#125;
+</code></pre>
+<p>可以在遍历一下</p>
+<pre><code class="java">Set&lt;String&gt; set = properties.stringPropertyNames();
+for (String s : set) &#123;
+    System.out.println(s+&#39;=&#39;+properties.getProperty(s));
+&#125;
+</code></pre>
+<p>再说一下之前的hashmap获取键值集合的方法</p>
+<pre><code>values的方法
+</code></pre>
+<p><strong>IO流工具包</strong></p>
+<pre><code>IO技术开发，代码量大，而且代码的重复率高，如果我们想要遍历目录，拷贝目录，就需要使用方法的递归调用，增加了程序的复杂度
+Apache基金会，开发Io技术工具类commonsIO，大大简化io开发
+</code></pre>
+<ul>
+<li><p>注意这个commonsIO是第三方的工具类</p>
+</li>
+<li><p>Oracle属于第一方，我们自己是第二方，其他的都是第三方</p>
+</li>
+<li><p>我们使用第三方的工具类，都需要添加第三方提供的jar包</p>
+</li>
+<li><p>jar就是压缩包可以解压，里面转的都是class文件，肯定看不见源码，我们想使用jar包的工具类，就需要将相应的jar包解压到我们的当前目录下\</p>
+</li>
+<li><p>怎么引入</p>
+<ul>
+<li><p>在当前的文件夹创建文件夹，取名为lib或者libs</p>
+</li>
+<li><p>将准备好的jar包放在此文件夹</p>
+</li>
+<li><p>对着jar包右键-》</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240402175851153.png" alt="image-20240402175851153"></p>
+</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240402180235500.png" alt="image-20240402180235500"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240402180248575.png" alt="image-20240402180248575"></p>
+<p>这样这个库就可以在当前的模块下是好用 的</p>
+<pre><code>使用
+    IoUtils类
+        静态方法 copy(InputStream in,OutputStream out)//传递字节流实现文件的复制
+        closeQuietly(任意流对象)//悄悄的是释放资源，自动处理close()方法抛出的异常
+</code></pre>
+<pre><code class="java">        //不用关闭会自动的关闭
+        IOUtils.copy(new FileReader(&quot;E:\\1.txt&quot;),new FileOutputStream(&quot;E:\\d.txt&quot;));
+</code></pre>
+<p>之前的close异常需要捕获</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240402181045568.png" alt="image-20240402181045568"></p>
+<p>现在，这样就处理掉了</p>
+<pre><code class="java">        FileWriter fw = null;
+        try&#123;
+            fw = new FileWriter(&quot;a.txt&quot;);
+            fw.write(&quot;hahah&quot;);
+        &#125; catch(Exception e)&#123;
+            e.printStackTrace();
+        &#125; finally &#123;
+            IOUtils.closeQuietly(fw);
+        &#125;
+</code></pre>
+<p><strong>FileUtils类</strong></p>
+<pre><code>静态方法
+    FileUtils.copyDirectoryToDirectoty(File src,file dest)
+    传递整个目录，进行整个目录的复制
+    src要复制的路径
+    writeStringToFile(File file,String str)//将字符串写在指定的文件里面去
+    String readFileToString(File file)读取文本文件，返回字符串
+</code></pre>
+<pre><code class="java">FileUtils.copyDirectoryToDirectory(new File(&quot;E:\\a&quot;),new File(&quot;E:\\b&quot;));
+        FileUtils.writeStringToFile(new File(&quot;E:\\a\\121.txt&quot;),&quot;hahaha&quot;);
+        System.out.println(FileUtils.readFileToString(new File(&quot;E:\\a\\121.txt&quot;)));//hahah
+</code></pre>
+<p><strong>网络编程</strong></p>
+<p><strong>基础概念</strong></p>
+<pre><code>概述
+    在网络通信协议下，不同的计算机运行的程序，进行数据传输
+    比如:通信，视频，邮件什么的
+    
+只要计算机进行数据的传输，就有网络编程的存在
+</code></pre>
+<p><strong>软件架构</strong></p>
+<p>C&#x2F;S架构</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240402184842434.png" alt="image-20240402184842434"></p>
+<p>好处</p>
+<pre><code>我们在安装的时候安装包的内存有时候很大，索引不用把所有的数据放在服务端，减轻了服务端的压力
+</code></pre>
+<p>坏处</p>
+<pre><code>这样维护的难度比较大
+</code></pre>
+<p>B&#x2F;S架构</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240402185137143.png" alt="image-20240402185137143"></p>
+<pre><code>访问的时候就不用了下载，直接通过浏览器访问服务器
+</code></pre>
+<p>好处</p>
+<pre><code>更新维护比较方便
+</code></pre>
+<p>坏处</p>
+<pre><code>所有的数据都在服务端，压力比较大
+</code></pre>
+<ul>
+<li>我们java主要针对的就是bs架构的</li>
+</ul>
+<p><strong>服务器概念</strong></p>
+<pre><code>安装服务器软件的计算机
+后面要见到的服务器软件tomcat
+</code></pre>
+<ul>
+<li>计算机进行数据的传输需要遵守规则，协议会对数据的格式，速率进行规定，只有都遵守这个协议才能完成数据的交互</li>
+</ul>
+<p><strong>通信的三要素</strong></p>
+<pre><code>IP地址
+协议
+端口号
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240402185834871.png" alt="image-20240402185834871"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240402190153906.png" alt="image-20240402190153906"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240402190250750.png" alt="image-20240402190250750"></p>
+<p><strong>UDP协议编程</strong></p>
+<pre><code>1.DatagramSocket -&gt;好比寄快递找的快递公司
+2.DatagramPacket -&gt;好比快递公司打包
+</code></pre>
+<p><strong>发送端</strong></p>
+<pre><code>创建DatagramSoket对象
+    空参：端口号从可用的的端口号随机选一个使用
+    有参:自己指定	
+创建DatagramPacket对象，进行数据打包
+    打包要发送的数据 -》bytes
+    指定接收端的ip
+    指定接收端的端口号
+发送数据
+释放资源
+</code></pre>
+<pre><code class="java">        DatagramSocket socket = new DatagramSocket();
+        //指定传输的数据
+        byte[] bytes = &quot;你好呀&quot;.getBytes();
+//        指定ip
+        InetAddress ip = InetAddress.getByName(&quot;127.0.0.1&quot;);
+        int port = 6666;
+        DatagramPacket dp = new DatagramPacket(bytes, bytes.length, ip, port);
+        //发送数据
+        socket.send(dp);
+        //关闭资源
+        socket.close();
+</code></pre>
+<pre><code class="java">        DatagramSocket socket = new DatagramSocket();
+        //指定传输的数据
+        byte[] bytes = &quot;你好呀&quot;.getBytes();
+//        指定ip
+        InetAddress ip= InetAddress.getByName(&quot;127.0.0.1&quot;);
+        int port = 6666;
+        DatagramPacket dp = new DatagramPacket(bytes, bytes.length, ip, port);
+        //发送数据
+        socket.send(dp);
+        //关闭资源
+        socket.close();
+</code></pre>
+<p>因为是无连接协议，所以只是直接把信息发过去了</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240402193321248.png" alt="image-20240402193321248"></p>
+<ul>
+<li>​	直接执行发送端，没有接收端也不会报错，因为是无连接的协议</li>
+</ul>
+<p>接收端的代码</p>
+<pre><code>1.创建DatagramSocket对象，指定服务的端口号
+2.接受数据包
+3.解析数据包
+4.释放资源
+</code></pre>
+<p>例如</p>
+<pre><code class="java">DatagramSocket socket = new DatagramSocket(6666);
+byte[] bytes= new byte[1024];//用于保存接受过来的数据
+//获取数据包
+DatagramPacket dp = new DatagramPacket(bytes,bytes.length);//这个byes的作用作为数据的缓冲区
+socket.receive(dp);
+//解析
+byte[] data = dp.getData();//接受数据
+int length = dp.getLength();//获取数的长度
+InetAddress address = dp.getAddress();//获取发送端的主机
+int port = dp.getPort();
+System.out.println(new String(data,0,data.length));
+System.out.println(&quot;length:&quot;+length+&quot;address:&quot;+address+&quot;port:&quot;+port);
+socket.close();
+</code></pre>
+<p><strong>TCP协议编程</strong></p>
+<pre><code>Soket:客户端对象
+ServerSocket:服务器对象
+</code></pre>
+<pre><code>
+Socket的客户端对象
+
+创建Socket对象，指明发送的服务器ip和端口号
+调用Socket对象里的getOutputStream获取输出流发送请求
+调用Socket中的getInputStream获取输入流获取响应的结果
+</code></pre>
+<pre><code>
+
+Socket的服务端对象
+ 
+ 创建ServerSocke对象，设置端口号，
+ 等待服务端连接使用ServerSocket里的accept方法，等待客户端连接(该方法返回的是连接服务端的Socket对象)
+ 调用Socket里的getInputStream,，用于读取请求 
+ 调用socket里的getOutputstream，用于给客户端写响应
+</code></pre>
+<p>因为TCP是面向连接的协议，当我们启动客户端，但是没有启动服务端，这样就会报错 了</p>
+<p>例子</p>
+<pre><code class="java">package Wei_Tcp;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+public class Wei_receive &#123;
+    public static void main(String[] args) throws IOException &#123;
+        ServerSocket serverSocket = new ServerSocket(6666);
+        //等待响应
+        Socket accept = serverSocket.accept();
+        //响应以后
+        InputStream is = accept.getInputStream();
+        byte[] bytes = new byte[1024];
+        int len  = is.read(bytes);
+        System.out.println(&quot;接受的数据为&quot;+new String(bytes,0,len));
+
+        //响应
+
+        OutputStream os = accept.getOutputStream();
+        os.write(&quot;服务端接收到了数据&quot;.getBytes());
+        os.close();
+        is.close();
+        serverSocket.close();
+
+    &#125;
+&#125;
+</code></pre>
+<pre><code class="java">package Wei_Tcp;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Socket;
+
+public class Wei_send &#123;
+    public static void main(String[] args) throws IOException &#123;
+        //指定发送的主机和端口号
+        Socket socket = new Socket(&quot;127.0.0.1&quot;,6666);
+        //传输数
+        OutputStream os = socket.getOutputStream();
+        os.write(&quot;我喜欢你&quot;.getBytes());
+        //读取响应
+        InputStream is = socket.getInputStream();
+        byte[] bytes = is.readAllBytes();
+        System.out.println(new String(bytes,0,bytes.length));
+
+//        byte[] bytes1 = new byte[1024];
+//        is.read(bytes1);
+//        System.out.println(&quot;接受的响应&quot;+new String(bytes1,0,bytes.length));
+        //关闭
+        is.close();
+        os.close();
+        socket.close();
+    &#125;
+&#125;
+</code></pre>
+<p>这样就是先TCP协议 了</p>
+<p><strong>TCP练习</strong></p>
+<p><strong>文件上传</strong></p>
+<p>操作的过程</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240403202103110.png" alt="image-20240403202103110"></p>
+<ul>
+<li><p>首先将数据从本机的硬盘上读取到客户端，再有客户端发送给服务端，在由服务端写在硬盘上</p>
+</li>
+<li><p>FileInputStream-&gt;socket.getOutputStream-&gt;Socket.getInputStream-&gt;FileOutputStream</p>
+</li>
+</ul>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240403202453741.png" alt="image-20240403202453741"></p>
+<p>代码</p>
+<pre><code class="java">package Wei_imgUpload;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+public class Wei_receive &#123;
+    public static void main(String[] args) throws IOException &#123;
+        ServerSocket serverSocket = new ServerSocket(6666);
+        Socket accept = serverSocket.accept();
+        InputStream inputStream = accept.getInputStream();
+
+        FileOutputStream fos = new FileOutputStream(&quot;E:\\12.png&quot;);
+        byte[] bytes = new byte[1024];
+        int len;
+        while ((len = inputStream.read(bytes)) != -1) &#123;
+            fos.write(bytes, 0, len);
+        &#125;
+
+
+        System.out.println(&quot;文件接收成功&quot;);
+
+        OutputStream outputStream = accept.getOutputStream();
+        outputStream.write(&quot;上传成功&quot;.getBytes());
+
+        outputStream.close(); // 关闭输出流，告知客户端响应已发送完成
+        fos.close(); // 关闭文件输出流，释放资源
+        accept.close();
+        serverSocket.close();
+    &#125;
+&#125;
+</code></pre>
+<pre><code class="java">package Wei_imgUpload;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Socket;
+
+public class Wei_Upload &#123;
+    public static void main(String[] args) throws IOException &#123;
+        Socket socket = new Socket(&quot;127.0.0.1&quot;, 6666);
+        FileInputStream fis = new FileInputStream(&quot;E:\\a\\1.png&quot;);
+        OutputStream os = socket.getOutputStream();
+
+        byte[] bytes = new byte[1024];
+        int len;
+        while ((len = fis.read(bytes)) != -1) &#123;
+            os.write(bytes, 0, len);
+        &#125;
+
+        fis.close(); // 关闭文件输入流，释放资源
+        os.close(); // 关闭输出流，告知服务端数据已发送完成
+        System.out.println(&quot;___--响应结果--_____&quot;);
+
+        InputStream inputStream = socket.getInputStream();
+        byte[] bytes1 = new byte[1024];
+        int length = inputStream.read(bytes1);
+        System.out.println(&quot;服务端接受的到的响应结果\r\n&quot; + new String(bytes1, 0, length));
+
+        inputStream.close();
+        socket.close();
+    &#125;
+&#125;
+</code></pre>
+<p>在操作的时候出现的问题</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240403210139076.png" alt="image-20240403210139076"></p>
+<ul>
+<li><p>注意当我们的客户端向服务端发送数据的时候，当我们读完以后传给服务端，然后客户端的代码向下走，单词此时的服务端的while里接受数据还没有停，因为没有传递接受标志，这样服务端的代码就卡在那里</p>
+<p>解决，关闭输出流写在这里</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240403210440420.png" alt="image-20240403210440420"></p>
+</li>
+</ul>
+<p>或者写一个结束的标记</p>
+<pre><code class="java">socket.shutDownOutput();
+</code></pre>
+<p><strong>随机数生成UUID</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240403210912215.png" alt="image-20240403210912215"></p>
+<p><strong>文件上传改造成多线程的形式（多线程）</strong></p>
+<pre><code>放过我太难了
+</code></pre>
+<p><strong>正则表达式</strong></p>
+<pre><code>概述
+    具有特殊规则的字符串，比如身份证，邮箱，手机号
+String里有一个校验正则的方法
+    boolean matches(String regex) //校验字符串是否符合regex的规则
+</code></pre>
+<p>使用</p>
+<pre><code class="java">        Scanner scanner = new Scanner(System.in);
+        String data = scanner.next();
+        boolean matches = data.matches(&quot;[1-9][0-9]&#123;4,9&#125;&quot;);
+        System.out.println(matches);
+</code></pre>
+<ul>
+<li>意思是第一位是1-9的然后后面的0-9出现4到9次</li>
+</ul>
+<p><strong>基本的使用</strong></p>
+<pre><code>模式
+    字符类:[]表示一个区间，范围可以自己定义
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240403213606986.png" alt="image-20240403213606986"></p>
+<p><strong>设计模式</strong></p>
+<ul>
+<li><strong>模板方法设计模式</strong></li>
+</ul>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240403213909276.png" alt="image-20240403213909276"></p>
+<ul>
+<li><p>单例模式</p>
+</li>
+<li><p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240403214311346.png" alt="image-20240403214311346"></p>
+<ul>
+<li><p>饿汉式</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240403214429039.png" alt="image-20240403214429039"></p>
+</li>
+<li><p>懒汉式</p>
+</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240403214700789.png" alt="image-20240403214700789"></p>
+<pre><code>总结
+    单列，构造私有，对象私有，静态的
+</code></pre>
+<p><strong>Lombok</strong></p>
+<pre><code>作用:简化javabean开发
+    
+</code></pre>
+<p>之前我们都是这样的写的</p>
+<pre><code class="java">package Wei_mathes;
+
+public class Person &#123;
+    private String name;
+    private Integer age;
+
+    public Person(String name, Integer age) &#123;
+        this.name = name;
+        this.age = age;
+    &#125;
+
+    public Person(String name) &#123;
+        this.name = name;
+    &#125;
+
+    public Person(Integer age) &#123;
+        this.age = age;
+    &#125;
+
+    public Person() &#123;
+    &#125;
+
+    public String getName() &#123;
+        return name;
+    &#125;
+
+    public void setName(String name) &#123;
+        this.name = name;
+    &#125;
+
+    public Integer getAge() &#123;
+        return age;
+    &#125;
+
+    public void setAge(Integer age) &#123;
+        this.age = age;
+    &#125;
+&#125;
+</code></pre>
+<p>但是有了Lombok</p>
+<p>需要这个插件</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240403215058069.png" alt="image-20240403215058069"></p>
+<p>导入lombok的jar包</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240403215347970.png" alt="image-20240403215347970"></p>
+<p>源码里没有getter什么的但是在编译的时候会自动给你生成</p>
+<p>在设置中需要</p>
+<ul>
+<li>让注解可以使用</li>
+</ul>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240403215552256.png" alt="image-20240403215552256"></p>
+<ul>
+<li>自动编译注解</li>
+</ul>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240403215637125.png" alt="image-20240403215637125"></p>
+<p>使用</p>
+<p>将jar包放在lib下</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240403215915183.png" alt="image-20240403215915183"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240403220155878.png" alt="image-20240403220155878"></p>
+<p>我们没有写get和set的方法</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240403220248601.png" alt="image-20240403220248601"></p>
+<p>但是这里提供</p>
+<pre><code>@Getter和@Setter
+    写在类上对所有的成员有效
+    注意:静态成员变量无效
+@ToString
+    注解只能写在类上面
+@NoArgsConstructor和@AllArgsConstructor
+    NoArgsConstructor:无参的构造方法
+    AllArgsConstructor:满参数的构造方法
+    注解只能写在类上
+@EqualsAndHashCode
+    作用:生成hashCode()和equals()方法
+    注解只能写在类上
+@Data	
+    作用:生成get/set，toString，hashCode，equals，无参构造函数
+    注解只能写在类上
+</code></pre>
+<h2 id="JDK新特性"><a href="#JDK新特性" class="headerlink" title="JDK新特性"></a>JDK新特性</h2><p><strong>Lambda表达式</strong></p>
+<p>mai’n’xi</p>
 
     </div>
     
