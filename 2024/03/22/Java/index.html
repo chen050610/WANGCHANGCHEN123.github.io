@@ -177,7 +177,7 @@
             
             <span class="tag">
                 
-                <a href="/tags/Java/" style="color: #ff7d73">Java</a>
+                <a href="/tags/Java/" style="color: #03a9f4">Java</a>
             </span>
             
         </span>
@@ -6260,7 +6260,68 @@ public class Person &#123;
     注解只能写在类上
 </code></pre>
 <h2 id="JDK新特性"><a href="#JDK新特性" class="headerlink" title="JDK新特性"></a>JDK新特性</h2><p><strong>Lambda表达式</strong></p>
-<p>mai’n’xi</p>
+<p><strong>函数式编程思想和lambda表达式</strong></p>
+<pre><code>面对对象的思想
+    Java的核心的面对思想
+    强调的是找对象帮我们做事
+    
+    比如:去北京 -&gt; 怎么去，火车，高铁，飞机，汽车，自行车，腿
+    其实重要的是去没去成
+JDK8开始了一个新的思想:函数式编程思想
+    不在强调找对象，而是结果
+在这个思想的推出一个表达式
+    Lambda表达式:
+        定义格式:()-&gt;&#123;&#125;
+        各部分的理解
+        ():重写方法的参数的位置
+        -&gt;:将参数传递到方法体中
+        &#123;&#125;:重写方法的方法体
+</code></pre>
+<p>比如</p>
+<pre><code class="java">        new Thread(new Runnable() &#123;
+            @Override
+            public void run() &#123;
+                System.out.println(&quot;开始执行了&quot;);
+            &#125;
+        &#125;).start();
+
+        //    但是使用lamdba的表达式
+        //这里面new Runnable的就是为了实现重写run方法
+        //    所以
+        new Thread(() -&gt; &#123;
+            System.out.println(&quot;我执行了&quot;);
+        &#125;).start();
+</code></pre>
+<p>这样的可读性变差了</p>
+<pre><code>为什么可以这么写
+ 因为虚拟机会给你反推推理出来，记住可推理的就是可以省略的
+ 就像之前的
+         ArrayList&lt;String&gt; strings = new ArrayList&lt;&gt;();//后面的泛型就不用写了
+</code></pre>
+<p>因为只有一个还可以在进行省略</p>
+<pre><code class="java">new Thread(() -&gt; System.out.println(&quot;我执行了&quot;)).start();
+</code></pre>
+<p><strong>Lamdba表达式的使用前提</strong></p>
+<pre><code>必须是函数式接口做方法参数传递
+什么是函数式接口？
+    有且只有一个抽象方法的接口，可以用@FunctionalInterface去检测
+</code></pre>
+<p>例如，这里面的@FunctionalInterface，而且只有一个抽象方法，所以这个Rnnable就可以改造成lamdba接口</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240403223342620.png" alt="image-20240403223342620"></p>
+<p>这个是有口诀的</p>
+<pre><code>a.观察是否函数式接口做方法参数传递
+b.如果是，考虑lamdba表达式
+c.调用方法，以匿名内部类的形式传递形参
+d.从new接口开始到重写的方法的方法名结束。删除，删除括号
+e.在重写方法的参数后面写上-&gt;
+</code></pre>
+<p>省略规则</p>
+<pre><code>a.重写的方法的参数类型可以干掉
+b.如果重写方法只有一个参数,所在的小括号可以省略
+c.如果方法体只有一句，那么所在的大括号和分号去掉
+d.如果只有一句话还是return的，那么return和都能干掉
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240403224711801.png" alt="image-20240403224711801"></p>
 
     </div>
     
