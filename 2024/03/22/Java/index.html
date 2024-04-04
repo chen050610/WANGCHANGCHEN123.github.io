@@ -177,7 +177,7 @@
             
             <span class="tag">
                 
-                <a href="/tags/Java/" style="color: #03a9f4">Java</a>
+                <a href="/tags/Java/" style="color: #00bcd4">Java</a>
             </span>
             
         </span>
@@ -6322,6 +6322,699 @@ c.如果方法体只有一句，那么所在的大括号和分号去掉
 d.如果只有一句话还是return的，那么return和都能干掉
 </code></pre>
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240403224711801.png" alt="image-20240403224711801"></p>
+<p><strong>函数式接口</strong></p>
+<pre><code>函数式接口
+    有且只有一个抽象方法的接口
+检查
+    @FunctionalInterface用在函数式接口上
+</code></pre>
+<p>例如</p>
+<pre><code class="java">package Wei_lomdba;
+
+@FunctionalInterface
+public interface USB &#123;
+    void open(String s);
+&#125;
+</code></pre>
+<pre><code class="java">package Wei_lomdba;
+
+public class Test &#123;
+    public static void main(String[] args) &#123;
+        method(new USB() &#123;
+            @Override
+            public void open(String s) &#123;
+                System.out.println(s+&quot;开启&quot;);
+            &#125;
+        &#125;);
+
+        method((s)-&gt;&#123;
+            System.out.println(s+&quot;开启了&quot;);
+        &#125;);
+
+        method(s-&gt; System.out.println(s+&quot;开启了&quot;));&#125;
+    public static void method(USB usb)&#123;
+        usb.open(&quot;鼠标&quot;);
+    &#125;
+&#125;
+</code></pre>
+<p>这是我们自定义的函数式接口，还有jdk给我们提供的函数式接口</p>
+<pre><code>Supperlier
+    他意味着供给，我们想要什么就给什么
+方法
+    T get() -&gt;我们想要什么，get方法就会返回什么
+需求
+    使用Supperlier接口作为方法的参数
+    用Lamdba表达式求出int数组的最大值
+</code></pre>
+<p>例如</p>
+<pre><code class="java">package Wei_lomdba;
+
+import java.util.Arrays;
+import java.util.function.Supplier;
+
+public class Wei_Supperlier &#123;
+    public static void main(String[] args) &#123;
+        method(new Supplier&lt;Integer&gt;() &#123;
+            @Override
+            public Integer get() &#123;
+                int[] arr = &#123;4,5,6,7&#125;;
+                Arrays.sort(arr);
+                return arr[arr.length-1];
+            &#125;
+        &#125;);
+
+    &#125;
+    public static void  method(Supplier&lt;Integer&gt; supplier)&#123;
+        Integer max =  supplier.get();//让get方法返回一个数组的最大值
+        System.out.println(&quot;最大值为&quot;+max);
+    &#125;
+&#125;
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240404100217349.png" alt="image-20240404100217349"></p>
+<pre><code>supperlier里面有一个get的方法，我们可以把具体的实现写在这里面
+</code></pre>
+<p>然后我们写成lomdba表达式可以写成这样</p>
+<pre><code class="java">package Wei_lomdba;
+
+import java.util.Arrays;
+import java.util.function.Supplier;
+
+public class Wei_Supperlier &#123;
+    public static void main(String[] args) &#123;
+        method(() -&gt;&#123;
+                int[] arr = &#123;4,5,6,7&#125;;
+                Arrays.sort(arr);
+                return arr[arr.length-1];
+        &#125;);
+
+    &#125;
+    public static void  method(Supplier&lt;Integer&gt; supplier)&#123;
+        Integer max =  supplier.get();//让get方法返回一个数组的最大值
+        System.out.println(&quot;最大值为&quot;+max);
+    &#125;
+&#125;
+</code></pre>
+<p>操作的过程</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240404100701078.png" alt="image-20240404100701078"></p>
+<p><strong>Comsumer</strong></p>
+<pre><code>消费性接口
+方法
+    void accept(T t),意思是消费一个指定的泛型的数据
+消费就是操作，至于怎么操作，就看重写的accept方法之后，方法体怎么写了
+</code></pre>
+<p>使用</p>
+<pre><code class="java">package Wei_lomdba;
+
+
+import java.util.function.Consumer;
+
+public class Wei_Consumer &#123;
+    public static void main(String[] args) &#123;
+        method(new Consumer&lt;String&gt;() &#123;
+            @Override
+            public void accept(String s) &#123;
+                System.out.println(s.length());
+            &#125;
+        &#125;,&quot;haha&quot;);
+    &#125;
+    public static void method(Consumer&lt;String&gt; consumer, String s)&#123;
+        consumer.accept(s);
+    &#125;
+&#125;
+</code></pre>
+<p>改为lamdba表达式</p>
+<pre><code class="java">package Wei_lomdba;
+
+
+import java.util.function.Consumer;
+
+public class Wei_Consumer &#123;
+    public static void main(String[] args) &#123;
+        method(s-&gt;&#123;System.out.println(s.length());&#125;,&quot;haha&quot;);&#125;
+    public static void method(Consumer&lt;String&gt; consumer, String s)&#123;
+        consumer.accept(s);
+    &#125;
+&#125;
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240404102358966.png" alt="image-20240404102358966"></p>
+<pre><code>supplier提供返回数据的泛型，consumer提供参数的泛型
+</code></pre>
+<p><strong>Function</strong></p>
+<pre><code>Function&lt;T,R&gt;泛型有两个，接口用来根据一个数据得到另外一个数据的类型
+方法	
+    R apply(T t)根据类型T参数获取类型R的结果
+</code></pre>
+<p>示例</p>
+<pre><code class="java">package Wei_lomdba;
+
+import java.util.function.Function;
+
+public class Wei_Function &#123;
+    public static void main(String[] args) &#123;
+        method(s -&gt; Integer.valueOf(s), &quot;haha&quot;);
+
+        method(new Function&lt;String, Integer&gt;() &#123;
+            @Override
+            public Integer apply(String s) &#123;
+                return Integer.valueOf(s);
+            &#125;
+        &#125;,&quot;haha&quot;);
+    &#125;
+    
+    public static void method(Function&lt;String,Integer&gt; function,String s)&#123;
+        Integer integer = function.apply(s);
+        System.out.println(&quot;转为整数为&quot;+integer);
+    &#125;
+&#125;
+</code></pre>
+<pre><code>supperlier式设置返回值的类型，consumer是获取参数的泛型，Function既可以指定返回值的类型而参数的类型
+</code></pre>
+<p><strong>Predicate</strong></p>
+<pre><code>Function&lt;T&gt;判断型接口
+boolean test(T t)-&gt;用于判断的方法，返回的值是boolean
+</code></pre>
+<p>实现</p>
+<pre><code class="java">package Wei_lomdba;
+
+import java.util.function.Predicate;
+
+public class Wei_Predicate &#123;
+    public static void main(String[] args) &#123;
+        method(i-&gt;&#123;return i&gt;5;&#125;,20);
+        method(new Predicate&lt;Integer&gt;() &#123;
+            @Override
+            public boolean test(Integer integer) &#123;
+                return integer&gt;5;
+            &#125;
+        &#125;,2);
+    &#125;
+    public static void method(Predicate&lt;Integer&gt; predicate,Integer integer)&#123;
+        boolean test = predicate.test(integer);
+        System.out.println(test? &quot;大于5&quot; :&quot;小于等于5&quot;);
+    &#125;
+&#125;
+</code></pre>
+<pre><code>感觉这个可以使用Function替代
+</code></pre>
+<p>使用Function的方法</p>
+<pre><code class="java">package Wei_lomdba;
+
+import java.util.function.Function;
+import java.util.function.Predicate;
+
+public class Wei_Predicate &#123;
+    public static void main(String[] args) &#123;
+        method(i-&gt; i&gt;5,20);
+        method(new Predicate&lt;Integer&gt;() &#123;
+            @Override
+            public boolean test(Integer integer) &#123;
+                return integer&gt;5;
+            &#125;
+        &#125;,2);
+
+        method1(new Function&lt;Integer, Boolean&gt;() &#123;
+            @Override
+            public Boolean apply(Integer integer) &#123;
+                return integer&gt;5;
+            &#125;
+        &#125;,10);
+
+        method1(i-&gt; i&gt;5 ,10);
+    &#125;
+    public static void method(Predicate&lt;Integer&gt; predicate,Integer integer)&#123;
+        boolean test = predicate.test(integer);
+        System.out.println(test? &quot;大于5&quot; :&quot;小于等于5&quot;);
+    &#125;
+    public static void method1(Function&lt;Integer,Boolean&gt; function,Integer integer)&#123;
+        Boolean apply = function.apply(integer);
+        System.out.println(apply? &quot;大于5&quot; :&quot;小于等于5&quot;);
+    &#125;
+&#125;
+</code></pre>
+<pre><code>这四个单独可能不会拿出来用，但是可以配合stream流使用
+</code></pre>
+<p><strong>Stream流</strong></p>
+<pre><code>Stream流中的不是特指IO流，他指的是一种编程方式，可以看做流水线，
+</code></pre>
+<p>例如</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240404105930448.png" alt="image-20240404105930448"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240404110119293.png" alt="image-20240404110119293"></p>
+<p>我们可以用Stream写</p>
+<p>例如</p>
+<pre><code class="java">package Wei_stream;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
+
+public class demo &#123;
+    public static void main(String[] args) &#123;
+        ArrayList&lt;String&gt; strings = new ArrayList&lt;&gt;();
+        Collections.addAll(strings,&quot;王昌晨&quot;,&quot;王少杰&quot;,&quot;王绍英&quot;,&quot;胡英俊&quot;,&quot;胡图图&quot;,&quot;王晓&quot;);
+        Stream&lt;String&gt; stream = strings.stream();
+        stream.filter(new Predicate&lt;String&gt;() &#123;
+            @Override
+            public boolean test(String s) &#123;
+                return s.startsWith(&quot;王&quot;);
+            &#125;
+        &#125;).filter(new Predicate&lt;String&gt;() &#123;
+            @Override
+            public boolean test(String s) &#123;
+                return s.length() == 3;
+            &#125;
+        &#125;).forEach(new Consumer&lt;String&gt;() &#123;
+            @Override
+            public void accept(String s) &#123;
+                System.out.println(s);
+            &#125;
+        &#125;);
+    &#125;
+&#125;
+</code></pre>
+<p>而且还可以改成lamdba表达式</p>
+<p>使用以后</p>
+<pre><code class="java">ArrayList&lt;String&gt; strings = new ArrayList&lt;&gt;();
+Collections.addAll(strings,&quot;王昌晨&quot;,&quot;王少杰&quot;,&quot;王绍英&quot;,&quot;胡英俊&quot;,&quot;胡图图&quot;,&quot;王晓&quot;);
+Stream&lt;String&gt; stream = strings.stream();
+stream.filter( s -&gt; s.startsWith(&quot;王&quot;)).filter(s-&gt;s.length() == 3).forEach(s-&gt; System.out.println(s));
+</code></pre>
+<p>其实就是一个链式调用</p>
+<p><strong>Stream的获取</strong></p>
+<pre><code>针对集合 : Collection中的方法
+    Stream&lt;E&gt; stream()
+针对数组:Stream接口中的静态方法
+    static &lt;T&gt; Stream&lt;T&gt; of(T...values)
+</code></pre>
+<pre><code class="java">ArrayList&lt;String&gt; list = new ArrayList&lt;&gt;();
+Collections .addAll(list,&quot;张三&quot;,&quot;李四&quot;,&quot;王五&quot;);
+Stream&lt;String&gt; stream = list.stream();
+System.out.println(stream);
+
+使用静态方法of获取stream对象
+Stream&lt;String&gt; stream1 = Stream.of(&quot;金莲&quot;, &quot;三少&quot;, &quot;王五&quot;, &quot;礼物&quot;);
+System.out.println(stream1)
+</code></pre>
+<p><strong>Stream对象的方法</strong></p>
+<p><strong>forEach</strong></p>
+<pre><code>void forEach(Cunsomer&lt;? super T&gt; action);
+注意forEach方法是一个终结方法，使用完以后stream流就使用不了了
+逐一处理
+</code></pre>
+<p>例如</p>
+<pre><code class="java">Stream&lt;String&gt; stream = Stream.of(&quot;王昌晨&quot;, &quot;哈哈哈&quot;, &quot;真帅&quot;, &quot;真的哈哈哈&quot;);
+stream.forEach(s-&gt;System.out.println(s));
+</code></pre>
+<p><strong>count方法</strong></p>
+<pre><code>作用:统计元素个数
+注意:count也是一个终结方法
+long count()
+</code></pre>
+<pre><code class="java">        Stream&lt;String&gt; stream = Stream.of(&quot;王昌晨&quot;, &quot;哈哈哈&quot;, &quot;真帅&quot;, &quot;真的哈哈哈&quot;);
+//        stream.forEach(s-&gt;System.out.println(s));
+        long count = stream.count();
+        System.out.println(count);//4
+</code></pre>
+<p><strong>filter方法</strong></p>
+<pre><code>Stream&lt;T&gt; filter(Predicate&lt;? super T&gt; predicate)方法，返回一个新的stream流对象
+作用:根据某条件进行筛选
+</code></pre>
+<pre><code class="java">Stream&lt;String&gt; stream = Stream.of(&quot;王昌晨&quot;, &quot;哈哈哈&quot;, &quot;真帅&quot;, &quot;真的哈哈哈&quot;);
+
+stream.filter(new Predicate&lt;String&gt;() &#123;
+    @Override
+    public boolean test(String s) &#123;
+        return s.startsWith(&quot;王&quot;);
+    &#125;
+&#125;).forEach(new Consumer&lt;String&gt;() &#123;
+    @Override
+    public void accept(String s) &#123;
+        System.out.println(s);
+    &#125;
+&#125;);
+</code></pre>
+<pre><code class="java">Stream&lt;String&gt; stream = Stream.of(&quot;王昌晨&quot;, &quot;哈哈哈&quot;, &quot;真帅&quot;, &quot;真的哈哈哈&quot;);
+
+stream.filter(s -&gt; s.startsWith(&quot;王&quot;)).forEach(s-&gt;System.out.println(s));
+</code></pre>
+<p><strong>limit方法</strong></p>
+<pre><code>Stream&lt;T&gt; limit(long maxsize):获取Stream流对象的前n个元素，返回一个新的Stream对象
+</code></pre>
+<pre><code class="java">Stream&lt;String&gt; stream = Stream.of(&quot;王昌晨&quot;, &quot;哈哈哈&quot;, &quot;真帅&quot;, &quot;真的哈哈哈&quot;);
+Stream&lt;String&gt; limit = stream.limit(2);
+limit.forEach(s-&gt; System.out.println(s));//王昌晨，哈哈哈
+</code></pre>
+<p><strong>skip方法</strong></p>
+<pre><code>Stream &lt;T&gt; skip(long n) :跳过Stream流对象的前n个元素，返回一个新的Stream的对象
+</code></pre>
+<pre><code class="java">        Stream&lt;String&gt; stream = Stream.of(&quot;王昌晨&quot;, &quot;哈哈哈&quot;, &quot;真帅&quot;, &quot;真的哈哈哈&quot;);
+
+        Stream&lt;String&gt; skip = stream.skip(1);
+        skip.forEach(s-&gt; System.out.println(s) );
+
+        //哈哈哈
+        //真帅
+        //真的哈哈哈
+</code></pre>
+<p><strong>concat方法</strong></p>
+<pre><code>static &lt;T&gt; Stream &lt;T&gt; concat(Stream&lt;? extends T&gt; a,Stream&lt;? extends T&gt; b):俩个流合成一起 
+</code></pre>
+<p>例如，这个concat是一个静态的方法</p>
+<pre><code class="java">Stream&lt;String&gt; stream = Stream.of(&quot;王昌晨&quot;, &quot;哈哈哈&quot;, &quot;真帅&quot;, &quot;真的哈哈哈&quot;);
+Stream&lt;String&gt; stream1 = Stream.of(&quot;haha&quot;);
+Stream.concat(stream1,stream).forEach(s-&gt; System.out.println(s));
+//haha
+//王昌晨
+//哈哈哈
+//真帅
+//真的哈哈
+</code></pre>
+<p><strong>将Stream转为列表</strong></p>
+<p>​	</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240404124630549.png" alt="image-20240404124630549"></p>
+<p>这里面可以变成很多种</p>
+<pre><code class="java">Stream&lt;String&gt; stream = Stream.of(&quot;王昌晨&quot;, &quot;哈哈哈&quot;, &quot;真帅&quot;, &quot;真的哈哈哈&quot;);
+List&lt;String&gt; collect = stream.collect(Collectors.toList());
+System.out.println(collect);//[王昌晨, 哈哈哈, 真帅, 真的哈哈哈]
+</code></pre>
+<p><strong>dinstinct方法</strong></p>
+<pre><code>Stream&lt;T&gt; distinct()
+元素去重复，依赖hashCode和equals，所以 去重的元素的底层需要重写hashCode和euqals方法
+</code></pre>
+<pre><code class="java">        Stream&lt;String&gt; stream = Stream.of(&quot;王昌晨&quot;, &quot;哈哈哈&quot;, &quot;真帅&quot;, &quot;真的哈哈哈&quot;,&quot;王昌晨&quot;);
+        stream.distinct().forEach(s -&gt; System.out.println(s));
+    //王昌晨
+    //哈哈哈
+    //真帅
+</code></pre>
+<p>如果每一个是对象的话</p>
+<pre><code class="java">package Wei_stream;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+@Data
+@AllArgsConstructor
+public class Person &#123;
+    private String name;
+    private Integer age;
+&#125;
+</code></pre>
+<pre><code class="java">Stream&lt;Person&gt; stream = Stream.of(new Person(&quot;王昌晨&quot;, 18), new Person(&quot;王昌晨&quot;, 18), new Person(&quot;黎明&quot;, 19));
+stream.distinct().forEach(s-&gt; System.out.println(s));
+</code></pre>
+<pre><code class="java">输出结果
+    Person(name=王昌晨, age=18)
+    Person(name=黎明, age=19)
+</code></pre>
+<p><strong>转换流中的类型</strong></p>
+<pre><code>Stream&lt;R&gt; map(Function &lt;T,R&gt; mapper)-&gt;转换流中的数据类型
+</code></pre>
+<p>例如</p>
+<pre><code class="java">Stream&lt;Integer&gt; stream = Stream.of(1, 2, 3, 4, 5, 6);
+stream.map(new Function&lt;Integer, String&gt;() &#123;
+    @Override
+    public String apply(Integer integer) &#123;
+        return integer+&quot;&quot;;
+    &#125;
+&#125;).forEach(i-&gt; System.out.println(i));
+</code></pre>
+<p>使用lamdba表达式</p>
+<pre><code class="java">Stream&lt;Integer&gt; stream = Stream.of(1, 2, 3, 4, 5, 6);
+stream.map(integer-&gt;integer+&quot;&quot;).forEach(i-&gt; System.out.println(i));
+</code></pre>
+<p><strong>方法引用</strong></p>
+<pre><code>概述
+    引用方法
+使用
+    被引用的方法要写在重写方法里
+    被引用的方法从参数，返回值上要和所在重写方法一致，而且引用的方法最好是操作重写方法的参数值的
+    在lamdba表达式的基础上，去掉重写的参数，去掉-&gt;，去掉引用方法的参数，将被引方法的.改成::
+</code></pre>
+<pre><code class="java">        Stream&lt;String&gt; stream = Stream.of(&quot;王昌晨&quot;, &quot;王俊凯&quot;, &quot;王直义&quot;, &quot;马超&quot;, &quot;黄忠&quot;);
+//         stream.forEach(
+//             /*
+//             accept是重写方法:参数类型String
+//                            没有返回值
+//               在accept里面println是方法，println参数类型是String,被引用的方法操作重写方法的参数值，println没有返回值
+//               就可以引用println方法
+//
+//              */
+//            (String s)-&gt;System.out.println(s));
+         stream.forEach(System.out::println);
+         //王昌晨
+        //王俊凯
+        //王直义
+        //马超
+        //黄忠
+</code></pre>
+<pre><code>println方法写在重写方法的里面，而且返回值类型和参数类型和重写的一致，这样我们就可以使用方法的使用
+</code></pre>
+<p><strong>引用对象成员方法</strong></p>
+<pre><code>格式
+    ::成员方法名
+需求
+    函数式接口:supperlier
+    java.until.function.Suppelier&lt;T&gt;接口
+    抽象方法
+        T get() :用来获取一个泛型参数指定类型的数据
+        Supperlier接口使用什么泛型，就可以使用get方法获取一个什么样的数据
+</code></pre>
+<p>例如</p>
+<pre><code class="java">    method(new Supplier&lt;String&gt;() &#123;
+        /*
+        get为重写方法，无参的返回值为String
+        trim方法在get中，无参的而且返回值也是String
+        所以get可以引用trim
+         */
+        @Override
+        public String get() &#123;
+            return &quot; abc &quot;.trim();
+        &#125;
+    &#125;);
+&#125;
+public static void  method(Supplier&lt;String&gt; supplier)&#123;
+    String s = supplier.get();
+    System.out.println(&quot;s=&quot;+s);
+&#125;
+</code></pre>
+<p>先变成lamdba</p>
+<pre><code class="java">        method( ()-&gt; &quot; abc &quot;.trim());
+</code></pre>
+<p>在使用方法的引用</p>
+<pre><code class="java">       method(&quot; abc &quot;::trim);
+</code></pre>
+<p><strong>引用静态方法</strong></p>
+<pre><code>类名--引用静态成员方法
+    格式
+        类名::静态成员方法
+</code></pre>
+<p>例如下面的代码</p>
+<pre><code class="java">package Wei_method;
+
+import java.util.function.Supplier;
+
+public class Demo2 &#123;
+    public static void main(String[] args) &#123;
+        method(new Supplier&lt;Double&gt;() &#123;
+            @Override
+            public Double get() &#123;
+                return Math.random();
+            &#125;
+        &#125;);
+    &#125;
+    public static void  method(Supplier&lt;Double&gt; supplier)&#123;
+        Double aDouble = supplier.get();
+        System.out.println(&quot;adoule=&quot;+aDouble);
+    &#125;
+&#125;
+</code></pre>
+<p>可以先变成lamdba表达式</p>
+<pre><code class="java"> method(()-&gt;Math.random());
+</code></pre>
+<ul>
+<li>都是无参返回值类型为double</li>
+</ul>
+<pre><code class="java">    public static void main(String[] args) &#123;
+        method(()-&gt;Math.random());
+        method(Math::random);
+    &#125;
+    public static void  method(Supplier&lt;Double&gt; supplier)&#123;
+        Double aDouble = supplier.get();
+        System.out.println(&quot;adoule=&quot;+aDouble);
+    &#125;
+</code></pre>
+<p><strong>构造引用</strong></p>
+<p>例如</p>
+<pre><code class="java">package Wei_method;
+
+import java.util.function.Function;
+
+public class Demo3 &#123;
+    public static void main(String[] args) &#123;
+        method(new Function&lt;String, Person&gt;() &#123;
+            /*
+
+             */
+            @Override
+            public Person apply(String s) &#123;
+                return new Person(s);
+            &#125;
+        &#125;,&quot;王昌晨&quot;);
+        method( s -&gt; new Person(s),&quot;王昌晨&quot;);
+    &#125;
+    public static  void method(Function&lt;String,Person&gt; function,String name)&#123;
+        Person person = function.apply(name);
+        System.out.println(person);
+    &#125;
+&#125;
+</code></pre>
+<p>改为方法的引用</p>
+<pre><code class="java">method( Person::new,&quot;王昌晨&quot;);
+</code></pre>
+<p>构造方法名：：new</p>
+<p><strong>数组引用</strong></p>
+<pre><code>格式
+    数组的数据类型[]::new
+    int[]::new//创建一个为int的数组
+    double[]::new //创建一个为double的数组
+</code></pre>
+<p>例如</p>
+<pre><code class="java">package Wei_method;
+
+import java.util.Arrays;
+import java.util.function.Function;
+
+public class Demo4 &#123;
+    public static void main(String[] args) &#123;
+        method(new Function&lt;Integer, int[]&gt;() &#123;
+            @Override
+            public int[] apply(Integer integer) &#123;
+                return new int[integer];
+            &#125;
+        &#125;,6);
+
+        //变成lamdba表达式
+        method( integer-&gt; new int[integer],6);
+
+        //在变成引用的形式
+        method(  int[]::new,6);
+    &#125;
+
+
+
+
+
+
+    public static  void method(Function&lt;Integer,int[]&gt; function,Integer integer)&#123;
+        int[] apply = function.apply(integer);
+        System.out.println(Arrays.toString(apply));
+    &#125;
+&#125;
+</code></pre>
+<ul>
+<li>就可以把这个[integer]看作参数的那个位置</li>
+</ul>
+<p><strong>JDK8以后的新特性</strong></p>
+<p>jdk8中接口新型两种方法</p>
+<ul>
+<li>公共的默认方法</li>
+<li>公共的静态方法</li>
+</ul>
+<p><strong>接口中的私有方法</strong></p>
+<p>例如</p>
+<pre><code class="java">package Wei_src;
+
+public interface USB &#123;
+    private void open()&#123;
+        System.out.println(&quot;私有静态方法&quot;);
+    &#125;
+    private static void close()&#123;
+        System.out.println(&quot;私有静态方法&quot;);
+    &#125;
+
+    //定义的=一个默认方法·调用私有方法
+    public default void methodOpen()&#123;
+        open();
+    &#125;
+    public default void methodClose()&#123;
+        close();
+    &#125;
+&#125;
+</code></pre>
+<p>在</p>
+<pre><code class="java">package Wei_src;
+
+public class Demo &#123;
+    public static void main(String[] args) &#123;
+
+        new usb().methodOpen();
+        new usb().methodClose();
+    &#125;
+&#125;
+class usb implements USB&#123;
+&#125;
+</code></pre>
+<ul>
+<li>这个说一下接口的默认方法，这个实现的接口可以不用实现这个方法，这样实例以后直接调用接口里这个方法</li>
+</ul>
+<p><strong>钻石操作符和匿名内部类</strong></p>
+<pre><code>钻石操作符就是泛型&lt;&gt;
+</code></pre>
+<p>匿名内部类里的泛型可以省略</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240404202555829.png" alt="image-20240404202555829"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240404202612474.png" alt="image-20240404202612474"></p>
+<p><strong>try catch的升级</strong><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240404204851302.png" alt="image-20240404204851302"></p>
+<p>io流new写在外面</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240404204950256.png" alt="image-20240404204950256"></p>
+<p><strong>局部变量的类型的自动推断</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240404205029701.png" alt="image-20240404205029701"></p>
+<p>定义局部变量的时候可以不用指定类型</p>
+<p>使用var声明，然后虚拟机会进行推断</p>
+<p><strong>switch表达式</strong></p>
+<p>之前的写法</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240404205209697.png" alt="image-20240404205209697"></p>
+<p>现在的写法</p>
+<p>我们的case可以写很多个</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240404205237960.png" alt="image-20240404205237960"></p>
+<p>如果不想写break的话</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240404205323414.png" alt="image-20240404205323414"></p>
+<p>使用箭头</p>
+<p><strong>yield语句</strong></p>
+<p>switch的返回值</p>
+<p>之前想要拿到switch的结果</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240404205459937.png" alt="image-20240404205459937"></p>
+<p>提前先定义一个变量然后再赋值</p>
+<p>现在的就可以这样写</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240404205552874.png" alt="image-20240404205552874"></p>
+<p><strong>文本块</strong></p>
+<p>如果我们想要代码写出这段文字</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240404205636402.png" alt="image-20240404205636402"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240404205643933.png" alt="image-20240404205643933"></p>
+<p>就要不断的加换行符这样体验不太好</p>
+<p>所以出现</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240404205725585.png" alt="image-20240404205725585"></p>
+<p>这样写也会正常的输出，而且注意，正文的那一行必须和第一个”””换行</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240404205817645.png" alt="image-20240404205817645"></p>
+<p><strong>instanceof模式匹配</strong></p>
+<p>之前判断以后在强转<img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240404205918391.png" alt="image-20240404205918391"></p>
+<p>现在的需要直接在instanceof直接强转</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240404210011634.png" alt="image-20240404210011634"></p>
+<p><strong>Record类</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240404210029480.png" alt="image-20240404210029480"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240404210151602.png" alt="image-20240404210151602"></p>
+<p>而且自动给你提供了equals和hashCode，用的不多</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240404210224813.png" alt="image-20240404210224813"></p>
+<p><strong>密封类</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240404210300579.png" alt="image-20240404210300579"></p>
+<pre><code>密封类的概念就是我让谁可以继承我，谁才可以继承我
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240404210343527.png" alt="image-20240404210343527"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240404210416148.png" alt="image-20240404210416148"></p>
+<p>前面的sealed就是指定为密封类，permits限定哪个类可以继承</p>
+<p>而且在指定子类中必须指定他为非密封</p>
 
     </div>
     
