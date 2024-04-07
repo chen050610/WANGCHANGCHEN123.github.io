@@ -186,7 +186,7 @@
             
             <span class="tag">
                 
-                <a href="/tags/PS3/" style="color: #00bcd4">PS3</a>
+                <a href="/tags/PS3/" style="color: #ff7d73">PS3</a>
             </span>
             
             <span class="tag">
@@ -263,7 +263,6 @@
             name:&#39;王昌晨&#39;,
             age:18
         &#125;
-
     &#125;)//参数是配置的，不能够更改，而且里冕宁是对像，只能使用几个指定的值
 
 
@@ -395,8 +394,7 @@
 <p>就是我有一个obj对象里面有x的属性，而我想通过另外一个对象obj2来进行读取</p>
 <p>最简单的数据代理</p>
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240121195114669.png" alt="image-20240121195114669"></p>
-<p>代码如</p>
-<p>下</p>
+<p>代码如下</p>
 <pre><code class="html">&lt;!DOCTYPE html&gt;
 &lt;html lang=&quot;en&quot;&gt;
 &lt;head&gt;
@@ -416,7 +414,6 @@
         set(value)&#123;
             obj.x=value//如果obj2的县发生改变那么1里的也会改变
         &#125;
-
     &#125;)
 &lt;/script&gt;
 
@@ -432,10 +429,8 @@
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240121201010800.png" alt="image-20240121201010800"></p>
 <p>如果vm里是这样的话那么</p>
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240121201108335.png" alt="image-20240121201108335"></p>
-<p>这里就得这么写了</p>
-<p>但是可为什么之前我们就直接写name和age什么的了</p>
-<p>不用在前面加上data了；在前面之前讲过里的参数都是vm里面的变量按时vm 里没有name什么的参数只有在data立面有这写</p>
-<p>，那么这个如何实现的呢？</p>
+<p>这里就得这么写了但是可为什么之前我们就直接写name和age什么的了</p>
+<p>不用在前面加上data了；在前面之前讲过里的参数都是vm里面的变量按时vm 里没有name什么的参数只有在data立面有这写,那么这个如何实现的呢？</p>
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240121201429255.png" alt="image-20240121201429255"></p>
 <p>然后就是使用到了数据代理</p>
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240121201429255-17058392877701.png"></p>
