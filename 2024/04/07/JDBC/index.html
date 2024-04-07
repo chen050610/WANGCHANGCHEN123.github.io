@@ -185,8 +185,44 @@
 -MYBabtis
 -HIBERNATE
 -spring DATa JPA
-上面框架的d原理是jdbc
+上面框架的底层原理是jdbc
 </code></pre>
+<p><strong>学习路线</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240407190556982.png" alt="image-20240407190556982"></p>
+<p><strong>技术讲解</strong></p>
+<pre><code>为什么买的键盘和鼠标在任何的电脑上都可以使用
+    因为都遵循一个原则USB标准
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240407191925243.png" alt="image-20240407191925243"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240407191957912.png" alt="image-20240407191957912"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240407192042158.png" alt="image-20240407192042158"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240407192239839.png" alt="image-20240407192239839"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240407192301488.png" alt="image-20240407192301488"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240407192331614.png" alt="image-20240407192331614"></p>
+<p><img src="/JDBC.assets/image-20240407192622390.png" alt="image-20240407192622390"></p>
+<p><strong>核心的API</strong></p>
+<pre><code>DriverMangager
+    将第三方数据库厂商的实习驱动jar注册到程序中
+    可以根据数据库连接信息获取connection
+Connection;
+    和数据库建立的连接。在连接对象上，可以多次执行数据库的curd动作
+    可以获取statement和preparestatement,callablestatement对象
+statement |	preparestatement | callablestatement
+    具体发送sql语句到数据库管理软件的对象
+    不同发送方式稍有不同 preparestatement最为重点
+result
+    查询的结果
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240407193454160.png" alt="image-20240407193454160"></p>
+<pre><code>一般使用第二种路线
+</code></pre>
+<pre><code>使用8版本的mysql-jdbc驱动
+    主流版本
+    支持jdk8的全新语法	
+</code></pre>
+<ul>
+<li>引用jar包</li>
+</ul>
 
     </div>
     
