@@ -177,7 +177,7 @@
             
             <span class="tag">
                 
-                <a href="/tags/MySql/" style="color: #00a596">MySql</a>
+                <a href="/tags/MySql/" style="color: #00bcd4">MySql</a>
             </span>
             
         </span>
@@ -736,7 +736,98 @@ select address,count(*) addresscount from users where age&lt;45 group by  addres
 </code></pre>
 <p>这样返回的是对应的字段名和数量</p>
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240407182030690.png" alt="image-20240407182030690"></p>
-<p>19</p>
+<p><strong>排序查询</strong></p>
+<pre><code class="sql">关键字
+order by
+
+
+select 字段列表 from 表名 order by 字段1 排序方式 ，字段2 排序方式2;
+
+排序方式
+ASC升序(默认值)
+DESC降序
+</code></pre>
+<pre><code class="sql">select * from emp order by age asc;//根据年龄进行升序排列，这里的可以省略
+select * from emp order by age desc;//根据年龄进行降序排列
+</code></pre>
+<pre><code class="sql">根据年龄升序，年龄的相同，再按照入职的事件降序排列
+select * from emp order by age asc , entryDate desc;
+</code></pre>
+<p><strong>分页查询</strong></p>
+<pre><code class="sql">关键字
+limit
+
+
+select 字段 from 表 limit 起始的索引 ,查询的记录数;
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240408102125146.png" alt="image-20240408102125146"></p>
+<pre><code class="sql">查询第一页的数据，每页展示10条数据
+select * from emp limit 0,10;
+select * from emp limit 10;//或者使用简写、
+
+查询第二页的的员工数据，每页展示10条，
+select * from emp limit 10,10;
+</code></pre>
+<p>练习</p>
+<pre><code class="sql">查询年龄为20.21，23 的女性
+select * from emp where gender = &#39;女&#39; and age in (20,21,23);
+
+性别男，年龄在20-40，姓名为3个字
+select * from emp where gender = &#39;男&#39; and age between 20 and 40 and name like &#39;___&#39;;
+
+统计员工年龄小于60，男性员工和女性员工的数量
+select gender , count(*) from emp where age &lt; 60 group by gneder;
+
+查询年龄小于等于35的性别和年龄，并且对查询的年龄按照升序。如果年龄相同按照入职时间的降序
+select gender , age from emp where age&lt;35 order by age asc , entryDate desc;
+
+查询性别为男，且年龄在20-40岁以内的前五个员工信息，对查询的结果按照年龄升序排列，年龄相同按照入职时间升序排列,
+select * from emp where gender = &#39;男&#39; and age between 20 and 40  order by  age , entryDate limit 5; 
+这里一定注意limit一定要写在最后
+</code></pre>
+<pre><code class="sql">between and 包括边际
+</code></pre>
+<p><strong>DQL语句执行顺序</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240408104109841.png" alt="image-20240408104109841"></p>
+<p><strong>DCL语句</strong></p>
+<pre><code>用于管理数据库的用户，控制数据库的访问权限
+</code></pre>
+<p><strong>查询MySql用户</strong></p>
+<pre><code class="sql">概述
+    mysql的用户信息保存在mysql这张库里面的user
+    use mysql;
+    select  * from user;
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240408104828519.png" alt="image-20240408104828519"></p>
+<pre><code>前面的
+    Host代表访问的主机,代表用户可以在哪个主机访问，，这个代表，root用户只能在localhost访问
+</code></pre>
+<p><strong>创建user</strong></p>
+<pre><code class="sql">create user &#39;用户名‘@’主机名&#39; identified by &#39;密码&#39;
+</code></pre>
+<p>例如</p>
+<pre><code class="sql">create user &#39;test&#39;@&#39;localhost&#39; identified by &#39;test&#39;
+</code></pre>
+<p>这样创建的权限是都没有的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240408105424929.png" alt="image-20240408105424929"></p>
+<p>我们可以去看一下登陆一下这个账号，访问的权限有限</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240408105604250.png" alt="image-20240408105604250"></p>
+<pre><code class="sql">可以在任意的主机都能访问数据库
+create user &#39;test1&#39;@&#39;%&#39; identified by &#39;test1&#39;;使用%
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240408105819049.png" alt="image-20240408105819049"></p>
+<p><strong>修改用户密码</strong></p>
+<pre><code class="sql">alter user &#39;用户‘@’主机&#39; identified with mysql_native_password by &#39;新密码&#39;;
+</code></pre>
+<pre><code class="sql">alter user &#39;test&#39;@&#39;localhost&#39; identified with mysql_native_password by &#39;12345&#39;;
+</code></pre>
+<p><strong>删除用户</strong></p>
+<pre><code class="sql">drop user &#39;&#39;
+</code></pre>
+<pre><code class="sql">drop user &#39;test1&#39;@&#39;%&#39;;
+</code></pre>
+<p><strong>权限控制</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240408110454633.png" alt="image-20240408110454633"></p>
 
     </div>
     
