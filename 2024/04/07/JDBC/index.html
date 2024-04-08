@@ -1,0 +1,1262 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <meta charset="utf-8" />
+    <title>JDBC | 哈哈哈哈哈哈哈重生之我是兵王</title>
+    <meta name="author" content="chenw" />
+    <meta name="description" content="description" />
+    <meta name="keywords" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+	<canvas id="fireworks" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 32767"></canvas>
+	<script src="https://cdn.staticfile.org/animejs/3.2.1/anime.min.js"></script>
+	<script src="/js/fireworks.min.js"></script>
+	<canvas id="background" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: -1"></canvas>
+	<script src="/js/background.min.js"></script>
+	<div id="cursor"></div>
+	<link rel="stylesheet" href="/css/cursor.min.css">
+	<script src="/js/cursor.min.js"></script>
+    <link rel="icon" href="/images/avatar.jpg" />
+    <link rel="preconnect" href="https://cdn.staticfile.org" />
+<script src="https://cdn.staticfile.org/vue/3.3.7/vue.global.prod.min.js"></script>
+<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/6.4.2/css/all.min.css" />
+<link rel="preconnect" href="https://fonts.loli.net" />
+<link rel="preconnect" href="https://gstatic.loli.net" crossorigin />
+<link rel="stylesheet" href="https://fonts.loli.net/css2?family=Fira+Code:wght@400;500;600;700&family=Lexend:wght@400;500;600;700;800;900&family=Noto+Sans+SC:wght@400;500;600;700;800;900&display=swap" />
+<script> const mixins = {}; </script>
+
+<script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+
+
+<script src="https://cdn.staticfile.org/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdn.staticfile.org/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></script>
+<link
+    rel="stylesheet"
+    href="https://cdn.staticfile.org/highlight.js/11.9.0/styles/github.min.css"
+/>
+<script src="/js/lib/highlight.js"></script>
+
+
+
+<script src="/js/lib/preview.js"></script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/main.css" />
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+    <div id="layout">
+        <transition name="fade">
+            <div id="loading" v-show="loading">
+                <div id="loading-circle">
+                    <h2>LOADING</h2>
+                    <p>加载过慢请开启缓存 浏览器默认开启</p>
+                    <img src="/images/loading.gif" />
+                </div>
+            </div>
+        </transition>
+        <div id="menu" :class="{ hidden: hiddenMenu, 'menu-color': menuColor}">
+    <nav id="desktop-menu">
+        <a class="title" href="/">
+            <span>哈哈哈哈哈哈哈重生之我是兵王</span>
+        </a>
+        
+        <a href="/">
+            <i class="fa-solid fa-house fa-fw"></i>
+            <span>&ensp;Home</span>
+        </a>
+        
+        <a href="/about">
+            <i class="fa-solid fa-id-card fa-fw"></i>
+            <span>&ensp;About</span>
+        </a>
+        
+        <a href="/archives">
+            <i class="fa-solid fa-box-archive fa-fw"></i>
+            <span>&ensp;Archives</span>
+        </a>
+        
+        <a href="/categories">
+            <i class="fa-solid fa-bookmark fa-fw"></i>
+            <span>&ensp;Categories</span>
+        </a>
+        
+        <a href="/tags">
+            <i class="fa-solid fa-tags fa-fw"></i>
+            <span>&ensp;Tags</span>
+        </a>
+        
+    </nav>
+    <nav id="mobile-menu">
+        <div class="title" @click="showMenuItems = !showMenuItems">
+            <i class="fa-solid fa-bars fa-fw"></i>
+            <span>&emsp;哈哈哈哈哈哈哈重生之我是兵王</span>
+        </div>
+        <transition name="slide">
+            <div class="items" v-show="showMenuItems">
+                
+                <a href="/">
+                    <div class="item">
+                        <div style="min-width: 20px; max-width: 50px; width: 10%">
+                            <i class="fa-solid fa-house fa-fw"></i>
+                        </div>
+                        <div style="min-width: 100px; max-width: 150%; width: 20%">Home</div>
+                    </div>
+                </a>
+                
+                <a href="/about">
+                    <div class="item">
+                        <div style="min-width: 20px; max-width: 50px; width: 10%">
+                            <i class="fa-solid fa-id-card fa-fw"></i>
+                        </div>
+                        <div style="min-width: 100px; max-width: 150%; width: 20%">About</div>
+                    </div>
+                </a>
+                
+                <a href="/archives">
+                    <div class="item">
+                        <div style="min-width: 20px; max-width: 50px; width: 10%">
+                            <i class="fa-solid fa-box-archive fa-fw"></i>
+                        </div>
+                        <div style="min-width: 100px; max-width: 150%; width: 20%">Archives</div>
+                    </div>
+                </a>
+                
+                <a href="/categories">
+                    <div class="item">
+                        <div style="min-width: 20px; max-width: 50px; width: 10%">
+                            <i class="fa-solid fa-bookmark fa-fw"></i>
+                        </div>
+                        <div style="min-width: 100px; max-width: 150%; width: 20%">Categories</div>
+                    </div>
+                </a>
+                
+                <a href="/tags">
+                    <div class="item">
+                        <div style="min-width: 20px; max-width: 50px; width: 10%">
+                            <i class="fa-solid fa-tags fa-fw"></i>
+                        </div>
+                        <div style="min-width: 100px; max-width: 150%; width: 20%">Tags</div>
+                    </div>
+                </a>
+                
+            </div>
+        </transition>
+    </nav>
+</div>
+<transition name="fade">
+    <div id="menu-curtain" @click="showMenuItems = !showMenuItems" v-show="showMenuItems"></div>
+</transition>
+
+        <div id="main" :class="loading ? 'into-enter-from': 'into-enter-active'">
+            <div class="article">
+    <div>
+        <h1>JDBC</h1>
+    </div>
+    <div class="info">
+        <span class="date">
+            <span class="icon">
+                <i class="fa-solid fa-calendar fa-fw"></i>
+            </span>
+            2024/4/7
+        </span>
+        
+        
+    </div>
+    
+    <div class="content" v-pre>
+        <p>摘要</p>
+<span id="more"></span>
+
+<p>正文</p>
+<h1 id="JDBC学习"><a href="#JDBC学习" class="headerlink" title="JDBC学习"></a>JDBC学习</h1><p>为什么学习JDBC</p>
+<pre><code>java连接数据库必要桥梁
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240407190127243.png"></p>
+<pre><code>原生的jdbc操作数据库会很复杂
+一般选择第三方框架操作
+-MYBabtis
+-HIBERNATE
+-spring DATa JPA
+上面框架的底层原理是jdbc
+</code></pre>
+<p><strong>学习路线</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240407190556982.png" alt="image-20240407190556982"></p>
+<p><strong>技术讲解</strong></p>
+<pre><code>为什么买的键盘和鼠标在任何的电脑上都可以使用
+    因为都遵循一个原则USB标准
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240407191925243.png" alt="image-20240407191925243"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240407191957912.png" alt="image-20240407191957912"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240407192042158.png" alt="image-20240407192042158"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240407192239839.png" alt="image-20240407192239839"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240407192301488.png" alt="image-20240407192301488"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240407192331614.png" alt="image-20240407192331614"></p>
+<p><img src="/JDBC.assets/image-20240407192622390.png" alt="image-20240407192622390"></p>
+<p><strong>核心的API</strong></p>
+<pre><code>DriverMangager
+    将第三方数据库厂商的实习驱动jar注册到程序中
+    可以根据数据库连接信息获取connection
+Connection;
+    和数据库建立的连接。在连接对象上，可以多次执行数据库的curd动作
+    可以获取statement和preparestatement,callablestatement对象
+statement |	preparestatement | callablestatement
+    具体发送sql语句到数据库管理软件的对象
+    不同发送方式稍有不同 preparestatement最为重点
+result
+    查询的结果
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240407193454160.png" alt="image-20240407193454160"></p>
+<pre><code>一般使用第二种路线
+</code></pre>
+<pre><code>使用8版本的mysql-jdbc驱动
+    主流版本
+    支持jdk8的全新语法	
+</code></pre>
+<ul>
+<li>引用jar包</li>
+</ul>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240407195342942.png" alt="image-20240407195342942"></p>
+<p>操作</p>
+<ul>
+<li>注册驱动，依赖jar包，进行安装</li>
+<li>建立连接</li>
+<li>创建连接发送sql语句对象statement，</li>
+<li>statement对象(小汽车),发送到sql语句到数据库，并且获取返回的结果</li>
+<li>解析结果</li>
+<li>销毁资源</li>
+</ul>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240407200110455.png" alt="image-20240407200110455"></p>
+<p>注意在注册的驱动的时候我们应该选择这个包</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240407202039089.png" alt="image-20240407202039089"></p>
+<pre><code>快速生成局部变量
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240407204015742.png" alt="image-20240407204015742"></p>
+<p>代码</p>
+<pre><code class="java">package wei_statement;
+
+import com.mysql.cj.jdbc.Driver;
+
+import java.sql.*;
+
+public class StatementQueryPart &#123;
+
+    /*
+    * DriverManger
+    * connection
+    * statement
+    * resultSet
+    * */
+    public static void main(String[] args) throws SQLException &#123;
+        //1.注册驱动
+        /*注册驱动
+        依赖：驱动版本 8+ com.mysql.cj.Driver
+            驱动版本 5+ com.mysql.jdbc.Driver
+        * */
+        DriverManager.registerDriver(new Driver());
+        /*
+        * todo
+        *  java程序和数据库创建连接，肯定调用某种方法，方法也需要填入连接数据库的基本信息
+        *   数据ip地址
+        *   端口号
+        *   账号
+        *   密码
+        *   连接数据库的名称
+        * */
+        //2.获取连接
+        /*
+        *   参数1，url jdbc:数据库厂商://ip:端口/数据库名
+        *   参数2：username 数据的账号 root
+        *   参数3 password 数据库软件的密码 root
+        * */
+        Connection connection = DriverManager.getConnection(&quot;jdbc:mysql://127.0.0.1:3306/jbdc&quot;, &quot;root&quot;, &quot;root&quot;);
+        //3.创建statement
+        Statement statement = connection.createStatement();
+        //4.发送sql语句，并且获取返回
+        String sql = &quot;select * from t_user&quot;;
+        ResultSet resultSet = statement.executeQuery(sql);
+        //5.进行结果 解析
+        //如果有下一行
+        while (resultSet.next())&#123;
+            //根据因为id字段是数字，使用getInt
+            int id = resultSet.getInt(&quot;id&quot;);
+            //根据因为account是字符串，使用getString
+            String account = resultSet.getString(&quot;account&quot;);
+            String password = resultSet.getString(&quot;password&quot;);
+            String nickname = resultSet.getString(&quot;nickname&quot;);
+            System.out.println(id+&quot;__&quot;+account+&quot;__&quot;+password+&quot;___&quot;+nickname);
+        &#125;
+        //6.关闭资源
+        //从后往前关
+        resultSet.close();
+        statement.close();
+        connection.close();
+    &#125;
+&#125;
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240407204809444.png" alt="image-20240407204809444"></p>
+<p>在这里关注一下细节的问题</p>
+<p>我们在注册驱动的时候</p>
+<pre><code class="java">        DriverManager.registerDriver(new Driver());
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240407210258160.png" alt="image-20240407210258160"></p>
+<p>点击去看一下</p>
+<p>有一个静态的代码块</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240407210326554.png" alt="image-20240407210326554"></p>
+<p>在这里也会注册一次的驱动</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240407210440804.png" alt="image-20240407210440804"></p>
+<p>这样出现效率的问题，解决的方法</p>
+<pre><code>我们之触发静态代码块即可，那怎么触发静态代码块
+    类加载机制: 类加载时候，会触发
+                加载[class文件-&gt; jvm虚拟机的class对象的过程]
+                连接[验证(检查文件的类型)-&gt;准备(静态变量的默认值) -&gt; 解析(触发静态代码块)]
+                初始化 (静态属性赋真实值)
+                
+        只要触发第二步的解析就可以了
+    触发类加载
+        1.new 关键字
+        2.调用静态方法和属性
+        3.接口 default默认实现
+        4.反射
+        5.子类触发父类
+        6.程序的main方法
+</code></pre>
+<pre><code class="java">我们可以直接写
+        DriverManager.registerDriver(new Driver());
+替换成
+        new Driver();//这样的写法是写死的，如果我们在使用别的数据库，这样也会换
+替换成,利用反射
+       Class.forName(&quot;com.mysql.cj.jdbc.Driver&quot;);//这样也可以触发静态代码块，而且这个还不是写死的，可以把这个字符产你放在外部的配置文件，然后动态的安装相应的驱动
+</code></pre>
+<p>在我们连接的时候有三种的不同的getConnection</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240407212349715.png" alt="image-20240407212349715"></p>
+<p>讲解下不同</p>
+<pre><code class="java">三个参数的
+    url:数据库所在的信息，连接的具体库，以及其他的可选的信息
+        格式 :: jdbc:数据库的类型(例如mysql)://ip:端口/具体的数据库名字?key=value &amp; key = 			value 后米的参数是可选的信息
+        jdbc:mysql://127.0.0.1:3306/jdbc
+        本机的省略写法:如果你的数据库安装在本机，可以进行一些省略
+        jdbc:mysql:///jdbc    //省略IP和端口端口3306菜可以省
+    user:数据库的账号
+    password:数据库的密码
+ 两个参数
+        url:和三个参数的url一样
+        prop:这里面放账号密码 
+        例如
+        Properties properties = new Properties();
+        properties.put(&quot;user&quot;,&quot;root&quot;);
+        properties.put(&quot;password&quot;,&quot;root&quot;);
+        DriverManager.getConnection(&quot;jbdc:mysql:///jbdc&quot;,properties);
+一个的参数
+        url: 数据库ip,端口号，具体的实现，后面的参数位置(账号密码)
+         jdbc:数据库的类型://ip:port/数据名？key = value &amp; key = value;
+        DriverManager.getConnection(&quot;jdbc:mysql:///jdbc?user=root&amp;password=root&quot;);
+    参数的名字是固定的
+</code></pre>
+<pre><code class="java">url路径后面的可选信息,下面的是可选的 user= &amp;password= &amp;serverTimezone=ASia/Shanghai&amp;suseUnicode=true&amp;characterEncoding=utf8&amp;useSSL=true
+    在8版本以后的驱动后面serverTimezone=ASia/Shanghai是自动识别的
+    8以后suseUnicode=true&amp;characterEncoding=utf8默认utf-8,所以这个可以省略
+    
+</code></pre>
+<p><strong>实现登录接口的实例</strong></p>
+<p>我们看见发送sql语句主要有两个函数</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240408113158648.png" alt="image-20240408113158648"></p>
+<pre><code class="java">ResultSet resultSet = statement.executeQuery(sql);
+int i = statement.executeUpdate(sql);
+</code></pre>
+<p>返回值也是不同的 </p>
+<p>查看源码</p>
+<pre><code>这里再复习一下sql语句的分类
+    DDL(表库的创建删除，和修改)
+    DML(数据的插入，修改删除) alter insert delete
+    DQL(查询语句)select
+    DCL(权限控制) 
+    TPL(事务控制语句)
+</code></pre>
+<pre><code>int i = statement.executeUpdate(sql);
+参数
+    sql 非DQL
+    返回的  结果是int类型
+        情况一:DML 返回影响的函数，例如删除2，就会返回2
+        情况二:非DML语句 返回0
+ResultSet resultSet = statement.executeQuery(sql);
+    sql：DQL语句
+        返回的结果	
+            resultSe是结果集合
+怎么解析resultSet
+</code></pre>
+<p>比如说</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240408115458889.png" alt="image-20240408115458889"></p>
+<p>我们查询的结果是这样的</p>
+<p>那么在resultSet是什么格式</p>
+<pre><code>java面向对象思维
+     把查询的结果封装成一个对象
+     内部也一定有行有列
+     
+     
+     我们获取数据应该是一行一行的获取
+     在拿到行里每一个的列的数据
+</code></pre>
+<p>看一下源码</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240408120004528.png" alt="image-20240408120004528"></p>
+<p>解释，类似于迭代器的next</p>
+<pre><code class="java">将游标向前移动一行，从其当前位置。一个 ResultSet 的游标最初位于第一行之前；对 next 方法的第一次调用将使第一行成为当前行；第二次调用将使第二行成为当前行，依此类推。当调用 next 方法返回 false 时，游标位于最后一行之后。对任何需要当前行的 ResultSet 方法的调用将导致抛出 SQLException。如果结果集类型为 TYPE_FORWARD_ONLY，则由 JDBC 驱动程序实现指定在后续对 next 的调用中是否返回 false 或抛出 SQLException。如果当前行有一个输入流打开，对 next 方法的调用将隐式关闭它。在读取新行时，ResultSet 对象的警告链将被清除
+</code></pre>
+<p>现在通过游标获取到行的数据，默认的获取第一行的之前的数据，如果有很多行，我们可以使用循环来获取</p>
+<p>还有其他的方法</p>
+<pre><code class="sql">relative(int rows)//像前面移动
+有很多的方法，只需要next即可
+</code></pre>
+<p>获取列的数据</p>
+<p>在方法里有很多的get方法</p>
+<p>这样可以获取相应类型字段的数据，参数列的名字或者别名</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240408121109119.png" alt="image-20240408121109119"></p>
+<pre><code>这里面有两个，一个是根据列的索引，一个是根据列的名字
+</code></pre>
+<p>下面实现</p>
+<pre><code class="java">package wei_statement;
+
+import com.mysql.cj.jdbc.Driver;
+
+import java.sql.*;
+import java.util.Properties;
+import java.util.Scanner;
+
+public class Userlogin &#123;
+    /*
+    *模拟登录
+    * 反馈登陆成功和失败
+    *
+    * 键盘输入事件，手机账号密码信息
+    * 注册驱动
+    * 获取获取连接
+    * 创建statement
+    * 发送查询，获取结构
+    * 结果判断
+    *  */
+    public static void main(String[] args) throws SQLException, ClassNotFoundException &#123;
+        //获取用户的信息
+        Scanner scanner = new Scanner(System.in);
+        System.out.println(&quot;请输入账号:&quot;);
+        String account = scanner.nextLine();
+        System.out.println(&quot;请输入密码:&quot;);
+        String password = scanner.nextLine();
+        //注册驱动
+        Class.forName(&quot;com.mysql.cj.jdbc.Driver&quot;);
+        //创建连接
+        Connection connection = DriverManager.getConnection(&quot;jdbc:mysql:///jbdc&quot;, &quot;root&quot;, &quot;root&quot;);
+        //获取statement对象发送sql和接受结果,statement
+        Statement statement = connection.createStatement();
+
+//        4.发送sql语句
+        String sql  = &quot;select * from t_user where account=&#39;&quot;+account+&quot;&#39; and password=&#39;&quot;+password+&quot;&#39;;&quot;;
+        System.out.println(sql);
+        ResultSet resultSet = statement.executeQuery(sql);
+//        只要移动了一行的光标，就代表数据库有这个数据
+        if (resultSet.next())&#123;
+            System.out.println(&quot;登录成功&quot;);
+        &#125; else &#123;
+            System.out.println(&quot;登录失败&quot;);
+        &#125;
+        resultSet.close();
+        statement.close();
+        connection.close();
+    &#125;
+&#125;
+</code></pre>
+<p><strong>之前的statement只适合执行静态的sql语句，但是执行动态的视情况语句就会出现问题</strong></p>
+<p>比如</p>
+<p>我们上面实现登录的</p>
+<pre><code class="java">        String sql  = &quot;select * from t_user where account=&#39;&quot;+account+&quot;&#39; and password=&#39;&quot;+password+&quot;&#39;;&quot;;//这个sql语句只能拼接字符串的类型，如果password是int类型，拼接以后也会成为string的类型
+//这样的拼接也很麻烦
+//而且还会出现注入工具
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240408122419525.png" alt="image-20240408122419525"></p>
+<p><strong>所以需要preparedStatement</strong></p>
+<pre><code class="java">package wei_statement;
+
+import java.sql.*;
+import java.util.Scanner;
+
+/*
+*
+* */
+public class PrepareStatementLogin &#123;
+    public static void main(String[] args) throws ClassNotFoundException, SQLException &#123;
+        Scanner scanner = new Scanner(System.in);
+        System.out.println(&quot;请输入账号:&quot;);
+        String account = scanner.nextLine();
+        System.out.println(&quot;请输入密码:&quot;);
+        String password = scanner.nextLine();
+        Class.forName(&quot;com.mysql.cj.jdbc.Driver&quot;);
+        Connection connection = DriverManager.getConnection(&quot;jdbc:mysql://127.0.0.1:3306/jbdc&quot;, &quot;root&quot;, &quot;root&quot;);
+
+
+        /*prepareStatement
+         1.编写sql语句 不包含动态值的部分 ，动态值的部分使用占位符 ？ 代替 注意；？只能替代动态值的部分 比如id = ?
+         2.创建prepareStatement，并且传入动态的值
+         3.动态值 占位符 赋值 ？ 单独赋值即可
+         4.发送sql语句，获取返返回的结果
+        * */
+        String sql = &quot;select * from t_user where account =? and password = ? &quot;;
+        //        创建预编译的statement并且设置sql语句的结果
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+
+        //        单独的占位符进行赋值
+        /*注意这里的占位符的 参数1 从1 开始
+                         参数2  object 占位符的值
+        * */
+        preparedStatement.setObject(1,account);
+        preparedStatement.setObject(2,password);
+
+        //6.发送sql语句，并且返回结果、
+        /*和之前的statement是一样的，就是不用参数了
+        * */
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if (resultSet.next())&#123;
+            System.out.println(&quot;成功&quot;);
+        &#125; else &#123;
+            System.out.println(&quot;失败&quot;);
+        &#125;
+    &#125;
+&#125;
+</code></pre>
+<p>这样的有注入也不会害怕了</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240408124424663.png" alt="image-20240408124424663"></p>
+<ul>
+<li>因为他会识别哪个是值哪个是sql语句</li>
+</ul>
+<p>为什么呢？</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240408124551446.png" alt="image-20240408124551446"></p>
+<p>因为</p>
+<pre><code>prepareStatement这个预先已经知道sql语句的结构
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240408124713946.png" alt="image-20240408124713946"></p>
+<pre><code>这个是知道sql语句的结构，这样在传入注入佛如语句只会d&#39;na
+</code></pre>
+<p><strong>基于preparStatement的对数据库的增删改查</strong></p>
+<p>进行增删查改的操作</p>
+<pre><code class="java">package wei_statement;
+
+import org.junit.Test;
+
+import java.sql.*;
+import java.util.ArrayList;
+
+public class prepareStatementCurd &#123;
+    @Test
+    public void testInsert() throws ClassNotFoundException, SQLException &#123;
+        /*
+        t_user表插入提条数据
+        account test
+        password test
+        nickname 二狗子
+        * */
+        Class.forName(&quot;com.mysql.cj.jdbc.Driver&quot;);
+        Connection connection = DriverManager.getConnection(&quot;jdbc:mysql://127.0.0.1:3306/jbdc&quot;, &quot;root&quot;, &quot;root&quot;);
+        String sql = &quot;insert into t_user(account,password,nickname) values (?,?,?)&quot;;
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.setObject(1,&quot;test&quot;);
+        preparedStatement.setObject(2,&quot;test&quot;);
+        preparedStatement.setObject(3,&quot;二狗子&quot;);
+        int rows = preparedStatement.executeUpdate();
+        if (rows &gt; 0)&#123;
+            System.out.println(&quot;添加成功&quot;);
+        &#125; else &#123;
+            System.out.println(&quot;数据插入失败&quot;);
+        &#125;
+    &#125;
+    @Test
+    public void testUpdate() throws ClassNotFoundException, SQLException &#123;
+        Class.forName(&quot;com.mysql.cj.jdbc.Driver&quot;);
+        Connection connection = DriverManager.getConnection(&quot;jdbc:mysql://127.0.0.1:3306/jbdc&quot;, &quot;root&quot;, &quot;root&quot;);
+        String sql = &quot;update t_user set nickname = ? where account = ?&quot;;
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.setObject(1,&quot;三狗子&quot;);
+        preparedStatement.setObject(2,&quot;test&quot;);
+        int rows = preparedStatement.executeUpdate();
+        if (rows&gt;0)&#123;
+            System.out.println(&quot;修改成功&quot;);
+        &#125; else &#123;
+            System.out.println(&quot;修改失败&quot;);
+        &#125;
+    &#125;
+    @Test
+    public void testDelete() throws ClassNotFoundException, SQLException &#123;
+        Class.forName(&quot;com.mysql.cj.jdbc.Driver&quot;);
+        Connection connection = DriverManager.getConnection(&quot;jdbc:mysql:///jbdc&quot;, &quot;root&quot;, &quot;root&quot;);
+        String sql = &quot;delete from t_user where account=?&quot;;
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.setObject(1,&quot;test&quot;);
+        int i = preparedStatement.executeUpdate();
+        if(i &gt; 0)
+        &#123;
+            System.out.println(&quot;删除成功&quot;);
+        &#125; else &#123;
+            System.out.println(&quot;删除失败&quot;);
+        &#125;
+
+    &#125;
+    @Test
+    public void testSelect() throws ClassNotFoundException, SQLException &#123;
+        Class.forName(&quot;com.mysql.cj.jdbc.Driver&quot;);
+        Connection connection = DriverManager.getConnection(&quot;jdbc:mysql://127.0.0.1:3306/jbdc&quot;, &quot;root&quot;, &quot;root&quot;);
+        String sql = &quot;select * from t_user&quot;;
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        ArrayList&lt;String&gt; accounts = new ArrayList&lt;&gt;();
+        ArrayList&lt;String&gt; passwords = new ArrayList&lt;&gt;();
+        ArrayList&lt;String&gt; nicknames = new ArrayList&lt;&gt;();
+        while(resultSet.next())&#123;
+            String account = resultSet.getString(&quot;account&quot;);
+            String password = resultSet.getString(&quot;password&quot;);
+            String nickname = resultSet.getString(&quot;nickname&quot;);
+            System.out.println(account);
+            System.out.println(password);
+            System.out.println(nickname);
+            accounts.add(account);
+            passwords.add(password);
+            nicknames.add(nickname);
+        &#125;
+        System.out.println(accounts);
+        System.out.println(passwords);
+        System.out.println(nicknames);
+    &#125;
+
+&#125;
+</code></pre>
+<p>这样把这个存在列表里</p>
+<pre><code class="java">ResultSetMetaData metaData = resultSet.getMetaData();//获取行的信息
+int columnCount = metaData.getColumnCount();//获取行的数目
+String columnLabel = metaData.getColumnLabel(i);//根据索引获取字段的名称，有别名获取的是别名
+String columnLabel = metaData.getColumnName(i);//获取字段的名字，这个只能获取真正的列名
+</code></pre>
+<pre><code class="java">        Class.forName(&quot;com.mysql.cj.jdbc.Driver&quot;);
+        Connection connection = DriverManager.getConnection(&quot;jdbc:mysql://127.0.0.1:3306/jbdc&quot;, &quot;root&quot;, &quot;root&quot;);
+        String sql = &quot;select * from t_user&quot;;
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        ArrayList&lt;Map&gt; list = new ArrayList&lt;&gt;();
+        /*
+        *    metaData这里装的是列的信息就是字段，可以获取数量，和名称
+        * */
+        ResultSetMetaData metaData = resultSet.getMetaData();
+        int columnCount = metaData.getColumnCount();
+        System.out.println(&quot;列的数目&quot;+columnCount);
+        while(resultSet.next())&#123;
+            Map  map = new HashMap&lt;&gt;();
+            //在这里的获取列是从一开始，所以遍历需要这么写
+            for (int i = 1; i &lt;= columnCount; i++) &#123;
+                Object value = resultSet.getObject(i);
+    //            getColumnLabel: 会获取别名 如果没有别名才是列的名称，不要使用getColummName,这样获取的只是列名
+                String columnLabel = metaData.getColumnLabel(i);
+                map.put(columnLabel,value);
+            &#125;
+            list.add(map);
+        &#125;
+        System.out.println(list);
+</code></pre>
+<p><strong>全新的JDBC扩展提升</strong></p>
+<pre><code>主键自增长
+    一般我们设置的都是主键自增长，我们的有时候是要获取自增长的主键
+</code></pre>
+<p>需求</p>
+<pre><code class="java">插入一条数据，并且获取插入数据的自增的id
+    之前我们可以通过DQL获取id的值
+</code></pre>
+<p>获取主键</p>
+<pre><code class="java">package wei_statement;
+
+import java.sql.*;
+
+public class returnPrimaryKey &#123;
+    public static void main(String[] args) throws ClassNotFoundException, SQLException &#123;
+        Class.forName(&quot;com.mysql.cj.jdbc.Driver&quot;);
+        Connection connection = DriverManager.getConnection(&quot;jdbc:mysql:///jbdc&quot;,&quot;root&quot;,&quot;root&quot;);
+        String sql = &quot;insert into t_user(account,password,nickname) values(?,?,?);&quot;;
+        //告诉返回主键
+        PreparedStatement preparedStatement = connection.prepareStatement(sql, 1);
+        preparedStatement.setObject(1,&quot;hututu&quot;);
+        preparedStatement.setObject(2,&quot;wei3588559&quot;);
+        preparedStatement.setObject(3,&quot;hututu&quot;);
+        int i = preparedStatement.executeUpdate();
+        if (i&gt;0)&#123;
+            System.out.println(&quot;数据插入成功&quot;);
+
+            //获取主键
+            //获取结果集对象，而且这里的数据还是固定的，只能是一行一列
+            ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+            generatedKeys.next();
+            int id = generatedKeys.getInt(1);//获取第一列的数据
+            System.out.println(&quot;主键为&quot;+id);
+        &#125; else &#123;
+            System.out.println(&quot;插入失败&quot;);
+        &#125;
+        preparedStatement.close();
+        connection.close();
+
+    &#125;
+&#125;
+</code></pre>
+<pre><code class="java">PreparedStatement preparedStatement = connection.prepareStatement(sql, 1);//第二个参数为1，告诉数据库要获取主键的值，需要返回
+ResultSet generatedKeys = preparedStatement.getGeneratedKeys();//通过这个获取结果集，这个结果是一行一列的，所以我们先移动光标，然后在根据索引获取值
+generatedKeys.next();
+int id = generatedKeys.getInt(1);//获取第一列的数据
+</code></pre>
+<p><strong>批量插入数据</strong></p>
+<p>利用循环插入</p>
+<pre><code class="java">        Class.forName(&quot;com.mysql.cj.jdbc.Driver&quot;);
+        Connection connection = DriverManager.getConnection(&quot;jdbc:mysql:///jbdc&quot;,&quot;root&quot;,&quot;root&quot;);
+        String sql = &quot;insert into t_user(account,password,nickname) values(?,?,?);&quot;;
+        //告诉返回主键
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        long l = System.currentTimeMillis();
+        for (int i = 0; i &lt; 1000; i++) &#123;
+            preparedStatement.setObject(1,&quot;hututu&quot;+i);
+            preparedStatement.setObject(2,&quot;wei3588559&quot;+i);
+            preparedStatement.setObject(3,&quot;hututu&quot;+i);
+            //发送
+            preparedStatement.executeUpdate();
+        &#125;
+        long l1 = System.currentTimeMillis();
+        System.out.println(&quot;花费的时间为&quot;+(l1-l));
+        preparedStatement.close();
+        connection.close();
+</code></pre>
+<pre><code>最后花费
+花费的时间为3472
+</code></pre>
+<p>使用批量插入以后</p>
+<p>代码这样写</p>
+<pre><code class="java">package wei_statement;
+
+import org.junit.Test;
+
+import java.sql.*;
+
+public class returnPrimaryKey &#123;
+    public static void main(String[] args) throws ClassNotFoundException, SQLException &#123;
+        Class.forName(&quot;com.mysql.cj.jdbc.Driver&quot;);
+        Connection connection = DriverManager.getConnection(&quot;jdbc:mysql:///jbdc&quot;,&quot;root&quot;,&quot;root&quot;);
+        String sql = &quot;insert into t_user(account,password,nickname) values(?,?,?);&quot;;
+        //告诉返回主键
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        long l = System.currentTimeMillis();
+        for (int i = 0; i &lt; 1000; i++) &#123;
+            preparedStatement.setObject(1,&quot;hututu&quot;+i);
+            preparedStatement.setObject(2,&quot;wei3588559&quot;+i);
+            preparedStatement.setObject(3,&quot;hututu&quot;+i);
+            //发送
+            preparedStatement.executeUpdate();
+        &#125;
+        long l1 = System.currentTimeMillis();
+        System.out.println(&quot;花费的时间为&quot;+(l1-l));
+        preparedStatement.close();
+        connection.close();
+    &#125;
+    @Test
+    public void func() throws ClassNotFoundException, SQLException &#123;
+        Class.forName(&quot;com.mysql.cj.jdbc.Driver&quot;);
+        Connection connection = DriverManager.getConnection(&quot;jdbc:mysql:///jbdc?rewriteBatchedStatements=true&quot;,&quot;root&quot;,&quot;root&quot;);
+        String sql = &quot;insert into t_user(account,password,nickname) values(?,?,?)&quot;;
+        //告诉返回主键
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        long l = System.currentTimeMillis();
+        for (int i = 0; i &lt; 1000; i++) &#123;
+            preparedStatement.setObject(1,&quot;hututu&quot;+i);
+            preparedStatement.setObject(2,&quot;wei3588559&quot;+i);
+            preparedStatement.setObject(3,&quot;hututu&quot;+i);
+            //发送
+            preparedStatement.addBatch();//不执行追加到value的后面
+        &#125;
+        preparedStatement.executeBatch();//最后在统一的批量追加
+        long l1 = System.currentTimeMillis();
+        System.out.println(&quot;花费的时间为&quot;+(l1-l));
+        preparedStatement.close();
+        connection.close();
+    &#125;
+&#125;
+</code></pre>
+<pre><code class="java">首先
+ 需要在参数的位置加上rewriteBatchedStatements=true
+     jdbc:mysql:///jbdc?rewriteBatchedStatements=true
+ 然后记住因为是追加的，所以sql语句结束的时候不要加分号
+String sql = &quot;insert into t_user(account,password,nickname) values(?,?,?)&quot;;
+这里的原理不是每条每条阿添加，而是先不断的追加，然后在统一的执行
+注意
+reparedStatement.addBatch();//不执行追加到value的后面
+
+
+这个才是最后的追加
+preparedStatement.executeBatch();//最后在统一的批量追加
+</code></pre>
+<p>这次花费的时间</p>
+<pre><code class="java">花费的时间为64
+</code></pre>
+<p>显然效率提高了	</p>
+<p><strong>JBDC中的数据库事务实现</strong></p>
+<pre><code>事务的概念
+    数据库事务是一种sql语句执行的缓存机制，不会单条执行完毕以后就更新数据库的数据
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240408200740348.png" alt="image-20240408200740348"></p>
+<pre><code>就比如银行的转账
+    A给B转账，但是A的余额发生改变但是B的余额没有改变，要是事务的化，需要A和B的都成功以后，数据库的数据才会更改
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240408201035395.png" alt="image-20240408201035395"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240408201120952.png" alt="image-20240408201120952"></p>
+<pre><code>我们现在都是第一种，都是一个语句放事务里面然后提交
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240408201242071.png" alt="image-20240408201242071"></p>
+<p>在jdbc里面如何关闭自动提交呢？</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240408201343500.png" alt="image-20240408201343500"></p>
+<p>实现转账的功能</p>
+<pre><code class="java">package wei_statement;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+public class BankDao &#123;
+    public void add(String account,int money) throws ClassNotFoundException, SQLException &#123;
+        Class.forName(&quot;com.mysql.cj.jdbc.Driver&quot;);
+        Connection connection = DriverManager.getConnection(&quot;jdbc:mysql:///jbdc&quot;, &quot;root&quot;, &quot;root&quot;);
+        String sql = &quot;update t_bank set money = money+? where account=?&quot;;
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.setObject(1,money);
+        preparedStatement.setObject(2,account);
+        int i = preparedStatement.executeUpdate();
+        if (i &gt;0)&#123;
+            System.out.println(&quot;加钱成功&quot;);
+        &#125;
+        preparedStatement.close();
+        connection.close();
+
+    &#125;
+    public void sub(String account,int money) throws ClassNotFoundException, SQLException &#123;
+        Class.forName(&quot;com.mysql.cj.jdbc.Driver&quot;);
+        Connection connection = DriverManager.getConnection(&quot;jdbc:mysql:///jbdc&quot;, &quot;root&quot;, &quot;root&quot;);
+        String sql = &quot;update t_bank set money = money-? where account=?&quot;;
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.setObject(1,money);
+        preparedStatement.setObject(2,account);
+        int i = preparedStatement.executeUpdate();
+        if (i&gt;0)&#123;
+            System.out.println(&quot;减钱成功&quot;);
+        &#125;
+        preparedStatement.close();
+        connection.close();
+
+    &#125;
+&#125;
+</code></pre>
+<pre><code class="java">package wei_statement;
+import org.junit.Test;
+import java.sql.SQLException;
+public class BankService &#123;
+    public void transfer(String AddCount,String SubAccount,int money) throws SQLException, ClassNotFoundException &#123;
+        BankDao bankDao = new BankDao();
+        bankDao.add(AddCount,money);
+        bankDao.sub(SubAccount,money);
+    &#125;
+    @Test
+    public void func() throws SQLException, ClassNotFoundException &#123;
+        //转钱的操作
+        transfer(&quot;lvdandna&quot;,&quot;ergouzi&quot;,200);
+    &#125;
+&#125;
+</code></pre>
+<p>注意当我们</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240408203820708.png" alt="image-20240408203820708"></p>
+<p>这里为0的时候再继续转</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240408203854465.png" alt="image-20240408203854465"></p>
+<p>会有报错，但是加钱的操作还是成功了</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240408203918261.png" alt="image-20240408203918261"></p>
+<pre><code>原因就是因为他们在两个事务的里面
+所以我们需要这两个事件绑在一个事务里面，一个发生错误的话，这样整个事务都不会提交
+</code></pre>
+<p>这次我们使用事务</p>
+<p>代码的更改如下</p>
+<pre><code class="java">package wei_statement;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+public class BankDao &#123;
+    public void add(String account,int money,Connection connection) throws ClassNotFoundException, SQLException &#123;
+        String sql = &quot;update t_bank set money = money+? where account=?&quot;;
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.setObject(1,money);
+        preparedStatement.setObject(2,account);
+        int i = preparedStatement.executeUpdate();
+        if (i &gt;0)&#123;
+            System.out.println(&quot;加钱成功&quot;);
+        &#125;
+        preparedStatement.close();
+    &#125;
+    public void sub(String account,int money,Connection connection) throws ClassNotFoundException, SQLException &#123;
+        String sql = &quot;update t_bank set money = money-? where account=?&quot;;
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.setObject(1,money);
+        preparedStatement.setObject(2,account);
+        int i = preparedStatement.executeUpdate();
+        if (i&gt;0)&#123;
+            System.out.println(&quot;减钱成功&quot;);
+        &#125;
+        preparedStatement.close();
+    &#125;
+&#125;
+</code></pre>
+<pre><code class="java">package wei_statement;
+
+import org.junit.Test;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+public class BankService &#123;
+    public void transfer(String AddCount,String SubAccount,int money) throws SQLException, ClassNotFoundException &#123;
+        BankDao bankDao = new BankDao();
+        Class.forName(&quot;com.mysql.cj.jdbc.Driver&quot;);
+        Connection connection = DriverManager.getConnection(&quot;jdbc:mysql:///jbdc&quot;, &quot;root&quot;, &quot;root&quot;);
+        try &#123;
+            //开启事务
+            //关闭事务提交，改为手动提交
+            connection.setAutoCommit(false);
+            //执行数据库的动作
+            //执行数据库的
+            bankDao.add(AddCount,money,connection);
+            bankDao.sub(SubAccount,money,connection);
+            //事务的提交
+            connection.commit();
+
+        &#125; catch (Exception e)&#123;
+            //事务回滚
+            connection.rollback();
+            throw e;
+        &#125; finally &#123;
+            connection.close();
+        &#125;
+    &#125;
+    @Test
+    public void func() throws SQLException, ClassNotFoundException &#123;
+        //转钱的操作
+        transfer(&quot;lvdandna&quot;,&quot;ergouzi&quot;,200);
+    &#125;
+&#125;
+</code></pre>
+<p>当</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240408205427665.png" alt="image-20240408205427665"></p>
+<p>我们在执行</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240408205446055.png" alt="image-20240408205446055"></p>
+<p>数据库</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240408205453019.png" alt="image-20240408205453019"></p>
+<pre><code>事务添加在业务的方法的里面
+</code></pre>
+<p><strong>国货之光Druid连接池的技术使用</strong></p>
+<pre><code>连接性能消耗
+数据库连接池的工作原理
+</code></pre>
+<p>比如说</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240408210032088.png" alt="image-20240408210032088"></p>
+<pre><code>t是连接花费的事件，t2操作的时间，t3是关闭的时间，第二种的情况就是非常不合理的
+浪费	,所以我们可以使用池的概念
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240408210245953.png" alt="image-20240408210245953"></p>
+<pre><code>我们可以在池子里创建几个连接使用的时候去池子里面取，然后不想用再去池子里面回收，这样节约了响应的时间
+</code></pre>
+<pre><code>连接池有很多的第三方
+</code></pre>
+<p>但是java里面规范连接池的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240408210500300.png" alt="image-20240408210500300"></p>
+<pre><code>Druid的是国货的,功能性能好，扩展的方法多
+</code></pre>
+<p>有两种一种是硬编码，还有一种是软编码</p>
+<pre><code>硬编码，是在代码里面配置一些必要的参数
+软编码，是把配置写在配置文件的里面，
+推荐软编码
+</code></pre>
+<p>这是硬编码的形式</p>
+<pre><code class="java">package Wei_Druid;
+
+import com.alibaba.druid.pool.DruidDataSource;
+import com.alibaba.druid.pool.DruidPooledConnection;
+import org.junit.Test;
+
+import java.sql.SQLException;
+
+
+/*
+* 创建一个连接池对象
+* 设置连接池的参数
+* 获取连接
+* 回收连接
+* */
+public class Use_druid &#123;
+    @Test
+    public void testHard() throws SQLException &#123;
+        //连接池对象
+        DruidDataSource dataSource = new DruidDataSource();
+        //设置参数
+        //连接的驱动| url |user|password
+        //非必须的参数    初始化的数量 ，最大 的连接的数量
+        dataSource.setUrl(&quot;jdbc:mysql://127.0.0.1:3306/jbdc&quot;);
+        dataSource.setUsername(&quot;root&quot;);
+        dataSource.setPassword(&quot;root&quot;);
+        dataSource.setDriverClassName(&quot;com.mysql.cj.jdbc.Driver&quot;);
+        //        dataSource.setInitialSize(5);
+        //        dataSource.setMaxActive(10);
+
+        DruidPooledConnection connection = dataSource.getConnection();
+        //数据库的操作
+        //        connection.prepareStatement()
+        //回收数据库
+        connection.close();
+    &#125;
+&#125;
+</code></pre>
+<p><strong>软编码的形式</strong></p>
+<pre><code class="java">    @Test
+    public void testSoft() throws Exception &#123;
+        //读取外部
+        Properties properties = new Properties();
+        //src下的文件可以使用类加载器提供的方法获取输入流
+        InputStream resourceAsStream = Use_druid.class.getClassLoader().getResourceAsStream(&quot;druid.properties&quot;);
+        properties.load(resourceAsStream);
+
+
+        DataSource dataSource = DruidDataSourceFactory.createDataSource(properties);
+
+        //获取连接
+        Connection connection = dataSource.getConnection();
+        //数据库的操作
+        connection.close();
+    &#125;
+</code></pre>
+<p>配置文件的几个特殊的字段</p>
+<pre><code class="java">driverClassName=com.mysql.cj.jdbc.Driver
+username=root
+password=root
+url=jdbc:mysql://127.0.0.1:3306/jbdc
+</code></pre>
+<p><strong>JDBC的使用优化以及工具类封装</strong></p>
+<pre><code>我们封装一个工具类，内部包含连接池对象，同时对外提供连接的方式和回收连接的方法
+</code></pre>
+<p>封装的代码</p>
+<pre><code class="java">package utils;
+
+
+import com.alibaba.druid.pool.DruidDataSourceFactory;
+
+import javax.sql.DataSource;
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Properties;
+
+/*
+*
+* 实现
+* 属性    连接池对象【只实例化一次】
+*               单列模式
+*               静态代码块
+* 方法
+*       对外提供连接的方法
+*       回收外部传入连接方法
+*
+* */
+public class jdbcUtils  &#123;
+    private  static DataSource dataSource= null;
+    static &#123;
+        //初始化连接池对象
+        Properties properties = new Properties();
+        InputStream resourceAsStream = jdbcUtils.class.getClassLoader().getResourceAsStream(&quot;druid.properties&quot;);
+        try &#123;
+            properties.load(resourceAsStream);
+        &#125; catch (IOException e) &#123;
+            throw new RuntimeException(e);
+        &#125;
+        try &#123;
+            dataSource = DruidDataSourceFactory.createDataSource(properties);
+        &#125; catch (Exception e) &#123;
+            throw new RuntimeException(e);
+        &#125;
+    &#125;
+    /*
+    * 对外提供连接的地方
+    *
+    * */
+    public static Connection getConnect() throws SQLException &#123;
+        return dataSource.getConnection();
+
+    &#125;
+    public static void  freeConnection(Connection connection) throws Exception&#123;
+        connection.close();
+    &#125;
+
+&#125;
+</code></pre>
+<p>然后我们就可以用这个工具包</p>
+<pre><code class="java">package Wei_Druid;
+
+import utils.jdbcUtils;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+
+public class Demo &#123;
+    public static void main(String[] args) throws Exception &#123;
+        Connection connect = jdbcUtils.getConnect();
+        //执行数据库的curd操作
+         jdbcUtils.freeConnection(connect);
+    &#125;
+&#125;
+</code></pre>
+<p>现在还是有一些的问题</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240408215107075.png" alt="image-20240408215107075"></p>
+<p>在这里我们只要调用就会返回一盒新的连接</p>
+<p>比如说之前的银行的案例</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240408215248921.png" alt="image-20240408215248921"></p>
+<p>如何一个线程的不同方法获取同一个的连接</p>
+<p>需要使用线程本地变量</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240408215516903.png" alt="image-20240408215516903"></p>
+<p>我们在执行这 这个代码</p>
+<p>是一个线程，如果获取的都是调用connect获取的都是统一的connect</p>
+<pre><code>需要线程本地变量
+    可以为同一个线程储存共享变量， 
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240408215719190.png" alt="image-20240408215719190"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240408215740184.png" alt="image-20240408215740184"></p>
+<pre><code class="java">package utils;
+
+
+import com.alibaba.druid.pool.DruidDataSourceFactory;
+
+import javax.sql.DataSource;
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Properties;
+
+/*
+*
+* 实现
+* 属性    连接池对象【只实例化一次】
+*               单列模式
+*               静态代码块
+* 方法
+*       对外提供连接的方法
+*       回收外部传入连接方法
+*
+* */
+//升级 存储连接信息 确保一个线程的多个方法可以获取同一个connection
+public class jdbcUtils2 &#123;
+    private  static DataSource dataSource= null;
+    private static ThreadLocal&lt;Connection&gt; t =new ThreadLocal&lt;&gt;();
+    static &#123;
+        //初始化连接池对象
+        Properties properties = new Properties();
+        InputStream resourceAsStream = jdbcUtils2.class.getClassLoader().getResourceAsStream(&quot;druid.properties&quot;);
+        try &#123;
+            properties.load(resourceAsStream);
+        &#125; catch (IOException e) &#123;
+            throw new RuntimeException(e);
+        &#125;
+        try &#123;
+            dataSource = DruidDataSourceFactory.createDataSource(properties);
+        &#125; catch (Exception e) &#123;
+            throw new RuntimeException(e);
+        &#125;
+    &#125;
+    /*
+    * 对外提供连接的地方
+    *
+    * */
+    public static Connection getConnect() throws SQLException &#123;
+
+        //线程本地变量是否存在
+        Connection connection = t.get();
+        if (connection == null)&#123;
+            connection = dataSource.getConnection();
+            t.set(connection);
+        &#125;
+        return connection;
+
+    &#125;
+    public static void  freeConnection() throws Exception&#123;
+        Connection connection = t.get();
+        if (connection != null)&#123;
+            t.remove();//清除本地变量
+            connection.setAutoCommit(true);
+            connection.close();//回收
+        &#125;
+    &#125;
+
+&#125;
+</code></pre>
+<p>这样的我们的银行的案列就可以优化了</p>
+<p>优化如下</p>
+<p>我们就可以不用传入</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240408220751581.png" alt="image-20240408220751581"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240408221129544.png" alt="image-20240408221129544"></p>
+<p>这样使用线程变量实现</p>
+
+    </div>
+    
+    
+    
+    
+    
+    
+    
+</div>
+
+            <footer id="footer">
+    <div id="footer-wrap">
+        <div>
+            &copy;
+            2022 - 2024 哈哈哈哈哈哈哈重生之我是兵王
+            <span id="footer-icon">
+                <i class="fa-solid fa-font-awesome fa-fw"></i>
+            </span>
+            &commat;chenw
+        </div>
+        <div>
+            Based on the <a target="_blank" rel="noopener" href="https://hexo.io">Hexo Engine</a> &amp;
+            <a target="_blank" rel="noopener" href="https://github.com/theme-particlex/hexo-theme-particlex">ParticleX Theme</a>
+        </div>
+        
+    </div>
+</footer>
+
+        </div>
+        
+        <transition name="fade">
+            <div id="preview" ref="preview" v-show="previewShow">
+                <img id="preview-content" ref="previewContent" />
+            </div>
+        </transition>
+        
+    </div>
+    <script src="/js/main.js"></script>
+    
+    
+
+
+
+
+    
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
