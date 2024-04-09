@@ -1212,6 +1212,121 @@ public class jdbcUtils2 &#123;
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240408220751581.png" alt="image-20240408220751581"></p>
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240408221129544.png" alt="image-20240408221129544"></p>
 <p>这样使用线程变量实现</p>
+<p><strong>BaseDao的分装</strong></p>
+<pre><code>之前分装连接数据库的操作，现在我们分装一下操作数据库的操作
+</code></pre>
+<p>封装的代码</p>
+<pre><code class="java">package utils;
+
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+/*
+* 分装两个方法
+*   一个简化非DQL操作
+*   一个简化DQL操作的
+*
+* */
+public abstract class BaseDao &#123;
+    /*
+    * sql带占位符的sql语句
+    * params 占位符的值
+    * return 影响的行数
+    * */
+    public int executeUpdate(String sql,Object ...params) throws Exception &#123;
+        Connection connect = jdbcUtils2.getConnect();
+        PreparedStatement preparedStatement = connect.prepareStatement(sql);
+        for (int i = 1; i &lt;= params.length; i++) &#123;
+            preparedStatement.setObject(i,params[i-1]);
+        &#125;
+        int rows = preparedStatement.executeUpdate();
+        preparedStatement.close();
+        //连接是否关闭看他是不是事务
+        //判断是否开启事务了，如果为false代表开启事务。代表不应关闭，如果是true代表没有开启事务，需要手动进行关闭
+        if (connect.getAutoCommit())&#123;
+            jdbcUtils2.freeConnection();
+        &#125;;
+        return  rows;
+    &#125;
+
+&#125;
+</code></pre>
+<p>然后我们可以在需要使用工具类的地方继承</p>
+<pre><code class="java">public class prepareStatementCurd extends BaseDao &#123;
+    @Test
+    public void testInsert() throws Exception &#123;
+        /*
+        t_user表插入提条数据
+        account test
+        password test
+        nickname 二狗子
+        * */
+        String sql = &quot;insert into t_user(account,password,nickname) values (?,?,?)&quot;;
+        int rows = executeUpdate(sql, &quot;测试1&quot;, &quot;测试1&quot;, &quot;测试1&quot;);
+        if (rows &gt; 0)&#123;
+            System.out.println(&quot;添加成功&quot;);
+        &#125; else &#123;
+            System.out.println(&quot;数据插入失败&quot;);
+        &#125;
+    &#125;
+&#125;
+</code></pre>
+<pre><code>这样代码的维护更加
+</code></pre>
+<p>完成DQL语句的封装</p>
+<pre><code>我们可以查询的每一行数据看作一个java里面的对象。然后再用列表存储他们  List&lt;java实体类&gt;
+</code></pre>
+<p>DQL语句的封装</p>
+<pre><code class="java">/*
+*   将查询的结果分装在一个实体类的集合里面
+*   tclass 要接值的实体类模板的属性值
+*   sql sql语句
+* */
+public &lt;T&gt; List&lt;T&gt; executeQuery(Class&lt;T&gt; tClass , String sql,Object...params) throws Exception&#123;
+    Connection connect = jdbcUtils2.getConnect();
+    PreparedStatement preparedStatement = connect.prepareStatement(sql);
+    if (params != null &amp;&amp; params.length !=0 )&#123;
+        for (int i = 1; i &lt;= params.length; i++) &#123;
+            preparedStatement.setObject(i,params[i-1]);
+        &#125;
+    &#125;
+    ResultSet resultSet = preparedStatement.executeQuery();
+    ArrayList&lt;T&gt; list = new ArrayList&lt;&gt;();
+    ResultSetMetaData metaData = preparedStatement.getMetaData();
+    int columnCount = metaData.getColumnCount();
+    while (resultSet.next())&#123;
+        //解析,因为示范性所以应该这样实例对象
+        T t = tClass.newInstance();
+        for (int i = 1; i &lt;= columnCount; i++) &#123;
+            //拿到属性值
+            Object value = resultSet.getObject(i);
+            //拿到属性的名字
+            String columnLabel = metaData.getColumnLabel(i);
+
+            // 反射给对象的属性值赋值
+            Field declaredField = tClass.getDeclaredField(columnLabel);
+            //打破私有修饰
+            declaredField.setAccessible(true);
+            /*
+            * 参数一是要赋值的对象 如果属性是静态的，第一个的参数可以为空
+            * 具体的属性值
+            *
+            * */
+            declaredField.set(t,value);
+        &#125;
+        list.add(t);
+    &#125;
+    //关闭资源
+    resultSet.close();
+    preparedStatement.close();
+    if (connect.getAutoCommit())&#123;
+        jdbcUtils2.freeConnection();
+    &#125;
+    return list;
+&#125;
+</code></pre>
 
     </div>
     
