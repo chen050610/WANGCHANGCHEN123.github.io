@@ -1,0 +1,783 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <meta charset="utf-8" />
+    <title>JavaWeb | 哈哈哈哈哈哈哈重生之我是兵王</title>
+    <meta name="author" content="chenw" />
+    <meta name="description" content="description" />
+    <meta name="keywords" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+	<canvas id="fireworks" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 32767"></canvas>
+	<script src="https://cdn.staticfile.org/animejs/3.2.1/anime.min.js"></script>
+	<script src="/js/fireworks.min.js"></script>
+	<canvas id="background" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: -1"></canvas>
+	<script src="/js/background.min.js"></script>
+	<div id="cursor"></div>
+	<link rel="stylesheet" href="/css/cursor.min.css">
+	<script src="/js/cursor.min.js"></script>
+    <link rel="icon" href="/images/avatar.jpg" />
+    <link rel="preconnect" href="https://cdn.staticfile.org" />
+<script src="https://cdn.staticfile.org/vue/3.3.7/vue.global.prod.min.js"></script>
+<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/6.4.2/css/all.min.css" />
+<link rel="preconnect" href="https://fonts.loli.net" />
+<link rel="preconnect" href="https://gstatic.loli.net" crossorigin />
+<link rel="stylesheet" href="https://fonts.loli.net/css2?family=Fira+Code:wght@400;500;600;700&family=Lexend:wght@400;500;600;700;800;900&family=Noto+Sans+SC:wght@400;500;600;700;800;900&display=swap" />
+<script> const mixins = {}; </script>
+
+<script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+
+
+<script src="https://cdn.staticfile.org/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdn.staticfile.org/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></script>
+<link
+    rel="stylesheet"
+    href="https://cdn.staticfile.org/highlight.js/11.9.0/styles/github.min.css"
+/>
+<script src="/js/lib/highlight.js"></script>
+
+
+
+<script src="/js/lib/preview.js"></script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/main.css" />
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+    <div id="layout">
+        <transition name="fade">
+            <div id="loading" v-show="loading">
+                <div id="loading-circle">
+                    <h2>LOADING</h2>
+                    <p>加载过慢请开启缓存 浏览器默认开启</p>
+                    <img src="/images/loading.gif" />
+                </div>
+            </div>
+        </transition>
+        <div id="menu" :class="{ hidden: hiddenMenu, 'menu-color': menuColor}">
+    <nav id="desktop-menu">
+        <a class="title" href="/">
+            <span>哈哈哈哈哈哈哈重生之我是兵王</span>
+        </a>
+        
+        <a href="/">
+            <i class="fa-solid fa-house fa-fw"></i>
+            <span>&ensp;Home</span>
+        </a>
+        
+        <a href="/about">
+            <i class="fa-solid fa-id-card fa-fw"></i>
+            <span>&ensp;About</span>
+        </a>
+        
+        <a href="/archives">
+            <i class="fa-solid fa-box-archive fa-fw"></i>
+            <span>&ensp;Archives</span>
+        </a>
+        
+        <a href="/categories">
+            <i class="fa-solid fa-bookmark fa-fw"></i>
+            <span>&ensp;Categories</span>
+        </a>
+        
+        <a href="/tags">
+            <i class="fa-solid fa-tags fa-fw"></i>
+            <span>&ensp;Tags</span>
+        </a>
+        
+    </nav>
+    <nav id="mobile-menu">
+        <div class="title" @click="showMenuItems = !showMenuItems">
+            <i class="fa-solid fa-bars fa-fw"></i>
+            <span>&emsp;哈哈哈哈哈哈哈重生之我是兵王</span>
+        </div>
+        <transition name="slide">
+            <div class="items" v-show="showMenuItems">
+                
+                <a href="/">
+                    <div class="item">
+                        <div style="min-width: 20px; max-width: 50px; width: 10%">
+                            <i class="fa-solid fa-house fa-fw"></i>
+                        </div>
+                        <div style="min-width: 100px; max-width: 150%; width: 20%">Home</div>
+                    </div>
+                </a>
+                
+                <a href="/about">
+                    <div class="item">
+                        <div style="min-width: 20px; max-width: 50px; width: 10%">
+                            <i class="fa-solid fa-id-card fa-fw"></i>
+                        </div>
+                        <div style="min-width: 100px; max-width: 150%; width: 20%">About</div>
+                    </div>
+                </a>
+                
+                <a href="/archives">
+                    <div class="item">
+                        <div style="min-width: 20px; max-width: 50px; width: 10%">
+                            <i class="fa-solid fa-box-archive fa-fw"></i>
+                        </div>
+                        <div style="min-width: 100px; max-width: 150%; width: 20%">Archives</div>
+                    </div>
+                </a>
+                
+                <a href="/categories">
+                    <div class="item">
+                        <div style="min-width: 20px; max-width: 50px; width: 10%">
+                            <i class="fa-solid fa-bookmark fa-fw"></i>
+                        </div>
+                        <div style="min-width: 100px; max-width: 150%; width: 20%">Categories</div>
+                    </div>
+                </a>
+                
+                <a href="/tags">
+                    <div class="item">
+                        <div style="min-width: 20px; max-width: 50px; width: 10%">
+                            <i class="fa-solid fa-tags fa-fw"></i>
+                        </div>
+                        <div style="min-width: 100px; max-width: 150%; width: 20%">Tags</div>
+                    </div>
+                </a>
+                
+            </div>
+        </transition>
+    </nav>
+</div>
+<transition name="fade">
+    <div id="menu-curtain" @click="showMenuItems = !showMenuItems" v-show="showMenuItems"></div>
+</transition>
+
+        <div id="main" :class="loading ? 'into-enter-from': 'into-enter-active'">
+            <div class="article">
+    <div>
+        <h1>JavaWeb</h1>
+    </div>
+    <div class="info">
+        <span class="date">
+            <span class="icon">
+                <i class="fa-solid fa-calendar fa-fw"></i>
+            </span>
+            2024/4/9
+        </span>
+        
+        
+    </div>
+    
+    <div class="content" v-pre>
+        <p>摘要</p>
+<span id="more"></span>
+
+<p>内容</p>
+<h1 id="JavaWeb"><a href="#JavaWeb" class="headerlink" title="JavaWeb"></a>JavaWeb</h1><p><strong>Tomcat10</strong></p>
+<pre><code>概述
+    当前应用最广的javaweb服务器
+</code></pre>
+<p><strong>Tomcat的安装</strong></p>
+<p>启动的程序</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409182153653.png" alt="image-20240409182153653"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409182306593.png" alt="image-20240409182306593"></p>
+<p>这里面是关闭的脚本</p>
+<p>解决乱码的问题</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409182506427.png" alt="image-20240409182506427"></p>
+<p>换成GBK</p>
+<p>这样就没有乱码的问题</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409182549021.png" alt="image-20240409182549021"></p>
+<p><strong>Tomcat目录的解释</strong></p>
+<p>配置在控制台启动</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409183429246.png" alt="image-20240409183429246"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409183441479.png" alt="image-20240409183441479"></p>
+<p>注意这样配置完以后可以在</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409183514187.png" alt="image-20240409183514187"></p>
+<p>这里面启动，但是 如果我们有很多版本的tomcat的话</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409183555360.png" alt="image-20240409183555360"></p>
+<p>我在这里面启动的话也是启用的之前的环境变量的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409183611535.png" alt="image-20240409183611535"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409183815033.png" alt="image-20240409183815033"></p>
+<p>用于配置启动的端口和</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409183858080.png" alt="image-20240409183858080"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409184029699.png" alt="image-20240409184029699"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409184107210.png" alt="image-20240409184107210"></p>
+<p>我们的项目放在webapps</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409184133869.png" alt="image-20240409184133869"></p>
+<p>日志文件</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409184217666.png" alt="image-20240409184217666"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409184253632.png" alt="image-20240409184253632"></p>
+<pre><code>work主要用于jsp的技术
+</code></pre>
+<p><strong>WEB项目的标准结构</strong></p>
+<p>一般的目录结构</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409184735710.png" alt="image-20240409184735710"></p>
+<pre><code>WEB-INF目录
+    这下面的资源是受保护的资源，是不可以通过浏览器访问的资源
+    一般的该目录下的文件为
+    class文件，一般存放，我们我们写的java代码经过编译以后的class文件
+    lib目录，第三方的jar往这里面放
+    web.xml,当前项目的配置文件
+</code></pre>
+<p>​	</p>
+<p><strong>Tomcat部署项目的方式</strong></p>
+<ul>
+<li>放在webapps目录下</li>
+<li>或者在tomcat的conf下创建Catalina&#x2F;localhost目录，并且在该目录下准备xml文件,使用配置文件的方式告诉项目的文件在哪里，配置文件的名字最好还是和项目的名字保持一致</li>
+</ul>
+<pre><code class="xml">&lt;Context path=&quot;/path&quot; docBase=&quot;项目的路径&quot;&gt;//前面是路径后面是项目的访问路径
+</code></pre>
+<p>对应的规则</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409185930918.png" alt="image-20240409185930918"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409190216537.png" alt="image-20240409190216537"></p>
+<p>这里是管理页面</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409190232342.png" alt="image-20240409190232342"></p>
+<p>我们需要进行登录，这个账号和密码需要配置</p>
+<p>在这个文件里</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409190709792.png" alt="image-20240409190709792"></p>
+<p>添加</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409190737829.png" alt="image-20240409190737829"></p>
+<p>这样就可以登录了</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409190800542.png" alt="image-20240409190800542"></p>
+<p>还有一个host-manager</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409190913323.png" alt="image-20240409190913323"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409191348619.png" alt="image-20240409191348619"></p>
+<p>访问这个需要配置</p>
+<pre><code class="xml">              &lt;role rolename=&quot;admin-gui&quot;/&gt;
+            &lt;user username=&quot;admin&quot; password=&quot;admin&quot; roles=&quot;admin-gui&quot;/&gt;
+</code></pre>
+<p><strong>IDEA关联Tomcat</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409205105112.png" alt="image-20240409205105112"></p>
+<pre><code>1.建立tomcat和idea的关联
+2.使用idea创建一个javaweb工程，在web工程中开发代码
+3.使用idea将工程构建成一个可以发布的app
+4.使用idea将构建好的app部署在tomcat里面，启动运行
+</code></pre>
+<p>关闭项目，打开所有设置</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409205600200.png" alt="image-20240409205600200"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409205642137.png" alt="image-20240409205642137"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409205725022.png" alt="image-20240409205725022"></p>
+<ul>
+<li>创建web工程</li>
+</ul>
+<p>创建的项目</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409210258527.png" alt="image-20240409210258527"></p>
+<p>添加tomcat的依赖</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409210734501.png" alt="image-20240409210734501"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409210753026.png" alt="image-20240409210753026"></p>
+<pre><code>在这里面添加tomcat的依赖
+</code></pre>
+<p>然后，这样我们的工程这个就是5.0，一定按上面的操作</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409210850217.png" alt="image-20240409210850217"></p>
+<p>生成了web目录</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409211006418.png" alt="image-20240409211006418"></p>
+<pre><code>这样我们的java项目就是javaweb的项目
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409211056040.png" alt="image-20240409211056040"></p>
+<pre><code>js，css的代码放在web的里面
+src下方面放的是java的代码
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409212155609.png" alt="image-20240409212155609"></p>
+<p>在这里构建</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409212238126.png" alt="image-20240409212238126"></p>
+<p>然后</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409212307488.png" alt="image-20240409212307488"></p>
+<p>这个我们可以获取部署在tomcat的上面的项目</p>
+<p>然后怎么向tomcat里面方？</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409212608088.png" alt="image-20240409212608088"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409212616202.png" alt="image-20240409212616202"></p>
+<p>选择tomcat</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409212655232.png" alt="image-20240409212655232"></p>
+<pre><code>下面是访问的路径
+</code></pre>
+<p>IDEA是怎么使用tomcat运行项目</p>
+<pre><code> 运行的时候发现，tomcat的webapps里面的目录下并没有
+ 也没有配置文件，那么怎么实现的
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409213421480.png" alt="image-20240409213421480"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409213617906.png" alt="image-20240409213617906"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409215139099.png" alt="image-20240409215139099"></p>
+<p><strong>Servlet</strong></p>
+<pre><code>动态资源和静态资源
+</code></pre>
+<ul>
+<li><p>静态资源</p>
+<pre><code>无需在程序运行是通过代码生成的资源，在程序运行之前就写好的资源，例如html,css,img，音频文件和视频文件
+</code></pre>
+</li>
+<li><p>动态资源</p>
+<pre><code>需要程序运行是通过代码运行生成的资源，在程序运行的之前无法确定的数据，运行时动态生成的
+</code></pre>
+</li>
+</ul>
+<p><strong>Servlet的简介</strong></p>
+<p>如果是静态资源</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409220318487.png" alt="image-20240409220318487"></p>
+<p>如果是资源的话</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409220407034.png" alt="image-20240409220407034"></p>
+<pre><code>servlet就是动态资源
+</code></pre>
+<pre><code>不是所有的JAVA类都能用于处理客户端的请求，能处理客户端请求并作出响应的一套技术的标准就是Servlet
+Servlet是运行在服务器端的，所以servlet必须在web项目中开发并且在tomcat这样的服务器容器中运行
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409221731775.png" alt="image-20240409221731775"></p>
+<pre><code>当浏览器请求响应的路径，请求就会发送给tomcat，tomcat会将请求的报文转为HttpServletRequest对象，这个对象里包含 请求的所有的信息
+然后找到对应的路径对对应的service，
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409222207277.png" alt="image-20240409222207277"></p>
+<p><strong>实例</strong></p>
+<pre><code>向客户端发送一个Servlet发送请求，携带username，如果用户名是”hhh“,回应no,其他的yes
+</code></pre>
+<p>servlet需要实现，下面这些接口，我们只需要service即可，所以我们可以继承与实现servlet的类</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409223227620.png" alt="image-20240409223227620"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409223349001.png" alt="image-20240409223349001"></p>
+<p>然后记住我们重写的是</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409223441821.png" alt="image-20240409223441821"></p>
+<pre><code>总的过程
+1.创建javaweb项目，同时将tomcat添加为当前项目的依赖
+2.重写service的方法
+3.在service中定义业务处理代码
+4.在webxml里配置servlet对用的请求映路径
+</code></pre>
+<pre><code class="xml">    &lt;servlet&gt;
+        &lt;servlet-name&gt;userServlet&lt;/servlet-name&gt;
+        &lt;servlet-class&gt;wei.chenw.servlet.User&lt;/servlet-class&gt;
+    &lt;/servlet&gt;
+</code></pre>
+<pre><code>在这里
+    tomcat根据servlet-name匹配过来的路径，如果符合的话，servlet-class这个是类的全路径，tomcat根据反射来实例这个方法，然后调用这里面的service
+    
+    servlet-name  //用于关联映射路径的
+    servlet-class //告诉Tomcat对应实例的化的servlet类
+</code></pre>
+<pre><code class="xml">&lt;servlet&gt;
+    &lt;servlet-name&gt;userServlet&lt;/servlet-name&gt;
+    &lt;servlet-class&gt;wei.chenw.servlet.User&lt;/servlet-class&gt;
+&lt;/servlet&gt;
+
+&lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;userServlet&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/user&lt;/url-pattern&gt;
+&lt;/servlet-mapping&gt;
+</code></pre>
+<pre><code>上面就可以匹配路径了
+</code></pre>
+<p>然后编辑运行的信息</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409225405936.png" alt="image-20240409225405936"></p>
+<p>我们要运行的项目</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240409225428789.png" alt="image-20240409225428789"></p>
+<pre><code>提醒一下
+    字符串的比较一定使用equals的方法
+</code></pre>
+<p>wei.chenw.servlet.User</p>
+<pre><code class="java">package wei.chenw.servlet;
+
+import jakarta.servlet.*;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+public class User extends HttpServlet &#123;
+    @Override
+    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException &#123;
+        //从req里获取请求中的任何信息
+        //getParameter根据参数名获取参数值，无论是get还是post请求
+        String username = req.getParameter(&quot;username&quot;);
+        //处理业务的代码
+
+        String  info = &quot;yes&quot;;
+        if (&quot;hhh&quot;.equals(username))&#123;
+            info = &quot;no&quot;;
+        &#125;
+        //将要响应的数据放在response
+        //getWriter该方法返回是一个向响应体中打印字符的打印流
+        PrintWriter writer = resp.getWriter();
+        writer.write(info);
+
+        //
+    &#125;
+&#125;
+</code></pre>
+<p>web.xml</p>
+<pre><code class="java">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;web-app xmlns=&quot;https://jakarta.ee/xml/ns/jakartaee&quot;
+         xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+         xsi:schemaLocation=&quot;https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd&quot;
+         version=&quot;5.0&quot;&gt;
+    &lt;!--
+    1.配置Servlet类，并器一个别名  servlet-class是类的全路径，servlet-name是别名
+
+    --&gt;
+    &lt;servlet&gt;
+        &lt;servlet-name&gt;userServlet&lt;/servlet-name&gt;
+        &lt;servlet-class&gt;wei.chenw.servlet.User&lt;/servlet-class&gt;
+    &lt;/servlet&gt;
+
+    &lt;servlet-mapping&gt;
+        &lt;servlet-name&gt;userServlet&lt;/servlet-name&gt;
+        &lt;url-pattern&gt;/user&lt;/url-pattern&gt;
+    &lt;/servlet-mapping&gt;
+&lt;/web-app&gt;
+</code></pre>
+<p>index.html</p>
+<pre><code class="html">&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;登录&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;form action=&quot;user&quot; method=&quot;get&quot;&gt;
+    &lt;span&gt;用户名&lt;/span&gt;&lt;input type=&quot;text&quot; name=&quot;username&quot;&gt;&lt;br&gt;
+    &lt;input type=&quot;submit&quot; value=&quot;校验&quot;&gt;
+&lt;/form&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<pre><code>Servlet开发中遇见的问题
+1.servlet-api.jar 导入的问题
+2.Content-type 响应头问题
+    MINE类型响应头，告诉客户端是什么样的响应类型，客户端以此类型决定用什么方式解析
+    在conf/web.xml的里面记录了几乎所有文件类型的对应的MINE类型
+</code></pre>
+<p>我们业务操作的地方，必须要间接的实现Servlet接口，这个不是java的内置类，</p>
+<pre><code class="java">public class User extends HttpServlet
+</code></pre>
+<p>这个jar包在这个位置</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240410122634367.png" alt="image-20240410122634367"></p>
+<p>在web.xml就规定了类型，看文件的后缀名</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240410123541815.png" alt="image-20240410123541815"></p>
+<p>但是当我们访问的&#x2F;user，不是以响应的结果没有设置，默认是以html解析那怎么指定</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240410124122989.png" alt="image-20240410124122989"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240410124448986.png" alt="image-20240410124448986"></p>
+<p>之前我们写在配置文件里路径匹配的规则</p>
+<p>之前在web.xml里面写</p>
+<pre><code class="java">&lt;servlet&gt;
+    &lt;servlet-name&gt;userServlet&lt;/servlet-name&gt;
+    &lt;servlet-class&gt;wei.chenw.servlet.User&lt;/servlet-class&gt;
+&lt;/servlet&gt;
+
+&lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;userServlet&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/user&lt;/url-pattern&gt;
+&lt;/servlet-mapping
+</code></pre>
+<p>还有一种方法，可以不用使用注解</p>
+<pre><code class="java">@WebServlet(&quot;/s1&quot;)
+public class User extends HttpServlet &#123;
+    @Override
+    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException &#123;
+        //从req里获取请求中的任何信息
+        //getParameter根据参数名获取参数值，无论是get还是post请求
+        String username = req.getParameter(&quot;username&quot;);
+        //处理业务的代码
+
+        String  info = &quot;yes&quot;;
+        if (&quot;hhh&quot;.equals(username))&#123;
+            info = &quot;no&quot;;
+        &#125;
+        //将要响应的数据放在response
+        //getWriter该方法返回是一个向响应体中打印字符的打印流
+        resp.setHeader(&quot;Content-Type&quot;,&quot;text/html&quot;);
+        PrintWriter writer = resp.getWriter();
+        writer.write(info);
+        //
+    &#125;
+&#125;
+</code></pre>
+<p>这样也可以实现</p>
+<pre><code>注意注解和配置文件的不要都写这样就会产生冲突
+</code></pre>
+<p><strong>Servlet的生命周期</strong></p>
+<pre><code>servlet是servlet对象创建的，servlet的创建和销毁都是由tomcat调用的，
+</code></pre>
+<pre><code class="java">package wei.chenw.servlet;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
+
+
+
+
+
+
+/*
+*1.实例化  构造器
+* 2.初始化  init
+* 3.接受请求 发送服务 服务  service
+* 4.销毁  destroy
+*
+*
+*
+* */
+@WebServlet(&quot;/servletLife&quot;)
+public class ServletLifeCycle extends HttpServlet &#123;
+    public ServletLifeCycle()&#123;
+        System.out.println(&quot;constructor&quot;);
+    &#125;
+    public void init()&#123;
+        System.out.println(&quot;初始化&quot;);
+    &#125;
+    @Override
+    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException &#123;
+        System.out.println(&quot;service&quot;);
+    &#125;
+    public void destroy()&#123;
+        System.out.println(&quot;destroy&quot;);
+    &#125;
+&#125;
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240411102023960.png" alt="image-20240411102023960"></p>
+<p>当我们关闭服务的时候就会destroy</p>
+<pre><code>Servlet是单例的，就是只有一个servlet对象
+</code></pre>
+<p>当有好几个客户端访问的化，访问的都是同一个的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240411102420236.png" alt="image-20240411102420236"></p>
+<pre><code>所以service方法尽量不要修改成员变量 在并发请求的里面 就会引发线程的安全问题，那么有人说加锁解决，这样就会出现性能的问题
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240411102627828.png" alt="image-20240411102627828"></p>
+<pre><code>当我们的第一个线程操作的时候，第二个线程必须等待他执行完以后才能在执行
+</code></pre>
+<p><strong>默认的Servlet的初始化是在请求的时候，那怎么样才能实现在创建servlet的时候就实现构造函数和初始化，这样需要设置注解的另外的一个属性</strong></p>
+<pre><code class="java">@WebServlet(value = &quot;/servletLife&quot;,loadOnStartup = -1)
+//日过这里面的是-1的话，这个servlet的实例，只能在访问的后面才能实例
+///其他的正整数 含义是tomcat在启动的时候，实例化servlet的顺序，数字越小越先实例化，如果冲突了，辉仔顶协调启动的顺序
+</code></pre>
+<p>或者在</p>
+<pre><code class="xml">&lt;!--    &lt;servlet&gt;--&gt;
+&lt;!--        &lt;servlet-name&gt;userServlet&lt;/servlet-name&gt;--&gt;
+&lt;!--        &lt;servlet-class&gt;wei.chenw.servlet.User&lt;/servlet-class&gt;--&gt;
+&lt;!--        &lt;load-on-startup&gt;-1&lt;/load-on-startup&gt;--&gt;
+&lt;!--    &lt;/servlet&gt;--&gt;
+
+&lt;!--    &lt;servlet-mapping&gt;--&gt;
+&lt;!--        &lt;servlet-name&gt;userServlet&lt;/servlet-name&gt;--&gt;
+&lt;!--        &lt;url-pattern&gt;/user&lt;/url-pattern&gt;--&gt;
+&lt;!--    &lt;/servlet-mapping&gt;--&gt;
+</code></pre>
+<p>设置动态的以后，这样就可以在tomcat启动的时候就实例初始化servlet</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240411103753455.png" alt="image-20240411103753455"></p>
+<p>之前的conf的目录下也有一个web.xml</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240411104312194.png" alt="image-20240411104312194"></p>
+<pre><code>一般把相同每个项目目录配置一样的写在web.xml,
+</code></pre>
+<p><strong>defalut-servlet</strong></p>
+<p>在tomcat的配置文件里面，</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240411105354069.png" alt="image-20240411105354069"></p>
+<p>对应的映射</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240411105455031.png" alt="image-20240411105455031"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240411105606684.png" alt="image-20240411105606684"></p>
+<pre><code>这个defaultservlet的操作流程是这样的，当我们访问的是静态资源的时候，就会去servlet的里面的路径如匹配，如果没有对应的，就会去defaultsrvlet的对象的里面，然后再通过io流，读取要访问的静态资源，然后再通过这个serlet对象的的response回复给客户端
+</code></pre>
+<pre><code>总的来说静态资源都是通过defaultservlet进行加载的
+
+
+
+在SpringMVC 的时候使用servlet的时候这个defaultServlet 就会失效，这样访问静态资源就会失败
+</code></pre>
+<p><strong>Servlet继承结构</strong></p>
+<p>servlet的顶级接口</p>
+<pre><code class="java">public interface Servlet &#123;
+    void init(ServletConfig var1) throws ServletException;
+//getServletConfig  获取ServletConfig对象
+    ServletConfig getServletConfig();
+
+    void service(ServletRequest var1, ServletResponse var2) throws ServletException, IOException;
+//getServletInfo返回Servlet字符串的描述信息的方法
+    String getServletInfo();
+    //Servlet在回收前，由tomcat调用的销毁，用于做资源的释放空间
+    void destroy();
+&#125;
+</code></pre>
+<p><strong>GenericServlet</strong></p>
+<pre><code>实现了servlet的接口
+</code></pre>
+<pre><code class="java">//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
+package jakarta.servlet;
+
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.Enumeration;
+
+public abstract class GenericServlet implements Servlet, ServletConfig, Serializable &#123;
+    private static final long serialVersionUID = 1L;
+    private transient ServletConfig config;
+
+    public GenericServlet() &#123;
+    &#125;
+
+    public void destroy() &#123;
+    &#125;
+
+    public String getInitParameter(String name) &#123;
+        return this.getServletConfig().getInitParameter(name);
+    &#125;
+
+    public Enumeration&lt;String&gt; getInitParameterNames() &#123;
+        return this.getServletConfig().getInitParameterNames();
+    &#125;
+
+    public ServletConfig getServletConfig() &#123;
+        return this.config;
+    &#125;
+
+    public ServletContext getServletContext() &#123;
+        return this.getServletConfig().getServletContext();
+    &#125;
+
+    public String getServletInfo() &#123;
+        return &quot;&quot;;
+    &#125;
+//tomcat 在调用init的方法的时候。会读取配置信息进入一个ServletConfig
+    public void init(ServletConfig config) throws ServletException &#123;
+        this.config = config;
+        this.init();
+    &#125;
+
+    public void init() throws ServletException &#123;
+    &#125;
+
+    public void log(String message) &#123;
+        ServletContext var10000 = this.getServletContext();
+        String var10001 = this.getServletName();
+        var10000.log(var10001 + &quot;: &quot; + message);
+    &#125;
+
+    public void log(String message, Throwable t) &#123;
+        this.getServletContext().log(this.getServletName() + &quot;: &quot; + message, t);
+    &#125;
+
+    public abstract void service(ServletRequest var1, ServletResponse var2) throws ServletException, IOException;
+
+    public String getServletName() &#123;
+        return this.config.getServletName();
+    &#125;
+&#125;
+</code></pre>
+<p>HttpServlet 抽象类 侧重除了service方法处理</p>
+<pre><code class="java">protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException &#123;
+    //获取请求的方式
+    String method = req.getMethod();
+    long lastModified;
+    //根据请求方式判断调用对用的do方法
+    if (method.equals(&quot;GET&quot;)) &#123;
+        lastModified = this.getLastModified(req);
+        if (lastModified == -1L) &#123;
+            this.doGet(req, resp);
+        &#125; else &#123;
+            long ifModifiedSince;
+            try &#123;
+                ifModifiedSince = req.getDateHeader(&quot;If-Modified-Since&quot;);
+            &#125; catch (IllegalArgumentException var9) &#123;
+                ifModifiedSince = -1L;
+            &#125;
+
+            if (ifModifiedSince &lt; lastModified / 1000L * 1000L) &#123;
+                this.maybeSetLastModified(resp, lastModified);
+                this.doGet(req, resp);
+            &#125; else &#123;
+                resp.setStatus(304);
+            &#125;
+        &#125;
+    &#125; else if (method.equals(&quot;HEAD&quot;)) &#123;
+        lastModified = this.getLastModified(req);
+        this.maybeSetLastModified(resp, lastModified);
+        this.doHead(req, resp);
+    &#125; else if (method.equals(&quot;POST&quot;)) &#123;
+        this.doPost(req, resp);
+    &#125; else if (method.equals(&quot;PUT&quot;)) &#123;
+        this.doPut(req, resp);
+    &#125; else if (method.equals(&quot;DELETE&quot;)) &#123;
+        this.doDelete(req, resp);
+    &#125; else if (method.equals(&quot;OPTIONS&quot;)) &#123;
+        this.doOptions(req, resp);
+    &#125; else if (method.equals(&quot;TRACE&quot;)) &#123;
+        this.doTrace(req, resp);
+    &#125; else &#123;
+        String errMsg = lStrings.getString(&quot;http.method_not_implemented&quot;);
+        Object[] errArgs = new Object[]&#123;method&#125;;
+        errMsg = MessageFormat.format(errMsg, errArgs);
+        resp.sendError(501, errMsg);
+    &#125;
+
+&#125;
+</code></pre>
+<p><strong>ServletConfig-ServletContext</strong></p>
+<pre><code>概述
+ 给servlet提供初始配置信息的一种对象
+</code></pre>
+<p>在配置文件的里面写配置信息，在这里使用keyvalue的形式</p>
+<pre><code class="xml">        &lt;init-param&gt;
+            &lt;param-name&gt;key&lt;/param-name&gt;
+            &lt;param-value&gt;value&lt;/param-value&gt;
+        &lt;/init-param&gt;
+        &lt;init-param&gt;
+            &lt;param-name&gt;key1&lt;/param-name&gt;
+            &lt;param-value&gt;value&lt;/param-value&gt;
+        &lt;/init-param&gt;
+</code></pre>
+
+    </div>
+    
+    
+    
+    
+    
+    
+    
+</div>
+
+            <footer id="footer">
+    <div id="footer-wrap">
+        <div>
+            &copy;
+            2022 - 2024 哈哈哈哈哈哈哈重生之我是兵王
+            <span id="footer-icon">
+                <i class="fa-solid fa-font-awesome fa-fw"></i>
+            </span>
+            &commat;chenw
+        </div>
+        <div>
+            Based on the <a target="_blank" rel="noopener" href="https://hexo.io">Hexo Engine</a> &amp;
+            <a target="_blank" rel="noopener" href="https://github.com/theme-particlex/hexo-theme-particlex">ParticleX Theme</a>
+        </div>
+        
+    </div>
+</footer>
+
+        </div>
+        
+        <transition name="fade">
+            <div id="preview" ref="preview" v-show="previewShow">
+                <img id="preview-content" ref="previewContent" />
+            </div>
+        </transition>
+        
+    </div>
+    <script src="/js/main.js"></script>
+    
+    
+
+
+
+
+    
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
