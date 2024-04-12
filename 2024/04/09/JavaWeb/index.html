@@ -733,6 +733,389 @@ public abstract class GenericServlet implements Servlet, ServletConfig, Serializ
             &lt;param-value&gt;value&lt;/param-value&gt;
         &lt;/init-param&gt;
 </code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240411204205862.png" alt="image-20240411204205862"></p>
+<pre><code>当tomcat读取到这个配置文件的时候，会将配置解析，然后形成一个Servlet的对象，然后，将这个对象传入init的方法里面
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240411204433973.png" alt="image-20240411204433973"></p>
+<pre><code>我们还可以获取config对象
+</code></pre>
+<p>我们在配置里面配置的信息在通过这样可以读取的到</p>
+<pre><code class="java">package wei_Servlet;
+
+
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
+import java.util.Enumeration;
+
+public class Servlet1 extends HttpServlet &#123;
+    @Override
+    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException &#123;
+        ServletConfig servletConfig = this.getServletConfig();
+        //获取
+        //根据参数名获取参数的值
+        String key1 = servletConfig.getInitParameter(&quot;key1&quot;);
+        System.out.println(key1);
+        //获取所有参数的名字   Enumeration就是intertor
+        Enumeration&lt;String&gt; initParameterNames = servletConfig.getInitParameterNames();
+//hasMoreElements判断是否有一个参数
+//        nextElement取出下一个元素   向下移动游标
+        while (initParameterNames.hasMoreElements())&#123;
+            String s = initParameterNames.nextElement();
+            System.out.println(s);
+            System.out.println(s+servletConfig.getInitParameter(s));
+        &#125;
+    &#125;
+&#125;
+</code></pre>
+<pre><code>Enumeration是类似于intertor的
+</code></pre>
+<pre><code>注意每一个的servlet都是独自的配置信息
+</code></pre>
+<pre><code>ServletConfig的使用并不多，
+</code></pre>
+<p>或者使用注解的方法进行配置</p>
+<pre><code class="java">@WebServlet(value = &quot;/demo&quot;,
+        initParams = &#123;@WebInitParam(name=&quot;key&quot;,value = &quot;value&quot;),@WebInitParam(name=&quot;key1&quot;,value = &quot;value&quot;)&#125;
+)
+</code></pre>
+<p><strong>ServletContext</strong></p>
+<p>之前的servletconfig是为单个的servlet配置参数，但是这个servletContext是为全部的servlet的提供配置	</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240411210629214.png" alt="image-20240411210629214"></p>
+<pre><code>非常重要
+    所有的servlet都共享一个配置信息
+    servletComtext是单例的
+</code></pre>
+<p>这三种都可以获取context的方法的</p>
+<pre><code class="jav">//两=三种获取context的方法,通过这两种方法
+
+ServletConfig servletConfig = this.getServletConfig();
+ServletContext servletContext1 = servletConfig.getServletContext();
+
+ServletContext servletContext2 = req.getServletContext();
+
+ServletContext servletContext = this.getServletContext();
+</code></pre>
+<p>获取属性值的方法和之前的config对象是一样的</p>
+<pre><code class="java">package wei_Servlet;
+
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebInitParam;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
+import java.util.Enumeration;
+
+@WebServlet(value = &quot;/user&quot;)
+public class Servlet2 extends HttpServlet &#123;
+    @Override
+    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException &#123;
+
+        //两=三种获取context的方法,通过这两种方法
+
+        ServletConfig servletConfig = this.getServletConfig();
+        ServletContext servletContext1 = servletConfig.getServletContext();
+
+        ServletContext servletContext2 = req.getServletContext();
+
+        ServletContext servletContext = this.getServletContext();
+
+        //获取参数
+        String username = servletContext1.getInitParameter(&quot;username&quot;);
+        System.out.println(username);
+        //获取参数名
+        Enumeration&lt;String&gt; initParameterNames = servletContext.getInitParameterNames();
+        while (initParameterNames.hasMoreElements())&#123;
+            String s = initParameterNames.nextElement();
+            System.out.println(s+&quot;=&quot;+servletConfig.getInitParameter(s));
+        &#125;
+    &#125;
+&#125;
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240411225413648.png" alt="image-20240411225413648"></p>
+<p><strong>Servlet其他重要的API</strong></p>
+<p>在写入文件的时候</p>
+<pre><code class="java">        //这里路径怎么写才能指向要写入的文件夹
+        String path = &quot;&quot;;
+//        FileOutputStream fos = new FileOutputStream(path+&#39;a.txt&#39;)
+</code></pre>
+<p>在我们项目构建玩以后应该是在out下的文件下保存</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240411225946314.png" alt="image-20240411225946314"></p>
+<p>而不是当前的目录结构那应该怎能么办？</p>
+<p>这里面我们就可以使用到servlet的api</p>
+<p><strong>getRealPath</strong></p>
+<p>使用</p>
+<pre><code class="java">//获取一个指向项目的部署位置下的某个文件真实的路径的api
+String path = servletContext.getRealPath(&quot;upload/a.txt&quot;);
+System.out.println(path);
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240412164408398.png" alt="image-20240412164408398"></p>
+<p>就是我们项目当前环境的真实路径</p>
+<p><strong>getContextPath</strong></p>
+<p>获取项目的根路径</p>
+<pre><code class="java">        String contextPath = servletContext.getContextPath();
+        System.out.println(contextPath);
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240412164811447.png" alt="image-20240412164811447"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240412164819187.png" alt="image-20240412164819187"></p>
+<p><strong>域对象</strong></p>
+<pre><code>一些储存数据和传递数据的对象，传递的数据不同的范围。就成为不同的域
+就是数据储存和传递
+</code></pre>
+<pre><code>ServletContext代表应用，所以servletContext域成为应用域，是webapp里面最大的域，可以在本应用中实现数据共享和传递
+</code></pre>
+<p>就比如说<img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240412165427007.png" alt="image-20240412165427007"></p>
+<pre><code>这两个之间传递数据
+    我们就可以把数据放在域对象里面，然后有需要的去读就可以了
+</code></pre>
+<pre><code>域对象的API
+setAttribute(String key ,Object value);
+Object getAttribute(String key)
+void removeArribute(String key)
+</code></pre>
+<pre><code class="java">        ServletContext servletContext = this.getServletContext();
+        //增加数据
+        servletContext.setAttribute(&quot;key&quot;,&quot;value&quot;);
+        //修改数据
+        servletContext.setAttribute(&quot;key&quot;,&quot;value1&quot;);
+        //获取
+        Object key = servletContext.getAttribute(&quot;key&quot;);
+        String key1 = (String)servletContext.getAttribute(&quot;key&quot;);
+        System.out.println(key);
+        System.out.println(key1);
+
+        //移除
+        servletContext.removeAttribute(&quot;key&quot;);
+</code></pre>
+<p>这是在一个的Servlet里面操作</p>
+<p>在其他的servlet对象里面我们就可以读取的到</p>
+<pre><code class="java">ServletContext servletContext = this.getServletContext();
+String attribute =(String) servletContext.getAttribute(&quot;key&quot;);
+System.out.println(attribute);
+</code></pre>
+<pre><code>context是最大的域
+</code></pre>
+<p><strong>HttpsrvletRequest</strong></p>
+<pre><code>HttpsrvletRequest是一个接口，他的父接口ServletRequest
+HttpsrvletRequest是tomcat将请求报文转换封装的对象	在tomcat调用service方法传入
+</code></pre>
+<pre><code class="java">常见的api
+StringBuffer getRequestURL();  获取客户端请求的url
+String getRequestURI();  获取客户端请求的项目的具体资源
+int getServerPort();		获取客户端发送请求
+int getLocalPort();   		获取本应用所在容器的端口
+int getRomotePort();		获取客户端程序的接口
+String getScheme();		获取请求的协议
+String getProtocol();		获取请求的协议和版本号
+String getMethod();			获取请求的方法
+</code></pre>
+<p>获取请求头的API</p>
+<pre><code class="java">String getHeader(String HeaderName);		//根据名字获取
+Enumeration&lt;String&gt; getHeaderNames();  //获取所有请求头的信息
+</code></pre>
+<pre><code class="java">例如
+        System.out.println(req.getRequestURL());  //http://localhost:8080/demo/user3
+        System.out.println(req.getRequestURI());  ///demo/user3
+        System.out.println(req.getServerPort()); //8080，如果中间有代理的话，就不一样了 
+        System.out.println(req.getLocalPort());  //8080
+        System.out.println(req.getRemotePort());  //42284
+        System.out.println(req.getScheme());  //http
+        System.out.println(req.getProtocol()); //HTTP/1.1
+        System.out.println(req.getMethod()); //GET
+</code></pre>
+<pre><code class="java">        Enumeration&lt;String&gt; headerNames = req.getHeaderNames();
+        while (headerNames.hasMoreElements())&#123;
+            String s = headerNames.nextElement();
+            System.out.println(s+req.getHeader(s));
+        &#125;
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240412193649411.png" alt="image-20240412193649411"></p>
+<p>获取请求参数的API</p>
+<pre><code class="java">String getParameter(String parameterName);
+String[] getparameterValues(String parameterName);
+Enumeration getparameterNames(); 
+Map&lt;String String[]&gt;getParaneterMap();  //获取所有参数的键值对集合
+BufferReader getReader() throws IOException;   //获取读取请求体的字节输入流
+ServletInputStream getInputStream() throws IOException;  //获取读取请求体的字节输入流
+int getcontentLength()  //获取请求体的长度的字节数
+</code></pre>
+<p>例如</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240412195756940.png" alt="image-20240412195756940"></p>
+<pre><code class="java">        String username = req.getParameter(&quot;username&quot;);
+        System.out.println(username); //root
+        String password = req.getParameter(&quot;password&quot;);
+        System.out.println(password);
+        String[] hobbies = req.getParameterValues(&quot;hobby&quot;);
+        for (String hobby : hobbies) &#123;
+            System.out.println(hobby);
+        &#125;
+</code></pre>
+<p>例如</p>
+<pre><code class="java">        //接受请求的参数,获取单个的参数的值
+        String username = req.getParameter(&quot;username&quot;);
+        System.out.println(username); //root
+        String password = req.getParameter(&quot;password&quot;);
+        System.out.println(password); //root
+        String[] hobbies = req.getParameterValues(&quot;hobby&quot;);
+        System.out.println(Arrays.toString(hobbies)); //[1, 2, 3]
+        Enumeration&lt;String&gt; parameterNames = req.getParameterNames();
+        while (parameterNames.hasMoreElements())&#123;
+            String s = parameterNames.nextElement();
+            String[] parameterValues = req.getParameterValues(s);
+            //if数组的长度大于一说明有两个以上的说明该属性有两个以上的值
+            if (parameterValues.length&gt;1)&#123;
+                System.out.println(s+&quot;=&quot;+Arrays.toString(parameterValues));  //hobby=[1, 2, 3]
+            &#125; else &#123;
+                System.out.println(s+&quot;=&quot;+parameterValues[0]); //password=root   username=root
+            &#125; 
+        &#125;
+</code></pre>
+<p>或者转为Map</p>
+<pre><code class="java">        Map&lt;String, String[]&gt; parameterMap = req.getParameterMap();
+        for (Map.Entry&lt;String, String[]&gt; stringEntry : parameterMap.entrySet()) &#123;
+            String key = stringEntry.getKey();
+            String[] value = stringEntry.getValue();
+            if (value.length&gt;1)&#123;
+                System.out.println(key+&quot;=&quot;+Arrays.toString(value));
+            &#125; else &#123;
+                System.out.println(key+&quot;=&quot;+value[0]);
+            &#125;
+            /*
+            *   username=root
+                password=root
+                hobby=[1, 2, 3]
+            * */
+</code></pre>
+<pre><code>注意上面的API的POST请求也是可以使用的，上面的都会获取key=value的参数
+那么如何获取JSON的数据或者文件
+
+getReader();
+</code></pre>
+<pre><code class="java">            //JSON串的
+            BufferedReader reader = req.getReader();
+
+            //重请求体读取二进制,文件的话
+            ServletInputStream inputStream = req.getInputStream();
+</code></pre>
+<p>获取servlet的映射路径</p>
+<pre><code class="java">            String servletPath = req.getServletPath();
+</code></pre>
+<p><strong>HttpServletResponse</strong></p>
+<pre><code>响应的对象
+    会转换成响应报文
+</code></pre>
+<ul>
+<li>设置相应行相关</li>
+</ul>
+<pre><code class="java">void setStatus(int code);
+</code></pre>
+<ul>
+<li>设置响应头相关</li>
+</ul>
+<pre><code class="java">void setHeader(String headerNames,String value);
+void setContentType(String contextType);
+</code></pre>
+<ul>
+<li>设置响应体相关</li>
+</ul>
+<pre><code class="java">PrintWriter  getWriter() throws IOException;//想响应体放入信息的字符输入流
+servletOutputStream getOuputStream();  //向响应体放入信息的字节输入流
+void setContentLength(int length);  //设置响应体的字节长度，其实就是设置在context-length响应头
+</code></pre>
+<ul>
+<li>其他的APi</li>
+</ul>
+<pre><code class="java">void sendError(int code,String msssage)  //向客户端响应错误信息的方法，需要指定响应码和响应信息
+void addCookie(Cookie cookie);  //向响应体添加cookie
+void setCharacterEncodeing(String encoding);//设置响应的编码
+</code></pre>
+<p>例如</p>
+<pre><code class="java">resp.setStatus(405);   //状态码
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240412203952137.png" alt="image-20240412203952137"></p>
+<pre><code class="java">        resp.setHeader(&quot;wang&quot;,&quot;chen&quot;);
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240412204240676.png" alt="image-20240412204240676"></p>
+<pre><code class="java">        //设置响应行
+        resp.setStatus(200);   //状态码
+        resp.setHeader(&quot;wang&quot;,&quot;chen&quot;);
+        resp.setContentType(&quot;text/html&quot;);
+        //设置响应体的内容
+        PrintWriter writer = resp.getWriter();
+        String info = &quot;&lt;h1&gt;Hello&lt;/h1&gt;&quot;;
+        int len = info.getBytes().length;
+        resp.setContentLength(len);
+        writer.write(info);
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240412205023522.png" alt="image-20240412205023522"></p>
+<p>向响应体放字节流</p>
+<pre><code class="java">        ServletOutputStream outputStream = resp.getOutputStream();
+</code></pre>
+<p><strong>请求转发和响应重定向</strong></p>
+<pre><code>概念
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240412210001302.png" alt="image-20240412210001302"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240412213004949.png" alt="image-20240412213004949"></p>
+<p>当我们请求servlet1的时候将请求转发到servlet2，这样把给servlet1的req和resp给了sevlet2 </p>
+<p>例如</p>
+<pre><code class="java">
+@WebServlet(&quot;/user1&quot;)
+public class Servlet1 extends HttpServlet &#123;
+    @Override
+    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException &#123;
+        //
+        System.out.println(&quot;service1开始了&quot;);
+        //转发
+        //getRequestDispatcher获取请求转发器,参数时映射的相对的路径
+        RequestDispatcher requestDispatcher = req.getRequestDispatcher(&quot;user2&quot;);
+        //让转发器做出转发,转发请求响应
+        requestDispatcher.forward(req,resp);
+    &#125;
+&#125;
+</code></pre>
+<pre><code class="java">@WebServlet(&quot;/user2&quot;)
+public class Servlet2 extends HttpServlet &#123;
+    @Override
+    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException &#123;
+        System.out.println(&quot;servlet2执行&quot;);
+    &#125;
+&#125;
+</code></pre>
+<p>这样当我们访问user1的时候，转发到servlet2，调用service方法</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240412220130204.png" alt="image-20240412220130204"></p>
+<pre><code>转发器是通过HttpServletRequest实现的
+转发请求是服务器的内部行为，对客户端时屏蔽的
+客户端只产生一次请求 服务器只产生一对request和response
+客户端的地址栏不变
+请求的参数是可以继续传递的
+目标资源可以是动态资源，也可以是静态资源，也可以是在web-inf下资源
+注意请求转发只在当前项目下寻找，不可以转发到外步的资源，例如https://www.baidu
+</code></pre>
+<p>转发 的请求也可以获取到参数</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240412220901689.png" alt="image-20240412220901689"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240412220912313.png" alt="image-20240412220912313"></p>
+<p>也可以转发给视图资源</p>
+<pre><code class="java">        RequestDispatcher requestDispatcher = req.getRequestDispatcher(&quot;a.html&quot;);
+        requestDispatcher.forward(req,resp)
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240412221337733.png" alt="image-20240412221337733"></p>
+<p>请求的时候，地址没有改变</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240412221350542.png" alt="image-20240412221350542"></p>
+<p><strong>转发还可以转发到web-inf下面，之前说是受保护的，客户端访问不到</strong></p>
+<pre><code class="java">        RequestDispatcher requestDispatcher = req.getRequestDispatcher(&quot;WEB-INF/b.html&quot;);
+        requestDispatcher.forward(req,resp);
+</code></pre>
+<p><img src="/JavaWeb.assets/image-20240412221625082.png" alt="image-20240412221625082"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240412221640654.png" alt="image-20240412221640654"></p>
 
     </div>
     

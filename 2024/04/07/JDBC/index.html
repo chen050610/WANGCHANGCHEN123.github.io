@@ -1033,10 +1033,7 @@ public class Use_druid &#123;
         //src下的文件可以使用类加载器提供的方法获取输入流
         InputStream resourceAsStream = Use_druid.class.getClassLoader().getResourceAsStream(&quot;druid.properties&quot;);
         properties.load(resourceAsStream);
-
-
         DataSource dataSource = DruidDataSourceFactory.createDataSource(properties);
-
         //获取连接
         Connection connection = dataSource.getConnection();
         //数据库的操作
