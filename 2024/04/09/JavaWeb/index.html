@@ -1116,6 +1116,163 @@ public class Servlet2 extends HttpServlet &#123;
 </code></pre>
 <p><img src="/JavaWeb.assets/image-20240412221625082.png" alt="image-20240412221625082"></p>
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240412221640654.png" alt="image-20240412221640654"></p>
+<p><strong>响应重定向</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240413084749530.png" alt="image-20240413084749530"></p>
+<pre><code>当我们访问servlet1的时候，会响应302状态码，和location重定向的地址，然后发给客户端，然后客户端继续向服务器请求，请求重定向的地址
+</code></pre>
+<p>例如</p>
+<pre><code class="java">package wei_Servlet;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
+
+
+@WebServlet(&quot;/servlet1&quot;)
+public class Servleta extends HttpServlet &#123;
+    @Override
+    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException &#123;
+        System.out.println(&quot;servlet1接收到了请求&quot;);
+        System.out.println(&quot;______________________________________________&quot;);
+
+
+//        响应重定向.设置响应状态码和响应的地址
+        resp.sendRedirect(&quot;servlet2&quot;);
+    &#125;
+&#125;
+</code></pre>
+<pre><code class="java">package wei_Servlet;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
+
+
+@WebServlet(&quot;/servlet2&quot;)
+public class Servletb extends HttpServlet &#123;
+    @Override
+    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException &#123;
+        System.out.println(&quot;servlet2接收到请求&quot;);
+    &#125;
+&#125;
+</code></pre>
+<p>这样当我们访问servlet1的时候就会重定向到servlet2</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240413085559747.png" alt="image-20240413085559747"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240413085640493.png" alt="image-20240413085640493"></p>
+<pre><code>重定向的特点
+1.是通过resp对象实现的
+2.相应重定向是在服务端提示下，客户端的行为
+3.客户端的地址栏会发生改变，同时客户端至少产生两次请求
+4.请求产生多次就会有多个req的对象，此时的请求中的参数不能继续传递，所以参数是接受不到的
+5.目标资源可以是视图资源 
+6.目标资源不可以是wen-inf下的资源
+7.可以重定向到外部资源
+</code></pre>
+<p><strong>重点</strong></p>
+<pre><code>同样能够实现页面的跳转，有限使用响应重定向
+</code></pre>
+<p><strong>web乱码和路径问题</strong></p>
+<pre><code>乱码的原因
+数据的编码和解码使用的不是同一个字符集
+使用不支持的某种语言文字的字符集
+</code></pre>
+<p>为什么英文不乱吗，</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240413090547861.png" alt="image-20240413090547861"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240413090704245.png" alt="image-20240413090704245"></p>
+<p>如果GBK的话</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240413090752840.png" alt="image-20240413090752840"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240413090800322.png" alt="image-20240413090800322"></p>
+<p>乱码</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240413091049624.png" alt="image-20240413091049624"></p>
+<p>系统的窗口的字符集使用的是GBK</p>
+<p>现在我的tomcat的日志窗口还有乱码</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240413091312607.png" alt="image-20240413091312607"></p>
+<p>在logging.proprties的里面可以修改</p>
+<p><img src="/JavaWeb.assets/image-20240413091754324.png" alt="image-20240413091754324"></p>
+<p>都改为GBK</p>
+<p>这样就解决了</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240413091908662.png" alt="image-20240413091908662"></p>
+<p>还有一中的乱码原因</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240413092048931.png" alt="image-20240413092048931"></p>
+<pre><code>这个java文件编译成class文件用utf-8，但是jvm使用别的字符集加载，这样就会乱码
+</code></pre>
+<p><strong>GET请求乱码</strong></p>
+<p>我们设置编码GBK</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240413123720857.png" alt="image-20240413123720857"></p>
+<p>然后再获取</p>
+<pre><code class="java">package wei_Servlet;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
+
+
+@WebServlet(&quot;/user&quot;)
+public class User extends HttpServlet &#123;
+    @Override
+    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException &#123;
+        String username = req.getParameter(&quot;username&quot;);
+        System.out.println(username);
+    &#125;
+&#125;
+</code></pre>
+<p>当我们的值为中文的时候，就会报错</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240413123830133.png" alt="image-20240413123830133"></p>
+<p>出现问题的原因</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240413124009193.png" alt="image-20240413124009193"></p>
+<pre><code>我们请求的时候?username=%CD%F5%B2%FD%B3%BF，这个%是每个字节的分隔，里面的是二进制转为16进制的形式，请求的时候，根据GBK转为二进制，然后再解析的时候，我们默认使用utf-8解码
+</code></pre>
+<p>我们设置tomcat的url解码的字符集</p>
+<p>添加这一行，这样uri里面的username参数就会以GBK解码</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240413124450833.png" alt="image-20240413124450833"></p>
+<p><strong>POST请求的乱码</strong></p>
+<pre><code>之前再配置的URIEncoding解决的是参数是再get的里面以url传递的
+所以这个再post请求是无用的
+设置请求体的解码使用的字符集
+</code></pre>
+<pre><code class="java">设置解析请求体的解析格式
+req.setCharacterEncoding();
+</code></pre>
+<p><strong>响应乱码</strong></p>
+<pre><code class="java">        resp.getWriter().write(&quot;你好&quot;);
+</code></pre>
+<p>这样会出现乱码</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240413125303359.png" alt="image-20240413125303359"></p>
+<pre><code>因为tomcat默认的使用的字符集使用的是utf-8
+    响应体  你好（再tomcat里面响应的默认编码的字符集是UTF-8），但是客户端不知道使用utf-8解码，浏览器饥结合语言环境使用GBK解码了，这样导致乱码了，两种解决方法
+</code></pre>
+<ul>
+<li><p>设置响应体的编码字符集，这是后端适应前端进行编码，这种方法不建议，因为访问的环境不同，</p>
+<pre><code class="java">        resp.setCharacterEncoding(&quot;GBK&quot;);
+</code></pre>
+</li>
+</ul>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240413130342129.png" alt="image-20240413130342129"></p>
+<ul>
+<li>设置浏览器的解析字符集，这样设置客户端解码的方式和服务端的编码方法一样</li>
+</ul>
+<pre><code class="java">        resp.setContentType(&quot;text/html;charset=utf-8&quot;);
+        resp.getWriter().write(&quot;你好&quot;);
+//设置响应体的编码，一定要和服务端编码方法一样
+</code></pre>
+<p>所以我们最好一起写</p>
+<pre><code class="java">resp.setCharacterEncoding(&quot;UTF-8&quot;);
+resp.setContentType(&quot;text/html;charset=utf-8&quot;);
+resp.getWriter().write(&quot;你好&quot;);
+</code></pre>
+<p>这样就可以保证响应体的内容以utf-8进行编码，浏览器再以utf-8进行解码</p>
 
     </div>
     
