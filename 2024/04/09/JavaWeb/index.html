@@ -1273,6 +1273,74 @@ resp.setContentType(&quot;text/html;charset=utf-8&quot;);
 resp.getWriter().write(&quot;你好&quot;);
 </code></pre>
 <p>这样就可以保证响应体的内容以utf-8进行编码，浏览器再以utf-8进行解码</p>
+<p><strong>路径的问题</strong></p>
+<ul>
+<li>相对路径</li>
+</ul>
+<pre><code>相对路径的规则
+以当前路径所在路出发去寻找目标资源
+相对路径不以/开头
+再file协议下，使用的是磁盘路径
+再http协议下，使用的是url路径
+相对路径可以使用./表示当前资源所在 路径，也可以省略不写、、
+使用../代表上一级路径
+</code></pre>
+<ul>
+<li>绝对路径</li>
+</ul>
+<pre><code>规则是使用一个固定的路径作为出发点去寻找，和当前的资源路径没有关系
+需要/开头
+再绝对路径不要以./或者../
+不同的协议和项目，绝对路径的基础位置可能要不同
+</code></pre>
+<pre><code>应用的场景
+前端href
+</code></pre>
+<p>如果这么写的话</p>
+<pre><code class="html">    &lt;base href=&quot;/demo/&quot;&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;img src=&quot;static/img/logo.png&quot; alt=&quot;&quot;&gt;
+</code></pre>
+<p>最后拼接的是，这样编程绝对路径了</p>
+<pre><code>/demo/static/img/logo.png
+</code></pre>
+<p><strong>响应重定向和请求转发的路径问题</strong></p>
+<p>相对路径</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240413144447942.png" alt="image-20240413144447942"></p>
+<p>原理是这样的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240413144628944.png" alt="image-20240413144628944"></p>
+<p>如果</p>
+<p>我的路径是这样的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240413144702372.png" alt="image-20240413144702372"></p>
+<p>重定向这里，这样就需要更改下 了</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240413144731195.png" alt="image-20240413144731195"></p>
+<p>这样就可以了</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240413144825358.png" alt="image-20240413144825358"></p>
+<p>上面是相对路径，如果是绝对路径的话</p>
+<pre><code class="java">        /*
+        *   http://localhost:8080
+        * http://localhost:8080/demo/servlet2
+        * */
+        resp.sendRedirect(&quot;/demo/servlet2&quot;);
+</code></pre>
+<p>因为我配置的上下文路径为，所以需要</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240413145103181.png" alt="image-20240413145103181"></p>
+<p><strong>不设置项目的上下文</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240413145500274.png" alt="image-20240413145500274"></p>
+<p><strong>MVC架构模式</strong></p>
+<pre><code>是软件架构工程的一种软件架构模式，他把软件分为模式，视图，控制器的三个部分，用一种业务逻辑，数据，界面，界面分离的方式组织代码，及那该业务逻辑聚集在一个部分，在改进和个性化定制界面和用户的交互的同时，不需要重写编写业务逻辑
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240413150000167.png" alt="image-20240413150000167"></p>
+<pre><code>高聚合低耦合
+开闭原则。当我们增加代码，尽量不会修改，而是在基础上增加
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240413150449350.png" alt="image-20240413150449350"></p>
+<p>比如购物的逻辑</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240413150943537.png" alt="image-20240413150943537"></p>
+<p><strong>项目搭建</strong></p>
+<p><strong>日程管理</strong></p>
+<p>数据库的准备</p>
 
     </div>
     

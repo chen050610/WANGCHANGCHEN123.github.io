@@ -399,8 +399,8 @@ ResultSet resultSet = statement.executeQuery(sql);
 <pre><code>java面向对象思维
      把查询的结果封装成一个对象
      内部也一定有行有列
-     
-     
+
+
      我们获取数据应该是一行一行的获取
      在拿到行里每一个的列的数据
 </code></pre>
@@ -685,7 +685,6 @@ public class returnPrimaryKey &#123;
         PreparedStatement preparedStatement = connection.prepareStatement(sql, 1);
         preparedStatement.setObject(1,&quot;hututu&quot;);
         preparedStatement.setObject(2,&quot;wei3588559&quot;);
-        preparedStatement.setObject(3,&quot;hututu&quot;);
         int i = preparedStatement.executeUpdate();
         if (i&gt;0)&#123;
             System.out.println(&quot;数据插入成功&quot;);
@@ -710,7 +709,6 @@ ResultSet generatedKeys = preparedStatement.getGeneratedKeys();//通过这个获
 generatedKeys.next();
 int id = generatedKeys.getInt(1);//获取第一列的数据
 </code></pre>
-<p><strong>批量插入数据</strong></p>
 <p>利用循环插入</p>
 <pre><code class="java">        Class.forName(&quot;com.mysql.cj.jdbc.Driver&quot;);
         Connection connection = DriverManager.getConnection(&quot;jdbc:mysql:///jbdc&quot;,&quot;root&quot;,&quot;root&quot;);
