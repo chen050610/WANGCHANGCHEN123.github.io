@@ -1341,6 +1341,811 @@ resp.getWriter().write(&quot;你好&quot;);
 <p><strong>项目搭建</strong></p>
 <p><strong>日程管理</strong></p>
 <p>数据库的准备</p>
+<p>之前处理业务的代码</p>
+<pre><code class="java">package wei_chen.controller;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
+
+/**
+ * 增加日程   /schedule/add
+ * 查日程    /schedule/find
+ * 改日程     /schedule/update
+ * 删日程   /schedule/remove
+ */
+
+@WebServlet(&quot;/schedule/*&quot;)
+public class SysScheduleControllerServlet extends HttpServlet &#123;
+    @Override
+    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException &#123;
+        //判断增删查改
+        String requestURI = req.getRequestURI();  //  schedule/add  ，如果没有上下文路径
+        String[] split = requestURI.split(&quot;/&quot;);
+        String methodName = split[split.length-1];
+        if (&quot;add&quot;.equals(methodName))&#123;
+            //增加处理
+            add(req, resp);
+        &#125; else if (&quot;find&quot;.equals(methodName))&#123;
+            //查找处理
+            find(req,resp);
+        &#125; else if (&quot;update&quot;.equals(methodName))&#123;
+            //更新处理
+            update(req,resp);
+        &#125; else  if (&quot;remove&quot;.equals(methodName))&#123;
+            //删除处理
+            remove(req,resp);
+        &#125;
+    &#125;
+    protected void add(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException &#123;
+        System.out.println(&quot;add&quot;);
+    &#125;
+    protected void find(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException &#123;
+        System.out.println(&quot;find&quot;);
+    &#125;
+    protected void update(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException &#123;
+        System.out.println(&quot;update&quot;);
+    &#125;
+    protected void remove(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException &#123;
+        System.out.println(&quot;remove&quot;);
+    &#125;
+
+&#125;
+</code></pre>
+<p>但是我可以通过反射进行实现</p>
+<pre><code class="java">package wei_chen.controller;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import wei_chen.service.SysScheduleService;
+
+import java.io.IOException;
+import java.lang.reflect.Method;
+
+/**
+ * 增加日程   /schedule/add
+ * 查日程    /schedule/find
+ * 改日程     /schedule/update
+ * 删日程   /schedule/remove
+ */
+
+@WebServlet(&quot;/schedule/*&quot;)
+public class SysScheduleControllerServlet extends HttpServlet &#123;
+    @Override
+    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException &#123;
+        //判断增删查改
+        String requestURI = req.getRequestURI();  //  schedule/add  ，如果没有上下文路径
+        String[] split = requestURI.split(&quot;/&quot;);
+        String methodName = split[split.length-1];
+        Class&lt;SysScheduleControllerServlet&gt; aClass = SysScheduleControllerServlet.class;
+        Method add = null;
+        try &#123;
+            add = aClass.getDeclaredMethod(methodName, HttpServletRequest.class, HttpServletResponse.class);
+            add.setAccessible(true);
+            add.invoke(this,req,resp);
+        &#125; catch (Exception e) &#123;
+            throw new RuntimeException(e);
+        &#125;
+
+    &#125;
+    protected void add(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException &#123;
+        System.out.println(&quot;add&quot;);
+    &#125;
+    protected void find(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException &#123;
+        System.out.println(&quot;find&quot;);
+    &#125;
+    protected void update(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException &#123;
+        System.out.println(&quot;update&quot;);
+    &#125;
+    protected void remove(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException &#123;
+        System.out.println(&quot;remove&quot;);
+    &#125;
+
+&#125;
+</code></pre>
+<p>加密类工具类</p>
+<p><strong>Cookie</strong></p>
+<pre><code>概述
+</code></pre>
+<p>代码</p>
+<pre><code class="java">@WebServlet(&quot;/servleta&quot;)
+public class ServletA extends HttpServlet &#123;
+    @Override
+    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException &#123;
+        //创建cookie对象
+        Cookie cookie1 = new Cookie(&quot;key&quot;,&quot;value&quot;);
+        Cookie cookie2 = new Cookie(&quot;key1&quot;,&quot;value1&quot;);
+        //将cookie放入response对象
+        resp.addCookie(cookie1);
+        resp.addCookie(cookie2);
+    &#125;
+&#125;
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240414214302308.png" alt="image-20240414214302308"></p>
+<p>这样我们再请求的时候</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240414214451511.png" alt="image-20240414214451511"></p>
+<pre><code>就会带上我们之前设置的cookie
+</code></pre>
+<p>获取cookie</p>
+<pre><code class="java">package wei.cookieServlet;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
+
+@WebServlet(&quot;/servletb&quot;)
+public class ServletB extends HttpServlet &#123;
+    @Override
+    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException &#123;
+        //获取请求的cookie
+        Cookie[] cookies = req.getCookies();
+        //请求中的多个cookie会进入该数组，请求中没有cookie  cookies为null
+        for (Cookie cookie : cookies) &#123;
+            System.out.println(cookie.getName()+cookie.getValue());
+        &#125;
+    &#125;
+&#125;
+</code></pre>
+<pre><code>cookie的默认的失效是一次会话范围以内，如果关闭浏览器这次的cookie就没有了，这个就是绘画型cookie
+</code></pre>
+<p><strong>持久化Cookie</strong></p>
+<pre><code>服务器明确设置cookie的存在时间
+再浏览器，cookie会保存在硬存中，如果绘画型就在内存
+cookie在硬盘的时间根据服务器限定的时间
+持久化cookie到时间就会释放
+</code></pre>
+<pre><code class="java">        //创建cookie对象
+        Cookie cookie1 = new Cookie(&quot;key&quot;,&quot;value&quot;);
+        cookie1.setMaxAge(10);//单位是秒
+</code></pre>
+<p>这样在请求的时候</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240414215739361.png" alt="image-20240414215739361"></p>
+<p><strong>但是我希望cookie只有在请求特殊的路径才提交，其他的路径不会提交</strong></p>
+<pre><code class="java">        cookie1.setPath(&quot;/cookie/servletb&quot;);
+</code></pre>
+<p>这样只有在提交servletb的时候，才会提交cookie</p>
+<p><strong>Session</strong></p>
+<pre><code>HttpSession
+    HttpSession是一种保留更多信息在服务端的一种技术，服务器会为每一个客户端开辟一块内存空间，即session对象，客户端在发送请求时，都可以使用自己的session
+    
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240414220447174.png" alt="image-20240414220447174"></p>
+<p><strong>Session一般用于存储敏感的信息</strong></p>
+<pre><code>Session是后端产生的的一个域对象
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240414220708628.png" alt="image-20240414220708628"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240414221411601.png" alt="image-20240414221411601"></p>
+<p>代码</p>
+<pre><code class="java">package wei.cookieServlet;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
+import java.io.IOException;
+
+@WebServlet(&quot;/servlet2&quot;)
+public class Servlet2 extends HttpServlet &#123;
+    @Override
+    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException &#123;
+        //接收username参数
+        String username = req.getParameter(&quot;username&quot;);
+        //获取session对象
+        // 内部的操作，先判断是否cookie里有JSESSIONID
+        //1.有
+            //根据JSESSIONID找对应的session对象
+                //1.找到了返回，之前的session
+                //2.没有找到，//创建一个新的session返回，并且向response对象存放JSESSIONID的cookie
+        //2.没有
+            //创建一个新的session返回，并且向response对象存放JSESSIONID的cookie
+        HttpSession session = req.getSession();
+        System.out.println(session.getId());//获取
+        System.out.println(session.isNew());//判断是否为新
+        //将username存入session
+        session.setAttribute(&quot;username&quot;,username);
+        //客户端响应
+        resp.setContentType(&quot;text/html;charset=utf-8&quot;);
+        resp.getWriter().write(&quot;成功&quot;);
+    &#125;
+&#125;
+</code></pre>
+<p>访问的时候</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240415102227187.png" alt="image-20240415102227187"></p>
+<p>得到id而且判断为true，说明创建创建了一个新的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240415102254431.png" alt="image-20240415102254431"></p>
+<p>然后在创建一个servlet1在获取对应的储存的username</p>
+<pre><code class="java">package wei.cookieServlet;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
+import java.io.IOException;
+
+
+@WebServlet(&quot;/servlet1&quot;)
+public class Servlet1 extends HttpServlet &#123;
+    @Override
+    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException &#123;
+        //获取session对象
+        HttpSession session = req.getSession();
+        System.out.println(session.getId());
+        System.out.println(session.isNew());
+        //读取session储存的用户名
+        String username = (String) session.getAttribute(&quot;username&quot;);
+        System.out.println(&quot;servlet get username&quot;+username);
+    &#125;
+&#125;
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240415102504636.png" alt="image-20240415102504636"></p>
+<pre><code>和之前的session一样，
+</code></pre>
+<pre><code> 注意服务端的session对象默认的时效性是30分钟，如果一个session在30分钟以内没有使用的话，这样就会删除这个对象
+</code></pre>
+<p>或者可以自己配置</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240415103617581.png" alt="image-20240415103617581"></p>
+<p><strong>域对象的使用</strong></p>
+<pre><code>一些用于储存传递数据
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240415103847307.png" alt="image-20240415103847307"></p>
+<pre><code>HttpRequest，传递的数据范围是在一次请求之内及请求转发
+HttpSession，传递数据范围是一次会话之内，可以跨多个请求
+HttpContext，传递数据范围本应用之内，可以跨多个会话
+</code></pre>
+<pre><code>HttpRequest请求域 	
+</code></pre>
+<p>请求转发，一次 请求范围以内</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240415111011593.png" alt="image-20240415111011593"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240415113834166.png" alt="image-20240415113834166"></p>
+<p><strong>域对象的使用</strong></p>
+<pre><code class="java">
+void setAttribute(String name,String value);
+Object getAttribute(String name);
+removeAttribute(String name)
+</code></pre>
+<p>请求域</p>
+<pre><code class="java">req.setAttribute();
+</code></pre>
+<p>会话域</p>
+<pre><code class="java">Session session=req.getSession();
+session.setAttribute()
+</code></pre>
+<p>应用域</p>
+<pre><code class="java">ServletContext servletContext = getServletContext();
+ServletContext servletContext1 = req.getServletContext();
+servletContext.setAttribute();
+</code></pre>
+<p>获取</p>
+<p>请求域 ，请求转发之后的也会获取的到</p>
+<pre><code class="java">        Object attribute = req.getAttribute(&quot;username&quot;);
+</code></pre>
+<p>会话域</p>
+<pre><code class="java">        HttpSession session1 = req.getSession();
+        session1.getAttribute(&quot;username&quot;);
+</code></pre>
+<p>应用域</p>
+<pre><code class="java">        ServletContext servletContext = getServletContext();
+        servletContext.getAttribute(&quot;username&quot;);
+</code></pre>
+<pre><code>总结
+    请求转发时，请求域可以传递数据，请求域内一般放与本业务有关的数据，
+    同一会话内，不用请求转发，会话域可以传递数据，会话域一般放在本次会话的客户端有关的数据，如当前登录的用户
+    同一app内，不同的客户端，应用域可以传递数据 ，应用域一般放本程序应用有关的数据 如spring框架的IOC容器
+</code></pre>
+<p><strong>过滤器</strong></p>
+<pre><code>概述
+是JAVAEE技术规范之一，作用目标资源的请求进行过滤的一套技术规范，是java web项目中最为实用的技术之一
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240415115514289.png" alt="image-20240415115514289"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240415115629390.png" alt="image-20240415115629390"></p>
+<p>过滤器的工作位置</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240415115838758.png" alt="image-20240415115838758"></p>
+<p>注意过滤器的实现接口是</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240415121145011.png" alt="image-20240415121145011"></p>
+<p>filter的配置</p>
+<pre><code class="xml">    &lt;filter&gt;
+        &lt;filter-name&gt;loginFilter&lt;/filter-name&gt;
+        &lt;filter-class&gt;wei_chenw.filter.LoginFilter&lt;/filter-class&gt;
+    &lt;/filter&gt;
+    &lt;!--配置过滤器过滤的资源规则  路径 servlet-name--&gt;
+    &lt;filter-mapping&gt;
+        &lt;filter-name&gt;loginFilter&lt;/filter-name&gt;
+        &lt;!--
+        url-pattern 根据请求的路径 对指定的资源进行过滤
+            /* 过滤全部资源
+            /a/* 过滤以a开头的全部资源
+            *.html  过滤html结尾的资源
+            /servlet1 对servlet1资源进行过滤
+        servlet-name 根据请求的servlet别名对指定的servlet资源进行过滤\
+        一个filter-mapping中存在多个url-pattern和servlet-name
+        --&gt;
+&lt;!--        &lt;servlet-name&gt;servlet1&lt;/servlet-name&gt;--&gt;
+        &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+    &lt;/filter-mapping&gt;
+</code></pre>
+<pre><code class="java">package wei_chenw.filter;
+/*
+日志过滤器  记录请求的历史，将日志打印在控制台上
+ */
+
+
+import jakarta.servlet.*;
+
+import java.io.IOException;
+
+/*
+流程
+    1.实现Filter接口
+    2.重写过滤方法
+    3.配置过滤器
+        web.xml
+        注解
+ */
+public class LoginFilter implements Filter &#123;
+    /*
+    过滤请求和响应的的方法
+        请求到目标资源前，先经过这个方法
+        该方法控制请求是否可以继续到达目标资源 ，可以在该方法内向客户端做响应处理
+        请求到达目标资源后，响应之前，还会经过这个方法
+     */
+    @Override
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException &#123;
+        /**
+         * 1.请求到达目标资源之前的功能代码
+         *          判断是否登录
+         *          权限是否满足
+         *          。。。。。
+         *  2.放行代码
+         *
+         *  3.响应之前  response对象转为报文之前  的功能代码
+         */
+
+        System.out.println(&quot;LoginFilter before filterChain invoked&quot;);
+        //放行给下一个过滤器
+        filterChain.doFilter(servletRequest,servletResponse);
+//        响应之前的功能代码
+        System.out.println(&quot;LoginFilter after filterChain.doFilter invoked&quot;);
+    &#125;
+&#125;
+</code></pre>
+<p><strong>过滤器的生命周期</strong></p>
+<pre><code class="java">package wei_chenw.filter;
+
+import jakarta.servlet.*;
+
+import java.io.IOException;
+
+/**
+ * 1.构造     构造器
+ * 2.初始化    init
+ * 3.过滤     doFilter
+ * 4.销毁     destroy
+ */
+public class FilterLifeCycle implements Filter &#123;
+    public  FilterLifeCycle()&#123;
+        System.out.println(&quot;constructor start&quot;);  //constructor start
+    &#125;
+
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException &#123;
+        //这里的filterConfig 可以进行配置
+        System.out.println(&quot;init start&quot;);  //init start
+        System.out.println(filterConfig.getInitParameter(&quot;dataTimePattern&quot;));  //yyyy-MM-dd HH:mm:ss
+    &#125;
+
+    @Override
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException &#123;
+        System.out.println(&quot;doFilter &quot;);//doFilter 
+        filterChain.doFilter(servletRequest,servletResponse);
+    &#125;
+
+    @Override
+    public void destroy() &#123;
+        System.out.println(&quot;destroy start&quot;);
+    &#125;
+&#125;
+</code></pre>
+<pre><code>init的配置信息的配置
+</code></pre>
+<pre><code class="xml">    &lt;filter&gt;
+        &lt;filter-name&gt;FilterLifeCycle&lt;/filter-name&gt;
+        &lt;filter-class&gt;wei_chenw.filter.FilterLifeCycle&lt;/filter-class&gt;
+        &lt;init-param&gt;
+            &lt;param-name&gt;dataTimePattern&lt;/param-name&gt;
+            &lt;param-value&gt;yyyy-MM-dd HH:mm:ss&lt;/param-value&gt;
+        &lt;/init-param&gt;
+    &lt;/filter&gt;
+    &lt;filter-mapping&gt;
+        &lt;filter-name&gt;FilterLifeCycle&lt;/filter-name&gt;
+        &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+    &lt;/filter-mapping&gt;
+</code></pre>
+<pre><code class="xml">    &lt;init-param&gt;
+        &lt;param-name&gt;dataTimePattern&lt;/param-name&gt;
+        &lt;param-value&gt;yyyy-MM-dd HH:mm:ss&lt;/param-value&gt;
+    &lt;/init-param&gt;
+</code></pre>
+<pre><code>总结这个生命周期和servlet有点像，但是这个的构造器和init方法，是在项目启动的时候就构造了执行了，不想srevlet，需要配置load-on来控制
+</code></pre>
+<p><strong>过滤器链</strong></p>
+<pre><code>存在多个过滤器形成链
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240415143845586.png" alt="image-20240415143845586"></p>
+<p>代码创建三个filter</p>
+<pre><code class="java">package wei_chenw.filter;
+
+import jakarta.servlet.*;
+
+import java.io.IOException;
+
+public class Filter1 implements Filter &#123;
+    @Override
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException &#123;
+        System.out.println(&quot;filter1 before dofilter invoked&quot;);
+        filterChain.doFilter(servletRequest, servletResponse);
+        System.out.println(&quot;filter1 after dofilter invoked&quot;);
+    &#125;
+&#125;
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240415144442939.png" alt="image-20240415144442939"></p>
+<p>配置</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240415144458118.png" alt="image-20240415144458118"></p>
+<p>然后在请求servlet1</p>
+<p>打印的日志的流程</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240415144527279.png" alt="image-20240415144527279"></p>
+<p>执行的机制</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240415144611499.png" alt="image-20240415144611499"></p>
+<p>为什么顺序是这样的</p>
+<p>因为这个顺序是根据我们在web.xml顺序来的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240415144718368.png" alt="image-20240415144718368"></p>
+<pre><code>起顺序作用的是filter不是filter-mapping
+</code></pre>
+<p>可以不用使使用配置文件进行配置，使用注解的形式</p>
+<pre><code class="java">@WebFilter(&quot;/*&quot;)
+public class Filter1 implements Filter &#123;
+    @Override
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException &#123;
+        System.out.println(&quot;filter1 before dofilter invoked&quot;);
+        filterChain.doFilter(servletRequest, servletResponse);
+        System.out.println(&quot;filter1 after dofilter invoked&quot;);
+    &#125;
+&#125;
+</code></pre>
+<p>那使用注解执行的顺序是什么样的</p>
+<pre><code>根据类的名字进行过滤
+    所以我们就可以在过滤器前面的加上1，2什么的控制过滤的顺序
+</code></pre>
+<p><strong>注解方式配置过滤器</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240415150246972.png" alt="image-20240415150246972"></p>
+<pre><code>initParams  初始参数，来替代web.xml里面的参数的配置
+servletNames	通过servlet别名的形式进行规则的匹配
+urlPatterns		通过路径的方式来过滤
+</code></pre>
+<p>完整的写法大盖是这样的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240415150529338.png" alt="image-20240415150529338"></p>
+<pre><code>注意这个注解的value的值是urlpatterns的值
+</code></pre>
+<p><strong>监听器</strong></p>
+<pre><code>概述
+    相当于js里面的事件，但是这里面的监听器监听的是域对象的发生的事，主要就是三大事件
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240415150933652.png" alt="image-20240415150933652"></p>
+<p>代码</p>
+<pre><code class="java">package wei.chenw.listener;
+
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
+
+public class MyApplicationListener implements ServletContextListener &#123;
+    @Override
+    public void contextInitialized(ServletContextEvent sce) &#123;
+        ServletContext servletContext = sce.getServletContext();
+        System.out.println(servletContext.hashCode()+&quot;应用域初始化&quot;);
+    &#125;
+
+    @Override
+    public void contextDestroyed(ServletContextEvent sce) &#123;
+        ServletContext servletContext = sce.getServletContext();
+        System.out.println(servletContext.hashCode()+&quot;应用域销毁&quot;);
+    &#125;
+&#125;
+</code></pre>
+<p>使用配置文件配置</p>
+<pre><code class="xml">    &lt;listener&gt;
+        &lt;listener-class&gt;wei.chenw.listener.MyApplicationListener&lt;/listener-class&gt;
+    &lt;/listener&gt;
+</code></pre>
+<p>使用注解配置</p>
+<pre><code class="java">@WebListener
+public class MyApplicationListener implements ServletContextListener &#123;
+    @Override
+    public void contextInitialized(ServletContextEvent sce) &#123;
+        ServletContext servletContext = sce.getServletContext();
+        System.out.println(servletContext.hashCode()+&quot;应用域初始化&quot;);
+    &#125;
+
+    @Override
+    public void contextDestroyed(ServletContextEvent sce) &#123;
+        ServletContext servletContext = sce.getServletContext();
+        System.out.println(servletContext.hashCode()+&quot;应用域销毁&quot;);
+    &#125;
+&#125;
+</code></pre>
+<p>当我们启动的时候</p>
+<p>就会自动实例化应用域</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240415152634753.png" alt="image-20240415152634753"></p>
+<p>现在只是监听域的创建</p>
+<p>还可以实现监听的数据的增删等操作</p>
+<p>需要在实现这个接口<img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240415152759874.png" alt="image-20240415152759874"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240415152807392.png" alt="image-20240415152807392"></p>
+<pre><code>分别监听数据的增加，删除和替换
+</code></pre>
+<p>这样测试以后</p>
+<pre><code class="java">package wei.chenw.listener;
+
+import jakarta.servlet.*;
+import jakarta.servlet.annotation.WebListener;
+
+
+@WebListener
+public class MyApplicationListener implements ServletContextListener , ServletContextAttributeListener &#123;
+    @Override
+    public void contextInitialized(ServletContextEvent sce) &#123;
+        ServletContext servletContext = sce.getServletContext();
+        System.out.println(servletContext.hashCode()+&quot;应用域初始化&quot;);
+    &#125;
+
+    @Override
+    public void contextDestroyed(ServletContextEvent sce) &#123;
+        ServletContext servletContext = sce.getServletContext();
+        System.out.println(servletContext.hashCode()+&quot;应用域销毁&quot;);
+    &#125;
+
+    @Override
+    public void attributeAdded(ServletContextAttributeEvent scae) &#123;
+        ServletContext servletContext = scae.getServletContext();
+        System.out.println(servletContext.hashCode()+&quot;应用域增加了&quot;+scae.getName()+scae.getValue());
+    &#125;
+
+    @Override
+    public void attributeRemoved(ServletContextAttributeEvent scae) &#123;
+        ServletContext servletContext = scae.getServletContext();
+        System.out.println(servletContext.hashCode()+&quot;应用域移除了&quot;+scae.getName()+scae.getValue());
+    &#125;
+
+    @Override
+    public void attributeReplaced(ServletContextAttributeEvent scae) &#123;
+        ServletContext servletContext = scae.getServletContext();
+        //注意修改的时候是可以获取两个值，一个是新的值，一个是老的值，getvalue是获取的是老的值
+        System.out.println(servletContext.hashCode());
+        System.out.println(&quot;之前的值为&quot;+scae.getValue());
+        System.out.println(&quot;修改的值为&quot;+servletContext.getAttribute(scae.getName()));
+    &#125;
+&#125;
+</code></pre>
+<p>但我们分别修改删除和增加的时候</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240415153605714.png" alt="image-20240415153605714"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240415153621224.png" alt="image-20240415153621224"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240415153640933.png" alt="image-20240415153640933"></p>
+<p>这样就实现应用域的监听</p>
+<p><strong>监听对话域</strong></p>
+<pre><code class="java">package wei.chenw.listener;
+
+import jakarta.servlet.annotation.WebListener;
+import jakarta.servlet.http.*;
+
+@WebListener
+public class MySessionListener implements HttpSessionListener , HttpSessionAttributeListener &#123;
+    @Override
+    public void sessionCreated(HttpSessionEvent se) &#123;
+        //任何session域的创建都会触发该方法的执行
+        HttpSession session = se.getSession();
+        System.out.println(session.getId()+&quot;创建&quot;);
+    &#125;
+
+    @Override
+    public void sessionDestroyed(HttpSessionEvent se) &#123;
+        ////session对象过期，或者手动销毁
+        HttpSession session = se.getSession();
+        System.out.println(session.getId()+&quot;销毁&quot;);
+    &#125;
+
+    @Override
+    public void attributeAdded(HttpSessionBindingEvent se) &#123;
+        //任何一个session域的增加数据，都会出发这个方法
+
+    &#125;
+
+    @Override
+    public void attributeRemoved(HttpSessionBindingEvent se) &#123;
+        //任何一个session域的移除数据，都会出发这个方法
+    &#125;
+
+    @Override
+    public void attributeReplaced(HttpSessionBindingEvent se) &#123;
+        //任何一个session域的替换数据，都会出发这个方法
+    &#125;
+&#125;
+</code></pre>
+<pre><code>使用的方法和之前的应用域的使用方法一样，但是这个session对象的建立是在调用req.getSession()方法以后擦能生成，所所以需要手动调用，应用域则是创建服务的时候，就会创建
+</code></pre>
+<p><strong>请求域的监听</strong></p>
+<pre><code class="java">package wei.chenw.listener;
+
+import jakarta.servlet.ServletRequestAttributeEvent;
+import jakarta.servlet.ServletRequestAttributeListener;
+import jakarta.servlet.ServletRequestEvent;
+import jakarta.servlet.ServletRequestListener;
+import jakarta.servlet.annotation.WebListener;
+import jakarta.servlet.http.HttpServletRequest;
+
+
+@WebListener
+public class MyRequestListener implements ServletRequestListener , ServletRequestAttributeListener &#123;
+    @Override
+    public void requestDestroyed(ServletRequestEvent sre) &#123;
+
+    &#125;
+
+    @Override
+    public void requestInitializead(ServletRequestEvent sre) &#123;
+        ServletRequestListener.super.requestInitialized(sre);
+    &#125;
+
+    @Override
+    public void attributeAdded(ServletRequestAttributeEvent srae) &#123;
+        ServletRequestAttributeListener.super.attributeAdded(srae);
+    &#125;
+
+    @Override
+    public void attributeRemoved(ServletRequestAttributeEvent srae) &#123;
+        ServletRequestAttributeListener.super.attributeRemoved(srae);
+    &#125;
+
+    @Override
+    public void attributeReplaced(ServletRequestAttributeEvent srae) &#123;
+        ServletRequestAttributeListener.super.attributeReplaced(srae);
+    &#125;
+&#125;
+</code></pre>
+<p>可以参照上面的步骤</p>
+<p><strong>session绑定监听器</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240415192605868.png" alt="image-20240415192605868"></p>
+<pre><code>HttpSessionBindingListener
+    valueBound(HttpSessionBindingEvent event)
+
+
+用来监听session的session的绑定和解绑定的操作
+</code></pre>
+<p>使用</p>
+<pre><code class="java">package wei.chenw.listener;
+
+import jakarta.servlet.http.HttpSessionBindingEvent;
+import jakarta.servlet.http.HttpSessionBindingListener;
+
+public class SessionBindingListener implements HttpSessionBindingListener &#123;
+    @Override
+    public void valueBound(HttpSessionBindingEvent event) &#123;
+        //当监听器 实例放入某个session中作为数据 绑定
+
+    &#125;
+
+    @Override
+    public void valueUnbound(HttpSessionBindingEvent event) &#123;
+        // 当前的监听器实例从某个session中移除
+    &#125;
+&#125;
+</code></pre>
+<p>例如下面就会触发监听 </p>
+<pre><code class="java">HttpSession session = req.getSession();
+SessionBindingListener sessionBindingListener = new SessionBindingListener();
+session.setAttribute(&quot;sbl&quot;,sessionBindingListener);  //触发绑定
+session.removeAttribute(&quot;sbl&quot;);  //触发移除
+</code></pre>
+<ul>
+<li>很少用</li>
+</ul>
+<p>	</p>
+<p><strong>钝化和活化监听器</strong></p>
+<pre><code>HttpSessionActivationListener 监听某个对象在session中的序列化和反序列化
+</code></pre>
+<pre><code>在服务器的有很多的session对象，一直在内存中运行会占用内存，所以我们一般序列化到文件里面，保存在硬盘，这个就是钝化的过程，相反就是活化
+</code></pre>
+<pre><code>HttpSessionActivationListener这个就是监视钝化和活化的
+</code></pre>
+<pre><code class="java">package wei.chenw.listener;
+
+import jakarta.servlet.http.HttpSessionActivationListener;
+import jakarta.servlet.http.HttpSessionEvent;
+
+public class MyActivationListener implements HttpSessionActivationListener &#123;
+    @Override
+    public void sessionWillPassivate(HttpSessionEvent se) &#123;
+        //钝化
+    &#125;
+
+    @Override
+    public void sessionDidActivate(HttpSessionEvent se) &#123;
+        //活化
+    &#125;
+&#125;
+</code></pre>
+<p>而且这个设置监听注解是没有用的，需要实例对象，放在session域上</p>
+<pre><code class="java">MyActivationListener myActivationListener = new MyActivationListener();
+session.setAttribute(&quot;lis&quot;,myActivationListener);
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240415200015880.png" alt="image-20240415200015880"></p>
+<p><strong>过滤器控制登录校验</strong></p>
+<p>现在我们还没有实现校验，在没有登录情况下也能访问主页</p>
+<pre><code>所以需要使用过滤器，
+</code></pre>
+<pre><code>而且之前写的control层的各种方法，比如添加数据，删除数据，必须登录以后，也要做限制
+</code></pre>
+<p>思路就是</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240415215419411.png" alt="image-20240415215419411"></p>
+<p>我们在登录的实现接口</p>
+<pre><code class="java">            //登录成功之后，将登录的用户信息放入session
+            HttpSession session = req.getSession();
+            session.setAttribute(&quot;sysUser&quot;,loginUser);
+            //登录成功，跳转到主页
+            resp.sendRedirect(&quot;/showSchedule.html&quot;);
+</code></pre>
+<p>然后在过滤器</p>
+<pre><code class="java">package wei_chen.filter;
+
+import jakarta.servlet.*;
+import jakarta.servlet.annotation.WebFilter;
+import jakarta.servlet.annotation.WebInitParam;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import wei_chen.pojo.SysUser;
+
+import java.io.IOException;
+
+@WebFilter(urlPatterns = &#123;&quot;/showSchedule.html&quot;,&quot;/schedule/*&quot;&#125;)
+public class LoginFilter  implements Filter &#123;
+    @Override
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException &#123;
+        //获取session域对象
+        //参数父转字这样就可以获取到session域对象
+        HttpServletRequest request = (HttpServletRequest) servletRequest;
+        HttpServletResponse response = (HttpServletResponse) servletResponse;
+        //从session域中获取登录的用户对象
+        HttpSession session = request.getSession();
+        SysUser sysUser = (SysUser)session.getAttribute(&quot;sysUser&quot;);
+        //判断用户对象是否为null,没登陆，重定向login，登陆过，可以放行
+        if (null==sysUser)&#123;
+            //没登陆过
+            response.sendRedirect(&quot;/login.html&quot;);
+        &#125; else &#123;
+            //登陆过  放行
+            filterChain.doFilter(request,response);
+        &#125;
+
+    &#125;
+&#125;
+</code></pre>
+<p><strong>AJax</strong></p>
 
     </div>
     
