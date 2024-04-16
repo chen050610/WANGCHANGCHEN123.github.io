@@ -177,7 +177,7 @@
             
             <span class="tag">
                 
-                <a href="/tags/Java/" style="color: #03a9f4">Java</a>
+                <a href="/tags/Java/" style="color: #ff7d73">Java</a>
             </span>
             
         </span>
@@ -2179,7 +2179,8 @@ Fu fu = new zi();--&gt;理解成大数据类型接受一个小数据类型的数
 </ul>
 <p><strong>多态的好处</strong></p>
 <pre><code>1.问题描述
-    如果不使用多态，使用原始的方法new对象，既能调用子类重写的父类的方法，还能调用自己特有的成员，但是多态的new的对象只能调用子类重写的，不能调用子类的特有的成员那为什么还要用多态？
+    如果不使用多态，使用原始的方法new对象，既能调用子类重写的父类的方法，还能调用自己特有的成员，但是多态的new的对象只能调用子类重写的，不能调用子类的特有的成员
+        那为什么还要用多态？
 2.多态方式和原始方式new对象的优缺点
     原始方式:
         优点:既能调用重写的，还能调用父类非私有的，还能调用自己特有的
@@ -5945,7 +5946,7 @@ Apache基金会，开发Io技术工具类commonsIO，大大简化io开发
 <pre><code class="java">DatagramSocket socket = new DatagramSocket(6666);
 byte[] bytes= new byte[1024];//用于保存接受过来的数据
 //获取数据包
-DatagramPacket dp = new DatagramPacket(bytes,bytes.length);//这个byes的作用作为数据的缓冲区
+DatagramPacket dp = new (bytes,bytes.length);//这个byes的作用作为数据的缓冲区
 socket.receive(dp);
 //解析
 byte[] data = dp.getData();//接受数据
@@ -7143,8 +7144,8 @@ public class Demo3 &#123;
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240405110456036.png" alt="image-20240405110456036"></p>
 <p><strong>类的加载机制</strong></p>
 <pre><code>下面都会将类加载到内存
-new 对象
-new 子类对象(new子类对象先初始化父类)
+    new 对象
+    new 子类对象(new子类对象先初始化父类)
 执行main方法
 调用静态方法
 反射，创建Class对象

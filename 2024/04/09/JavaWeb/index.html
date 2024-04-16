@@ -2146,6 +2146,349 @@ public class LoginFilter  implements Filter &#123;
 &#125;
 </code></pre>
 <p><strong>AJax</strong></p>
+<p>原生的xmlHttpRequest</p>
+<pre><code class="html">&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;Title&lt;/title&gt;
+    &lt;script&gt;
+        let getMessage = () =&gt; &#123;
+            //实例化xmlHttpRequest对象
+            let xmlHttpRequest = new XMLHttpRequest();
+            //设置xmHttpRequest的回调函数,当状态改变就会调用这个函数   xmlHttpRequest.reqState 1 2 3 4  第四个状态代表响应回来信息
+            //xmlHttpRequest.status  响应的状态码
+            xmlHttpRequest.onreadystatechange = ()=&gt;&#123;
+                let state = xmlHttpRequest.readyState;
+                let status = xmlHttpRequest.status;
+                if (state == 4  &amp;&amp; status == 200)&#123;
+                    //接收响应结果处理,获取响应的信息
+                    console.log(xmlHttpRequest.responseText)
+                    let elementById = document.getElementById(&quot;message&quot;);
+                    elementById.value = xmlHttpRequest.responseText
+                &#125;
+            &#125;
+            //设置发送请求的方式和请求的资源路径
+            xmlHttpRequest.open(&quot;GET&quot;,&quot;/hello?username=chenw&quot;)
+            //发送请求
+            xmlHttpRequest.send()
+        &#125;
+    &lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;button onclick=&quot;getMessage()&quot;&gt;点我&lt;/button&gt;
+&lt;input type=&quot;text&quot; id=&quot;message&quot;/&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<pre><code class="java">package WeI.chenw.servlet;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebFilter;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
+
+
+@WebServlet(&quot;/hello&quot;)
+public class HelloServlet extends HttpServlet &#123;
+    @Override
+    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException &#123;
+        String username = req.getParameter(&quot;username&quot;);
+        System.out.println(&quot;username = &quot;+ username);
+        resp.setContentType(&quot;text/html;charset=utf-8&quot;);
+        resp.getWriter().write(&quot;用户名为=&quot;+username);
+    &#125;
+&#125;
+</code></pre>
+<p><strong>注册提交前校验用户名是否被占用</strong></p>
+<pre><code class="js">            //格式校验正确以后，继续校验用户名是否被占用
+            let xmlHttpRequest = new XMLHttpRequest();
+            //回调函数
+            xmlHttpRequest.onreadystatechange = ()=&gt;&#123;
+                if(xmlHttpRequest.readyState == 4 &amp;&amp; xmlHttpRequest.status == 200)&#123;
+                    usernameMsgSpan.innerText = xmlHttpRequest.responseText;
+                &#125;
+            &#125;
+            xmlHttpRequest.open(&quot;GET&quot;,&quot;/user/checkUsernameUsed?username=&quot;+username);
+            xmlHttpRequest.send()
+</code></pre>
+<pre><code class="java">//接收用户名
+String username = req.getParameter(&quot;username&quot;);
+//调用服务层的代码查询该用户是否存在
+SysUser sysUser = userService.findByUsername(username);
+//如果有   响应   占用
+String info = &quot;可用&quot;;
+if (null != sysUser )&#123;
+    info  = &quot;已占用&quot;;
+&#125;
+resp.getWriter().write(info);
+</code></pre>
+<p>解决问题</p>
+<pre><code>1.响应乱码
+2.响应格式信息不规范，处理方式不规范
+    后端响应的信息应当有一个统一的格式，前后端共同遵守
+    可以响应一个json串，一般都有这几个属性
+    &#123;
+        &quot;code&quot;:业务状态码;比如 1,0
+        &quot;message&quot;:业务状态码的描述
+        &quot;data&quot;:&#123;&#125; :本次响应的数据
+    &#125;
+3.校验不通过，无法阻止表单提交的问题
+</code></pre>
+<p>代码如下</p>
+<p>工具包</p>
+<pre><code class="java">package wei_chen.common;
+
+
+/**
+ * 全局统一响应的JSON格式处理类
+ *
+ */
+public class Result&lt;T&gt; &#123;
+    // 返回码
+    private Integer code;
+    // 返回消息
+    private String message;
+    // 返回数据
+    private T data;
+    public Result()&#123;&#125;
+    // 返回数据
+    protected static &lt;T&gt; Result&lt;T&gt; build(T data) &#123;
+        Result&lt;T&gt; result = new Result&lt;T&gt;();
+        if (data != null)
+            result.setData(data);
+        return result;
+    &#125;
+    public static &lt;T&gt; Result&lt;T&gt; build(T body, Integer code, String message) &#123;
+        Result&lt;T&gt; result = build(body);
+        result.setCode(code);
+        result.setMessage(message);
+        return result;
+    &#125;
+    public static &lt;T&gt; Result&lt;T&gt; build(T body, ResultCodeEnum resultCodeEnum) &#123;
+        Result&lt;T&gt; result = build(body);
+        result.setCode(resultCodeEnum.getCode());
+        result.setMessage(resultCodeEnum.getMessage());
+        return result;
+    &#125;
+    /**
+     * 操作成功
+     * @param data  baseCategory1List
+     * @param &lt;T&gt;
+     * @return
+     */
+    public static&lt;T&gt; Result&lt;T&gt; ok(T data)&#123;
+        Result&lt;T&gt; result = build(data);
+        return build(data, ResultCodeEnum.SUCCESS);
+    &#125;
+    public Result&lt;T&gt; message(String msg)&#123;
+        this.setMessage(msg);
+        return this;
+    &#125;
+    public Result&lt;T&gt; code(Integer code)&#123;
+        this.setCode(code);
+        return this;
+    &#125;
+    public Integer getCode() &#123;
+        return code;
+    &#125;
+    public void setCode(Integer code) &#123;
+        this.code = code;
+    &#125;
+    public String getMessage() &#123;
+        return message;
+    &#125;
+    public void setMessage(String message) &#123;
+        this.message = message;
+    &#125;
+    public T getData() &#123;
+        return data;
+    &#125;
+    public void setData(T data) &#123;
+        this.data = data;
+    &#125;
+
+    @Override
+    public String toString() &#123;
+        return &quot;Result&#123;&quot; +
+                &quot;code=&quot; + code +
+                &quot;, message=&#39;&quot; + message + &#39;\&#39;&#39; +
+                &quot;, data=&quot; + data +
+                &#39;&#125;&#39;;
+    &#125;
+&#125;
+</code></pre>
+<p>枚举类设置状态码和状态的提示信息</p>
+<pre><code class="java">package wei_chen.common;
+
+
+/**
+ * 全局统一响应的JSON格式处理类
+ *
+ */
+public class Result&lt;T&gt; &#123;
+    // 返回码
+    private Integer code;
+    // 返回消息
+    private String message;
+    // 返回数据
+    private T data;
+    public Result()&#123;&#125;
+    // 返回数据
+    protected static &lt;T&gt; Result&lt;T&gt; build(T data) &#123;
+        Result&lt;T&gt; result = new Result&lt;T&gt;();
+        if (data != null)
+            result.setData(data);
+        return result;
+    &#125;
+    public static &lt;T&gt; Result&lt;T&gt; build(T body, Integer code, String message) &#123;
+        Result&lt;T&gt; result = build(body);
+        result.setCode(code);
+        result.setMessage(message);
+        return result;
+    &#125;
+    public static &lt;T&gt; Result&lt;T&gt; build(T body, ResultCodeEnum resultCodeEnum) &#123;
+        Result&lt;T&gt; result = build(body);
+        result.setCode(resultCodeEnum.getCode());
+        result.setMessage(resultCodeEnum.getMessage());
+        return result;
+    &#125;
+    /**
+     * 操作成功
+     * @param data  baseCategory1List
+     * @param &lt;T&gt;
+     * @return
+     */
+    public static&lt;T&gt; Result&lt;T&gt; ok(T data)&#123;
+        Result&lt;T&gt; result = build(data);
+        return build(data, ResultCodeEnum.SUCCESS);
+    &#125;
+    public Result&lt;T&gt; message(String msg)&#123;
+        this.setMessage(msg);
+        return this;
+    &#125;
+    public Result&lt;T&gt; code(Integer code)&#123;
+        this.setCode(code);
+        return this;
+    &#125;
+    public Integer getCode() &#123;
+        return code;
+    &#125;
+    public void setCode(Integer code) &#123;
+        this.code = code;
+    &#125;
+    public String getMessage() &#123;
+        return message;
+    &#125;
+    public void setMessage(String message) &#123;
+        this.message = message;
+    &#125;
+    public T getData() &#123;
+        return data;
+    &#125;
+    public void setData(T data) &#123;
+        this.data = data;
+    &#125;
+
+    @Override
+    public String toString() &#123;
+        return &quot;Result&#123;&quot; +
+                &quot;code=&quot; + code +
+                &quot;, message=&#39;&quot; + message + &#39;\&#39;&#39; +
+                &quot;, data=&quot; + data +
+                &#39;&#125;&#39;;
+    &#125;
+&#125;
+</code></pre>
+<p>服务端</p>
+<pre><code class="java">//接收用户名
+String username = req.getParameter(&quot;username&quot;);
+//调用服务层的代码查询该用户是否存在
+SysUser sysUser = userService.findByUsername(username);
+//如果有   响应   占用
+Result result  = Result.ok(null);
+if (null != sysUser )&#123;
+    result =  result.build(null, ResultCodeEnum.USERNAME_USED);
+&#125;
+//将result对象转为JSON传递给客户端
+ObjectMapper objectMapper = new ObjectMapper();
+String info= objectMapper.writeValueAsString(result);
+//还要告诉客户端响应的是json串
+resp.setContentType(&quot;application/json;charset=UTF-8&quot;);
+resp.getWriter().write(info);
+</code></pre>
+<p>前端</p>
+<pre><code class="js">//格式校验正确以后，继续校验用户名是否被占用
+let xmlHttpRequest = new XMLHttpRequest();
+//回调函数
+xmlHttpRequest.onreadystatechange = ()=&gt;&#123;
+    if(xmlHttpRequest.readyState == 4 &amp;&amp; xmlHttpRequest.status == 200)&#123;
+        console.log(xmlHttpRequest.responseText)
+        let result = JSON.parse(xmlHttpRequest.responseText);
+        if (result.code != 200)&#123;
+            usernameMsgSpan.innerText=&quot;不可用&quot;
+        &#125; else &#123;
+            usernameMsgSpan.innerText=&quot;可用&quot;
+        &#125;
+    &#125;
+&#125;
+xmlHttpRequest.open(&quot;GET&quot;,&quot;/user/checkUsernameUsed?username=&quot;+username);
+xmlHttpRequest.send()
+</code></pre>
+<p>我们可以在把响应json代码分装成一个工具包</p>
+<pre><code class="java">package wei_chen.util;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import wei_chen.common.Result;
+
+public class WebUtil &#123;
+    private static ObjectMapper objectMapper;
+    static &#123;
+        objectMapper = new ObjectMapper();
+    &#125;
+    /**
+     * 专门用于向客户端响应json串
+     */
+    public static void writeJson(HttpServletResponse resp, Result result)&#123;
+        resp.setContentType(&quot;application/json;charset=UTF-8&quot;);
+        //将result对象转为JSON传递给客户端
+
+        try &#123;
+            String info= objectMapper.writeValueAsString(result);
+            resp.getWriter().write(info);
+        &#125; catch (Exception e)&#123;
+            e.printStackTrace();
+        &#125;
+    &#125;
+&#125;
+</code></pre>
+<p>在调用的时候</p>
+<pre><code class="java">//接收用户名
+String username = req.getParameter(&quot;username&quot;);
+//调用服务层的代码查询该用户是否存在
+SysUser sysUser = userService.findByUsername(username);
+//如果有   响应   占用
+Result result  = Result.ok(null);
+if (null != sysUser )&#123;
+    result =  result.build(null, ResultCodeEnum.USERNAME_USED);
+&#125;
+WebUtil.writeJson(resp,result);
+</code></pre>
+<p>前端工程化</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240416204611130.png" alt="image-20240416204611130"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240416210013007.png" alt="image-20240416210013007"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240416210420079.png" alt="image-20240416210420079"></p>
+<p>下载到本地的话，如果其他的项目就会有冲突，所以最好下载项目的node_modules</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240416210625206.png" alt="image-20240416210625206"></p>
+<p><strong>node的指令的复习</strong></p>
+<p>查看</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240416215034416.png" alt="image-20240416215034416"></p>
 
     </div>
     
