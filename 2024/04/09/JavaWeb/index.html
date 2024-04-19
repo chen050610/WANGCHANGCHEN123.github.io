@@ -527,9 +527,7 @@ import java.io.IOException;
 public class ServletLifeCycle extends HttpServlet &#123;
     public ServletLifeCycle()&#123;
         System.out.println(&quot;constructor&quot;);
-    &#125;
-    public void init()&#123;
-        System.out.println(&quot;初始化&quot;);
+          System.out.println(&quot;初始化&quot;);
     &#125;
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException &#123;
@@ -2489,6 +2487,139 @@ WebUtil.writeJson(resp,result);
 <p><strong>node的指令的复习</strong></p>
 <p>查看</p>
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240416215034416.png" alt="image-20240416215034416"></p>
+<p>axios的注意</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240418201515482.png" alt="image-20240418201515482"></p>
+<pre><code>如果是post请求，参数写在data参数的里面
+如果是get请求，参数应该写在params的里面
+</code></pre>
+<p>或者一般使用的都是简写的形式</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240418201801035.png" alt="image-20240418201801035"></p>
+<p>例如</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240418201837107.png" alt="image-20240418201837107"></p>
+<p>post方法</p>
+<p>直接在url后面添加参数</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240418202129247.png" alt="image-20240418202129247"></p>
+<p>请求拦截器和响应拦截器</p>
+<p>拦截器封装以后的</p>
+<pre><code class="js">import axios from &#39;axios&#39;
+
+const instance=axios.create(&#123;
+    baseURL:&quot;&quot;
+&#125;)
+
+instance.interceptors.request.use((config)=&gt;&#123;
+    //请求的拦截器，在请求之前，设置请求的信息；例如
+    config.headers.Accept = &quot;Application/json,text/plain&quot;;
+    //最后一定要config返回回去
+    return  config;
+
+&#125;,(error)=&gt;&#123;
+    //请求前拦截器异常的方法
+    //返回失败的promise
+    return Promise.reject(&quot;something wrong&quot;)
+&#125;)
+
+//响应拦截器
+instance.interceptors.response.use((resp)=&gt;&#123;
+    //响应状态码为200要执行的代码
+    //可以在这里处理响应数据
+    // 最后要返回数据的
+    console.log(&quot;response success&quot;)
+    return resp;
+
+&#125;,(err)=&gt;&#123;
+    //状态码不是200就会执行的函数
+    console.log(err)
+    //最后一定要响应一个失败的promise
+    return Promise.reject(&quot;something wrong&quot;)
+&#125;)
+</code></pre>
+<p>跨域问题</p>
+<p>看到这里终于深度的理解的跨域的问题</p>
+<pre><code>我们写的发送请求的代码，就会在浏览器执行，然后请求完响应，因为浏览器会有不允许跨域的协议，所以不会讲请求的数据响应回发送请求的端口，但是，如果我们在发送请求的端口配置代理，在这里请求同一个端口，再通过代理访问要访问的，这样就可以不用被浏览器限制了
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240418205732712.png" alt="image-20240418205732712"></p>
+<p>上面这种是比较麻烦的，或者直接在服务端配置</p>
+<pre><code>在服务端配置可以可以跨域
+    这样客户端就会发送两个请求，预检请求只有在第一次请求的时候发送，会有时效性
+        一个是预检，判断服务器是否可以跨域
+        第二个就是正常的请求
+</code></pre>
+<p>那服务器应该怎么配置</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240418211324353.png" alt="image-20240418211324353"></p>
+<pre><code>配置跨域过滤器
+    如果是预检请求，响应允许跨域的信息，一般预检请求都是options
+    如果不是，直接响应信息
+</code></pre>
+<p>预检的代码</p>
+<pre><code class="java">package wei_chen.filter;
+
+import wei_chen.util.WebUtil;
+import wei_chen.common.Result;
+import jakarta.servlet.*;
+import jakarta.servlet.annotation.WebFilter;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
+
+@WebFilter(&quot;/*&quot;)
+public class CrosFilter implements Filter &#123;
+    @Override
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException &#123;
+
+        HttpServletRequest request = (HttpServletRequest) servletRequest;
+        System.out.println(request.getMethod());
+        HttpServletResponse response = (HttpServletResponse) servletResponse;
+        response.setHeader(&quot;Access-Control-Allow-Origin&quot;, &quot;*&quot;);
+        response.setHeader(&quot;Access-Control-Allow-Methods&quot;, &quot;POST, GET, PUT,OPTIONS, DELETE, HEAD&quot;);
+        response.setHeader(&quot;Access-Control-Max-Age&quot;, &quot;3600&quot;);
+        response.setHeader(&quot;Access-Control-Allow-Headers&quot;, &quot;access-control-allow-origin, authority, content-type, version-info, X-Requested-With&quot;);
+        // 如果是跨域预检请求,则直接在此响应200业务码
+        if(request.getMethod().equalsIgnoreCase(&quot;OPTIONS&quot;))&#123;
+            WebUtil.writeJson(response, Result.ok(null));
+        &#125;else&#123;
+            // 非预检请求,放行即可
+            filterChain.doFilter(servletRequest, servletResponse);
+        &#125;
+    &#125;
+&#125;
+</code></pre>
+<p>这个不用自己写，到后来使用注解就能实现</p>
+<p>接收json的字符串可以这样</p>
+<pre><code class="java">//1.客户端提交的json参数，并且转为SysUser对象
+BufferedReader reader = req.getReader();
+StringBuffer stringBuffer = new StringBuffer();
+String s = reader.readLine();
+while (s!=null)&#123;
+    stringBuffer.append(s);
+    s = reader.readLine();
+&#125;
+//经过上面的步骤这样就可以获取到json字符串
+ObjectMapper objectMapper = new ObjectMapper();
+SysUser sysUser = objectMapper.readValue(s.toString(), SysUser.class);
+</code></pre>
+<p>或者把这个直接分装成工具类</p>
+<pre><code class="java">    // 从请求中获取JSON串并转换为Object
+    public static &lt;T&gt; T readJson(HttpServletRequest request,Class&lt;T&gt; clazz) throws IOException &#123;
+        T t =null;
+        BufferedReader reader = null;
+        try &#123;
+            reader = request.getReader();
+            StringBuffer buffer =new StringBuffer();
+            String line =null;
+            while((line = reader.readLine())!= null)&#123;
+                buffer.append(line);
+            &#125;
+
+            t= objectMapper.readValue(buffer.toString(),clazz);
+        &#125; catch (IOException e) &#123;
+            throw new RuntimeException(e);
+        &#125;
+        return t;
+    &#125;
+&#125;
+</code></pre>
 
     </div>
     

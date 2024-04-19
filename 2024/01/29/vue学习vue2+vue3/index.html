@@ -186,12 +186,12 @@
             
             <span class="tag">
                 
-                <a href="/tags/PS3/" style="color: #ffa2c4">PS3</a>
+                <a href="/tags/PS3/" style="color: #ff7d73">PS3</a>
             </span>
             
             <span class="tag">
                 
-                <a href="/tags/Games/" style="color: #ff7d73">Games</a>
+                <a href="/tags/Games/" style="color: #00a596">Games</a>
             </span>
             
         </span>
@@ -241,9 +241,7 @@
 &lt;head&gt;
     &lt;meta charset=&quot;UTF-8&quot;&gt;
     &lt;title&gt;初始vue&lt;/title&gt;
-    &lt;script type=&quot;text/javascript&quot; src=&quot;vue.js&quot;&gt;
-
-    &lt;/script&gt;
+    &lt;script type=&quot;text/javascript&quot; src=&quot;vue.js&quot;&gt;&lt;/script&gt;
 &lt;/head&gt;
 &lt;body&gt;
 &lt;!--准备一个容器--&gt;
@@ -323,7 +321,7 @@
 <p>v-model也有局限性</p>
 <p><em><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240121190948659.png" alt="image-20240121190948659"></em>*</p>
 <p>只能用于以下的标签下都有value的值 </p>
-<p>c-model的简写就直接省去valu的</p>
+<p>v-model的简写就直接省去value的</p>
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240121191221026.png" alt="image-20240121191221026"></p>
 <p>直接这样就可以</p>
 <h2 id="el和data的两种写法"><a href="#el和data的两种写法" class="headerlink" title="el和data的两种写法"></a>el和data的两种写法</h2><p>el可以使用</p>
@@ -526,7 +524,7 @@
       showInfo(e) &#123;
         // console.log(e.keyCode)
         // 这是键盘吗/
-        if (e.keyCode !==13) return//只有回车才会显示
+        if (e.keyCode !== 13) return//只有回车才会显示
         console.log(e)
       &#125;
     &#125;
@@ -4652,7 +4650,7 @@ export default &#123;
 &#125;
 &lt;/style&gt;
 </code></pre>
-<p>rf对于基本类型的数据就是用getset数据劫持的方式 </p>
+<p>ref对于基本类型的数据就是用getset数据劫持的方式 </p>
 <p>而对于对象的话哦那个的是 更高端的东西</p>
 <p>用的proxy</p>
 <p>总结</p>
