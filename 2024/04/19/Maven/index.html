@@ -177,12 +177,12 @@
             
             <span class="tag">
                 
-                <a href="/tags/chenw/" style="color: #ffa2c4">chenw</a>
+                <a href="/tags/chenw/" style="color: #03a9f4">chenw</a>
             </span>
             
             <span class="tag">
                 
-                <a href="/tags/Games/" style="color: #03a9f4">Games</a>
+                <a href="/tags/Games/" style="color: #00bcd4">Games</a>
             </span>
             
         </span>
@@ -845,7 +845,7 @@ GOTO MENU
 <p> <strong>Maven工程聚合关系</strong></p>
 <ol>
 <li><p>聚合概念</p>
-<p>Maven 聚合是指将多个项目组织到一个父级项目中，以便一起构建和管理的机制。聚合可以帮助我们更好地管理一组相关的子项目，同时简化它们的构建和部署过程。</p>
+<p>Maven 聚合是指将多个项目组织到一个父级项目中，以便一起构建和管理的机制。聚合可以帮助我们更好地管理一组相关的子项目，同时简化它们的构建和部署过程。就是父工程 进行了什么操作，子工程也会进行什么操作</p>
 </li>
 <li><p>聚合作用</p>
 <ol>
@@ -869,6 +869,136 @@ GOTO MENU
     &lt;module&gt;child-project2&lt;/module&gt;
   &lt;/modules&gt;
 &lt;/project&gt;
+</code></pre>
+<p><strong>Maven私服</strong></p>
+<p>Maven 私服是一种特殊的Maven远程仓库，它是架设在局域网内的仓库服务，用来代理位于外部的远程仓库（中央仓库、其他远程公共仓库）。</p>
+<blockquote>
+<p>当然也并不是说私服只能建立在局域网，也有很多公司会直接把私服部署到公网，具体还是得看公司业务的性质是否是保密的等等，因为局域网的话只能在公司用，部署到公网的话员工在家里也可以办公使用。</p>
+</blockquote>
+<p>建立了 Maven 私服后，当局域网内的用户需要某个构件时，会按照如下顺序进行请求和下载。</p>
+<p>请求本地仓库，若本地仓库不存在所需构件，则跳转到第 2 步；<br>请求 Maven 私服，将所需构件下载到本地仓库，若私服中不存在所需构件，则跳转到第 3 步。<br>请求外部的远程仓库，将所需构件下载并缓存到 Maven 私服，若外部远程仓库不存在所需构件，则 Maven 直接报错。</p>
+<p>此外，一些无法从外部仓库下载到的构件，也能从本地上传到私服供其他人使用。</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240420214217835.png" alt="image-20240420214217835"></p>
+<p>②Maven私服的优势</p>
+<ol>
+<li><p>节省外网带宽<br>消除对外部远程仓库的大量重复请求（会消耗很大量的带宽），降低外网带宽压力。</p>
+</li>
+<li><p>下载速度更快<br>Maven私服位于局域网内，从私服下载构建更快更稳定。</p>
+</li>
+<li><p>便于部署第三方构件<br>有些构件无法从任何一个远程仓库中获得（如：公司或组织内部的私有构件、Oracle的JDBC驱动等），建立私服之后，就可以将这些构件部署到私服中，供内部Maven项目使用。</p>
+</li>
+<li><p>提高项目的稳定性，增强对项目的控制<br>如果不建立私服，那么Maven项目的构件就高度依赖外部的远程仓库，若外部网络不稳定，则项目的构建过程也会变得不稳定。建立私服后，即使外部网络状况不佳甚至中断，只要私服中已经缓存了所需的构件，Maven也能够正常运行。私服软件（如：Nexus）提供了很多控制功能（如：权限管理、RELEASE&#x2F;SNAPSHOT版本控制等），可以对仓库进行一些更加高级的控制。</p>
+</li>
+<li><p>降低中央仓库得负荷压力<br>由于私服会缓存中央仓库得构件，避免了很多对中央仓库的重复下载，降低了中央仓库的负荷。</p>
+</li>
+</ol>
+<p>③常见的Maven私服产品</p>
+<ol>
+<li>Apache的Archiva</li>
+<li>JFrog的Artifactory</li>
+<li>Sonatype的Nexus（[ˈneksəs]）（当前最流行、使用最广泛）</li>
+</ol>
+<p><strong>Nexus的下载和安装</strong></p>
+<p>下载地址：<a target="_blank" rel="noopener" href="https://help.sonatype.com/repomanager3/product-information/download">https://help.sonatype.com/repomanager3/product-information/download</a></p>
+<p>解压，以管理员身份打开CMD，进入bin目录下，执行.&#x2F;nexus &#x2F;run命令启动</p>
+<p>访问 Nexus 首页</p>
+<p>首页地址：<a target="_blank" rel="noopener" href="http://localhost:8081/%EF%BC%8C8081%E4%B8%BA%E9%BB%98%E8%AE%A4%E7%AB%AF%E5%8F%A3%E5%8F%B7">http://localhost:8081/，8081为默认端口号</a></p>
+<p>注意启动需要使用管理员cmd启动直接点击是启动不了的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240420214858794.png" alt="image-20240420214858794"></p>
+<p>指令</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240420215222580.png" alt="image-20240420215222580"></p>
+<p>注意第一次启动的时间非常慢，需要等待</p>
+<p>出现，证明就已经启动了</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240420215319434.png" alt="image-20240420215319434"></p>
+<p><strong>Nexus的初始设置</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240420215454591.png" alt="image-20240420215454591"></p>
+<p>密码在这里面，账号默认是admin</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240420215549860.png" alt="image-20240420215549860"></p>
+<p>然后设置新的密码</p>
+<p>然后设置是否匿名访问</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240420215740030.png" alt="image-20240420215740030"></p>
+<p><strong>Nexus的各种仓库</strong></p>
+<p>默认就会又七个仓库</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240420220136576.png" alt="image-20240420220136576"></p>
+<table>
+<thead>
+<tr>
+<th>仓库类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>proxy</td>
+<td>某个远程仓库的代理</td>
+</tr>
+<tr>
+<td>group</td>
+<td>存放：通过 Nexus 获取的第三方 jar 包</td>
+</tr>
+<tr>
+<td>hosted</td>
+<td>存放：本团队其他开发人员部署到 Nexus 的 jar 包</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th>仓库名称</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>maven-central</td>
+<td>Nexus 对 Maven 中央仓库的代理</td>
+</tr>
+<tr>
+<td>maven-public</td>
+<td>Nexus 默认创建，供开发人员下载使用的组仓库</td>
+</tr>
+<tr>
+<td>maven-releases</td>
+<td>Nexus 默认创建，供开发人员部署自己 jar 包的宿主仓库 要求 releases 版本</td>
+</tr>
+<tr>
+<td>maven-snapshots</td>
+<td>Nexus 默认创建，供开发人员部署自己 jar 包的宿主仓库 要求 snapshots 版本</td>
+</tr>
+</tbody></table>
+<pre><code>proxy就是从中央仓库下载jar包，如果下载慢可以换镜像
+</code></pre>
+<p>我们在设置里面就可以看见中央仓库的地址</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240420220402951.png" alt="image-20240420220402951"></p>
+<pre><code>group的仓库存放下载的jar包，就相当于proxy是下载链接。这个group是存放下载东西的地方	
+</code></pre>
+<pre><code>hosted 自己的jar包存放的地方
+</code></pre>
+<p>初始状态下，这几个仓库都没有内容：</p>
+<p><strong>通过 Nexus 下载 jar 包</strong></p>
+<p>修改本地maven的核心配置文件settings.xml，设置新的本地仓库地址</p>
+<pre><code class="xml">&lt;!-- 配置一个新的 Maven 本地仓库 --&gt;
+&lt;localRepository&gt;D:/maven-repository-new&lt;/localRepository&gt;
+</code></pre>
+<p>把我们原来配置阿里云仓库地址的 mirror 标签改成下面这样：</p>
+<pre><code class="xml">&lt;mirror&gt;
+    &lt;id&gt;nexus-mine&lt;/id&gt;
+    &lt;mirrorOf&gt;central&lt;/mirrorOf&gt;
+    &lt;name&gt;Nexus mine&lt;/name&gt;
+    &lt;url&gt;http://localhost:8081/repository/maven-public/&lt;/url&gt;
+&lt;/mirror&gt;
+</code></pre>
+<p>这里的 url 标签是这么来的：</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240420220759264.png" alt="image-20240420220759264"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240420220809058.png" alt="image-20240420220809058"></p>
+<p>把上图中看到的地址复制出来即可。如果我们在前面允许了匿名访问，到这里就够了。但如果我们禁用了匿名访问，那么接下来我们还要继续配置 settings.xml：</p>
+<pre><code class="xml">&lt;server&gt;
+  &lt;id&gt;nexus-mine&lt;/id&gt;
+  &lt;username&gt;admin&lt;/username&gt;
+  &lt;password&gt;atguigu&lt;/password&gt;
+&lt;/server&gt;
+</code></pre>
+<p>这里需要<strong>格外注意</strong>：server 标签内的 id 标签值必须和 mirror 标签中的 id 值一样。</p>
+<p>找一个用到框架的 Maven 工程，执行命令：</p>
+<pre><code class="sh">mvn clean compile
 </code></pre>
 
     </div>
