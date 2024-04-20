@@ -177,12 +177,12 @@
             
             <span class="tag">
                 
-                <a href="/tags/chenw/" style="color: #00bcd4">chenw</a>
+                <a href="/tags/chenw/" style="color: #ffa2c4">chenw</a>
             </span>
             
             <span class="tag">
                 
-                <a href="/tags/Games/" style="color: #00a596">Games</a>
+                <a href="/tags/Games/" style="color: #ff7d73">Games</a>
             </span>
             
         </span>
@@ -194,7 +194,274 @@
 <span id="more"></span>
 
 <p>内容</p>
-<h1 id="Maven"><a href="#Maven" class="headerlink" title="Maven"></a>Maven</h1>
+<h1 id="Maven"><a href="#Maven" class="headerlink" title="Maven"></a>Maven</h1><pre><code>概念
+    依赖管理工具和构建工具，之前我们都是在网站下载第三方jar包，然后放在项目，Maven可以在远程仓库获取jar包下载到本地的仓库
+    依赖jar包的分享
+</code></pre>
+<p><strong>依赖管理工具</strong></p>
+<hr></hr>
+
+<p>jar包的来源</p>
+<p>jar包存放的位置</p>
+<p>jar包的依赖关系</p>
+<p><strong>构建工具</strong></p>
+<hr/>
+
+<p> <img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240419193756616.png" alt="image-20240419193756616"></p>
+<p><strong>Maven的安装和配置</strong></p>
+<ul>
+<li><p>下载地址   <a target="_blank" rel="noopener" href="https://maven.apache.org/docs/3.8.8/">Maven下载</a></p>
+</li>
+<li><p>注意java_home的环境变量必须有</p>
+</li>
+</ul>
+<p><strong>软件架构</strong></p>
+<ul>
+<li>bin目录:含有Maven的运行脚本</li>
+<li>boot:含有plexus-classworlds类加载器框架</li>
+<li>conf:含有Maven的核心配置</li>
+<li>lib:含有Maven运行时所需要的java类库</li>
+</ul>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240419194940184.png" alt="image-20240419194940184"></p>
+<p><strong>Maven的环境配置</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240419195310010.png" alt="image-20240419195310010"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240419195323637.png" alt="image-20240419195323637"></p>
+<p>检查</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240419195346383.png" alt="image-20240419195346383"></p>
+<p><strong>Maven的功能配置</strong></p>
+<ul>
+<li>我们需要修改conf下的settings.xml的配置文件,来修改maven的一些默认的配置，我们主要修改的有三个配置<ul>
+<li>1.依赖本地缓存(就是本地仓库的位置)</li>
+<li>2.maven的下载镜像</li>
+<li>3.maven选用编译项目的jdk版本</li>
+</ul>
+</li>
+</ul>
+<p>本地仓库的位置</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240419195737539.png" alt="image-20240419195737539"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240419195912277.png" alt="image-20240419195912277"></p>
+<p>设置下载的镜像网站</p>
+<p>添加</p>
+<pre><code class="xml">    &lt;mirror&gt;
+      &lt;id&gt;alimaven&lt;/id&gt;
+      &lt;name&gt;aliyun maven&lt;/name&gt;
+      &lt;url&gt;http://maven.aliyun.com/nexus/content/groups/public/&lt;/url&gt;
+      &lt;mirrorOf&gt;central&lt;/blocked&gt;
+    &lt;/mirror&gt;
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240419200250134.png" alt="image-20240419200250134"></p>
+<p>配置JDK17版本项目构建</p>
+<pre><code class="xml">在profiles下面配置
+        &lt;profile&gt;
+            &lt;id&gt;jdk-17&lt;/id&gt;
+            &lt;activation&gt;
+                &lt;activeByDefault&gt;true&lt;/activeByDefault&gt;
+                &lt;jdk&gt;17&lt;/jdk&gt;
+            &lt;/activation&gt;
+            &lt;properties&gt;
+                &lt;maven.compiler.source&gt;17&lt;/maven.compiler.source&gt;
+                &lt;maven.compiler.target&gt;17&lt;/maven.compiler.target&gt;
+                &lt;maven.compiler.compilerVersion&gt;17&lt;/maven.compiler.compilerVersion&gt;
+                &lt;!-- 其他 JDK 17 的配置 --&gt;
+            &lt;/properties&gt;
+        &lt;/profile&gt;
+</code></pre>
+<p><strong>IDEA配置本地的Maven的软件</strong></p>
+<p>Idea里面默认就会有maven</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240419201322765.png" alt="image-20240419201322765"></p>
+<ul>
+<li>这个maven是没有经过配置的，需要应该绑定我们配置过后的maven</li>
+</ul>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240419201754310.png" alt="image-20240419201754310"></p>
+<p><strong>创建Maven的java工程</strong></p>
+<pre><code>理解Maven工程的GAVP
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240419201925587.png" alt="image-20240419201925587"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240419202018685.png" alt="image-20240419202018685"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240419202032126.png" alt="image-20240419202032126"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240419202247595.png" alt="image-20240419202247595"></p>
+<p>根据上面的规则创建maven的工程</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240419202447725.png" alt="image-20240419202447725"></p>
+<p>maven的项目结构</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240419202646677.png" alt="image-20240419202646677"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240419202900263.png" alt="image-20240419202900263"></p>
+<pre><code class="xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot;
+         xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+         xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
+    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+    &lt;!--maven工程的坐标--&gt;
+    &lt;groupId&gt;com.chenw.maven&lt;/groupId&gt;
+    &lt;artifactId&gt;maven_java&lt;/artifactId&gt;
+    &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
+    &lt;!--maven工程的打包方式,这个默认值就为jar--&gt;
+    &lt;packaging&gt;jar&lt;/packaging&gt;
+
+
+
+    &lt;properties&gt;
+        &lt;maven.compiler.source&gt;17&lt;/maven.compiler.source&gt;
+        &lt;maven.compiler.target&gt;17&lt;/maven.compiler.target&gt;
+        &lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
+    &lt;/properties&gt;
+
+&lt;/project&gt;
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240419203537436.png" alt="image-20240419203537436"></p>
+<p>当我们修改这里面的内容，就可以使用刷新</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240419203552239.png" alt="image-20240419203552239"></p>
+<p><strong>创建Maven的JaveWeb工程</strong></p>
+<ul>
+<li>手动创建</li>
+</ul>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240419204748474.png" alt="image-20240419204748474"></p>
+<p>这样比较麻烦或者直接</p>
+<ul>
+<li>自动配置</li>
+</ul>
+<p>设置打包方式为war</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240419204838501.png" alt="image-20240419204838501"></p>
+<p>然后再刷新，就会自动给你添加上</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240419204916883.png" alt="image-20240419204916883"></p>
+<p>然后再配置资源目录和描述符</p>
+<p>注意看webapp的路径</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240419205128370.png" alt="image-20240419205128370"></p>
+<p>我们在添加web-xml,但是路径并不再我们的上面的webapp的下面，所以需要修改下</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240419205155941.png" alt="image-20240419205155941"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240419205222276.png" alt="image-20240419205222276"></p>
+<p>配置成下面的这样</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240419205410320.png" alt="image-20240419205410320"></p>
+<p>然后再来看我们的目录，这样以后我们的webapp目录下的结构就有了</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240419205505953.png" alt="image-20240419205505953"></p>
+<p><strong>web工程的第二种创建</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240419211421007.png" alt="image-20240419211421007"></p>
+<p>安装上面的插件</p>
+<p>正常创建模块，然后使用插件创建</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240419211623006.png" alt="image-20240419211623006"></p>
+<p>使用玩以后</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240419211734140.png" alt="image-20240419211734140"></p>
+<p>第三种创建方式</p>
+<p>在这里面创建，但是缺点是web.xml的版本比较低</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240419211904299.png" alt="image-20240419211904299"></p>
+<p>如何将moven的web工程放入tomcat的里面</p>
+<p>还是之前的方法</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240419212118492.png" alt="image-20240419212118492"></p>
+<p>然后，一般选择和工程名字后面又exploded的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240419212211673.png" alt="image-20240419212211673"></p>
+<p>然后更改，下面这样更改以后，代码更新以后就会自动从新的部署，不用再从 </p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240419212319113.png" alt="image-20240419212319113"></p>
+<p>这样就部署成功了</p>
+<p><strong>maven的项目结构</strong></p>
+<p>Maven 是一个强大的构建工具，它提供一种标准化的项目结构，可以帮助开发者更容易地管理项目的依赖、构建、测试和发布等任务。以下是 Maven Web 程序的文件结构及每个文件的作用：</p>
+<pre><code class="xml">|-- pom.xml                               # Maven 项目管理文件 
+|-- src
+    |-- main                              # 项目主要代码
+    |   |-- java                          # Java 源代码目录
+    |   |   `-- com/example/myapp         # 开发者代码主目录
+    |   |       |-- controller            # 存放 Controller 层代码的目录
+    |   |       |-- service               # 存放 Service 层代码的目录
+    |   |       |-- dao                   # 存放 DAO 层代码的目录
+    |   |       `-- model                 # 存放数据模型的目录
+    |   |-- resources                     # 资源目录，存放配置文件、静态资源等
+    |   |   |-- log4j.properties          # 日志配置文件
+    |   |   |-- spring-mybatis.xml        # Spring Mybatis 配置文件
+    |   |   `-- static                    # 存放静态资源的目录
+    |   |       |-- css                   # 存放 CSS 文件的目录
+    |   |       |-- js                    # 存放 JavaScript 文件的目录
+    |   |       `-- images                # 存放图片资源的目录
+    |   `-- webapp                        # 存放 WEB 相关配置和资源
+    |       |-- WEB-INF                   # 存放 WEB 应用配置文件
+    |       |   |-- web.xml               # Web 应用的部署描述文件
+    |       |   `-- classes               # 存放编译后的 class 文件
+    |       `-- index.html                # Web 应用入口页面
+    `-- test                              # 项目测试代码
+        |-- java                          # 单元测试目录
+        `-- resources                     # 测试资源目录
+</code></pre>
+<ul>
+<li>pom.xml：Maven 项目管理文件，用于描述项目的依赖和构建配置等信息。</li>
+<li>src&#x2F;main&#x2F;java：存放项目的 Java 源代码。</li>
+<li>src&#x2F;main&#x2F;resources：存放项目的资源文件，如配置文件、静态资源等。</li>
+<li>src&#x2F;main&#x2F;webapp&#x2F;WEB-INF：存放 Web 应用的配置文件。</li>
+<li>src&#x2F;main&#x2F;webapp&#x2F;index.jsp：Web 应用的入口页面。</li>
+<li>src&#x2F;test&#x2F;java：存放项目的测试代码。</li>
+<li>src&#x2F;test&#x2F;resources：存放测试相关的资源文件，如测试配置文件等</li>
+</ul>
+<p><strong>命令方式项目构建</strong></p>
+<pre><code>mvn compile    编译项目，生成target的项目
+mvn package    打包项目，生成jar或war的文件
+mvn clean      清理编译或打包后的项目结构
+mvn install    打包后上传到maven私服仓库
+mvn test		执行测试的源码
+mvn test-compile  编译测试的程序的
+</code></pre>
+<ul>
+<li><p>mvn test-compile</p>
+<p>这就是test的编译以后的字节码文件</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240420092904859.png" alt="image-20240420092904859"></p>
+</li>
+<li><p>mvn test 会自动执行测试的代码</p>
+</li>
+</ul>
+<p>执行的结果</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240420093059405.png" alt="image-20240420093059405"></p>
+<p><strong>注意</strong></p>
+<p>maven是怎么识别测试方法并且执行的</p>
+<p>这里面注意</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240420093252789.png" alt="image-20240420093252789"></p>
+<pre><code>不是通过jUint的注解执行的，而是看方法的名字
+</code></pre>
+<p>当我们把方法名字改为aaa以后在执行测试</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240420093421686.png" alt="image-20240420093421686"></p>
+<p>发现运行我们的测试的方法</p>
+<p>所以我们注意起名一定前面要加test</p>
+<p>注意我们的类名也要规范</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240420093845156.png" alt="image-20240420093845156"></p>
+<ul>
+<li>需要以Test结尾,或者test开头</li>
+</ul>
+<p>注意我们的指令还可以一起写</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240420094134187.png" alt="image-20240420094134187"></p>
+<p>注意，这是测试的报告</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240420094205320.png" alt="image-20240420094205320"></p>
+<p><strong>打包</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240420094407250.png" alt="image-20240420094407250"></p>
+<p>注意打包以后是没有测试程序的，因为i测试程序再打包之前就已经开始执行了，能够打包说明测试没有问题</p>
+<p>如果是打war包的话</p>
+<pre><code class="xml">&lt;build&gt;
+    &lt;!-- jdk17 和 war包版本插件不匹配 --&gt;
+    &lt;plugins&gt;
+        &lt;plugin&gt;
+            &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+            &lt;artifactId&gt;maven-war-plugin&lt;/artifactId&gt;
+            &lt;version&gt;3.2.2&lt;/version&gt;
+        &lt;/plugin&gt;
+    &lt;/plugins&gt;
+&lt;/build&gt;
+</code></pre>
+<p>这样我们的的javaWeb项目的war就可以生成了</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240420095116511.png" alt="image-20240420095116511"></p>
+<p><strong>安装</strong></p>
+<ul>
+<li>mvn install</li>
+</ul>
+<pre><code>就是上传我们的jar包到私服
+</code></pre>
+<p>例如，maven_java工程的jar包使用再maven_web下面，就需要</p>
+<p>我想要<img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240420095347611.png" alt="image-20240420095347611"></p>
+<p>就可以在再这里把我们的jar包的位置引入<img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240420095539882.png" alt="image-20240420095539882"></p>
+<p>然后我们打包试一下，就会报错</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240420095641996.png" alt="image-20240420095641996"></p>
+<pre><code>失败的原因是因为，再pom.xmld设置的依赖，先再本地的仓库寻找，没有再去中央仓库寻找，但是我们的maven_java的项目并没有上传到我们的本地的仓库，这样就会导致失败
+</code></pre>
+<pre><code>所以我们就可以通过mvn install上传到本地的仓库，然后再操作
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240420100007614.png" alt="image-20240420100007614"></p>
+<p>然后再打包，这样就没有问题了</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240420100045164.png" alt="image-20240420100045164"></p>
+<p>这样我们就可以在本地仓库看见我们依赖的包</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240420100157551.png" alt="image-20240420100157551"></p>
+
     </div>
     
     
