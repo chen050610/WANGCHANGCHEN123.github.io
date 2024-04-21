@@ -177,7 +177,7 @@
             
             <span class="tag">
                 
-                <a href="/tags/chenw/" style="color: #ffa2c4">chenw</a>
+                <a href="/tags/chenw/" style="color: #00bcd4">chenw</a>
             </span>
             
             <span class="tag">
@@ -622,6 +622,403 @@ public class DefaultServiceLocator &#123;
 <p> <img src="https://secure2.wostatic.cn/static/mpqqiD6Bmbno45SpRwBNom/image.png?auth_key=1713670560-duArnWPbh3N648zpywt4TQ-0-a9a4e362a86ac845b548422894d84630"></p>
 </li>
 </ol>
+<p><strong>组件之间的依赖注入的配置</strong></p>
+<ol>
+<li><p>目标</p>
+<p> 通过配置文件,实现IoC容器中Bean之间的引用（依赖注入DI配置）。</p>
+<p> 主要涉及注入场景：基于构造函数的依赖注入和基于 Setter 的依赖注入。</p>
+</li>
+<li><p>思路</p>
+<p> <img src="https://secure2.wostatic.cn/static/opfLAb8XnCZDyPMm9BuiMc/image.png?auth_key=1713684087-bBRYsMKzN7SHz6zStP3DJ1-0-641ac1f4b0398f3884e4e5df5caa7e78"></p>
+</li>
+<li><p>基于构造函数的依赖注入（单个构造参数）</p>
+<ol>
+<li><p>介绍</p>
+<p> 基于构造函数的 DI 是通过容器调用具有多个参数的构造函数来完成的，每个参数表示一个依赖项。</p>
+<p> 下面的示例演示一个只能通过构造函数注入进行依赖项注入的类！</p>
+</li>
+<li><p>准备组件类</p>
+</li>
+</ol>
+</li>
+</ol>
+<pre><code class="Java">public class UserDao &#123;
+&#125;
+
+
+public class UserService &#123;
+    
+    private UserDao userDao;
+
+    public UserService(UserDao userDao) &#123;
+        this.userDao = userDao;
+    &#125;
+&#125;
+</code></pre>
+<pre><code>3. 编写配置文件
+
+    文件：resources/spring-02.xml
+</code></pre>
+<pre><code class="XML">        &lt;!--引用和被引用的组件 必须全部在ioc容器--&gt;
+    &lt;!--单个构造函数的注入--&gt;
+    &lt;!--将他们呢都存放在ioc容器的--&gt;
+    &lt;bean id=&quot;userDao&quot; class=&quot;com.chenw.ioc_02.UserDao&quot;/&gt;
+    &lt;bean id=&quot;userService&quot; class=&quot;com.chenw.ioc_02.UserService&quot;&gt;
+        &lt;!--这个参数作为构造函数参数传值的设置
+        value   是直接的属性值,例如 String name = &quot;二狗子&quot; int age = 18
+        ref   引用其他的bean bean的id值
+        --&gt;
+        &lt;constructor-arg  ref=&quot;userDao&quot; /&gt;
+    &lt;/bean&gt;
+</code></pre>
+<pre><code>    - constructor-arg标签：可以引用构造参数 ref引用其他bean的标识。
+</code></pre>
+<ol start="4">
+<li>基于构造函数的依赖注入（多构造参数解析）<ol>
+<li><p>介绍</p>
+<p> 基于构造函数的 DI 是通过容器调用具有多个参数的构造函数来完成的，每个参数表示一个依赖项。</p>
+<p> 下面的示例演示通过构造函数注入多个参数，参数包含其他bean和基本数据类型！</p>
+</li>
+<li><p>准备组件类</p>
+</li>
+</ol>
+</li>
+</ol>
+<pre><code class="Java">public class UserDao &#123;
+&#125;
+
+
+public class UserService &#123;
+    
+    private UserDao userDao;
+    
+    private int age;
+    
+    private String name;
+
+    public UserService(int age , String name ,UserDao userDao) &#123;
+        this.userDao = userDao;
+        this.age = age;
+        this.name = name;
+    &#125;
+&#125;
+</code></pre>
+<pre><code>3. 编写配置文件
+</code></pre>
+<pre><code class="XML">&lt;!-- 场景1: 多参数，可以按照相应构造函数的顺序注入数据 --&gt;
+    &lt;bean id=&quot;userDao&quot; class=&quot;com.chenw.ioc_02.UserDao&quot;/&gt;
+    &lt;bean id=&quot;userService2&quot; class=&quot;com.chenw.ioc_02.UserService2&quot;&gt;
+        &lt;!--第一种收按照顺序写 --&gt;
+        &lt;constructor-arg    value=&quot;18&quot;/&gt;
+        &lt;constructor-arg    value=&quot;二狗子&quot;/&gt;
+        &lt;constructor-arg    ref=&quot;userDao&quot;/&gt;
+    &lt;/bean&gt;
+
+&lt;!-- 场景2: 多参数，可以按照相应构造函数的参数的名字注入数据 --&gt;
+    &lt;bean id=&quot;userDao&quot; class=&quot;com.chenw.ioc_02.UserDao&quot;/&gt;
+    &lt;bean id=&quot;userService2&quot; class=&quot;com.chenw.ioc_02.UserService2&quot;&gt;
+        &lt;!-- --&gt;
+        &lt;constructor-arg  name=&quot;age&quot;  value=&quot;18&quot;/&gt;
+        &lt;constructor-arg  name=&quot;name&quot;  value=&quot;二狗子&quot;/&gt;
+        &lt;constructor-arg name=&quot;userDao&quot;   ref=&quot;userDao&quot;/&gt;
+    &lt;/bean&gt;
+
+&lt;!-- 场景3: 多参数，可以按照相应构造函数的角标注入数据 
+           index从0开始 构造函数(0,1,2....)
+--&gt;
+    &lt;bean id=&quot;userDao&quot; class=&quot;com.chenw.ioc_02.UserDao&quot;/&gt;
+    &lt;bean id=&quot;userService2&quot; class=&quot;com.chenw.ioc_02.UserService2&quot;&gt;
+        &lt;!-- --&gt;
+        &lt;constructor-arg  index=&quot;0&quot;  value=&quot;18&quot;/&gt;
+        &lt;constructor-arg  index=&quot;1&quot;  value=&quot;二狗子&quot;/&gt;
+        &lt;constructor-arg index=&quot;2&quot;   ref=&quot;userDao&quot;/&gt;
+    &lt;/bean&gt;
+</code></pre>
+<pre><code>    - constructor-arg标签：指定构造参数和对应的值
+    - constructor-arg标签：name属性指定参数名、index属性指定参数角标、value属性指定普通属性值
+</code></pre>
+<ol start="5">
+<li><strong>基于Setter方法依赖注入</strong><ol>
+<li><p>介绍</p>
+<p> 开发中，除了构造函数注入（DI）更多的使用的Setter方法进行注入！</p>
+<p> 下面的示例演示一个只能使用纯 setter 注入进行依赖项注入的类。</p>
+</li>
+<li><p>准备组件类</p>
+</li>
+</ol>
+</li>
+</ol>
+<pre><code class="Java">public Class MovieFinder&#123;
+
+&#125;
+
+public class SimpleMovieLister &#123;
+
+  private MovieFinder movieFinder;
+  
+  private String movieName;
+
+  public void setMovieFinder(MovieFinder movieFinder) &#123;
+    this.movieFinder = movieFinder;
+  &#125;
+  
+  public void setMovieName(String movieName)&#123;
+    this.movieName = movieName;
+  &#125;
+
+  // business logic that actually uses the injected MovieFinder is omitted...
+&#125;
+</code></pre>
+<pre><code>3. 编写配置文件
+</code></pre>
+<pre><code class="XML">    &lt;!--3.触发setter方法进行注入--&gt;
+    &lt;bean id=&quot;movieFinder&quot; class=&quot;com.chenw.ioc_02.MovieFinder&quot;/&gt;
+    &lt;bean id=&quot;simpleMovieLister&quot; class=&quot;com.chenw.ioc_02.SimpleMovieLister&quot;&gt;
+        &lt;!--name -&gt; 属性名 （setter方法的 去掉setter方法的set并且首字母小写的值）
+           例如
+           setMovieFinder  -&gt;  movieFinder
+
+           ref和value二选一和之前的使用一样
+
+           这个本质的是找的set方法，不是找的属性
+           --&gt;
+        &lt;property name=&quot;movieFinder&quot; ref=&quot;movieFinder&quot;/&gt;
+        &lt;property name=&quot;movieName&quot; value=&quot;消失的她&quot;/&gt;
+    &lt;/bean&gt;
+</code></pre>
+<pre><code>    - property标签： 可以给setter方法对应的属性赋值
+    - property 标签： name属性代表**set方法标识**、ref代表引用bean的标识id、value属性代表基本属性值
+</code></pre>
+<p><strong>总结：</strong></p>
+<p>  依赖注入（DI）包含引用类型和基本数据类型，同时注入的方式也有多种！主流的注入方式为setter方法注入和构造函数注入，两种注入语法都需要掌握！</p>
+<p>  需要特别注意：引用其他bean，使用ref属性。直接注入基本类型值，使用value属性。</p>
+<h4 id="4-2-2-实验二：-组件（Bean）依赖注入配置（DI）"><a href="#4-2-2-实验二：-组件（Bean）依赖注入配置（DI）" class="headerlink" title="4.2.2 实验二： 组件（Bean）依赖注入配置（DI）"></a>4.2.2 实验二： 组件（Bean）依赖注入配置（DI）</h4><ol>
+<li><p>目标</p>
+<p> 通过配置文件,实现IoC容器中Bean之间的引用（依赖注入DI配置）。</p>
+<p> 主要涉及注入场景：基于构造函数的依赖注入和基于 Setter 的依赖注入。</p>
+</li>
+<li><p>思路</p>
+<p> <img src="https://secure2.wostatic.cn/static/opfLAb8XnCZDyPMm9BuiMc/image.png?auth_key=1713684087-bBRYsMKzN7SHz6zStP3DJ1-0-641ac1f4b0398f3884e4e5df5caa7e78"></p>
+</li>
+<li><p>基于构造函数的依赖注入（单个构造参数）</p>
+<ol>
+<li><p>介绍</p>
+<p> 基于构造函数的 DI 是通过容器调用具有多个参数的构造函数来完成的，每个参数表示一个依赖项。</p>
+<p> 下面的示例演示一个只能通过构造函数注入进行依赖项注入的类！</p>
+</li>
+<li><p>准备组件类</p>
+</li>
+</ol>
+</li>
+</ol>
+<pre><code class="Java">public class UserDao &#123;
+&#125;
+
+
+public class UserService &#123;
+    
+    private UserDao userDao;
+
+    public UserService(UserDao userDao) &#123;
+        this.userDao = userDao;
+    &#125;
+&#125;
+</code></pre>
+<pre><code>  3. 编写配置文件
+
+      文件：resources/spring-02.xml
+</code></pre>
+<pre><code class="XML">&lt;beans&gt;
+  &lt;!-- 引用类bean声明 --&gt;
+  &lt;bean id=&quot;userService&quot; class=&quot;x.y.UserService&quot;&gt;
+   &lt;!-- 构造函数引用 --&gt;
+    &lt;constructor-arg ref=&quot;userDao&quot;/&gt;
+  &lt;/bean&gt;
+  &lt;!-- 被引用类bean声明 --&gt;
+  &lt;bean id=&quot;userDao&quot; class=&quot;x.y.UserDao&quot;/&gt;
+&lt;/beans&gt;
+</code></pre>
+<pre><code>      - constructor-arg标签：可以引用构造参数 ref引用其他bean的标识。
+</code></pre>
+<ol start="4">
+<li>基于构造函数的依赖注入（多构造参数解析）<ol>
+<li><p>介绍</p>
+<p> 基于构造函数的 DI 是通过容器调用具有多个参数的构造函数来完成的，每个参数表示一个依赖项。</p>
+<p> 下面的示例演示通过构造函数注入多个参数，参数包含其他bean和基本数据类型！</p>
+</li>
+<li><p>准备组件类</p>
+</li>
+</ol>
+</li>
+</ol>
+<pre><code class="Java">public class UserDao &#123;
+&#125;
+
+
+public class UserService &#123;
+    
+    private UserDao userDao;
+    
+    private int age;
+    
+    private String name;
+
+    public UserService(int age , String name ,UserDao userDao) &#123;
+        this.userDao = userDao;
+        this.age = age;
+        this.name = name;
+    &#125;
+&#125;
+</code></pre>
+<pre><code>  3. 编写配置文件
+</code></pre>
+<pre><code class="XML">&lt;!-- 场景1: 多参数，可以按照相应构造函数的顺序注入数据 --&gt;
+&lt;beans&gt;
+  &lt;bean id=&quot;userService&quot; class=&quot;x.y.UserService&quot;&gt;
+    &lt;!-- value直接注入基本类型值 --&gt;
+    &lt;constructor-arg  value=&quot;18&quot;/&gt;
+    &lt;constructor-arg  value=&quot;赵伟风&quot;/&gt;
+    
+    &lt;constructor-arg  ref=&quot;userDao&quot;/&gt;
+  &lt;/bean&gt;
+  &lt;!-- 被引用类bean声明 --&gt;
+  &lt;bean id=&quot;userDao&quot; class=&quot;x.y.UserDao&quot;/&gt;
+&lt;/beans&gt;
+
+
+&lt;!-- 场景2: 多参数，可以按照相应构造函数的名称注入数据 --&gt;
+&lt;beans&gt;
+  &lt;bean id=&quot;userService&quot; class=&quot;x.y.UserService&quot;&gt;
+    &lt;!-- value直接注入基本类型值 --&gt;
+    &lt;constructor-arg name=&quot;name&quot; value=&quot;赵伟风&quot;/&gt;
+    &lt;constructor-arg name=&quot;userDao&quot; ref=&quot;userDao&quot;/&gt;
+    &lt;constructor-arg name=&quot;age&quot;  value=&quot;18&quot;/&gt;
+  &lt;/bean&gt;
+  &lt;!-- 被引用类bean声明 --&gt;
+  &lt;bean id=&quot;userDao&quot; class=&quot;x.y.UserDao&quot;/&gt;
+&lt;/beans&gt;
+
+&lt;!-- 场景2: 多参数，可以按照相应构造函数的角标注入数据 
+           index从0开始 构造函数(0,1,2....)
+--&gt;
+&lt;beans&gt;
+    &lt;bean id=&quot;userService&quot; class=&quot;x.y.UserService&quot;&gt;
+    &lt;!-- value直接注入基本类型值 --&gt;
+    &lt;constructor-arg index=&quot;1&quot; value=&quot;赵伟风&quot;/&gt;
+    &lt;constructor-arg index=&quot;2&quot; ref=&quot;userDao&quot;/&gt;
+    &lt;constructor-arg index=&quot;0&quot;  value=&quot;18&quot;/&gt;
+  &lt;/bean&gt;
+  &lt;!-- 被引用类bean声明 --&gt;
+  &lt;bean id=&quot;userDao&quot; class=&quot;x.y.UserDao&quot;/&gt;
+&lt;/beans&gt;
+</code></pre>
+<pre><code>      - constructor-arg标签：指定构造参数和对应的值
+      - constructor-arg标签：name属性指定参数名、index属性指定参数角标、value属性指定普通属性值
+</code></pre>
+<ol start="5">
+<li><strong>基于Setter方法依赖注入</strong><ol>
+<li><p>介绍</p>
+<p> 开发中，除了构造函数注入（DI）更多的使用的Setter方法进行注入！</p>
+<p> 下面的示例演示一个只能使用纯 setter 注入进行依赖项注入的类。</p>
+</li>
+<li><p>准备组件类</p>
+</li>
+</ol>
+</li>
+</ol>
+<pre><code class="Java">public Class MovieFinder&#123;
+
+&#125;
+
+public class SimpleMovieLister &#123;
+
+  private MovieFinder movieFinder;
+  
+  private String movieName;
+
+  public void setMovieFinder(MovieFinder movieFinder) &#123;
+    this.movieFinder = movieFinder;
+  &#125;
+  
+  public void setMovieName(String movieName)&#123;
+    this.movieName = movieName;
+  &#125;
+
+  // business logic that actually uses the injected MovieFinder is omitted...
+&#125;
+</code></pre>
+<pre><code>  3. 编写配置文件
+</code></pre>
+<pre><code class="XML">&lt;bean id=&quot;simpleMovieLister&quot; class=&quot;examples.SimpleMovieLister&quot;&gt;
+  &lt;!-- setter方法，注入movieFinder对象的标识id
+       name = 属性名  ref = 引用bean的id值
+   --&gt;
+  &lt;property name=&quot;movieFinder&quot; ref=&quot;movieFinder&quot; /&gt;
+
+  &lt;!-- setter方法，注入基本数据类型movieName
+       name = 属性名 value= 基本类型值
+   --&gt;
+  &lt;property name=&quot;movieName&quot; value=&quot;消失的她&quot;/&gt;
+&lt;/bean&gt;
+
+&lt;bean id=&quot;movieFinder&quot; class=&quot;examples.MovieFinder&quot;/&gt;
+</code></pre>
+<pre><code>      - property标签： 可以给setter方法对应的属性赋值
+      - property 标签： name属性代表**set方法标识**、ref代表引用bean的标识id、value属性代表基本属性值
+</code></pre>
+<p>  <strong>总结：</strong></p>
+<pre><code>依赖注入（DI）包含引用类型和基本数据类型，同时注入的方式也有多种！主流的注入方式为setter方法注入和构造函数注入，两种注入语法都需要掌握！
+
+需要特别注意：引用其他bean，使用ref属性。直接注入基本类型值，使用value属性。
+</code></pre>
+<p> <strong>IoC容器创建和使用</strong></p>
+<ol>
+<li><p>介绍</p>
+<p> 上面的实验只是讲解了如何在XML格式的配置文件编写IoC和DI配置！</p>
+<p> 如图：</p>
+<p> <img src="https://secure2.wostatic.cn/static/ngQZT7qhVfAzTxrr2oX1ny/image.png?auth_key=1713686158-sbfHvbb8SRsw7s3ZkFgXtY-0-f2d76343dcd8e0eff2fb9205ed5498ca"></p>
+<p> 想要配置文件中声明组件类信息真正的进行实例化成Bean对象和形成Bean之间的引用关系，我们需要声明IoC容器对象，读取配置文件，实例化组件和关系维护的过程都是在IoC容器中实现的！</p>
+</li>
+<li><p>容器实例化</p>
+</li>
+</ol>
+<pre><code class="Java">//方式1:实例化并且指定配置文件
+//参数：String...locations 传入一个或者多个配置文件
+ApplicationContext context = 
+           new ClassPathXmlApplicationContext(&quot;services.xml&quot;, &quot;daos.xml&quot;);
+           
+//方式2:先实例化，再指定配置文件，最后刷新容器触发Bean实例化动作 [springmvc源码和contextLoadListener源码方式]  
+ApplicationContext context = 
+           new ClassPathXmlApplicationContext();   
+//设置配置配置文件,方法参数为可变参数,可以设置一个或者多个配置
+iocContainer1.setConfigLocations(&quot;services.xml&quot;, &quot;daos.xml&quot;);
+//后配置的文件,需要调用refresh方法,触发刷新配置
+iocContainer1.refresh();           
+</code></pre>
+<ol start="3">
+<li>Bean对象读取</li>
+</ol>
+<pre><code class="Java">//方式1: 根据id获取
+//没有指定类型,返回为Object,需要类型转化!
+HappyComponent happyComponent = 
+        (HappyComponent) iocContainer.getBean(&quot;bean的id标识&quot;);
+        
+//使用组件对象        
+happyComponent.doWork();
+
+//方式2: 根据类型获取
+//根据类型获取,但是要求,同类型(当前类,或者之类,或者接口的实现类)只能有一个对象交给IoC容器管理
+//配置两个或者以上出现: org.springframework.beans.factory.NoUniqueBeanDefinitionException 问题
+HappyComponent happyComponent = iocContainer.getBean(HappyComponent.class);
+happyComponent.doWork();
+
+//方式3: 根据id和类型获取
+HappyComponent happyComponent = iocContainer.getBean(&quot;bean的id标识&quot;, HappyComponent.class);
+happyComponent.doWork();
+
+根据类型来获取bean时，在满足bean唯一性的前提下，其实只是看：『对象 instanceof 指定的类型』的返回结果，
+只要返回的是true就可以认定为和类型匹配，能够获取到。
+</code></pre>
 
     </div>
     
