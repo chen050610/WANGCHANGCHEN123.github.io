@@ -177,7 +177,7 @@
             
             <span class="tag">
                 
-                <a href="/tags/chenw/" style="color: #03a9f4">chenw</a>
+                <a href="/tags/chenw/" style="color: #ff7d73">chenw</a>
             </span>
             
             <span class="tag">
@@ -194,7 +194,202 @@
 <span id="more"></span>
 
 <p>内容</p>
-<h1 id="SSM框架"><a href="#SSM框架" class="headerlink" title="SSM框架"></a>SSM框架</h1>
+<h1 id="SSM框架"><a href="#SSM框架" class="headerlink" title="SSM框架"></a>SSM框架</h1><p>课程的学习路线</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240420223535106.png" alt="image-20240420223535106"></p>
+<p><strong>SpringFramework</strong></p>
+<pre><code>SSM框架
+    SpringMVC
+    Spring
+    MyBaits
+</code></pre>
+<p><strong>SpringFramework</strong></p>
+<pre><code>广义的spring泛指Spring Framework为基础的Spring技术栈
+ 如
+     Spring Framework
+    Spring MVC
+    SpringBoot	
+    Spring Cloud
+    Spring Data等
+    
+</code></pre>
+<p><strong>广义的 Spring：Spring 技术栈</strong>（全家桶）</p>
+<p>广义上的 Spring 泛指以 Spring Framework 为基础的 Spring 技术栈。</p>
+<p>经过十多年的发展，Spring 已经不再是一个单纯的应用框架，而是逐渐发展成为一个由多个不同子项目（模块）组成的成熟技术，例如 Spring Framework、Spring MVC、SpringBoot、Spring Cloud、Spring Data、Spring Security 等，其中 Spring Framework 是其他子项目的基础。</p>
+<p><strong>狭义的 Spring：Spring Framework</strong>（基础框架）</p>
+<p>狭义的 Spring 特指 Spring Framework，通常我们将它称为 Spring 框架。</p>
+<p>Spring Framework（Spring框架）是一个开源的应用程序框架，由SpringSource公司开发，最初是为了解决企业级开发中各种常见问题而创建的。它提供了很多功能，例如：依赖注入（Dependency Injection）、面向切面编程（AOP）、声明式事务管理（TX）等。其主要目标是使企业级应用程序的开发变得更加简单和快速，并且Spring框架被广泛应用于Java企业开发领域。</p>
+<p>Spring全家桶的其他框架都是以SpringFramework框架为基础！</p>
+<p><strong>SpringFramework框架结构图</strong>：</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image.png" alt="img"></p>
+<table>
+<thead>
+<tr>
+<th>功能模块</th>
+<th>功能介绍</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Core Container</td>
+<td>核心容器，在 Spring 环境下使用任何功能都必须基于 IOC 容器。</td>
+</tr>
+<tr>
+<td>AOP&amp;Aspects</td>
+<td>面向切面编程</td>
+</tr>
+<tr>
+<td>TX</td>
+<td>声明式事务管理。</td>
+</tr>
+<tr>
+<td>Spring MVC</td>
+<td>提供了面向Web应用程序的集成功能。</td>
+</tr>
+</tbody></table>
+<p><strong>SpringFramework 主要优势</strong></p>
+<ol>
+<li>丰富的生态系统：Spring 生态系统非常丰富，支持许多模块和库，如 Spring Boot、Spring Security、Spring Cloud 等等，可以帮助开发人员快速构建高可靠性的企业应用程序。</li>
+<li>模块化的设计：框架组件之间的松散耦合和模块化设计使得 Spring Framework 具有良好的可重用性、可扩展性和可维护性。开发人员可以轻松地选择自己需要的模块，根据自己的需求进行开发。</li>
+<li>简化 Java 开发：Spring Framework 简化了 Java 开发，提供了各种工具和 API，可以降低开发复杂度和学习成本。同时，Spring Framework 支持各种应用场景，包括 Web 应用程序、RESTful API、消息传递、批处理等等。</li>
+<li>不断创新和发展：Spring Framework 开发团队一直在不断创新和发展，保持与最新技术的接轨，为开发人员提供更加先进和优秀的工具和框架。</li>
+</ol>
+<p>  因此，这些优点使得 Spring Framework 成为了一个稳定、可靠、且创新的框架，为企业级 Java 开发提供了一站式的解决方案。</p>
+<p>  Spring 使创建 Java 企业应用程序变得容易。它提供了在企业环境中采用 Java 语言所需的一切，支持 Groovy 和 Kotlin 作为 JVM 上的替代语言，并且可以根据应用程序的需求灵活地创建多种架构。从Spring Framework 6.0.6开始，Spring 需要 Java 17+。</p>
+<p><strong>Core Container</strong></p>
+<p><strong>Spring IoC容器和核心概念</strong></p>
+<ul>
+<li><p>组件和组件管理的概念</p>
+<p>之前的三层架构  control-service-dao</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image.png" alt="img"></p>
+</li>
+</ul>
+<p>上面的整个业务就是各种组件搭建而成的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image.png" alt="img"></p>
+<p>如果实现这样的功能就好了</p>
+<ul>
+<li>有人替我们创建组件的对象</li>
+<li>有人帮我们保存组件的对象</li>
+<li>有人帮助我们自动组装</li>
+<li>有人替我们管理事务</li>
+<li>有人协助我们整合其他框架</li>
+</ul>
+<p>所以这个 <strong>core Container</strong>就能充当这个功能</p>
+<p><strong>Spring充当组件管理角色（IoC）</strong></p>
+<p>组件可以完全交给Spring 框架进行管理，Spring框架替代了程序员原有的new对象和对象属性赋值动作等！</p>
+<p>Spring具体的组件管理动作包含：</p>
+<ul>
+<li>组件对象实例化</li>
+<li>组件属性属性赋值</li>
+<li>组件对象之间引用</li>
+<li>组件对象存活周期管理</li>
+<li>……</li>
+</ul>
+<p>我们只需要编写元数据（配置文件）告知Spring 管理哪些类组件和他们的关系即可！</p>
+<p>注意：组件是映射到应用程序中所有可重用组件的Java对象，应该是可复用的功能对象！</p>
+<ul>
+<li>组件一定是对象</li>
+<li>对象不一定是组件</li>
+</ul>
+<p>综上所述，Spring 充当一个组件容器，创建、管理、存储组件，减少了我们的编码压力，让我们更加专注进行业务编写！</p>
+<ul>
+<li>组件就是可以复用的java对象</li>
+</ul>
+<p><strong>优点</strong></p>
+<pre><code>1. 降低了组件之间的耦合性：Spring IoC容器通过依赖注入机制，将组件之间的依赖关系削弱，减少了程序组件之间的耦合性，使得组件更加松散地耦合。
+2. 提高了代码的可重用性和可维护性：将组件的实例化过程、依赖关系的管理等功能交给Spring IoC容器处理，使得组件代码更加模块化、可重用、更易于维护。
+3. 方便了配置和管理：Spring IoC容器通过XML文件或者注解，轻松的对组件进行配置和管理，使得组件的切换、替换等操作更加的方便和快捷。
+4. 交给Spring管理的对象（组件），方可享受Spring框架的其他功能（AOP,声明事务管理）等
+</code></pre>
+<p><strong>Spring IoC容器和容器的实现</strong></p>
+<p>普通的容器</p>
+<blockquote>
+<p>普通容器只能用来存储，没有更多功能。</p>
+</blockquote>
+<p>程序中的普通容器</p>
+<ul>
+<li>数组</li>
+<li>集合：List</li>
+<li>集合：Set</li>
+</ul>
+<p>复杂容器</p>
+<p>  生活中的复杂容器  <img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/img003.6f9c041c.png"></p>
+<blockquote>
+<p>政府管理我们的一生，生老病死都和政府有关。</p>
+</blockquote>
+<p>  程序中的复杂容器</p>
+<p>  Servlet 容器能够管理 Servlet(init,service,destroy)、Filter、Listener 这样的组件的一生，所以它是一个复杂容器。</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>时机</th>
+<th>次数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>创建对象</td>
+<td>默认情况：接收到第一次请求  修改启动顺序后：Web应用启动过程中</td>
+<td>一次</td>
+</tr>
+<tr>
+<td>初始化操作</td>
+<td>创建对象之后</td>
+<td>一次</td>
+</tr>
+<tr>
+<td>处理请求</td>
+<td>接收到请求</td>
+<td>多次</td>
+</tr>
+<tr>
+<td>销毁操作</td>
+<td>Web应用卸载之前</td>
+<td>一次</td>
+</tr>
+</tbody></table>
+<p>我们即将要学习的 SpringIoC 容器也是一个复杂容器。它们不仅要负责创建组件的对象、存储组件的对象，还要负责调用组件的方法让它们工作，最终在特定情况下销毁组件。</p>
+<p>总结：Spring管理组件的容器，就是一个复杂容器，不仅存储组件，也可以管理组件之间依赖关系，并且创建和销毁组件等！</p>
+<p>Spring IoC 容器，负责实例化、配置和组装 bean（组件）。容器通过读取配置元数据来获取有关要实例化、配置和组装组件的指令。配置元数据以 XML、Java 注解或 Java 代码形式表现。它允许表达组成应用程序的组件以及这些组件之间丰富的相互依赖关系。</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image.png"></p>
+<p>上图显示了 Spring 容器工作原理的高级视图。应用程序类与配置元数据相结合，您拥有完全配置且可执行的系统或应用程序。</p>
+<p><strong>SpringIoC容器具体接口和实现类</strong></p>
+<p><strong>SpringIoc容器接口</strong>： </p>
+<p><code>BeanFactory</code> 接口提供了一种高级配置机制，能够管理任何类型的对象，它是SpringIoC容器标准化超接口！</p>
+<p><code>ApplicationContext</code> 是 <code>BeanFactory</code> 的子接口。它扩展了以下功能：</p>
+<ul>
+<li>更容易与 Spring 的 AOP 功能集成</li>
+<li>消息资源处理（用于国际化）</li>
+<li>特定于应用程序给予此接口实现，例如Web 应用程序的 <code>WebApplicationContext</code></li>
+</ul>
+<p>简而言之， <code>BeanFactory</code> 提供了配置框架和基本功能，而 <code>ApplicationContext</code> 添加了更多特定于企业的功能。 <code>ApplicationContext</code> 是 <code>BeanFactory</code> 的完整超集！</p>
+<p><strong>ApplicationContext容器实现类</strong>：</p>
+<p><img src="http://heavy_code_industry.gitee.io/code_heavy_industry/assets/img/img004.f6680aef.png"></p>
+<table>
+<thead>
+<tr>
+<th>类型名</th>
+<th>简介</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ClassPathXmlApplicationContext</td>
+<td>通过读取类路径下的 XML 格式的配置文件创建 IOC 容器对象</td>
+</tr>
+<tr>
+<td>FileSystemXmlApplicationContext</td>
+<td>通过文件系统路径读取 XML 格式的配置文件创建 IOC 容器对象</td>
+</tr>
+<tr>
+<td>AnnotationConfigApplicationContext</td>
+<td>通过读取Java配置类创建 IOC 容器对象</td>
+</tr>
+<tr>
+<td>WebApplicationContext</td>
+<td>专门为 Web 应用准备，基于 Web 环境创建 IOC 容器对象，并将对象引入存入 ServletContext 域中。</td>
+</tr>
+</tbody></table>
+<p>总的来说是这样的</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240421104631981.png" alt="image-20240421104631981"></p>
+
     </div>
     
     
