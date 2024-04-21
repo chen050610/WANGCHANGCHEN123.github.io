@@ -1019,6 +1019,255 @@ happyComponent.doWork();
 根据类型来获取bean时，在满足bean唯一性的前提下，其实只是看：『对象 instanceof 指定的类型』的返回结果，
 只要返回的是true就可以认定为和类型匹配，能够获取到。
 </code></pre>
+<p>演示</p>
+<pre><code class="java">package com.chenw.test;
+
+import com.chenw.ioc_03.HappyComponent;
+import org.junit.jupiter.api.Test;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class SpringIoCTest &#123;
+    /*
+    * 如何创建ioc容器并且读取配置文件
+    * */
+    public void createIoC()&#123;
+        //创建容器，选择合适的容器实现
+        /*
+        *接口
+        * BeanFactory
+        *   ApplicationContext
+        * 实现类
+        *   直接通过构造函数实例化
+        *   ClassPathXmlApplicationContext
+        *   FileSystemXmlApplicationContext
+        *   AnnotationConfigApplicationContext
+        *   WebApplicationContext
+        *
+        * */
+        //构造函数（string...配置文件）可以写一个或者多个，推荐
+        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext(&quot;spring-03.xml&quot;);
+        //先创建
+        ClassPathXmlApplicationContext applicationContext1 = new ClassPathXmlApplicationContext();
+        //外部配置文件的配置
+        applicationContext1.setConfigLocations(&quot;spring-03.xml&quot;);
+        //调用ioc和di的流程
+        applicationContext1.refresh();
+
+
+    &#125;
+    /*
+    *   如何在Ioc容器中获取组件Bean
+    * */
+    @Test
+    public void getBeanFromIoC()&#123;
+        //1.创建容器
+        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext();
+        applicationContext.setConfigLocations(&quot;spring-03.xml&quot;);
+        applicationContext.refresh();
+
+        //2.读取ioc容器的组件
+        //方案1:根据bean的id获取 返回值为object,这种需要强转不推荐
+        HappyComponent happyComponent = (HappyComponent)applicationContext.getBean(&quot;happyComponent&quot;);
+        //方案2:根据bean的id和类型获取
+        HappyComponent happyComponent1 = applicationContext.getBean(&quot;happyComponent&quot;, HappyComponent.class);
+        //方案3:直接根据类型获取
+        HappyComponent bean = applicationContext.getBean(HappyComponent.class);
+        happyComponent.doWork();  //HappyComponent.doWork
+        happyComponent1.doWork(); //HappyComponent.doWork
+        bean.doWork();   //HappyComponent.doWor
+
+        //而且创建的都是同一个对象
+        System.out.println(happyComponent1==happyComponent); //true
+        System.out.println(happyComponent1==bean); //true
+    &#125;
+
+&#125;
+</code></pre>
+<pre><code class="xml">注意第三中方法，通过类的类对象作为参数可能出现一些问题 
+如果下面这样，这样第三种方法就会出错
+    &lt;bean id=&quot;happyComponent&quot; class=&quot;com.chenw.ioc_03.HappyComponent&quot;/&gt;
+    &lt;bean id=&quot;happyComponent1&quot; class=&quot;com.chenw.ioc_03.HappyComponent&quot;/&gt;
+</code></pre>
+<pre><code class="java">还有一个注意点
+第三中方法，如果该类实现一个接口吗，下面这些操作也是可行的，因为参数的判断是通过 instanceof
+    例如
+    package com.chenw.ioc_03;
+
+public interface A &#123;
+    void doWork();
+&#125;
+
+实现
+package com.chenw.ioc_03;
+
+
+public class HappyComponent implements A &#123;
+
+    //默认包含无参数构造函数
+
+    public void doWork() &#123;
+        System.out.println(&quot;HappyComponent.doWork&quot;);
+    &#125;
+&#125;
+
+配置
+    &lt;bean id=&quot;happyComponent&quot; class=&quot;com.chenw.ioc_03.HappyComponent&quot;/&gt;
+测试类
+            A bean = applicationContext.getBean(A.class);
+            bean.doWork();   //HappyComponent.doWork
+</code></pre>
+<p><strong>组件(bean)的作用域和周期方法的配置</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240421165645730.png" alt="image-20240421165645730"></p>
+<pre><code>我们可以组件类里面声明周期方法，然后通过配置文件告诉容器
+</code></pre>
+<ol>
+<li>组件周期方法配置<ol>
+<li><p>周期方法概念</p>
+<p> 我们可以在组件类中定义方法，然后当IoC容器实例化和销毁组件对象的时候进行调用！这两个方法我们成为生命周期方法！</p>
+<p> 类似于Servlet的init&#x2F;destroy方法,我们可以在周期方法完成初始化和释放资源等工作。</p>
+</li>
+<li><p>周期方法声明</p>
+</li>
+</ol>
+</li>
+</ol>
+<pre><code class="Java">package com.chenw.ioc_04;
+
+public class JavaBean &#123;
+    /*
+    * 必须public 必须是void返回值 必须是无参数的
+    * 命名是随意的的
+    *
+    * */
+    public void init()&#123;
+        System.out.println(&quot;javaBean.init&quot;);
+    &#125;
+    public void clear()&#123;
+        System.out.println(&quot;JavaBean,clear&quot;);
+    &#125;
+&#125;
+</code></pre>
+<pre><code class="xml">3. 周期方法配置
+    &lt;bean id=&quot;javaBean&quot; class=&quot;com.chenw.ioc_04.JavaBean&quot; init-method=&quot;init&quot; destroy-method=&quot;clear&quot;/&gt;
+</code></pre>
+<pre><code class="xml">&lt;beans&gt;
+  &lt;bean id=&quot;beanOne&quot; class=&quot;examples.BeanOne&quot; init-method=&quot;init&quot; /&gt;
+  &lt;bean id=&quot;beanTwo&quot; class=&quot;examples.BeanTwo&quot; destroy-method=&quot;cleanup&quot; /&gt;
+&lt;/beans&gt;
+</code></pre>
+<p>例如</p>
+<p>上面配置玩以后</p>
+<pre><code class="java">    @Test
+    public void Test_o4()&#123;
+        //但我们创建ioc容器的时候 就会对组件实例化 ，然后就会调用初始化方法
+        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext(&quot;spring_04.xml&quot;);
+&#125;
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240421171007793.png" alt="image-20240421171007793"></p>
+<p>怎么调用销毁呢？</p>
+<pre><code class="java">    @Test
+    public void Test_o4()&#123;
+        //但我们创建ioc容器的时候 就会对组件实例化 ，然后就会调用初始化方法
+        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext(&quot;spring_04.xml&quot;);
+
+        //怎么调用销毁的方法呢？
+        //当我们代码执行玩以后，ioc直接就会释放掉，没有机会去调用组件的销毁方法
+        // 需要手动销毁ioc
+        applicationContext.close();
+        &#125;
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240421171336304.png" alt="image-20240421171336304"></p>
+<p>2.组件作用域配置</p>
+<ol>
+<li><p>Bean作用域概念</p>
+<p> <code>&lt;bean</code> 标签声明Bean，只是将Bean的信息配置给SpringIoC容器！</p>
+<p> 在IoC容器中，这些<code>&lt;bean</code>标签对应的信息转成Spring内部 <code>BeanDefinition</code> 对象，<code>BeanDefinition</code> 对象内，包含定义的信息（id,class,属性等等）！</p>
+<p> 这意味着，<code>BeanDefinition</code>与<code>类</code>概念一样，SpringIoC容器可以可以根据<code>BeanDefinition</code>对象反射创建多个Bean对象实例。</p>
+<p> 具体创建多少个Bean的实例对象，由Bean的作用域Scope属性指定！</p>
+</li>
+<li><p>作用域可选值</p>
+</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>取值</th>
+<th>含义</th>
+<th>创建对象的时机</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>singleton</td>
+<td>在 IOC 容器中，这个 bean 的对象始终为单实例</td>
+<td>IOC 容器初始化时</td>
+<td>是</td>
+</tr>
+<tr>
+<td>prototype</td>
+<td>这个 bean 在 IOC 容器中有多个实例</td>
+<td>获取 bean 时</td>
+<td>否</td>
+</tr>
+</tbody></table>
+<pre><code>    如果是在WebApplicationContext环境下还会有另外两个作用域（但不常用）：
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>取值</th>
+<th>含义</th>
+<th>创建对象的时机</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>request</td>
+<td>请求范围内有效的实例</td>
+<td>每次请求</td>
+<td>否</td>
+</tr>
+<tr>
+<td>session</td>
+<td>会话范围内有效的实例</td>
+<td>每次会话</td>
+<td>否</td>
+</tr>
+</tbody></table>
+<pre><code>3. 作用域配置
+
+    配置scope范围
+</code></pre>
+<pre><code class="XML">&lt;!--bean的作用域 
+    准备两个引用关系的组件类即可！！
+--&gt;
+&lt;!-- scope属性：取值singleton（默认值），bean在IOC容器中只有一个实例，IOC容器初始化时创建对象 --&gt;
+&lt;!-- scope属性：取值prototype，bean在IOC容器中可以有多个实例，getBean()时创建对象 --&gt;
+&lt;bean id=&quot;happyMachine8&quot; scope=&quot;prototype&quot; class=&quot;com.atguigu.ioc.HappyMachine&quot;&gt;
+    &lt;property name=&quot;machineName&quot; value=&quot;happyMachine&quot;/&gt;
+&lt;/bean&gt;
+
+&lt;bean id=&quot;happyComponent8&quot; scope=&quot;singleton&quot; class=&quot;com.atguigu.ioc.HappyComponent&quot;&gt;
+    &lt;property name=&quot;componentName&quot; value=&quot;happyComponent&quot;/&gt;
+&lt;/bean&gt;
+</code></pre>
+<pre><code>4. 作用域测试
+</code></pre>
+<pre><code class="Java">@Test
+public void testExperiment08()  &#123;
+    ApplicationContext iocContainer = new ClassPathXmlApplicationContext(&quot;配置文件名&quot;);
+
+    HappyMachine bean = iocContainer.getBean(HappyMachine.class);
+    HappyMachine bean1 = iocContainer.getBean(HappyMachine.class);
+    //多例对比 false
+    System.out.println(bean == bean1);
+
+    HappyComponent bean2 = iocContainer.getBean(HappyComponent.class);
+    HappyComponent bean3 = iocContainer.getBean(HappyComponent.class);
+    //单例对比 true
+    System.out.println(bean2 == bean3);
+&#125;
+</code></pre>
 
     </div>
     
