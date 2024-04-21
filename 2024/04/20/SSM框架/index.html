@@ -177,12 +177,12 @@
             
             <span class="tag">
                 
-                <a href="/tags/chenw/" style="color: #ff7d73">chenw</a>
+                <a href="/tags/chenw/" style="color: #ffa2c4">chenw</a>
             </span>
             
             <span class="tag">
                 
-                <a href="/tags/SSM%E5%AD%A6%E4%B9%A0/" style="color: #ffa2c4">SSM学习</a>
+                <a href="/tags/SSM%E5%AD%A6%E4%B9%A0/" style="color: #03a9f4">SSM学习</a>
             </span>
             
         </span>
@@ -389,6 +389,239 @@
 </tbody></table>
 <p>总的来说是这样的</p>
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240421104631981.png" alt="image-20240421104631981"></p>
+<p><strong>SpringIoC容器管理配置方式</strong></p>
+<p>Spring IoC 容器使用多种形式的配置元数据。此配置元数据表示您作为应用程序开发人员如何告诉 Spring 容器实例化、配置和组装应用程序中的对象。</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image.png"></p>
+<p>Spring框架提供了多种配置方式：XML配置方式、注解方式和Java配置类方式</p>
+<ol>
+<li>XML配置方式：是Spring框架最早的配置方式之一，通过在XML文件中定义Bean及其依赖关系、Bean的作用域等信息，让Spring IoC容器来管理Bean之间的依赖关系。该方式从Spring框架的第一版开始提供支持。</li>
+<li>注解方式：从Spring 2.5版本开始提供支持，可以通过在Bean类上使用注解来代替XML配置文件中的配置信息。通过在Bean类上加上相应的注解（如@Component, @Service, @Autowired等），将Bean注册到Spring IoC容器中，这样Spring IoC容器就可以管理这些Bean之间的依赖关系。</li>
+<li><strong>Java配置类</strong>方式：从Spring 3.0版本开始提供支持，通过Java类来定义Bean、Bean之间的依赖关系和配置信息，从而代替XML配置文件的方式。Java配置类是一种使用Java编写配置信息的方式，通过@Configuration、@Bean等注解来实现Bean和依赖关系的配置。</li>
+</ol>
+<p>为了迎合当下开发环境，我们将以<strong>配置类+注解方式</strong>为主进行讲解！</p>
+<p><strong>Spring IoC &#x2F; DI概念总结</strong></p>
+<ul>
+<li><p><strong>IoC容器</strong></p>
+<p>Spring IoC 容器，负责实例化、配置和组装 bean（组件）核心容器。容器通过读取配置元数据来获取有关要实例化、配置和组装组件的指令。</p>
+</li>
+<li><p><strong>IoC（Inversion of Control）控制反转</strong></p>
+<p>IoC 主要是针对对象的创建和调用控制而言的，也就是说，当应用程序需要使用一个对象时，不再是应用程序直接创建该对象，而是由 IoC 容器来创建和管理，即控制权由应用程序转移到 IoC 容器中，也就是“反转”了控制权。这种方式基本上是通过依赖查找的方式来实现的，即 IoC 容器维护着构成应用程序的对象，并负责创建这些对象。</p>
+</li>
+<li><p><strong>DI (Dependency Injection) 依赖注入</strong></p>
+<p>DI 是指在组件之间传递依赖关系的过程中，将依赖关系在容器内部进行处理，这样就不必在应用程序代码中硬编码对象之间的依赖关系，实现了对象之间的解耦合。在 Spring 中，DI 是通过 XML 配置文件或注解的方式实现的。它提供了三种形式的依赖注入：构造函数注入、Setter 方法注入和接口注入。</p>
+</li>
+</ul>
+<p> <strong>Spring IoC &#x2F; DI 实现步骤</strong></p>
+<blockquote>
+<p>我们总结下，组件交给Spring IoC容器管理，并且获取和使用的基本步骤！</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240421113253180.png" alt="image-20240421113253180"></p>
+</blockquote>
+<ol>
+<li><p><strong>配置元数据（配置）</strong></p>
+<p> 配置元数据，既是编写交给SpringIoC容器管理组件的信息，配置方式有三种。</p>
+<p> 基于 XML 的配置元数据的基本结构：</p>
+<p> &lt;bean id&#x3D;”…” [1] class&#x3D;”…” [2]&gt;</p>
+</li>
+</ol>
+<pre><code>&lt;!-- collaborators and configuration for this bean go here --&gt;
+</code></pre>
+  </bean>
+
+<pre><code class="XML">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;!-- 此处要添加一些约束，配置文件的标签并不是随意命名 --&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+  xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+  xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans
+    https://www.springframework.org/schema/beans/spring-beans.xsd&quot;&gt;
+
+  &lt;bean id=&quot;...&quot; [1] class=&quot;...&quot; [2]&gt;  
+    &lt;!-- collaborators and configuration for this bean go here --&gt;
+  &lt;/bean&gt;
+
+  &lt;bean id=&quot;...&quot; class=&quot;...&quot;&gt;
+    &lt;!-- collaborators and configuration for this bean go here --&gt;
+  &lt;/bean&gt;
+  &lt;!-- more bean definitions go here --&gt;
+&lt;/beans&gt;
+</code></pre>
+<pre><code>  Spring IoC 容器管理一个或多个组件。这些 组件是使用你提供给容器的配置元数据（例如，以 XML `&lt;bean/&gt;` 定义的形式）创建的。
+
+  &lt;bean /&gt; 标签 == 组件信息声明
+
+  - `id` 属性是标识单个 Bean 定义的字符串。
+  - `class` 属性定义 Bean 的类型并使用完全限定的类名。
+</code></pre>
+<ol start="2">
+<li><p><strong>实例化IoC容器</strong></p>
+<p> 提供给 <code>ApplicationContext</code> 构造函数的位置路径是资源字符串地址，允许容器从各种外部资源（如本地文件系统、Java <code>CLASSPATH</code> 等）加载配置元数据。</p>
+<p> 我们应该选择一个合适的容器实现类，进行IoC容器的实例化工作：</p>
+</li>
+</ol>
+<pre><code class="Java">//实例化ioc容器,读取外部配置文件,最终会在容器内进行ioc和di动作
+ApplicationContext context = 
+           new ClassPathXmlApplicationContext(&quot;services.xml&quot;, &quot;daos.xml&quot;);
+</code></pre>
+<ol start="3">
+<li><p><strong>获取Bean（组件）</strong></p>
+<p> <code>ApplicationContext</code> 是一个高级工厂的接口，能够维护不同 bean 及其依赖项的注册表。通过使用方法 <code>T getBean(String name, Class&lt;T&gt; requiredType)</code> ，您可以检索 bean 的实例。</p>
+<p> 允许读取 Bean 定义并访问它们，如以下示例所示：</p>
+</li>
+</ol>
+<pre><code class="Java">//创建ioc容器对象，指定配置文件，ioc也开始实例组件对象
+ApplicationContext context = new ClassPathXmlApplicationContext(&quot;services.xml&quot;, &quot;daos.xml&quot;);
+//获取ioc容器的组件对象
+PetStoreService service = context.getBean(&quot;petStore&quot;, PetStoreService.class);
+//使用组件对象
+List&lt;String&gt; userList = service.getUsernameList();
+</code></pre>
+<p><strong>基于XML的方式配置组件的管理</strong></p>
+<p><strong>组件（Bean）信息声明配置（IoC）</strong></p>
+<ol>
+<li><p>目标</p>
+<p> Spring IoC 容器管理一个或多个 bean。这些 Bean 是使用您提供给容器的配置元数据创建的（例如，以 XML <code>&lt;bean/&gt;</code> 定义的形式）。</p>
+<p> 我们学习，如何通过定义XML配置文件，声明组件类信息，交给 Spring 的 IoC 容器进行组件管理！</p>
+</li>
+<li><p>思路</p>
+<p> <img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/img006.c8bae859.png"></p>
+</li>
+<li><p>准备项目</p>
+<ol>
+<li><p>创建maven工程（spring-ioc-xml-01）</p>
+</li>
+<li><p>导入SpringIoC相关依赖</p>
+<p> pom.xml</p>
+</li>
+</ol>
+</li>
+</ol>
+<pre><code class="XML">&lt;dependencies&gt;
+    &lt;!--spring context依赖--&gt;
+    &lt;!--当你引入Spring Context依赖之后，表示将Spring的基础依赖引入了--&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-context&lt;/artifactId&gt;
+        &lt;version&gt;6.0.6&lt;/version&gt;
+    &lt;/dependency&gt;
+    &lt;!--junit5测试--&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.junit.jupiter&lt;/groupId&gt;
+        &lt;artifactId&gt;junit-jupiter-api&lt;/artifactId&gt;
+        &lt;version&gt;5.3.1&lt;/version&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;
+</code></pre>
+<ol start="4">
+<li><p>基于无参数构造函数</p>
+<blockquote>
+<p>当通过构造函数方法创建一个 bean（组件对象） 时，所有普通类都可以由 Spring 使用并与之兼容。也就是说，正在开发的类不需要实现任何特定的接口或以特定的方式进行编码。只需指定 Bean 类信息就足够了。但是，默认情况下，我们需要一个默认（空）构造函数。</p>
+</blockquote>
+<ol>
+<li>准备组件类</li>
+</ol>
+</li>
+</ol>
+<pre><code class="Java">package com.atguigu.ioc;
+
+
+public class HappyComponent &#123;
+
+    //默认包含无参数构造函数
+
+    public void doWork() &#123;
+        System.out.println(&quot;HappyComponent.doWork&quot;);
+    &#125;
+&#125;
+</code></pre>
+<pre><code>  2. xml配置文件编写
+
+      创建携带spring约束的xml配置文件
+
+
+      编写配置文件：
+
+      文件：resources/spring-bean-01.xml
+</code></pre>
+<pre><code class="Java">&lt;!-- 实验一 [重要]创建bean --&gt;
+&lt;bean id=&quot;happyComponent&quot; class=&quot;com.atguigu.ioc.HappyComponent&quot;/&gt;
+</code></pre>
+<pre><code>      - bean标签：通过配置bean标签告诉IOC容器需要创建对象的组件信息
+      - id属性：bean的唯一标识,方便后期获取Bean！
+      - class属性：组件类的全限定符！
+      - 注意：要求当前组件类必须包含无参数构造函数！
+</code></pre>
+<ol start="5">
+<li><p>基于静态工厂方法实例化</p>
+<blockquote>
+<p>除了使用构造函数实例化对象，还有一类是通过工厂模式实例化对象。接下来我们讲解如何定义使用静态工厂方法创建Bean的配置 ！</p>
+</blockquote>
+<ol>
+<li>准备组件类</li>
+</ol>
+</li>
+</ol>
+<pre><code class="Java">public class ClientService &#123;
+  private static ClientService clientService = new ClientService();
+  private ClientService() &#123;&#125;
+
+  public static ClientService createInstance() &#123;
+  
+    return clientService;
+  &#125;
+&#125;
+</code></pre>
+<pre><code>  2. xml配置文件编写
+
+      文件：resources/spring-bean-01.xml
+</code></pre>
+<pre><code class="XML">&lt;bean id=&quot;clientService&quot;
+  class=&quot;examples.ClientService&quot;
+  factory-method=&quot;createInstance&quot;/&gt;
+</code></pre>
+<pre><code>      - class属性：指定工厂类的全限定符！
+      - factory-method: 指定静态工厂方法，注意，该方法必须是static方法。
+</code></pre>
+<ol start="6">
+<li><p>基于实例工厂方法实例化</p>
+<blockquote>
+<p>接下来我们讲解下如何定义使用实例工厂方法创建Bean的配置 ！</p>
+</blockquote>
+<ol>
+<li>准备组建类</li>
+</ol>
+</li>
+</ol>
+<pre><code class="Java">package com.chenw.ioc_01;
+
+public class DefaultServiceLocator &#123;
+
+  private static ClientServiceImpl clientService = new ClientServiceImpl();
+
+  public ClientServiceImpl createClientServiceInstance() &#123;
+    return clientService;
+  &#125;
+&#125;
+</code></pre>
+<pre><code>  2. xml配置文件编写
+
+      文件：resources/spring-bean-01.xml
+</code></pre>
+<pre><code class="XML">&lt;!-- 将工厂类进行ioc配置 --&gt;
+&lt;bean id=&quot;serviceLocator&quot; class=&quot;examples.DefaultServiceLocator&quot;&gt;
+&lt;/bean&gt;
+
+&lt;!-- 根据工厂对象的实例工厂方法进行实例化组件对象 --&gt;
+&lt;bean id=&quot;clientService&quot;
+  factory-bean=&quot;serviceLocator&quot;
+  factory-method=&quot;createClientServiceInstance&quot;/&gt;
+</code></pre>
+<pre><code>      - factory-bean属性：指定当前容器中工厂Bean 的名称。
+      - factory-method:  指定实例工厂方法名。注意，实例方法必须是非static的！
+</code></pre>
+<ol start="7">
+<li><p>图解IoC配置流程</p>
+<p> <img src="https://secure2.wostatic.cn/static/mpqqiD6Bmbno45SpRwBNom/image.png?auth_key=1713670560-duArnWPbh3N648zpywt4TQ-0-a9a4e362a86ac845b548422894d84630"></p>
+</li>
+</ol>
 
     </div>
     
