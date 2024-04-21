@@ -177,12 +177,12 @@
             
             <span class="tag">
                 
-                <a href="/tags/chenw/" style="color: #00bcd4">chenw</a>
+                <a href="/tags/chenw/" style="color: #ff7d73">chenw</a>
             </span>
             
             <span class="tag">
                 
-                <a href="/tags/SSM%E5%AD%A6%E4%B9%A0/" style="color: #03a9f4">SSM学习</a>
+                <a href="/tags/SSM%E5%AD%A6%E4%B9%A0/" style="color: #00a596">SSM学习</a>
             </span>
             
         </span>
@@ -1442,7 +1442,477 @@ public class JavaBeanFactoryBean implements FactoryBean&lt;JavaBean&gt; &#123;
 </code></pre>
 <p>或者直接调用方法赋值</p>
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240421183855851.png" alt="image-20240421183855851"></p>
-<p>基于</p>
+<p><strong>基于XML方式整合的三层架构组件</strong></p>
+<ol>
+<li><p>需求分析</p>
+<p> 搭建一个三层架构案例，模拟查询全部学生（学生表）信息，持久层使用JdbcTemplate和Druid技术，使用XML方式进行组件管理！</p>
+<p> <img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image.png"></p>
+</li>
+<li><p>数据库准备</p>
+</li>
+</ol>
+<pre><code class="Java">create database studb;
+
+use studb;
+
+CREATE TABLE students (
+  id INT PRIMARY KEY,
+  name VARCHAR(50) NOT NULL,
+  gender VARCHAR(10) NOT NULL,
+  age INT,
+  class VARCHAR(50)
+);
+
+INSERT INTO students (id, name, gender, age, class)
+VALUES
+  (1, &#39;张三&#39;, &#39;男&#39;, 20, &#39;高中一班&#39;),
+  (2, &#39;李四&#39;, &#39;男&#39;, 19, &#39;高中二班&#39;),
+  (3, &#39;王五&#39;, &#39;女&#39;, 18, &#39;高中一班&#39;),
+  (4, &#39;赵六&#39;, &#39;女&#39;, 20, &#39;高中三班&#39;),
+  (5, &#39;刘七&#39;, &#39;男&#39;, 19, &#39;高中二班&#39;),
+  (6, &#39;陈八&#39;, &#39;女&#39;, 18, &#39;高中一班&#39;),
+  (7, &#39;杨九&#39;, &#39;男&#39;, 20, &#39;高中三班&#39;),
+  (8, &#39;吴十&#39;, &#39;男&#39;, 19, &#39;高中二班&#39;);
+</code></pre>
+<ol>
+<li>项目准备<ol>
+<li><p>项目创建</p>
+<p> spring-xml-practice-02</p>
+</li>
+<li><p>依赖导入</p>
+</li>
+</ol>
+</li>
+</ol>
+<pre><code class="XML">&lt;dependencies&gt;
+      &lt;!--spring context依赖--&gt;
+      &lt;!--当你引入SpringContext依赖之后，表示将Spring的基础依赖引入了--&gt;
+      &lt;dependency&gt;
+          &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+          &lt;artifactId&gt;spring-context&lt;/artifactId&gt;
+          &lt;version&gt;6.0.6&lt;/version&gt;
+      &lt;/dependency&gt;
+
+      &lt;!-- 数据库驱动和连接池--&gt;
+      &lt;dependency&gt;
+          &lt;groupId&gt;mysql&lt;/groupId&gt;
+          &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
+          &lt;version&gt;8.0.25&lt;/version&gt;
+      &lt;/dependency&gt;
+
+      &lt;dependency&gt;
+          &lt;groupId&gt;com.alibaba&lt;/groupId&gt;
+          &lt;artifactId&gt;druid&lt;/artifactId&gt;
+          &lt;version&gt;1.2.8&lt;/version&gt;
+      &lt;/dependency&gt;
+
+      &lt;!-- spring-jdbc --&gt;
+      &lt;dependency&gt;
+          &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+          &lt;artifactId&gt;spring-jdbc&lt;/artifactId&gt;
+          &lt;version&gt;6.0.6&lt;/version&gt;
+      &lt;/dependency&gt;
+
+&lt;/dependencies&gt; 
+</code></pre>
+<pre><code>3. 实体类准备
+</code></pre>
+<pre><code class="Java">public class Student &#123;
+
+    private Integer id;
+    private String name;
+    private String gender;
+    private Integer age;
+    private String classes;
+
+    public Integer getId() &#123;
+        return id;
+    &#125;
+
+    public void setId(Integer id) &#123;
+        this.id = id;
+    &#125;
+
+    public String getName() &#123;
+        return name;
+    &#125;
+
+    public void setName(String name) &#123;
+        this.name = name;
+    &#125;
+
+    public String getGender() &#123;
+        return gender;
+    &#125;
+
+    public void setGender(String gender) &#123;
+        this.gender = gender;
+    &#125;
+
+    public Integer getAge() &#123;
+        return age;
+    &#125;
+
+    public void setAge(Integer age) &#123;
+        this.age = age;
+    &#125;
+
+    public String getClasses() &#123;
+        return classes;
+    &#125;
+
+    public void setClasses(String classes) &#123;
+        this.classes = classes;
+    &#125;
+
+    @Override
+    public String toString() &#123;
+        return &quot;Student&#123;&quot; +
+                &quot;id=&quot; + id +
+                &quot;, name=&#39;&quot; + name + &#39;\&#39;&#39; +
+                &quot;, gender=&#39;&quot; + gender + &#39;\&#39;&#39; +
+                &quot;, age=&quot; + age +
+                &quot;, classes=&#39;&quot; + classes + &#39;\&#39;&#39; +
+                &#39;&#125;&#39;;
+    &#125;
+&#125;
+</code></pre>
+<ol start="2">
+<li><p>JdbcTemplate技术讲解</p>
+<blockquote>
+<p>为了在特定领域帮助我们简化代码，Spring 封装了很多 『Template』形式的模板类。例如：RedisTemplate、RestTemplate 等等，包括我们今天要学习的 JdbcTemplate。</p>
+</blockquote>
+<p> jdbcTemplate的基本使用</p>
+<pre><code class="java">package com.chenw.jdbc;
+
+import com.alibaba.druid.pool.DruidDataSource;
+import org.springframework.jdbc.core.JdbcTemplate;
+
+public class jdbcTemplateTest &#123;
+    public void testForJava()&#123;
+        /*
+        * jdbcTemplate  简化了数据库的curd 不提供连续持等操作
+        * DruidDataSource  负责连接的创建和数据库驱动的注册
+        *   所以DruidDataSource赋值给jdbcTemplate
+        * */
+        //1.实例对象
+        JdbcTemplate jdbcTemplate = new JdbcTemplate();
+        //2.调用方法
+//        jdbcTemplate.update();     //DDL  DML   DCL ...非查询语句
+//        jdbcTemplate.queryForObject();  //DQL 查询单个语句
+//        jdbcTemplate.query()  //DQL查询集合
+        DruidDataSource dataSource = new DruidDataSource();
+        dataSource.setUrl(&quot;jdbc:mysql:///studb&quot;);
+        dataSource.setDriverClassName(&quot;com.mysql.cj.jdbc.Driver&quot;);
+        dataSource.setUsername(&quot;root&quot;);
+        dataSource.setPassword(&quot;root&quot;);
+        //参数是连接池对象
+        jdbcTemplate.setDataSource(dataSource);
+    &#125;
+&#125;
+</code></pre>
+<p> 上面时使用java代码实现，如何使用ioc管理呢？</p>
+<p> 下面的操作在配置文件完成上面的操作</p>
+<pre><code class="xml">&lt;bean id=&quot;dataSource&quot; class=&quot;com.alibaba.druid.pool.DruidDataSource &quot;&gt;
+    &lt;property name=&quot;url&quot; value=&quot;jdbc:mysql:///studb&quot;/&gt;
+    &lt;property name=&quot;driverClassName&quot; value=&quot;com.mysql.cj.jdbc.Driver&quot;/&gt;
+    &lt;property name=&quot;username&quot; value=&quot;root&quot;/&gt;
+    &lt;property name=&quot;password&quot; value=&quot;root&quot;/&gt;
+&lt;/bean&gt;
+&lt;bean id=&quot;jdbcTemplate&quot; class=&quot;org.springframework.jdbc.core.JdbcTemplate&quot;&gt;
+    &lt;property name=&quot;dataSource&quot; ref=&quot;dataSource&quot;/&gt;
+&lt;/bean&gt;
+</code></pre>
+<p> 但是一般的这个数据库的配置信息这样写不太好，所最好写一个配置文件</p>
+<p> jdbc.properties</p>
+<p> 提取数据库连接信息</p>
+</li>
+</ol>
+<pre><code class=".properties">atguigu.url=jdbc:mysql://localhost:3306/studb
+atguigu.driver=com.mysql.cj.jdbc.Driver
+atguigu.username=root
+atguigu.password=root
+</code></pre>
+<pre><code>springioc配置文件
+</code></pre>
+<pre><code class="XML">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+       xmlns:context=&quot;http://www.springframework.org/schema/context&quot;
+       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd 
+       http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd&quot;&gt;
+
+
+    &lt;!--读取外部的配置文件 .properties -&gt;  value = $&#123;&#125;--&gt;
+    &lt;!--需要这，注意这里面的classpath是类路径的意思，而且只能支持properties的文件--&gt;
+    &lt;context:property-placeholder location=&quot;classpath:jdbc.properties&quot;/&gt;
+    &lt;bean id=&quot;dataSource&quot; class=&quot;com.alibaba.druid.pool.DruidDataSource&quot;&gt;
+        &lt;property name=&quot;url&quot; value=&quot;$&#123;chenw.url&#125;&quot;/&gt;
+        &lt;property name=&quot;driverClassName&quot; value=&quot;$&#123;chenw.driver&#125;&quot;/&gt;
+        &lt;property name=&quot;username&quot; value=&quot;$&#123;chenw.username&#125;&quot;/&gt;
+        &lt;property name=&quot;password&quot; value=&quot;$&#123;chenw.password&#125;&quot;/&gt;
+    &lt;/bean&gt;
+    &lt;bean id=&quot;jdbcTemplate&quot; class=&quot;org.springframework.jdbc.core.JdbcTemplate&quot;&gt;
+        &lt;property name=&quot;dataSource&quot; ref=&quot;dataSource&quot;/&gt;
+    &lt;/bean&gt;	
+    
+&lt;/beans&gt;
+</code></pre>
+<pre><code>基于jdbcTemplate的CRUD使用
+</code></pre>
+<pre><code class="Java">package com.chenw.jdbc;
+
+import com.alibaba.druid.pool.DruidDataSource;
+import com.chenw.pojo.Student;
+import org.junit.jupiter.api.Test;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+
+public class jdbcTemplateTest &#123;
+    public void testForJava()&#123;
+        /*
+        * jdbcTemplate  简化了数据库的curd 不提供连续持等操作
+        * DruidDataSource  负责连接的创建和数据库驱动的注册
+        *   所以DruidDataSource赋值给jdbcTemplate
+        * */
+        //1.实例对象
+        JdbcTemplate jdbcTemplate = new JdbcTemplate();
+        //2.调用方法
+//        jdbcTemplate.update();     //DDL  DML   DCL ...非查询语句
+//        jdbcTemplate.queryForObject();  //DQL 查询单个语句
+//        jdbcTemplate.query()  //DQL查询集合
+        DruidDataSource dataSource = new DruidDataSource();
+        dataSource.setUrl(&quot;jdbc:mysql:///studb&quot;);
+        dataSource.setDriverClassName(&quot;com.mysql.cj.jdbc.Driver&quot;);
+        dataSource.setUsername(&quot;root&quot;);
+        dataSource.setPassword(&quot;root&quot;);
+        //参数是连接池对象
+        jdbcTemplate.setDataSource(dataSource);
+    &#125;
+
+    /*
+    * TODO 通过ioc容器读取配置的jdbcTemplate的组件
+    * */
+    @Test
+    public void testForIoC()&#123;
+
+        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext(&quot;spring-01.xml&quot;);
+        JdbcTemplate jdbcTemplate = applicationContext.getBean(&quot;jdbcTemplate&quot;, JdbcTemplate.class);
+        //插入删除修改
+        String sql = &quot;insert into students (id,name,gender,age,class) values (?,?,?,?,?)&quot;;
+        /*
+        * 参数1，sql语句
+        * 参数二，占位符的值
+        * 返回值是影响的行数
+        * */
+        int rows = jdbcTemplate.update(sql, 10,&quot;王昌晨&quot;, &quot;男&quot;, 18, &quot;三年二班&quot;);
+        System.out.println(rows);
+
+
+        //查询单条数据，返回实体对象
+        sql = &quot;select  * from students where id = ?&quot;;
+        /*
+        * 参数一sql语句 可以使用占位符
+        * 参数2 RowMapper 列名和属性名的映射器接口,里面的泛型是实体类对象
+        * 参数3 Object ...params 占位符参数
+        * 返回值 rowMapper指定的参数
+        * */
+//        Student student = jdbcTemplate.queryForObject(sql, new RowMapper&lt;Student&gt;() &#123;
+//            @Override
+//            public Student mapRow(ResultSet rs, int rowNum) throws SQLException &#123;
+//                //rs代表结果集
+//                //rowNum 行数
+//                //rs获取列的值 赋值给尸体类对象
+//                Student student1 = new Student();
+//                student1.setId(rs.getInt(&quot;id&quot;));
+//                student1.setName(rs.getString(&quot;name&quot;));
+//                student1.setGender(rs.getString(&quot;gender&quot;));
+//                student1.setClasses(rs.getString(&quot;class&quot;));
+//                return student1;
+//            &#125;
+//        &#125;, 1);
+//        然后缓冲lamda表达式
+        Student student = jdbcTemplate.queryForObject(sql, ( rs,     rowNum)-&gt;&#123;
+                //rs代表结果集
+                //rowNum 行数
+                //rs获取列的值 赋值给尸体类对象
+                Student student1 = new Student();
+                student1.setId(rs.getInt(&quot;id&quot;));
+                student1.setName(rs.getString(&quot;name&quot;));
+                student1.setGender(rs.getString(&quot;gender&quot;));
+                student1.setClasses(rs.getString(&quot;class&quot;));
+                return student1;
+            &#125;, 1);
+        System.out.println(student);
+
+
+        //查询所有的数据
+        sql = &quot;select id ,name,gender,age,class as classes  from students&quot;;
+        //注意这个BeanPropertyRowMapper，就自动实现映射，注意列名和实体类的属性名要一致，不一致的需要起别名
+        List&lt;Student&gt; query = jdbcTemplate.query(sql, new BeanPropertyRowMapper&lt;Student&gt;(Student.class), null);
+        System.out.println(query);
+    &#125;
+&#125;
+</code></pre>
+<p>3.三层架构搭建和实现</p>
+<ol>
+<li>持久层</li>
+</ol>
+<pre><code class="Java">//接口
+public interface StudentDao &#123;
+
+    /**
+     * 查询全部学生数据
+     * @return
+     */
+    List&lt;Student&gt; queryAll();
+&#125;
+
+//实现类
+public class StudentDaoImpl implements StudentDao &#123;
+
+    private JdbcTemplate jdbcTemplate;
+
+    public void setJdbcTemplate(JdbcTemplate jdbcTemplate) &#123;
+        this.jdbcTemplate = jdbcTemplate;
+    &#125;
+
+    /**
+     * 查询全部学生数据
+     * @return
+     */
+    @Override
+    public List&lt;Student&gt; queryAll() &#123;
+
+        String sql = &quot;select id , name , age , gender , class as classes from students ;&quot;;
+
+        /*
+          query可以返回集合!
+          BeanPropertyRowMapper就是封装好RowMapper的实现,要求属性名和列名相同即可
+         */
+        List&lt;Student&gt; studentList = jdbcTemplate.query(sql, new BeanPropertyRowMapper&lt;&gt;(Student.class));
+
+        return studentList;
+   &#125;
+&#125;
+</code></pre>
+<pre><code>2. 业务层
+</code></pre>
+<pre><code class="Java">//接口
+public interface StudentService &#123;
+
+    /**
+     * 查询全部学员业务
+     * @return
+     */
+    List&lt;Student&gt; findAll();
+
+&#125;
+
+//实现类
+public class StudentServiceImpl  implements StudentService &#123;
+    
+    private StudentDao studentDao;
+
+    public void setStudentDao(StudentDao studentDao) &#123;
+        this.studentDao = studentDao;
+    &#125;
+
+    /**
+     * 查询全部学员业务
+     * @return
+     */
+    @Override
+    public List&lt;Student&gt; findAll() &#123;
+        
+        List&lt;Student&gt; studentList =  studentDao.queryAll();
+        
+        return studentList;
+    &#125;
+&#125;
+</code></pre>
+<pre><code>3. 表述层
+</code></pre>
+<pre><code class="Java">public class StudentController &#123;
+    
+    private StudentService studentService;
+
+    public void setStudentService(StudentService studentService) &#123;
+        this.studentService = studentService;
+    &#125;
+    
+    public void  findAll()&#123;
+       List&lt;Student&gt; studentList =  studentService.findAll();
+        System.out.println(&quot;studentList = &quot; + studentList);
+    &#125;
+&#125;
+</code></pre>
+<ol start="4">
+<li>三层架构IoC配置</li>
+</ol>
+<pre><code class="XML">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+       xmlns:context=&quot;http://www.springframework.org/schema/context&quot;
+       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd&quot;&gt;
+    &lt;context:property-placeholder location=&quot;classpath:jdbc.properties&quot;/&gt;
+    &lt;!--druid--&gt;
+    &lt;bean id=&quot;dataSource&quot; class=&quot;com.alibaba.druid.pool.DruidDataSource&quot;&gt;
+        &lt;property name=&quot;url&quot; value=&quot;$&#123;chenw.url&#125;&quot;/&gt;
+        &lt;property name=&quot;username&quot; value=&quot;$&#123;chenw.username&#125;&quot;/&gt;
+        &lt;property name=&quot;password&quot; value=&quot;$&#123;chenw.password&#125;&quot;/&gt;
+        &lt;property name=&quot;driverClassName&quot; value=&quot;$&#123;chenw.driver&#125;&quot;/&gt;
+    &lt;/bean&gt;
+    &lt;!--jdbcTemplate--&gt;
+    &lt;bean id=&quot;jdbcTemplate&quot; class=&quot;org.springframework.jdbc.core.JdbcTemplate&quot;&gt;
+        &lt;property name=&quot;dataSource&quot; ref=&quot;dataSource&quot;/&gt;
+    &lt;/bean&gt;
+    &lt;!--dao 配置注入 di jdbcTemplate--&gt;
+    &lt;bean id=&quot;studentDao&quot; class=&quot;com.chenw.dao.Imp.StudentDaoImpl&quot;&gt;
+        &lt;property name=&quot;jdbcTemplate&quot; ref=&quot;jdbcTemplate&quot;/&gt;
+    &lt;/bean&gt;
+    &lt;!--service 配置注入 di dao--&gt;
+    &lt;bean id=&quot;studentServiceImp&quot; class=&quot;com.chenw.service.Imp.StudentServiceImp&quot;&gt;
+        &lt;property name=&quot;studentDao&quot; ref=&quot;studentDao&quot;/&gt;
+    &lt;/bean&gt;
+    &lt;!--controller 配置注入 di service--&gt;
+    &lt;bean id=&quot;studentController&quot; class=&quot;com.chenw.controller.StudentController&quot;&gt;
+        &lt;property name=&quot;studentService&quot; ref=&quot;studentServiceImp&quot;/&gt;
+    &lt;/bean&gt;
+&lt;/beans&gt;
+</code></pre>
+<ol start="5">
+<li>运行测试</li>
+</ol>
+<pre><code class="Java">    /*
+    * 从ioc容器里面获取controller并且调用业务！内部都是ioc
+    * */
+    @Test
+    public void testQueryAll()&#123;
+        //创建ioc容器
+        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext(&quot;spring-02.xml&quot;);
+        //获取组件对象
+        StudentController bean = applicationContext.getBean(StudentController.class);
+        //使用组件对象
+        bean.findAll();
+        //关闭容器
+        applicationContext.close();
+    &#125;
+</code></pre>
+<p>结果</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240421211218635.png" alt="image-20240421211218635"></p>
+<p>6.XMLIoC方式问题总结</p>
+<ol>
+<li>注入的属性必须添加setter方法、代码结构乱！</li>
+<li>配置文件和Java代码分离、编写不是很方便！</li>
+<li>XML配置文件解析效率低</li>
+</ol>
 
     </div>
     
