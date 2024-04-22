@@ -177,12 +177,12 @@
             
             <span class="tag">
                 
-                <a href="/tags/chenw/" style="color: #ff7d73">chenw</a>
+                <a href="/tags/chenw/" style="color: #03a9f4">chenw</a>
             </span>
             
             <span class="tag">
                 
-                <a href="/tags/SSM%E5%AD%A6%E4%B9%A0/" style="color: #00a596">SSM学习</a>
+                <a href="/tags/SSM%E5%AD%A6%E4%B9%A0/" style="color: #ff7d73">SSM学习</a>
             </span>
             
         </span>
@@ -535,11 +535,9 @@ public class HappyComponent &#123;
 <pre><code>  2. xml配置文件编写
 
       创建携带spring约束的xml配置文件
-
-
-      编写配置文件：
-
-      文件：resources/spring-bean-01.xml
+</code></pre>
+<p>​<br>          编写配置文件：</p>
+<pre><code>      文件：resources/spring-bean-01.xml
 </code></pre>
 <pre><code class="Java">&lt;!-- 实验一 [重要]创建bean --&gt;
 &lt;bean id=&quot;happyComponent&quot; class=&quot;com.atguigu.ioc.HappyComponent&quot;/&gt;
@@ -996,7 +994,7 @@ iocContainer1.setConfigLocations(&quot;services.xml&quot;, &quot;daos.xml&quot;)
 iocContainer1.refresh();           
 </code></pre>
 <ol start="3">
-<li>Bean对象读取</li>
+<li>​	对象读取</li>
 </ol>
 <pre><code class="Java">//方式1: 根据id获取
 //没有指定类型,返回为Object,需要类型转化!
@@ -1913,6 +1911,1364 @@ public class StudentServiceImpl  implements StudentService &#123;
 <li>配置文件和Java代码分离、编写不是很方便！</li>
 <li>XML配置文件解析效率低</li>
 </ol>
+<p><strong>Bean注解标记和扫描 (IoC)</strong></p>
+<ol>
+<li><p><strong>注解理解</strong></p>
+<p> 和 XML 配置文件一样，注解本身并不能执行，注解本身仅仅只是做一个标记，具体的功能是框架检测到注解标记的位置，然后针对这个位置按照注解标记的功能来执行具体操作。</p>
+<p> 本质上：所有一切的操作都是 Java 代码来完成的，XML 和注解只是告诉框架中的 Java 代码如何执行。</p>
+<p> 举例：元旦联欢会要布置教室，蓝色的地方贴上元旦快乐四个字，红色的地方贴上拉花，黄色的地方贴上气球。</p>
+<p> <img src="http://heavy_code_industry.gitee.io/code_heavy_industry/assets/img/img015.a6b65329.png"></p>
+<p> 班长做了所有标记，同学们来完成具体工作。墙上的标记相当于我们在代码中使用的注解，后面同学们做的工作，相当于框架的具体操作。</p>
+</li>
+<li><p><strong>扫描理解</strong></p>
+<p> Spring 为了知道程序员在哪些地方标记了什么注解，就需要通过扫描的方式，来进行检测。然后根据注解进行后续操作。</p>
+</li>
+<li><p><strong>准备Spring项目和组件</strong></p>
+<ol>
+<li>准备项目pom.xml</li>
+</ol>
+</li>
+</ol>
+<pre><code class="XML">&lt;dependencies&gt;
+    &lt;!--spring context依赖--&gt;
+    &lt;!--当你引入Spring Context依赖之后，表示将Spring的基础依赖引入了--&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-context&lt;/artifactId&gt;
+        &lt;version&gt;6.0.6&lt;/version&gt;
+    &lt;/dependency&gt;
+
+    &lt;!--junit5测试--&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.junit.jupiter&lt;/groupId&gt;
+        &lt;artifactId&gt;junit-jupiter-api&lt;/artifactId&gt;
+        &lt;version&gt;5.3.1&lt;/version&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;
+</code></pre>
+<pre><code>  2. 准备组件类
+
+      普通组件
+</code></pre>
+<pre><code class="Java">/**
+ * projectName: com.atguigu.components
+ *
+ * description: 普通的组件
+ */
+public class CommonComponent &#123;
+&#125;
+</code></pre>
+<pre><code>      Controller组件
+</code></pre>
+<pre><code class="Java">/**
+ * projectName: com.atguigu.components
+ *
+ * description: controller类型组件
+ */
+public class XxxController &#123;
+&#125;
+</code></pre>
+<pre><code>      Service组件
+</code></pre>
+<pre><code class="Java">/**
+ * projectName: com.atguigu.components
+ *
+ * description: service类型组件
+ */
+public class XxxService &#123;
+&#125;
+</code></pre>
+<pre><code>      Dao组件
+</code></pre>
+<pre><code class="Java">/**
+ * projectName: com.atguigu.components
+ *
+ * description: dao类型组件
+ */
+public class XxxDao &#123;
+&#125;
+</code></pre>
+<ol start="4">
+<li><strong>组件添加标记注解</strong><ol>
+<li><p>组件标记注解和区别</p>
+<p> Spring 提供了以下多个注解，这些注解可以直接标注在 Java 类上，将它们定义成 Spring Bean。</p>
+<ul>
+<li>注意:添加注解默认的id为类的开头小写</li>
+</ul>
+</li>
+</ol>
+</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>注解</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>@Component</td>
+<td>该注解用于描述 Spring 中的 Bean，它是一个泛化的概念，仅仅表示容器中的一个组件（Bean），并且可以作用在应用的任何层次，例如 Service 层、Dao 层等。 使用时只需将该注解标注在相应类上即可。</td>
+</tr>
+<tr>
+<td>@Repository</td>
+<td>该注解用于将数据访问层（Dao 层）的类标识为 Spring 中的 Bean，其功能与 @Component 相同。</td>
+</tr>
+<tr>
+<td>@Service</td>
+<td>该注解通常作用在业务层（Service 层），用于将业务层的类标识为 Spring 中的 Bean，其功能与 @Component 相同。</td>
+</tr>
+<tr>
+<td>@Controller</td>
+<td>该注解通常作用在控制层（如SpringMVC 的 Controller），用于将控制层的类标识为 Spring 中的 Bean，其功能与 @Component 相同。</td>
+</tr>
+</tbody></table>
+<p>​<br>          通过查看源码我们得知，@Controller、@Service、@Repository这三个注解只是在@Component注解的基础上起了三个新的名字。</p>
+<pre><code>      对于Spring使用IOC容器管理这些组件来说没有区别，也就是语法层面没有区别。所以@Controller、@Service、@Repository这三个注解只是给开发人员看的，让我们能够便于分辨组件的作用。
+      
+      注意：虽然它们本质上一样，但是为了代码的可读性、程序结构严谨！我们肯定不能随便胡乱标记。
+  2. 使用注解标记
+  
+      普通组件
+</code></pre>
+<pre><code class="Java">/**
+ * projectName: com.atguigu.components
+ *
+ * description: 普通的组件
+ */
+@Component
+public class CommonComponent &#123;
+&#125;
+</code></pre>
+<pre><code>      Controller组件
+</code></pre>
+<pre><code class="Java">/**
+ * projectName: com.atguigu.components
+ *
+ * description: controller类型组件
+ */
+@Controller
+public class XxxController &#123;
+&#125;
+</code></pre>
+<pre><code>      Service组件
+</code></pre>
+<pre><code class="Java">/**
+ * projectName: com.atguigu.components
+ *
+ * description: service类型组件
+ */
+@Service
+public class XxxService &#123;
+&#125;
+</code></pre>
+<pre><code>      Dao组件
+</code></pre>
+<pre><code class="Java">/**
+ * projectName: com.atguigu.components
+ *
+ * description: dao类型组件
+ */
+@Repository
+public class XxxDao &#123;
+&#125;
+</code></pre>
+<ol start="5">
+<li><p><strong>配置文件确定扫描范围</strong></p>
+<p> 情况1：基本扫描配置</p>
+</li>
+</ol>
+<pre><code class="XML">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+       xmlns:context=&quot;http://www.springframework.org/schema/context&quot;
+       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd&quot;&gt;
+    &lt;!-- 配置自动扫描的包 --&gt;
+    &lt;!-- 1.包要精准,提高性能!
+         2.会扫描指定的包和子包内容
+         3.多个包可以使用,分割 例如: com.atguigu.controller,com.atguigu.service等
+    --&gt;
+    &lt;context:component-scan base-package=&quot;com.chenw.ioc_01&quot;/&gt;
+  
+&lt;/beans&gt;
+</code></pre>
+<pre><code>  情况2：指定排除组件
+</code></pre>
+<pre><code class="XML">&lt;!-- 情况三：指定不扫描的组件 --&gt;
+    &lt;context:component-scan base-package=&quot;com.chenw.ioc_01&quot;&gt;
+        &lt;!--排序com.chenw.ioc_01下面的Repository的注解--&gt;
+        &lt;context:exclude-filter type=&quot;annotation&quot; expression=&quot;org.springframework.stereotype.Repository&quot;/&gt;
+        &lt;!--排序com.chenw.ioc_01下面的Service的注解--&gt;
+        &lt;context:exclude-filter type=&quot;annotation&quot; expression=&quot;org.springframework.stereotype.Service&quot;/&gt;
+    &lt;/context:component-scan&gt;
+</code></pre>
+<pre><code>  情况3：指定扫描组件
+</code></pre>
+<pre><code class="XML">&lt;!-- 情况四：仅扫描指定的组件 --&gt;
+&lt;!-- 仅扫描 = 关闭默认规则 + 追加规则 --&gt;
+&lt;!-- use-default-filters属性：取值false表示关闭默认扫描规则 --&gt;
+    &lt;!--
+        指定包下面的哪些注解是生效的
+        注意
+            因为base-package是指定包下面的所有的注解都生效，use-default-filters是指定这个包下面的注解都不生效
+    --&gt;
+    &lt;context:component-scan base-package=&quot;com.chenw.ioc_01&quot; use-default-filters=&quot;false&quot;&gt;
+        &lt;!--上面的包的注解都失效了，才能指定哪些的注解生效--&gt;
+        &lt;context:include-filter type=&quot;annotation&quot; expression=&quot;org.springframework.stereotype.Repository&quot;/&gt;
+    &lt;/context:component-scan&gt;
+</code></pre>
+<ol start="6">
+<li><p><strong>组件BeanName问题</strong></p>
+<p> 在我们使用 XML 方式管理 bean 的时候，每个 bean 都有一个唯一标识——id 属性的值，便于在其他地方引用。现在使用注解后，每个组件仍然应该有一个唯一标识。</p>
+<p> 默认情况：</p>
+<p> 类名首字母小写就是 bean 的 id。例如：SoldierController 类对应的 bean 的 id 就是 soldierController。</p>
+<p> 使用value属性指定：</p>
+</li>
+</ol>
+<pre><code class="Java">@Controller(value = &quot;tianDog&quot;)
+public class SoldierController &#123;
+&#125;
+</code></pre>
+<pre><code>  当注解中只设置一个属性时，value属性的属性名可以省略：
+</code></pre>
+<pre><code class="Java">@Service(&quot;smallDog&quot;)
+public class SoldierService &#123;
+&#125;
+</code></pre>
+<ol start="7">
+<li><strong>总结</strong><ol>
+<li>注解方式IoC只是标记哪些类要被Spring管理</li>
+<li>最终，我们还需要XML方式或者后面讲解Java配置类方式指定注解生效的包</li>
+<li><strong>现阶段配置方式为 注解 （标记）+ XML（扫描）</strong></li>
+</ol>
+</li>
+</ol>
+<p><strong>组件(Bean)作用域和周期方法注解</strong></p>
+<ol>
+<li>组件周期方法配置<ol>
+<li><p>周期方法概念</p>
+<p> 我们可以在组件类中定义方法，然后当IoC容器实例化和销毁组件对象的时候进行调用！这两个方法我们成为生命周期方法！</p>
+<p> 类似于Servlet的init&#x2F;destroy方法,我们可以在周期方法完成初始化和释放资源等工作。</p>
+</li>
+<li><p>周期方法声明</p>
+</li>
+</ol>
+</li>
+</ol>
+<pre><code class="Java">public class BeanOne &#123;
+
+  //周期方法要求： 方法命名随意，但是要求方法必须是 public void 无形参列表
+  @PostConstruct  //注解制指定初始化方法
+  public void init() &#123;
+    // 初始化逻辑
+  &#125;
+&#125;
+
+public class BeanTwo &#123;
+  
+  @PreDestroy //注解指定销毁方法
+  public void cleanup() &#123;
+    // 释放资源逻辑
+  &#125;
+&#125;
+</code></pre>
+<ol start="2">
+<li>组件作用域配置<ol>
+<li><p>Bean作用域概念</p>
+<p> <code>&lt;bean</code> 标签声明Bean，只是将Bean的信息配置给SpringIoC容器！</p>
+<p> 在IoC容器中，这些<code>&lt;bean</code>标签对应的信息转成Spring内部 <code>BeanDefinition</code> 对象，<code>BeanDefinition</code> 对象内，包含定义的信息（id,class,属性等等）！</p>
+<p> 这意味着，<code>BeanDefinition</code>与<code>类</code>概念一样，SpringIoC容器可以可以根据<code>BeanDefinition</code>对象反射创建多个Bean对象实例。</p>
+<p> 具体创建多少个Bean的实例对象，由Bean的作用域Scope属性指定！</p>
+</li>
+<li><p>作用域可选值</p>
+</li>
+</ol>
+</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>取值</th>
+<th>含义</th>
+<th>创建对象的时机</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>singleton</td>
+<td>在 IOC 容器中，这个 bean 的对象始终为单实例</td>
+<td>IOC 容器初始化时</td>
+<td>是</td>
+</tr>
+<tr>
+<td>prototype</td>
+<td>这个 bean 在 IOC 容器中有多个实例</td>
+<td>获取 bean 时</td>
+<td>否</td>
+</tr>
+</tbody></table>
+<pre><code>    如果是在WebApplicationContext环境下还会有另外两个作用域（但不常用）：
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>取值</th>
+<th>含义</th>
+<th>创建对象的时机</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>request</td>
+<td>请求范围内有效的实例</td>
+<td>每次请求</td>
+<td>否</td>
+</tr>
+<tr>
+<td>session</td>
+<td>会话范围内有效的实例</td>
+<td>每次会话</td>
+<td>否</td>
+</tr>
+</tbody></table>
+<pre><code>3. 作用域配置
+</code></pre>
+<pre><code class="Java">package com.chenw.ioc_02;
+
+
+import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+
+
+@Scope(scopeName = ConfigurableBeanFactory.SCOPE_SINGLETON)  //默认的单列
+@Scope(scopeName = ConfigurableBeanFactory.SCOPE_PROTOTYPE)  //多例模式
+@Component
+public class JavaBean &#123;
+    /*
+    * 周期方法名字随意，
+    * 但是还是之前的要求，方法没有返回值，没有参数
+    * */
+    @PostConstruct
+    public void init()&#123;
+        System.out.println(&quot;init start&quot;);
+
+    &#125;
+    @PreDestroy
+    public void destroy()&#123;
+        System.out.println(&quot;destroy start&quot;);
+    &#125;
+&#125;
+</code></pre>
+<p>测试</p>
+<pre><code class="java">    @Test
+    public void testIoC_02()&#123;
+        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext(&quot;spring-02.xml&quot;);
+        JavaBean javaBean = applicationContext.getBean(&quot;javaBean&quot;, JavaBean.class);
+        JavaBean javaBean1 = applicationContext.getBean(&quot;javaBean&quot;, JavaBean.class);
+        System.out.println(javaBean1 == javaBean);
+        applicationContext.close();
+        /*
+        * 	init start
+            init start
+            false
+        * */
+    &#125;
+</code></pre>
+<pre><code>注意这里面没有调用周期方法destroy的方法，是因为多例不会调用
+</code></pre>
+<p><strong>基于注解的注入(引入类型的自动装配)</strong></p>
+<ol>
+<li><strong>设定场景</strong><ul>
+<li><p>SoldierController 需要 SoldierService</p>
+</li>
+<li><p>SoldierService 需要 SoldierDao</p>
+<p>同时在各个组件中声明要调用的方法。</p>
+</li>
+<li><p>SoldierController中声明方法</p>
+</li>
+</ul>
+</li>
+</ol>
+<pre><code class="Java">import org.springframework.stereotype.Controller;
+
+@Controller(value = &quot;tianDog&quot;)
+public class SoldierController &#123;
+
+    private SoldierService soldierService;
+
+    public void getMessage() &#123;
+        soldierService.getMessage();
+    &#125;
+
+&#125;
+</code></pre>
+<pre><code>- SoldierService中声明方法
+</code></pre>
+<pre><code class="Java">@Service(&quot;smallDog&quot;)
+public class SoldierService &#123;
+
+    private SoldierDao soldierDao;
+
+    public void getMessage() &#123;
+        soldierDao.getMessage();
+    &#125;
+&#125;
+</code></pre>
+<pre><code>- SoldierDao中声明方法
+</code></pre>
+<pre><code class="Java">@Repository
+public class SoldierDao &#123;
+
+    public void getMessage() &#123;
+        System.out.print(&quot;I am a soldier&quot;);
+    &#125;
+
+&#125;
+</code></pre>
+<ol start="2">
+<li><strong>自动装配实现</strong><ol>
+<li><p>前提</p>
+<p> 参与自动装配的组件（需要装配、被装配）全部都必须在IoC容器中。</p>
+<p> 注意：不区分IoC的方式！XML和注解都可以！</p>
+</li>
+<li><p>@Autowired注解</p>
+<p> 在成员变量上直接标记@Autowired注解即可，不需要提供setXxx()方法。以后我们在项目中的正式用法就是这样。</p>
+</li>
+<li><p>给Controller装配Service</p>
+</li>
+</ol>
+</li>
+</ol>
+<pre><code class="Java">@Controller(value = &quot;tianDog&quot;)
+public class SoldierController &#123;
+    
+    @Autowired
+    private SoldierService soldierService;
+    
+    public void getMessage() &#123;
+        soldierService.getMessage();
+    &#125;
+    
+&#125;
+</code></pre>
+<pre><code>4. 给Service装配Dao
+</code></pre>
+<pre><code class="Java">@Service(&quot;smallDog&quot;)
+public class SoldierService &#123;
+    
+    @Autowired
+    private SoldierDao soldierDao;
+    
+    public void getMessage() &#123;
+        soldierDao.getMessage();
+    &#125;
+&#125;
+</code></pre>
+<ol start="3">
+<li><strong>@Autowired注解细节</strong><ol>
+<li>标记位置<ol>
+<li><p>成员变量</p>
+<p> <strong>这是最主要的使用方式！</strong></p>
+<p> <strong>与xml进行bean ref引用不同，他不需要有set方法！</strong></p>
+<p> <strong>所以这是直接属性进行赋值操作，不像之前的xml配置方式，通过set等方法实现</strong></p>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<pre><code class="Java">@Service(&quot;smallDog&quot;)
+public class SoldierService &#123;
+    
+    @Autowired
+    private SoldierDao soldierDao;
+    
+    public void getMessage() &#123;
+        soldierDao.getMessage();
+    &#125;
+&#125;
+</code></pre>
+<pre><code>    2. 构造器
+</code></pre>
+<pre><code class="Java">@Controller(value = &quot;tianDog&quot;)
+public class SoldierController &#123;
+    
+    private SoldierService soldierService;
+    
+    @Autowired
+    public SoldierController(SoldierService soldierService) &#123;
+        this.soldierService = soldierService;
+    &#125;
+    ……
+</code></pre>
+<pre><code>    3. setXxx()方法
+</code></pre>
+<pre><code class="Java">@Controller(value = &quot;tianDog&quot;)
+public class SoldierController &#123;
+
+    private SoldierService soldierService;
+
+    @Autowired
+    public void setSoldierService(SoldierService soldierService) &#123;
+        this.soldierService = soldierService;
+    &#125;
+    ……
+</code></pre>
+<ol start="2">
+<li>工作流程</li>
+</ol>
+<p>​    <img src="http://heavy_code_industry.gitee.io/code_heavy_industry/assets/img/img018.2ff0ae09.png"></p>
+<ul>
+<li>首先根据所需要的组件类型到 IOC 容器中查找<ul>
+<li>能够找到唯一的 bean：直接执行装配</li>
+<li>如果完全找不到匹配这个类型的 bean：装配失败</li>
+<li>和所需类型匹配的 bean 不止一个<ul>
+<li>没有 @Qualifier 注解：根据 @Autowired 标记位置成员变量的变量名作为 bean 的 id 进行匹配<ul>
+<li>能够找到：执行装配</li>
+<li>找不到：装配失败</li>
+</ul>
+</li>
+<li>使用 @Qualifier 注解：根据 @Qualifier 注解中指定的名称作为 bean 的id进行匹配<ul>
+<li>能够找到：执行装配</li>
+<li>找不到：装配失败</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<pre><code class="Java">@Controller(value = &quot;tianDog&quot;)
+public class SoldierController &#123;
+    
+    @Autowired
+    @Qualifier(value = &quot;maomiService222&quot;)
+    // 根据面向接口编程思想，使用接口类型引入Service组件
+    private ISoldierService soldierService;
+</code></pre>
+<ol start="4">
+<li><p><strong>佛系装配</strong></p>
+<p> 给 @Autowired 注解设置 required &#x3D; false 属性表示：能装就装，装不上就不装。但是实际开发时，基本上所有需要装配组件的地方都是必须装配的，用不上这个属性</p>
+</li>
+</ol>
+<pre><code class="java">@Controller(value = &quot;tianDog&quot;)
+public class SoldierController &#123;
+
+    // 给@Autowired注解设置required = false属性表示：能装就装，装不上就不装
+    @Autowired(required = false)
+    private ISoldierService soldierService;
+</code></pre>
+<p>还有一种情况，对应多个的情况</p>
+<p>例如</p>
+<pre><code class="java">controller层有一个的定义的一个接口的成员变量，UserService
+    他的下面有两个实现类
+@Service
+public class NewUserService implements UserService &#123;
+    @Override
+    public String show() &#123;
+        return &quot;UserServiceImpl show&quot;;
+    &#125;
+&#125;
+@Service
+public class UserServiceImpl implements UserService &#123;
+    @Override
+    public String show() &#123;
+        return &quot;UserServiceImpl show&quot;;
+    &#125;
+&#125;
+上面都添加注解，而且没有指定名字，这样自动装配，就会出错	
+</code></pre>
+<pre><code class="java">public class UserController &#123;
+    /*
+    * @Autowired相当于&lt;property userService -&gt; 对应类型的bean装配&gt;
+    //自动装配注解（DI）:1.ioc容器里面查找符合类型的组件的对象 2.设置给当前的属性（di）
+    * */
+    @Autowired
+    private UserService userService;
+
+    public void setUserService(UserService userService) &#123;
+        this.userService = userService;
+    &#125;
+
+    @Test
+    public void show()&#123;
+        //调用业务层的show
+        System.out.println(userService.show());
+    &#125;
+&#125;
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240422111659141.png" alt="image-20240422111659141"></p>
+<p>这样就会出错</p>
+<pre><code>解决的方法
+    1.成员属性名指定@AutoWired的时候，默认的会根据成员的属性名作为bean的id去查找
+</code></pre>
+<p>例如</p>
+<p>我们的属性的名字为</p>
+<pre><code>newUserService这样就会寻找id为newUserServicebean的bean
+</code></pre>
+<pre><code class="java">package com.chenw.ioc_03;
+
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+
+@Controller
+public class UserController &#123;
+    /*
+    * @Autowired相当于&lt;property userService -&gt; 对应类型的bean装配&gt;
+    //自动装配注解（DI）:1.ioc容器里面查找符合类型的组件的对象 2.设置给当前的属性（di）
+    * */
+    @Autowired
+    private UserService newUserService;
+
+    public void setUserService(UserService userService) &#123;
+        this.newUserService = userService;
+    &#125;
+
+    @Test
+    public void show()&#123;
+        //调用业务层的show
+        System.out.println(newUserService.show());
+    &#125;
+&#125;
+</code></pre>
+<pre><code class="java">package com.chenw.ioc_03;
+
+
+import org.springframework.stereotype.Service;
+
+@Service
+public class NewUserService implements UserService &#123;
+    @Override
+    public String show() &#123;
+        return &quot;NewUserService show&quot;;
+    &#125;
+&#125;
+</code></pre>
+<p>再来测试</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240422112302142.png" alt="image-20240422112302142"></p>
+<pre><code>解决方法2,注解
+    @Qualifier，使用该注解指定Bean的id，不能单独使用必须配合autowired
+</code></pre>
+<pre><code class="java">@Autowired()
+@Qualifier(&quot;userServiceImpl&quot;)
+private UserService newUserService;
+
+public void setUserService(UserService userService) &#123;
+    this.newUserService = userService;
+&#125;
+</code></pre>
+<p>测试</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240422115010462.png" alt="image-20240422115010462"></p>
+<p>上面需要两个注解联合使用，</p>
+<p>下面的Resource注解将他们的功能整合到一起,就直接实现找到对应id的bean然后实现自动装配</p>
+<pre><code class="java">@Autowired(required = true) + @Qualifier(&quot;userServiceImpl&quot;)  = @Source(name=&quot;userServiceImpl&quot;)
+</code></pre>
+<ol start="5">
+<li><p><strong>扩展JSR-250注解@Resource</strong></p>
+<ul>
+<li><p>理解JSR系列注解</p>
+<p>  JSR（Java Specification Requests）是Java平台标准化进程中的一种技术规范，而JSR注解是其中一部分重要的内容。按照JSR的分类以及注解语义的不同，可以将JSR注解分为不同的系列，主要有以下几个系列：</p>
+<ol>
+<li>JSR-175: 这个JSR是Java SE 5引入的，是Java注解最早的规范化版本，Java SE 5后的版本中都包含该JSR中定义的注解。主要包括以下几种标准注解：</li>
+</ol>
+<ul>
+<li><code>@Deprecated</code>: 标识一个程序元素（如类、方法或字段）已过时，并且在将来的版本中可能会被删除。</li>
+<li><code>@Override</code>: 标识一个方法重写了父类中的方法。</li>
+<li><code>@SuppressWarnings</code>: 抑制编译时产生的警告消息。</li>
+<li><code>@SafeVarargs</code>: 标识一个有安全性警告的可变参数方法。</li>
+<li><code>@FunctionalInterface</code>: 标识一个接口只有一个抽象方法，可以作为lambda表达式的目标。</li>
+</ul>
+<ol>
+<li>JSR-250: 这个JSR主要用于在Java EE 5中定义一些支持注解。该JSR主要定义了一些用于进行对象管理的注解，包括：</li>
+</ol>
+<ul>
+<li><code>@Resource</code>: 标识一个需要注入的资源，是实现Java EE组件之间依赖关系的一种方式。</li>
+<li><code>@PostConstruct</code>: 标识一个方法作为初始化方法。</li>
+<li><code>@PreDestroy</code>: 标识一个方法作为销毁方法。</li>
+<li><code>@Resource.AuthenticationType</code>: 标识注入的资源的身份验证类型。</li>
+<li><code>@Resource.AuthenticationType</code>: 标识注入的资源的默认名称。</li>
+</ul>
+<ol>
+<li>JSR-269: 这个JSR主要是Java SE 6中引入的一种支持编译时元数据处理的框架，即使用注解来处理Java源文件。该JSR定义了一些可以用注解标记的注解处理器，用于生成一些元数据，常用的注解有：</li>
+</ol>
+<ul>
+<li><code>@SupportedAnnotationTypes</code>: 标识注解处理器所处理的注解类型。</li>
+<li><code>@SupportedSourceVersion</code>: 标识注解处理器支持的Java源码版本。</li>
+</ul>
+<ol>
+<li>JSR-330: 该JSR主要为Java应用程序定义了一个依赖注入的标准，即Java依赖注入标准（javax.inject）。在此规范中定义了多种注解，包括：</li>
+</ol>
+<ul>
+<li><code>@Named</code>: 标识一个被依赖注入的组件的名称。</li>
+<li><code>@Inject</code>: 标识一个需要被注入的依赖组件。</li>
+<li><code>@Singleton</code>: 标识一个组件的生命周期只有一个唯一的实例。</li>
+</ul>
+<ol>
+<li>JSR-250: 这个JSR主要是Java EE 5中定义一些支持注解。该JSR包含了一些支持注解，可以用于对Java EE组件进行管理，包括：</li>
+</ol>
+<ul>
+<li><code>@RolesAllowed</code>: 标识授权角色</li>
+<li><code>@PermitAll</code>: 标识一个活动无需进行身份验证。</li>
+<li><code>@DenyAll</code>: 标识不提供针对该方法的访问控制。</li>
+<li><code>@DeclareRoles</code>: 声明安全角色。</li>
+</ul>
+<p>  但是你要理解JSR是Java提供的<strong>技术规范</strong>，也就是说，他只是规定了注解和注解的含义，<strong>JSR并不是直接提供特定的实现</strong>，而是提供标准和指导方针，由第三方框架（Spring）和库来实现和提供对应的功能。</p>
+</li>
+<li><p>JSR-250 @Resource注解</p>
+<p>  @Resource注解也可以完成属性注入。那它和@Autowired注解有什么区别？</p>
+<ul>
+<li>@Resource注解是JDK扩展包中的，也就是说属于JDK的一部分。所以该注解是标准注解，更加具有通用性。(JSR-250标准中制定的注解类型。JSR是Java规范提案。)</li>
+<li>@Autowired注解是Spring框架自己的。</li>
+<li><strong>@Resource注解默认根据Bean名称装配，未指定name时，使用属性名作为name。通过name找不到的话会自动启动通过类型装配。</strong></li>
+<li><strong>@Autowired注解默认根据类型装配，如果想根据名称装配，需要配合@Qualifier注解一起用。</strong></li>
+<li>@Resource注解用在属性上、setter方法上。</li>
+<li>@Autowired注解用在属性上、setter方法上、构造方法上、构造方法参数上。</li>
+</ul>
+<p>  @Resource注解属于JDK扩展包，所以不在JDK当中，需要额外引入以下依赖：【<strong>高于JDK11或低于JDK8需要引入以下依赖</strong>】</p>
+</li>
+</ul>
+</li>
+</ol>
+<pre><code class="XML">&lt;dependency&gt;
+    &lt;groupId&gt;jakarta.annotation&lt;/groupId&gt;
+    &lt;artifactId&gt;jakarta.annotation-api&lt;/artifactId&gt;
+    &lt;version&gt;2.1.1&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+<pre><code>- @Resource使用
+</code></pre>
+<pre><code class="Java">@Controller
+public class XxxController &#123;
+    /**
+     * 1. 如果没有指定name,先根据属性名查找IoC中组件xxxService
+     * 2. 如果没有指定name,并且属性名没有对应的组件,会根据属性类型查找
+     * 3. 可以指定name名称查找!  @Resource(name=&#39;test&#39;) == @Autowired + @Qualifier(value=&#39;test&#39;)
+     */
+    @Resource
+    private XxxService xxxService;
+
+    //@Resource(name = &quot;指定beanName&quot;)
+    //private XxxService xxxService;
+
+    public void show()&#123;
+        System.out.println(&quot;XxxController.show&quot;);
+        xxxService.show();
+    &#125;
+&#125;
+</code></pre>
+<p>注意resource是这个包</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240422120914997.png" alt="image-20240422120914997"></p>
+<p><strong>赋值类型的属性赋值(使用注解)</strong></p>
+<p><code>@Value</code> 通常用于注入外部化属性</p>
+<p><strong>声明外部配置</strong></p>
+<p>jdbc.properties</p>
+<pre><code class="Java">jdbc.username=root
+jdbc.password=root
+</code></pre>
+<p><strong>xml引入外部配置</strong></p>
+<pre><code class="Java">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+       xmlns:context=&quot;http://www.springframework.org/schema/context&quot;
+       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd&quot;&gt;
+
+    &lt;context:component-scan base-package=&quot;com.chenw.ioc_04&quot;/&gt;
+        //引入外部的配置文件
+    &lt;context:property-placeholder location=&quot;jdbc.properties&quot;/&gt;
+&lt;/beans&gt;
+</code></pre>
+<p><strong>@Value注解读取配置</strong></p>
+<pre><code class="java">package com.chenw.ioc_04;
+
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+@Component
+public class JavaBean &#123;
+
+    //方案1直接赋值
+    //方案2 注解赋值，通常一般是直接赋值，一般使用注解是读取外部的信息
+    @Value(&quot;张三&quot;)
+    private String name;
+    @Value(&quot;$&#123;jdbc.username&#125;&quot;)
+    private String username;
+    @Value(&quot;$&#123;jdbc.password&#125;&quot;)
+    private String password;
+&#125;
+</code></pre>
+<p><strong>测试</strong></p>
+<pre><code class="java">    @Test
+    public void testIoC_04()&#123;
+        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext(&quot;spring-04.xml&quot;);
+        com.chenw.ioc_04.JavaBean bean = applicationContext.getBean(com.chenw.ioc_04.JavaBean.class);
+        System.out.println(bean);
+    &#125;
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240422162441038.png" alt="image-20240422162441038"></p>
+<p>注解那里还可以添加默认值</p>
+<pre><code class="java">@Value(&quot;$&#123;jdbc.username:胡图图&#125;&quot;)
+private String username;
+</code></pre>
+<pre><code>如果外部的配置文件的里面没有username的值，那么就会使用胡图图
+</code></pre>
+<pre><code>对于之前的第三方的jar包，我们不能再第三方jar包上面添加注解，需要使用XML的方式进行配置	 
+</code></pre>
+<p><strong>使用注解+XML的方式实现整合的三层架构</strong></p>
+<ol>
+<li>三层架构搭建和实现<ol>
+<li>持久层</li>
+</ol>
+</li>
+</ol>
+<pre><code class="Java">package com.chenw.dao;
+
+import com.chenw.pojo.Student;
+
+import java.util.List;
+
+public interface StudentDao &#123;
+    List&lt;Student&gt; queryAll();
+&#125;
+
+
+//实现类
+package com.chenw.dao.Impl;
+
+import com.chenw.dao.StudentDao;
+import com.chenw.pojo.Student;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+
+@Repository
+public class StudentDaoImpl implements StudentDao &#123;
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+    @Override
+    public List&lt;Student&gt; queryAll() &#123;
+        String sql = &quot;select id ,name , age ,gender,class as classes from students&quot;;
+        List&lt;Student&gt; studentList = jdbcTemplate.query(sql, new BeanPropertyRowMapper&lt;&gt;(Student.class));
+        return studentList;
+    &#125;
+&#125;
+
+</code></pre>
+<pre><code>2. 业务层
+</code></pre>
+<pre><code class="Java">//接口
+package com.chenw.service;
+
+import com.chenw.pojo.Student;
+
+import java.util.List;
+
+public interface StudentService &#123;
+
+    /**
+     * 查询全部学员业务
+     * @return
+     */
+    List&lt;Student&gt; findAll();
+
+&#125;
+
+//实现类
+import com.chenw.pojo.Student;
+import com.chenw.service.StudentService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class StudentServiceImpl  implements StudentService &#123;
+
+    @Autowired
+    private StudentDao studentDao;
+
+    /**
+     * 查询全部学员业务
+     * @return
+     */
+    @Override
+    public List&lt;Student&gt; findAll() &#123;
+
+        List&lt;Student&gt; studentList =  studentDao.queryAll();
+
+        return studentList;
+    &#125;
+&#125;
+</code></pre>
+<pre><code>3. 表述层
+</code></pre>
+<pre><code class="Java">package com.chenw.controller;
+
+import com.chenw.pojo.Student;
+import com.chenw.service.StudentService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+
+import java.util.List;
+
+@Controller
+public class StudentController &#123;
+
+    @Autowired
+    private StudentService studentService;
+
+    public void  findAll()&#123;
+       List&lt;Student&gt; studentList =  studentService.findAll();
+        System.out.println(&quot;studentList = &quot; + studentList);
+    &#125;
+&#125;
+</code></pre>
+<ol start="2">
+<li>三层架构IoC配置</li>
+</ol>
+<pre><code class="XML">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+       xmlns:context=&quot;http://www.springframework.org/schema/context&quot;
+       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd&quot;&gt;
+    &lt;!--将自己的类注解扫描--&gt;
+    &lt;context:component-scan base-package=&quot;com.chenw&quot;/&gt;
+
+    &lt;!--第三方的类依然使用bean标签配置--&gt;
+    &lt;context:property-placeholder location=&quot;jdbc.properties&quot;/&gt;
+    &lt;bean id=&quot;dataSource&quot; class=&quot;com.alibaba.druid.pool.DruidDataSource&quot;&gt;
+        &lt;property name=&quot;driverClassName&quot; value=&quot;$&#123;chenw.driver&#125;&quot;/&gt;
+        &lt;property name=&quot;username&quot; value=&quot;$&#123;chenw.username&#125;&quot;/&gt;
+        &lt;property name=&quot;password&quot; value=&quot;$&#123;chenw.password&#125;&quot;/&gt;
+        &lt;property name=&quot;url&quot; value=&quot;$&#123;chenw.url&#125;&quot;/&gt;
+    &lt;/bean&gt;
+    &lt;bean id=&quot;jdbcTemplate&quot; class=&quot;org.springframework.jdbc.core.JdbcTemplate&quot;&gt;
+        &lt;property name=&quot;dataSource&quot; ref=&quot;dataSource&quot;/&gt;
+    &lt;/bean&gt;
+&lt;/beans&gt;
+</code></pre>
+<ol start="3">
+<li>运行测试</li>
+</ol>
+<pre><code class="Java">    @Test
+    public void test()&#123;
+        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext(&quot;spring.xml&quot;);
+        StudentController bean = applicationContext.getBean(StudentController.class);
+        bean.findAll();
+    &#125;
+&#125;
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240422171952627.png" alt="image-20240422171952627"></p>
+<p>4.注解+XML IoC方式问题总结</p>
+<ol>
+<li>自定义类可以使用注解方式，但是第三方依赖的类依然使用XML方式！</li>
+<li>XML格式解析效率低！</li>
+</ol>
+<p><strong>配置类完成完全的注解开发</strong></p>
+<pre><code>之前我们使用注解，还需要XML配置文件进行辅助，但是使用配置类的方法以后，就可以不用写配置文件了
+</code></pre>
+<h4 id="4-4-1-完全注解开发理解"><a href="#4-4-1-完全注解开发理解" class="headerlink" title="4.4.1 完全注解开发理解"></a>4.4.1 完全注解开发理解</h4><p>  Spring 完全注解配置（Fully Annotation-based Configuration）是指通过 Java配置类 代码来配置 Spring 应用程序，使用注解来替代原本在 XML 配置文件中的配置。相对于 XML 配置，完全注解配置具有更强的类型安全性和更好的可读性。</p>
+<p>  <strong>两种方式思维转化</strong>：</p>
+<p>  <img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image.png"></p>
+<p><strong>配置类和扫描注解</strong></p>
+<p><strong>xml+注解方式</strong></p>
+<p>配置文件application.xml</p>
+<pre><code class="XML">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+       xmlns:context=&quot;http://www.springframework.org/schema/context&quot;
+       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd&quot;&gt;
+
+
+    &lt;!-- 配置自动扫描的包 --&gt;
+    &lt;!-- 1.包要精准,提高性能!
+         2.会扫描指定的包和子包内容
+         3.多个包可以使用,分割 例如: com.atguigu.controller,com.atguigu.service等
+    --&gt;
+    &lt;context:component-scan base-package=&quot;com.atguigu.components&quot;/&gt;
+
+    &lt;!-- 引入外部配置文件--&gt;
+    &lt;context:property-placeholder location=&quot;application.properties&quot; /&gt;
+&lt;/beans&gt;
+</code></pre>
+<p>测试创建IoC容器</p>
+<pre><code class="Java"> // xml方式配置文件使用ClassPathXmlApplicationContext容器读取
+ ApplicationContext applicationContext =
+                new ClassPathXmlApplicationContext(&quot;application.xml&quot;);
+</code></pre>
+<p><strong>配置类+注解方式（完全注解方式）</strong></p>
+<p>配置类</p>
+<p>使用 @Configuration 注解将一个普通的类标记为 Spring 的配置类。</p>
+<pre><code class="Java">import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+
+//标注当前类是配置类，替代application.xml    
+@Configuration
+//使用注解读取外部配置，替代 &lt;context:property-placeholder标签，指定类路径下的配置文件
+@PropertySource(&quot;classpath:application.properties&quot;)
+//使用@ComponentScan注解,可以配置扫描包,替代&lt;context:component-scan标签
+@ComponentScan(basePackages = &#123;&quot;com.atguigu.components&quot;&#125;)
+public class MyConfiguration &#123;
+    
+&#125;
+</code></pre>
+<p>测试创建IoC容器</p>
+<pre><code class="Java">// AnnotationConfigApplicationContext 根据配置类创建 IOC 容器对象
+ApplicationContext iocContainerAnnotation = 
+new AnnotationConfigApplicationContext(MyConfiguration.class);
+</code></pre>
+<p>可以使用 no-arg 构造函数实例化 <code>AnnotationConfigApplicationContext</code> ，然后使用 <code>register()</code> 方法对其进行配置。此方法在以编程方式生成 <code>AnnotationConfigApplicationContext</code> 时特别有用。以下示例演示如何执行此操作：</p>
+<pre><code class="Java">// AnnotationConfigApplicationContext-IOC容器对象
+ApplicationContext iocContainerAnnotation = 
+new AnnotationConfigApplicationContext();
+//外部设置配置类
+iocContainerAnnotation.register(MyConfiguration.class);
+//刷新后方可生效！！
+iocContainerAnnotation.refresh();
+</code></pre>
+<p><strong>总结：</strong></p>
+<p>  @Configuration指定一个类为配置类，可以添加配置注解，替代配置xml文件</p>
+<p>  @ComponentScan(basePackages &#x3D; {“包”,”包”}) 替代&lt;context:component-scan标签实现注解扫描</p>
+<p>  @PropertySource(“classpath:配置文件地址”) 替代 &lt;context:property-placeholder标签</p>
+<p>  配合IoC&#x2F;DI注解，可以进行完整注解开发！</p>
+<p><strong>@Bean定义组件</strong></p>
+<pre><code>如果是第三方类那应该怎么声明
+</code></pre>
+<p><strong>场景需求</strong>：将Druid连接池对象存储到IoC容器</p>
+<p><strong>需求分析</strong>：第三方jar包的类，添加到ioc容器，无法使用@Component等相关注解！因为源码jar包内容为只读模式！</p>
+<p><strong>xml方式实现</strong>：</p>
+<pre><code class="XML">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+       xmlns:context=&quot;http://www.springframework.org/schema/context&quot;
+       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd&quot;&gt;
+
+
+    &lt;!-- 引入外部属性文件 --&gt;
+    &lt;context:property-placeholder location=&quot;classpath:jdbc.properties&quot;/&gt;
+
+    &lt;!-- 实验六 [重要]给bean的属性赋值：引入外部属性文件 --&gt;
+    &lt;bean id=&quot;druidDataSource&quot; class=&quot;com.alibaba.druid.pool.DruidDataSource&quot;&gt;
+        &lt;property name=&quot;url&quot; value=&quot;$&#123;jdbc.url&#125;&quot;/&gt;
+        &lt;property name=&quot;driverClassName&quot; value=&quot;$&#123;jdbc.driver&#125;&quot;/&gt;
+        &lt;property name=&quot;username&quot; value=&quot;$&#123;jdbc.user&#125;&quot;/&gt;
+        &lt;property name=&quot;password&quot; value=&quot;$&#123;jdbc.password&#125;&quot;/&gt;
+    &lt;/bean&gt;
+
+&lt;/beans&gt;
+</code></pre>
+<p><strong>配置类方式实现</strong>：</p>
+<p>  <code>@Bean</code> 注释用于指示方法实例化、配置和初始化要由 Spring IoC 容器管理的新对象。对于那些熟悉 Spring 的 <code>&lt;beans/&gt;</code> XML 配置的人来说， <code>@Bean</code> 注释与 <code>&lt;bean/&gt;</code> 元素起着相同的作用。</p>
+<pre><code class="Java">package com.chenw.config;
+
+
+
+/*
+*
+*   1.b包扫描注解配置类，代替XML配置文件
+*   2.引用外部的配置文件
+*   3.声明第三方依赖的bean组件
+* */
+
+import com.alibaba.druid.pool.DruidDataSource;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Component;
+
+import javax.sql.DataSource;
+
+/*
+*1.添加configuration的注解
+* 2.实现上面的功能注解
+* */
+@Configuration
+@ComponentScan(&quot;com.chenw.ioc_01&quot;)
+@PropertySource(&quot;classpath:jdbc.properties&quot;)
+public class JavaConfiguration &#123;
+    @Value(&quot;$&#123;chenw.url&#125;&quot;)
+    private String url;
+    @Value(&quot;$&#123;chenw.username&#125;&quot;)
+    private String username;
+    @Value(&quot;$&#123;chenw.password&#125;&quot;)
+    private String password;
+    @Value(&quot;$&#123;chenw.driver&#125;&quot;)
+    private String driver;
+
+    /*
+    *   方法的返回值的类型 == bean组件的类型或则其他的接口和父类
+    *   方法名字  = bean的id的标识
+    *   在方法体实现自定义类的过程
+    *   最后添加@Bean注解 真正的让配置类的方法创建的组件存储到ioc容器
+    *
+    * */
+    @Bean
+    public DruidDataSource dataSource()&#123;
+        //具体实例化的方法
+        DruidDataSource dataSource = new DruidDataSource();
+        dataSource.setUsername(username);
+        dataSource.setPassword(password);
+        dataSource.setDriverClassName(driver);
+        dataSource.setUrl(url);
+        return dataSource;
+    &#125;
+    /*
+    * 这个最后就相当于
+    * &lt;bean id=&quot;dataSource&quot; class=&quot;DruidSource&quot;&gt;
+        配置
+    *   &lt;/bean&gt;
+    * */
+    //注意读取配置文件的可以写在形参列表
+    @Bean
+    public DataSource createDataSource(@Value(&quot;$&#123;jdbc.user&#125;&quot;) String username,
+                                       @Value(&quot;$&#123;jdbc.password&#125;&quot;)String password,
+                                       @Value(&quot;$&#123;jdbc.url&#125;&quot;)String url,
+                                       @Value(&quot;$&#123;jdbc.driver&#125;&quot;)String driverClassName)&#123;
+        //使用Java代码实例化
+        DruidDataSource dataSource = new DruidDataSource();
+        dataSource.setUsername(username);
+        dataSource.setPassword(password);
+        dataSource.setUrl(url);
+        dataSource.setDriverClassName(driverClassName);
+        //返回结果即可
+        return dataSource;
+    &#125;
+&#125;
+</code></pre>
+<p><strong>@Bean组件的高级使用</strong></p>
+<ol>
+<li><p><strong>@Bean生成BeanName问题</strong></p>
+<pre><code>默认的bean的id为方法的名字
+可以指定在Bean注解里面的使用name或者value属性进行赋值，value可以进行省略
+</code></pre>
+<p> @Bean注解源码：</p>
+</li>
+</ol>
+<pre><code class="Java">public @interface Bean &#123;
+    //前两个注解可以指定Bean的标识
+    @AliasFor(&quot;name&quot;)
+    String[] value() default &#123;&#125;;
+    @AliasFor(&quot;value&quot;)
+    String[] name() default &#123;&#125;;
+  
+    //autowireCandidate 属性来指示该 Bean 是否候选用于自动装配。
+    //autowireCandidate 属性默认值为 true，表示该 Bean 是一个默认的装配目标，
+    //可被候选用于自动装配。如果将 autowireCandidate 属性设置为 false，则说明该 Bean 不是默认的装配目标，不会被候选用于自动装配。
+    boolean autowireCandidate() default true;
+
+    //指定初始化方法
+    String initMethod() default &quot;&quot;;
+    //指定销毁方法
+    String destroyMethod() default &quot;(inferred)&quot;;
+&#125;
+</code></pre>
+<pre><code>指定@Bean的名称：
+</code></pre>
+<pre><code class="Java">@Configuration
+public class AppConfig &#123;
+
+  @Bean(&quot;myThing&quot;) //指定名称
+  public Thing thing() &#123;
+    return new Thing();
+  &#125;
+&#125;
+</code></pre>
+<pre><code>`@Bean` 注释注释方法。使用此方法在指定为方法返回值的类型的 `ApplicationContext` 中注册 Bean 定义。缺省情况下，Bean 名称与方法名称相同。下面的示例演示 `@Bean` 方法声明：
+</code></pre>
+<pre><code class="Java">@Configuration
+public class AppConfig &#123;
+
+  @Bean
+  public TransferServiceImpl transferService() &#123;
+    return new TransferServiceImpl();
+  &#125;
+&#125;
+</code></pre>
+<pre><code>前面的配置完全等同于下面的Spring XML：
+</code></pre>
+<pre><code class="Java">&lt;beans&gt;
+  &lt;bean id=&quot;transferService&quot; class=&quot;com.acme.TransferServiceImpl&quot;/&gt;
+&lt;/beans&gt;
+</code></pre>
+<ol start="2">
+<li><p><strong>@Bean 初始化和销毁方法指定</strong></p>
+<p> <code>@Bean</code> 注解支持指定任意初始化和销毁回调方法，非常类似于 Spring XML 在 <code>bean</code> 元素上的 <code>init-method</code> 和 <code>destroy-method</code> 属性，如以下示例所示：</p>
+</li>
+</ol>
+<pre><code class="Java">public class BeanOne &#123;
+
+  public void init() &#123;
+    // initialization logic
+  &#125;
+&#125;
+
+public class BeanTwo &#123;
+
+  public void cleanup() &#123;
+    // destruction logic
+  &#125;
+&#125;
+
+@Configuration
+public class AppConfig &#123;
+
+  @Bean(initMethod = &quot;init&quot;)
+  public BeanOne beanOne() &#123;
+    return new BeanOne();
+  &#125;
+
+  @Bean(destroyMethod = &quot;cleanup&quot;)
+  public BeanTwo beanTwo() &#123;
+    return new BeanTwo();
+  &#125;
+&#125;
+</code></pre>
+<ol start="3">
+<li><p><strong>@Bean Scope作用域</strong></p>
+<p> 可以指定使用 <code>@Bean</code> 注释定义的 bean 应具有特定范围。您可以使用在 Bean 作用域部分中指定的任何标准作用域。</p>
+<p> 默认作用域为 <code>singleton</code> ，但您可以使用 <code>@Scope</code> 注释覆盖此范围，如以下示例所示：</p>
+</li>
+</ol>
+<pre><code class="Java">@Configuration
+public class MyConfiguration &#123;
+
+  @Bean
+  @Scope(scopeName = CofigurableBeanFactory.SCOPE_SINGLETON)
+  public Encryptor encryptor() &#123;
+    // ...
+  &#125;
+&#125;
+</code></pre>
+<ol start="4">
+<li><p><strong>@Bean方法之间依赖</strong></p>
+<p> 例如</p>
+<pre><code class="java">package com.chenw.config;
+
+
+
+/*
+*
+*   1.b包扫描注解配置类，代替XML配置文件
+*   2.引用外部的配置文件
+*   3.声明第三方依赖的bean组件
+* */
+
+import com.alibaba.druid.pool.DruidDataSource;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Component;
+
+import javax.sql.DataSource;
+
+/*
+*1.添加configuration的注解
+* 2.实现上面的功能注解
+* */
+@Configuration
+@ComponentScan(&quot;com.chenw.ioc_01&quot;)
+@PropertySource(&quot;classpath:jdbc.properties&quot;)
+public class JavaConfiguration &#123;
+    @Value(&quot;$&#123;chenw.url&#125;&quot;)
+    private String url;
+    @Value(&quot;$&#123;chenw.username&#125;&quot;)
+    private String username;
+    @Value(&quot;$&#123;chenw.password&#125;&quot;)
+    private String password;
+    @Value(&quot;$&#123;chenw.driver&#125;&quot;)
+    private String driver;
+
+    /*
+    *   方法的返回值的类型 == bean组件的类型或则其他的接口和父类
+    *   方法名字  = bean的id的标识
+    *   在方法体实现自定义类的过程
+    *   最后添加@Bean注解 真正的让配置类的方法创建的组件存储到ioc容器
+    *
+    * */
+    @Bean
+    public DruidDataSource dataSource()&#123;
+        //具体实例化的方法
+        DruidDataSource dataSource = new DruidDataSource();
+        dataSource.setUsername(username);
+        dataSource.setPassword(password);
+        dataSource.setDriverClassName(driver);
+        dataSource.setUrl(url);
+        return dataSource;
+    &#125;
+
+    @Bean
+    public JdbcTemplate jdbcTemplate(DataSource dataSource)&#123;
+        JdbcTemplate jdbcTemplate = new JdbcTemplate();
+        //两种方法
+        //1.如果引用的组件也是使用@Bean注解，直接调用可以  | 本质上看是方法，其实是从ioc引用组件 | 不推荐
+//        jdbcTemplate.setDataSource(dataSource());
+        //2.利用形参列表传值,在形参列表写上对应的引用，或者多个引用，ioc会自动完成装配
+        /*
+            可能出现两种情况
+        *   1.如果没有引用的
+                注意形参蚕食注入，要求需要必须有对应的类型的组件，如果没有抛异常
+        *   2.如果存在多个
+                可以使用形成你名称 == 你需要的bean的id
+        * */
+        jdbcTemplate.setDataSource(dataSource);
+        return  jdbcTemplate;
+    &#125;
+&#125;
+</code></pre>
+</li>
+</ol>
+<p><strong>扩展@Import注解的使用</strong></p>
+<p><code>@Import</code> 注释允许从另一个配置类加载 <code>@Bean</code> 定义，如以下示例所示：</p>
+<pre><code class="Java">@Configuration
+public class ConfigA &#123;
+
+  @Bean
+  public A a() &#123;
+    return new A();
+  &#125;
+&#125;
+
+@Configuration
+@Import(ConfigA.class)
+public class ConfigB &#123;
+
+  @Bean
+  public B b() &#123;
+    return new B();
+  &#125;
+&#125;
+</code></pre>
+<p>现在，在实例化上下文时不需要同时指定 <code>ConfigA.class</code> 和 <code>ConfigB.class</code> ，只需显式提供 <code>ConfigB</code> ，如以下示例所示：</p>
+<pre><code class="Java">public static void main(String[] args) &#123;
+  ApplicationContext ctx = new AnnotationConfigApplicationContext(ConfigB.class);
+
+  // now both beans A and B will be available...
+  A a = ctx.getBean(A.class);
+  B b = ctx.getBean(B.class);
+&#125;
+</code></pre>
+<p>此方法简化了容器实例化，因为只需要处理一个类，而不是要求您在构造期间记住可能大量的 <code>@Configuration</code> 类。</p>
+<p><strong>基于注解和配置类的方式实现</strong></p>
 
     </div>
     
