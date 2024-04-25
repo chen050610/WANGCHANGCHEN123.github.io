@@ -177,12 +177,12 @@
             
             <span class="tag">
                 
-                <a href="/tags/chenw/" style="color: #00bcd4">chenw</a>
+                <a href="/tags/chenw/" style="color: #03a9f4">chenw</a>
             </span>
             
             <span class="tag">
                 
-                <a href="/tags/SSM%E5%AD%A6%E4%B9%A0/" style="color: #ffa2c4">SSM学习</a>
+                <a href="/tags/SSM%E5%AD%A6%E4%B9%A0/" style="color: #00a596">SSM学习</a>
             </span>
             
         </span>
@@ -536,7 +536,7 @@ public class HappyComponent &#123;
 
       创建携带spring约束的xml配置文件
 </code></pre>
-<p>​<br>​          编写配置文件：<br>​<br>          文件：resources&#x2F;spring-bean-01.xml</p>
+<p>​<br>​          编写配置文件：<br>​<br>​          文件：resources&#x2F;spring-bean-01.xml</p>
 <pre><code class="Java">&lt;!-- 实验一 [重要]创建bean --&gt;
 &lt;bean id=&quot;happyComponent&quot; class=&quot;com.atguigu.ioc.HappyComponent&quot;/&gt;
 </code></pre>
@@ -2021,11 +2021,8 @@ public class XxxDao &#123;
 <td>该注解通常作用在控制层（如SpringMVC 的 Controller），用于将控制层的类标识为 Spring 中的 Bean，其功能与 @Component 相同。</td>
 </tr>
 </tbody></table>
-<p>​<br>​          通过查看源码我们得知，@Controller、@Service、@Repository这三个注解只是在@Component注解的基础上起了三个新的名字。<br>​<br>          对于Spring使用IOC容器管理这些组件来说没有区别，也就是语法层面没有区别。所以@Controller、@Service、@Repository这三个注解只是给开发人员看的，让我们能够便于分辨组件的作用。</p>
-<pre><code>      注意：虽然它们本质上一样，但是为了代码的可读性、程序结构严谨！我们肯定不能随便胡乱标记。
-  2. 使用注解标记
-  
-      普通组件
+<p>​<br>​          通过查看源码我们得知，@Controller、@Service、@Repository这三个注解只是在@Component注解的基础上起了三个新的名字。<br>​<br>​          对于Spring使用IOC容器管理这些组件来说没有区别，也就是语法层面没有区别。所以@Controller、@Service、@Repository这三个注解只是给开发人员看的，让我们能够便于分辨组件的作用。<br>​<br>          注意：虽然它们本质上一样，但是为了代码的可读性、程序结构严谨！我们肯定不能随便胡乱标记。<br>      2. 使用注解标记</p>
+<pre><code>      普通组件
 </code></pre>
 <pre><code class="Java">/**
  * projectName: com.atguigu.components
@@ -4592,6 +4589,735 @@ public class AopTest &#123;
     &#125;
 &#125;
 </code></pre>
+<p><strong>Spring声明式事物</strong></p>
+<p><strong>编程式事务</strong></p>
+<p>  编程式事务是指手动编写程序来管理事务，即通过编写代码的方式直接控制事务的提交和回滚。在 Java 中，通常使用事务管理器(如 Spring 中的 <code>PlatformTransactionManager</code>)来实现编程式事务。</p>
+<pre><code>感觉还是和AOP有关
+</code></pre>
+<p>  编程式事务的主要优点是灵活性高，可以按照自己的需求来控制事务的粒度、模式等等。但是，编写大量的事务控制代码容易出现问题，对代码的可读性和可维护性有一定影响。</p>
+<pre><code class="Java">Connection conn = ...;
+  
+try &#123;
+    // 开启事务：关闭事务的自动提交
+    conn.setAutoCommit(false);
+    // 核心操作
+    // 业务代码
+    // 提交事务
+    conn.commit();
+  
+&#125;catch(Exception e)&#123;
+  
+    // 回滚事务
+    conn.rollBack();
+  
+&#125;finally&#123;
+  
+    // 释放数据库连接
+    conn.close();
+  
+&#125;
+</code></pre>
+<p>  编程式的实现方式存在缺陷：</p>
+<ul>
+<li>细节没有被屏蔽：具体操作过程中，所有细节都需要程序员自己来完成，比较繁琐。</li>
+<li>代码复用性不高：如果没有有效抽取出来，每次实现功能都需要自己编写代码，代码就没有得到复用。</li>
+</ul>
+<p><strong>声明式事务</strong></p>
+<p>  声明式事务是指使用注解或 XML 配置的方式来控制事务的提交和回滚。</p>
+<p>  开发者只需要添加配置即可， 具体事务的实现由第三方框架实现，避免我们直接进行事务操作！</p>
+<p>  使用声明式事务可以将事务的控制和业务逻辑分离开来，提高代码的可读性和可维护性。</p>
+<p>  区别：</p>
+<ul>
+<li>编程式事务需要手动编写代码来管理事务</li>
+<li>而声明式事务可以通过配置文件或注解来控制事务。</li>
+</ul>
+<p><strong>Spring事务管理器</strong></p>
+<ol>
+<li><p>Spring声明式事务对应依赖</p>
+<ul>
+<li>spring-tx: 包含声明式事务实现的基本规范（事务管理器规范接口和事务增强等等）</li>
+<li>spring-jdbc: 包含DataSource方式事务管理器实现类DataSourceTransactionManager</li>
+<li>spring-orm: 包含其他持久层框架的事务管理器实现类例如：Hibernate&#x2F;Jpa等</li>
+</ul>
+</li>
+<li><p>Spring声明式事务对应事务管理器接口</p>
+<p> <img src="https://secure2.wostatic.cn/static/cTpSy6E9Vzq4H8i1x7MLEf/image.png?auth_key=1714005756-umnHbDAKH7o75FxSKBENSn-0-6f35268ca292ab76450f7b1fc16ba011"></p>
+<p> 我们现在要使用的事务管理器是org.springframework.jdbc.datasource.DataSourceTransactionManager，将来整合 JDBC方式、JdbcTemplate方式、Mybatis方式的事务实现！</p>
+<p> DataSourceTransactionManager类中的主要方法：</p>
+<ul>
+<li>doBegin()：开启事务</li>
+<li>doSuspend()：挂起事务</li>
+<li>doResume()：恢复挂起的事务</li>
+<li>doCommit()：提交事务</li>
+<li>doRollback()：回滚事务</li>
+</ul>
+</li>
+</ol>
+<p><strong>基于注解声明式事物</strong></p>
+<ol>
+<li>准备项目</li>
+</ol>
+<pre><code class="XML">&lt;dependencies&gt;
+  &lt;!--spring context依赖--&gt;
+  &lt;!--当你引入Spring Context依赖之后，表示将Spring的基础依赖引入了--&gt;
+  &lt;dependency&gt;
+      &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+      &lt;artifactId&gt;spring-context&lt;/artifactId&gt;
+      &lt;version&gt;6.0.6&lt;/version&gt;
+  &lt;/dependency&gt;
+
+  &lt;!--junit5测试--&gt;
+  &lt;dependency&gt;
+      &lt;groupId&gt;org.junit.jupiter&lt;/groupId&gt;
+      &lt;artifactId&gt;junit-jupiter-api&lt;/artifactId&gt;
+      &lt;version&gt;5.3.1&lt;/version&gt;
+  &lt;/dependency&gt;
+
+
+  &lt;dependency&gt;
+      &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+      &lt;artifactId&gt;spring-test&lt;/artifactId&gt;
+      &lt;version&gt;6.0.6&lt;/version&gt;
+      &lt;scope&gt;test&lt;/scope&gt;
+  &lt;/dependency&gt;
+
+  &lt;dependency&gt;
+      &lt;groupId&gt;jakarta.annotation&lt;/groupId&gt;
+      &lt;artifactId&gt;jakarta.annotation-api&lt;/artifactId&gt;
+      &lt;version&gt;2.1.1&lt;/version&gt;
+  &lt;/dependency&gt;
+
+  &lt;!-- 数据库驱动 和 连接池--&gt;
+  &lt;dependency&gt;
+      &lt;groupId&gt;mysql&lt;/groupId&gt;
+      &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
+      &lt;version&gt;8.0.25&lt;/version&gt;
+  &lt;/dependency&gt;
+
+  &lt;dependency&gt;
+      &lt;groupId&gt;com.alibaba&lt;/groupId&gt;
+      &lt;artifactId&gt;druid&lt;/artifactId&gt;
+      &lt;version&gt;1.2.8&lt;/version&gt;
+  &lt;/dependency&gt;
+
+  &lt;!-- spring-jdbc --&gt;
+  &lt;dependency&gt;
+      &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+      &lt;artifactId&gt;spring-jdbc&lt;/artifactId&gt;
+      &lt;version&gt;6.0.6&lt;/version&gt;
+  &lt;/dependency&gt;
+
+  &lt;!-- 声明式事务依赖--&gt;
+  &lt;dependency&gt;
+      &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+      &lt;artifactId&gt;spring-tx&lt;/artifactId&gt;
+      &lt;version&gt;6.0.6&lt;/version&gt;
+  &lt;/dependency&gt;
+
+
+  &lt;dependency&gt;
+      &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+      &lt;artifactId&gt;spring-aop&lt;/artifactId&gt;
+      &lt;version&gt;6.0.6&lt;/version&gt;
+  &lt;/dependency&gt;
+
+  &lt;dependency&gt;
+      &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+      &lt;artifactId&gt;spring-aspects&lt;/artifactId&gt;
+      &lt;version&gt;6.0.6&lt;/version&gt;
+  &lt;/dependency&gt;
+&lt;/dependencies&gt;
+</code></pre>
+<ol start="2">
+<li><p>外部配置文件</p>
+<p> jdbc.properties</p>
+</li>
+</ol>
+<pre><code class=".properties">atguigu.url=jdbc:mysql://localhost:3306/studb
+atguigu.driver=com.mysql.cj.jdbc.Driver
+atguigu.username=root
+atguigu.password=root
+</code></pre>
+<ol start="3">
+<li>spring配置文件</li>
+</ol>
+<pre><code class="Java">@Configuration
+@ComponentScan(&quot;com.atguigu&quot;)
+@PropertySource(&quot;classpath:jdbc.properties&quot;)
+public class JavaConfig &#123;
+
+    @Value(&quot;$&#123;atguigu.driver&#125;&quot;)
+    private String driver;
+    @Value(&quot;$&#123;atguigu.url&#125;&quot;)
+    private String url;
+    @Value(&quot;$&#123;atguigu.username&#125;&quot;)
+    private String username;
+    @Value(&quot;$&#123;atguigu.password&#125;&quot;)
+    private String password;
+
+
+
+    //druid连接池
+    @Bean
+    public DataSource dataSource()&#123;
+        DruidDataSource dataSource = new DruidDataSource();
+        dataSource.setDriverClassName(driver);
+        dataSource.setUrl(url);
+        dataSource.setUsername(username);
+        dataSource.setPassword(password);
+        return dataSource;
+    &#125;
+
+
+    @Bean
+    //jdbcTemplate
+    public JdbcTemplate jdbcTemplate(DataSource dataSource)&#123;
+        JdbcTemplate jdbcTemplate = new JdbcTemplate();
+        jdbcTemplate.setDataSource(dataSource);
+        return jdbcTemplate;
+    &#125;
+
+&#125;
+</code></pre>
+<ol start="4">
+<li><p>准备dao&#x2F;service层</p>
+<p> dao</p>
+</li>
+</ol>
+<pre><code class="Java">@Repository
+public class StudentDao &#123;
+    
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+    
+    public void updateNameById(String name,Integer id)&#123;
+        String sql = &quot;update students set name = ? where id = ? ;&quot;;
+        int rows = jdbcTemplate.update(sql, name, id);
+    &#125;
+
+    public void updateAgeById(Integer age,Integer id)&#123;
+        String sql = &quot;update students set age = ? where id = ? ;&quot;;
+        jdbcTemplate.update(sql,age,id);
+    &#125;
+&#125;
+</code></pre>
+<pre><code>service
+</code></pre>
+<pre><code class="Java">@Service
+public class StudentService &#123;
+    
+    @Autowired
+    private StudentDao studentDao;
+    
+    public void changeInfo()&#123;
+        studentDao.updateAgeById(100,1);
+        System.out.println(&quot;-----------&quot;);
+        studentDao.updateNameById(&quot;test1&quot;,1);
+    &#125;
+&#125;
+</code></pre>
+<ol start="5">
+<li>测试环境搭建</li>
+</ol>
+<pre><code class="Java">/**
+ * projectName: com.atguigu.test
+ *
+ * description:
+ */
+@SpringJUnitConfig(JavaConfig.class)
+public class TxTest &#123;
+
+    @Autowired
+    private StudentService studentService;
+
+    @Test
+    public void  testTx()&#123;
+        studentService.changeInfo();
+    &#125;
+&#125;
+</code></pre>
+<p><strong>基本事物控制</strong></p>
+<ol>
+<li><p>配置事务管理器</p>
+<p> 数据库相关的配置</p>
+</li>
+</ol>
+<pre><code class="Java">package com.chenw.config;
+
+
+import com.alibaba.druid.pool.DruidDataSource;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.*;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.TransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import javax.sql.DataSource;
+
+@Configuration
+@ComponentScan(&quot;com.chenw&quot;)
+@PropertySource(&quot;classpath:jdbc.properties&quot;)
+/*开启aspect的注解的支持*/
+@EnableAspectJAutoProxy
+/*开启事物注解的支持*/
+@EnableTransactionManagement
+public class JavaConfig &#123;
+    @Bean
+    public DruidDataSource dataSource(@Value(&quot;$&#123;chenw.username&#125;&quot;) String username,@Value(&quot;$&#123;chenw.password&#125;&quot;) String password,
+                                      @Value(&quot;$&#123;chenw.url&#125;&quot;) String url,@Value(&quot;$&#123;chenw.driver&#125;&quot;) String driver
+
+    )&#123;
+        DruidDataSource dataSource = new DruidDataSource();
+        dataSource.setUsername(username);
+        dataSource.setPassword(password);
+        dataSource.setDriverClassName(driver);
+        dataSource.setUrl(url);
+        return dataSource;
+    &#125;
+
+    @Bean
+    public JdbcTemplate jdbcTemplate(DataSource dataSource)&#123;
+        JdbcTemplate jdbcTemplate = new JdbcTemplate();
+        jdbcTemplate.setDataSource(dataSource);
+        return  jdbcTemplate;
+    &#125;
+    @Bean
+    public TransactionManager transactionManager(DataSource dataSource)&#123;
+        /*
+        *   内部要进行的事物的操作，基于的连接池
+        * */
+        DataSourceTransactionManager dataSourceTransactionManager = new DataSourceTransactionManager();
+        //需要连接池对象
+        dataSourceTransactionManager.setDataSource(dataSource);
+        return  dataSourceTransactionManager;
+    &#125;
+&#125;
+</code></pre>
+<ol start="2">
+<li>使用声明事务注解@Transactional</li>
+</ol>
+<pre><code class="Java">package com.chenw.service;
+
+import com.chenw.dao.StudentDao;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class StudentService &#123;
+    
+    @Autowired
+    private StudentDao studentDao;
+
+    /*
+    *   添加事物
+    *       @Transactional
+    *        位置: 方法或者类上
+    *       方法:当前的方法有事物
+    *       类上:类下的所有方法都有事物
+    *
+    * */
+    @Transactional
+    public void changeInfo()&#123;
+        studentDao.updateAgeById(100,1);
+        System.out.println(&quot;-----------&quot;);
+        studentDao.updateNameById(&quot;test1&quot;,1);
+    &#125;
+&#125;
+</code></pre>
+<pre><code>经过上面配置以后changeInfo这个方法就有事物了
+    我们可以测试一下
+    在 studentDao.updateAgeById(100,1);和 studentDao.updateNameById(&quot;test1&quot;,1);中间制造错误
+    如果是有事物的话，第一句和第二句都会事物回滚，都执行不了
+    但是没有事物的话，第一句依旧式执行成功的，但是第二句是失败的
+</code></pre>
+<pre><code class="java">    @Transactional
+    public void changeInfo()&#123;
+        studentDao.updateAgeById(88,1);
+        int i = 1/0;
+        System.out.println(&quot;-----------&quot;);
+        studentDao.updateNameById(&quot;test2&quot;,1);
+    &#125;
+</code></pre>
+<pre><code>测试晚数据都没有改变
+</code></pre>
+<p><strong>事务属性</strong></p>
+<p><strong>只读</strong></p>
+<ol>
+<li><p>只读介绍</p>
+<p> 对一个查询操作来说，如果我们把它设置成只读，就能够明确告诉数据库，这个操作不涉及写操作。这样数据库就能够针对查询操作来进行优化。</p>
+</li>
+<li><p>设置方式</p>
+</li>
+</ol>
+<pre><code class="Java">// readOnly = true把当前事务设置为只读 默认是false!
+@Transactional(readOnly = true)
+</code></pre>
+<ol start="3">
+<li><p>针对DML动作设置只读模式</p>
+<p> 会抛出下面异常：</p>
+<p> Caused by: java.sql.SQLException: Connection is read-only. Queries leading to data modification are not allowed</p>
+</li>
+<li><p>@Transactional注解放在类上</p>
+<ol>
+<li><p>生效原则</p>
+<p> 如果一个类中每一个方法上都使用了 @Transactional 注解，那么就可以将 @Transactional 注解提取到类上。反过来说：@Transactional 注解在类级别标记，会影响到类中的每一个方法。同时，类级别标记的 @Transactional 注解中设置的事务属性也会延续影响到方法执行时的事务属性。除非在方法上又设置了 @Transactional 注解。</p>
+<p> 对一个方法来说，离它最近的 @Transactional 注解中的事务属性设置生效。</p>
+</li>
+<li><p>用法举例</p>
+<p> 在类级别@Transactional注解中设置只读，这样类中所有的查询方法都不需要设置@Transactional注解了。因为对查询操作来说，其他属性通常不需要设置，所以使用公共设置即可。</p>
+<p> 然后在这个基础上，对增删改方法设置@Transactional注解 readOnly 属性为 false。</p>
+</li>
+</ol>
+</li>
+</ol>
+<pre><code class="Java">@Service
+@Transactional(readOnly = true)
+public class EmpService &#123;
+    
+    // 为了便于核对数据库操作结果，不要修改同一条记录
+    @Transactional(readOnly = false)
+    public void updateTwice(……) &#123;
+    ……
+    &#125;
+    
+    // readOnly = true把当前事务设置为只读
+    // @Transactional(readOnly = true)
+    public String getEmpName(Integer empId) &#123;
+    ……
+    &#125;
+    
+&#125;
+</code></pre>
+<p><strong>超时时间</strong></p>
+<ol>
+<li><p>需求</p>
+<p> 事务在执行过程中，有可能因为遇到某些问题，导致程序卡住，从而长时间占用数据库资源。而长时间占用资源，大概率是因为程序运行出现了问题（可能是Java程序或MySQL数据库或网络连接等等）。</p>
+<p> 此时这个很可能出问题的程序应该被回滚，撤销它已做的操作，事务结束，把资源让出来，让其他正常程序可以执行。</p>
+<p> 概括来说就是一句话：超时回滚，释放资源。</p>
+</li>
+<li><p>设置超时时间</p>
+</li>
+</ol>
+<pre><code class="Java">@Service
+public class StudentService &#123;
+
+    @Autowired
+    private StudentDao studentDao;
+
+    /**
+     * timeout设置事务超时时间,单位秒! 默认: -1 永不超时,不限制事务时间!
+     */
+    @Transactional(readOnly = false,timeout = 3)
+    public void changeInfo()&#123;
+        studentDao.updateAgeById(100,1);
+        //休眠4秒,等待方法超时!
+        try &#123;
+            Thread.sleep(4000);
+        &#125; catch (InterruptedException e) &#123;
+            throw new RuntimeException(e);
+        &#125;
+        studentDao.updateNameById(&quot;test1&quot;,1);
+    &#125;
+&#125;
+</code></pre>
+<ol start="3">
+<li><p>测试超时效果</p>
+<p> 执行抛出事务超时异常</p>
+</li>
+</ol>
+<pre><code class="Java">org.springframework.transaction.TransactionTimedOutException: Transaction timed out: deadline was Wed May 24 09:10:43 IRKT 2023
+
+  at org.springframework.transaction.support.ResourceHolderSupport.checkTransactionTimeout(ResourceHolderSupport.java:155)
+  at org.springframework.transaction.support.ResourceHolderSupport.getTimeToLiveInMillis(ResourceHolderSupport.java:144)
+  at org.springframework.transaction.support.ResourceHolderSupport.getTimeToLiveInSeconds(ResourceHolderSupport.java:128)
+  at org.springframework.jdbc.datasource.DataSourceUtils.applyTimeout(DataSourceUtils.java:341)
+  at org.springframework.jdbc.core.JdbcTemplate.applyStatementSettings(JdbcTemplate.java:1467)
+</code></pre>
+<p><strong>事务异常</strong></p>
+<ol>
+<li><p>默认情况</p>
+<p> 默认只针对运行时异常回滚，编译时异常不回滚。情景模拟代码如下：</p>
+</li>
+</ol>
+<pre><code class="Java">@Service
+public class StudentService &#123;
+
+    @Autowired
+    private StudentDao studentDao;
+
+    /**
+     * timeout设置事务超时时间,单位秒! 默认: -1 永不超时,不限制事务时间!
+     * rollbackFor = 指定哪些异常才会回滚,默认是 RuntimeException and Error 异常方可回滚!
+     * noRollbackFor = 指定哪些异常不会回滚, 默认没有指定,如果指定,应该在rollbackFor的范围内!
+     */
+    @Transactional(readOnly = false,timeout = 3)
+    public void changeInfo() throws FileNotFoundException &#123;
+        studentDao.updateAgeById(100,1);
+        //主动抛出一个检查异常,测试! 发现不会回滚,因为不在rollbackFor的默认范围内! 
+        new FileInputStream(&quot;xxxx&quot;);
+        studentDao.updateNameById(&quot;test1&quot;,1);
+    &#125;
+&#125;
+</code></pre>
+<ol start="2">
+<li><p>设置回滚异常</p>
+<p> rollbackFor属性：指定哪些异常类才会回滚,默认是 RuntimeException and Error 异常方可回滚!</p>
+</li>
+</ol>
+<pre><code class="Java">/**
+ * timeout设置事务超时时间,单位秒! 默认: -1 永不超时,不限制事务时间!
+ * rollbackFor = 指定哪些异常才会回滚,默认是 RuntimeException and Error 异常方可回滚!
+ * noRollbackFor = 指定哪些异常不会回滚, 默认没有指定,如果指定,应该在rollbackFor的范围内!
+ */
+@Transactional(readOnly = false,timeout = 3,rollbackFor = Exception.class)
+public void changeInfo() throws FileNotFoundException &#123;
+    studentDao.updateAgeById(100,1);
+    //主动抛出一个检查异常,测试! 发现不会回滚,因为不在rollbackFor的默认范围内! 
+    new FileInputStream(&quot;xxxx&quot;);
+    studentDao.updateNameById(&quot;test1&quot;,1);
+&#125;
+</code></pre>
+<ol start="3">
+<li><p>设置不回滚的异常</p>
+<p> 在默认设置和已有设置的基础上，再指定一个异常类型，碰到它不回滚。</p>
+<p> noRollbackFor属性：指定哪些异常不会回滚, 默认没有指定,如果指定,应该在rollbackFor的范围内!</p>
+</li>
+</ol>
+<pre><code class="Java">@Service
+public class StudentService &#123;
+
+    @Autowired
+    private StudentDao studentDao;
+
+    /**
+     * timeout设置事务超时时间,单位秒! 默认: -1 永不超时,不限制事务时间!
+     * rollbackFor = 指定哪些异常才会回滚,默认是 RuntimeException and Error 异常方可回滚!
+     * noRollbackFor = 指定哪些异常不会回滚, 默认没有指定,如果指定,应该在rollbackFor的范围内!
+     */
+    @Transactional(readOnly = false,timeout = 3,rollbackFor = Exception.class,noRollbackFor = FileNotFoundException.class)
+    public void changeInfo() throws FileNotFoundException &#123;
+        studentDao.updateAgeById(100,1);
+        //主动抛出一个检查异常,测试! 发现不会回滚,因为不在rollbackFor的默认范围内!
+        new FileInputStream(&quot;xxxx&quot;);
+        studentDao.updateNameById(&quot;test1&quot;,1);
+    &#125;
+&#125;
+</code></pre>
+<p><strong>事务隔离等级</strong></p>
+<ol>
+<li><p>事务隔离级别</p>
+<p> 数据库事务的隔离级别是指在多个事务并发执行时，数据库系统为了保证数据一致性所遵循的规定。常见的隔离级别包括：</p>
+<ol>
+<li><p>读未提交（Read Uncommitted）：事务可以读取未被提交的数据，容易产生脏读、不可重复读和幻读等问题。实现简单但不太安全，一般不用。</p>
+<pre><code>脏读是一个事务读取一个事务未提交的数据，这个可能读取是不准确的，如果另外ige事务发生错误，造成回滚
+    后面两个读取的都是正常的数据，但是后面两个不符合原则
+不可重复读 是一个事务读取一个事务的提交的修改的数据
+幻读 一个事务读取另外一个事务的插入的数据
+</code></pre>
+</li>
+<li><p>读已提交（Read Committed）：事务只能读取已经提交的数据，可以避免脏读问题，但可能引发不可重复读和幻读。</p>
+</li>
+<li><p>可重复读（Repeatable Read）：在一个事务中，相同的查询将返回相同的结果集，不管其他事务对数据做了什么修改。可以避免脏读和不可重复读，但仍有幻读的问题。</p>
+</li>
+<li><p>串行化（Serializable）：最高的隔离级别，完全禁止了并发，只允许一个事务执行完毕之后才能执行另一个事务。可以避免以上所有问题，但效率较低，不适用于高并发场景。</p>
+</li>
+</ol>
+<p> 不同的隔离级别适用于不同的场景，需要根据实际业务需求进行选择和调整。MYSQL默认的等级是第三个
+ </p>
+</li>
+<li><p>事务隔离级别设置</p>
+</li>
+</ol>
+<pre><code class="Java">package com.atguigu.service;
+
+import com.atguigu.dao.StudentDao;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+
+/**
+ * projectName: com.atguigu.service
+ */
+@Service
+public class StudentService &#123;
+
+    @Autowired
+    private StudentDao studentDao;
+
+    /**
+     * timeout设置事务超时时间,单位秒! 默认: -1 永不超时,不限制事务时间!
+     * rollbackFor = 指定哪些异常才会回滚,默认是 RuntimeException and Error 异常方可回滚!
+     * noRollbackFor = 指定哪些异常不会回滚, 默认没有指定,如果指定,应该在rollbackFor的范围内!
+     * isolation = 设置事务的隔离级别,mysql默认是repeatable read!
+     */
+    @Transactional(readOnly = false,
+                   timeout = 3,
+                   rollbackFor = Exception.class,
+                   noRollbackFor = FileNotFoundException.class,
+                   isolation = Isolation.REPEATABLE_READ)
+    public void changeInfo() throws FileNotFoundException &#123;
+        studentDao.updateAgeById(100,1);
+        //主动抛出一个检查异常,测试! 发现不会回滚,因为不在rollbackFor的默认范围内!
+        new FileInputStream(&quot;xxxx&quot;);
+        studentDao.updateNameById(&quot;test1&quot;,1);
+    &#125;
+&#125;
+</code></pre>
+<p><strong>事务传播行为</strong></p>
+<pre><code>当我们在一个事务里面调用另外一个事务的方法，那么这两个事务是合并还是独立
+事务传播行为设置到子事务
+</code></pre>
+<ol>
+<li><p>事务传播行为要研究的问题</p>
+<p> <img src="http://heavy_code_industry.gitee.io/code_heavy_industry/assets/img/img012.faac2cb7.png"></p>
+<p> 举例代码：</p>
+</li>
+</ol>
+<pre><code class="Java">@Transactional
+public void MethodA()&#123;
+    // ...
+    MethodB();
+    // ...
+&#125;
+
+//在被调用的子方法中设置传播行为，代表如何处理调用的事务！ 是加入，还是新事务等！
+@Transactional(propagation = Propagation.REQUIRES_NEW)
+public void MethodB()&#123;
+    // ...
+&#125;
+</code></pre>
+<ol start="2">
+<li><p>propagation属性</p>
+<p> @Transactional 注解通过 propagation 属性设置事务的传播行为。它的默认值是：</p>
+</li>
+</ol>
+<pre><code class="Java">Propagation propagation() default Propagation.REQUIRED;
+</code></pre>
+<pre><code>propagation 属性的可选值由 org.springframework.transaction.annotation.Propagation 枚举类提供：
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>REQUIRED  默认值</td>
+<td>如果父方法有事务，就加入，如果没有就新建自己独立！</td>
+</tr>
+<tr>
+<td>REQUIRES_NEW</td>
+<td>不管父方法是否有事务，我都新建事务，都是独立的！</td>
+</tr>
+</tbody></table>
+<ol start="3">
+<li>测试<ol>
+<li>声明两个业务方法</li>
+</ol>
+</li>
+</ol>
+<pre><code class="Java">@Service
+public class StudentService &#123;
+    /**
+     * 声明两个独立修改数据库的事务业务方法
+     */
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void changeAge()&#123;
+        studentDao.updateAgeById(99,1);
+    &#125;
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void changeName()&#123;
+        studentDao.updateNameById(&quot;test2&quot;,1);
+        int i = 1/0;
+    &#125;
+
+&#125;
+这样的话，我们加入到的父事务有事务的话，默认就会加入父事务一起
+其中changeName，发生回滚，这个方法也执行不了，推荐的使用默认值
+</code></pre>
+<pre><code>2. 声明一个整合业务方法
+</code></pre>
+<pre><code class="Java">@Service
+public class TopService &#123;
+
+    @Autowired
+    private StudentService studentService;
+
+    @Transactional
+    public void  topService()&#123;
+        studentService.changeAge();
+        studentService.changeName();
+    &#125;
+&#125;
+</code></pre>
+<pre><code>3. 添加传播行为测试
+</code></pre>
+<pre><code class="Java">@SpringJUnitConfig(classes = AppConfig.class)
+public class TxTest &#123;
+    @Autowired
+    private TopService topService;
+    @Test
+    public void  testTx() throws FileNotFoundException &#123;
+        topService.topService();
+    &#125;
+&#125;
+</code></pre>
+<pre><code>**注意：**
+  在同一个类中，对于@Transactional注解的方法调用，事务传播行为不会生效。这是因为Spring框架中使用代理模式实现了事务机制，在同一个类中的方法调用并不经过代理，而是通过对象的方法调用，因此@Transactional注解的设置不会被代理捕获，也就不会产生任何事务传播行为的效果。
+</code></pre>
+<ol start="4">
+<li>其他传播行为值（了解）<ol>
+<li>Propagation.REQUIRED：如果当前存在事务，则加入当前事务，否则创建一个新事务。</li>
+<li>Propagation.REQUIRES_NEW：创建一个新事务，并在新事务中执行。如果当前存在事务，则挂起当前事务，即使新事务抛出异常，也不会影响当前事务。</li>
+<li>Propagation.NESTED：如果当前存在事务，则在该事务中嵌套一个新事务，如果没有事务，则与Propagation.REQUIRED一样。</li>
+<li>Propagation.SUPPORTS：如果当前存在事务，则加入该事务，否则以非事务方式执行。</li>
+<li>Propagation.NOT_SUPPORTED：以非事务方式执行，如果当前存在事务，挂起该事务。</li>
+<li>Propagation.MANDATORY：必须在一个已有的事务中执行，否则抛出异常。</li>
+<li>Propagation.NEVER：必须在没有事务的情况下执行，否则抛出异常。</li>
+</ol>
+</li>
+</ol>
+<p><strong>Spring框架的总结</strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>核心点</td>
+<td>掌握目标</td>
+</tr>
+<tr>
+<td>spring框架理解</td>
+<td>spring家族和spring framework框架</td>
+</tr>
+<tr>
+<td>spring核心功能</td>
+<td>ioc&#x2F;di , aop , tx</td>
+</tr>
+<tr>
+<td>spring ioc &#x2F; di</td>
+<td>组件管理、ioc容器、ioc&#x2F;di , 三种配置方式</td>
+</tr>
+<tr>
+<td>spring aop</td>
+<td>aop和aop框架和代理技术、基于注解的aop配置</td>
+</tr>
+<tr>
+<td>spring tx</td>
+<td>声明式和编程式事务、动态事务管理器、事务注解、属性</td>
+</tr>
+</tbody></table>
 
     </div>
     
