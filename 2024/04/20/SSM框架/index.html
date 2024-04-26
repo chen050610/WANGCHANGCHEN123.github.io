@@ -4058,7 +4058,7 @@ public class JavaConfig &#123;
 <p>如果使用XML配置文件的方式实现的话</p>
 <pre><code class="xml">    &lt;context:component-scan base-package=&quot;com.chenw&quot;/&gt;
     &lt;!--在配置文件的里面开启aop的z注解支持--&gt;
-        &lt;aop:aspectj-autoproxy/&gt;
+    &lt;aop:aspectj-autoproxy/&gt;
 </code></pre>
 <p>测试代码</p>
 <pre><code class="java">package com.chenw.test;
@@ -4498,6 +4498,8 @@ public class LogAdvice &#123;
 </code></pre>
 <p>测试</p>
 <p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240423194145021.png" alt="image-20240423194145021"></p>
+<pre><code>优先级高的事务，限制性前置通知，后置通知后执行
+</code></pre>
 <p><strong>CGLib动态代理生效</strong></p>
 <pre><code>之前说过
     如果该类有接口的话，spring aoc底层就会使用JDK动态代理，如果没有的话，底层使用的是CGLib代理
@@ -4592,8 +4594,6 @@ public class AopTest &#123;
 <p><strong>Spring声明式事物</strong></p>
 <p><strong>编程式事务</strong></p>
 <p>  编程式事务是指手动编写程序来管理事务，即通过编写代码的方式直接控制事务的提交和回滚。在 Java 中，通常使用事务管理器(如 Spring 中的 <code>PlatformTransactionManager</code>)来实现编程式事务。</p>
-<pre><code>感觉还是和AOP有关
-</code></pre>
 <p>  编程式事务的主要优点是灵活性高，可以按照自己的需求来控制事务的粒度、模式等等。但是，编写大量的事务控制代码容易出现问题，对代码的可读性和可维护性有一定影响。</p>
 <pre><code class="Java">Connection conn = ...;
   
@@ -5318,6 +5318,499 @@ public class TxTest &#123;
 <td>声明式和编程式事务、动态事务管理器、事务注解、属性</td>
 </tr>
 </tbody></table>
+<p><strong>MyBatis实践：提高持久层数据处理效率</strong></p>
+<h3 id="1-1-简介"><a href="#1-1-简介" class="headerlink" title="1.1 简介"></a>1.1 简介</h3><p>  <a target="_blank" rel="noopener" href="https://mybatis.org/mybatis-3/zh/index.html">https://mybatis.org/mybatis-3/zh/index.html</a></p>
+<p>  MyBatis最初是Apache的一个开源项目iBatis, 2010年6月这个项目由Apache Software Foundation迁移到了Google Code。随着开发团队转投Google Code旗下， iBatis3.x正式更名为MyBatis。代码于2013年11月迁移到Github。</p>
+<p>  MyBatis 是一款优秀的持久层框架，它支持自定义 SQL、存储过程以及高级映射。MyBatis 免除了几乎所有的 JDBC 代码以及设置参数和获取结果集的工作。MyBatis 可以通过简单的 XML 或注解来配置和映射原始类型、接口和 Java POJO（Plain Old Java Objects，普通老式 Java 对象）为数据库中的记录。</p>
+<p>  <img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image.png"></p>
+<blockquote>
+<p>社区会持续更新开源项目，版本会不断变化，我们不必每个小版本都追，关注重大更新的大版本升级即可。</p>
+</blockquote>
+<p><strong>持久层框架对比</strong></p>
+<ul>
+<li>JDBC<ul>
+<li>SQL 夹杂在Java代码中耦合度高，导致硬编码内伤</li>
+<li>维护不易且实际开发需求中 SQL 有变化，频繁修改的情况多见</li>
+<li>代码冗长，开发效率低</li>
+</ul>
+</li>
+<li>Hibernate 和 JPA<ul>
+<li>操作简便，开发效率高</li>
+<li>程序中的长难复杂 SQL 需要绕过框架</li>
+<li>内部自动生成的 SQL，不容易做特殊优化</li>
+<li>基于全映射的全自动框架，大量字段的 POJO 进行部分映射时比较困难。</li>
+<li>反射操作太多，导致数据库性能下降</li>
+</ul>
+</li>
+<li>MyBatis<ul>
+<li>轻量级，性能出色</li>
+<li>SQL 和 Java 编码分开，功能边界清晰。Java代码专注业务、SQL语句专注数据</li>
+<li>开发效率稍逊于 Hibernate，但是完全能够接收</li>
+</ul>
+</li>
+</ul>
+<p>开发效率：Hibernate&gt;Mybatis&gt;JDBC</p>
+<p>运行效率：JDBC&gt;Mybatis&gt;Hibernate</p>
+<p><strong>快速入门</strong></p>
+<ol>
+<li>准备数据模型</li>
+</ol>
+<pre><code class="SQL">CREATE DATABASE `mybatis-example`;
+
+USE `mybatis-example`;
+
+CREATE TABLE `t_emp`(
+  emp_id INT AUTO_INCREMENT,
+  emp_name CHAR(100),
+  emp_salary DOUBLE(10,5),
+  PRIMARY KEY(emp_id)
+);
+
+INSERT INTO `t_emp`(emp_name,emp_salary) VALUES(&quot;tom&quot;,200.33);
+INSERT INTO `t_emp`(emp_name,emp_salary) VALUES(&quot;jerry&quot;,666.66);
+INSERT INTO `t_emp`(emp_name,emp_salary) VALUES(&quot;andy&quot;,777.77);
+</code></pre>
+<ol start="2">
+<li>项目搭建和准备<ol>
+<li><p>项目搭建</p>
+<p> <img src="https://secure2.wostatic.cn/static/vF2ubwBhNSqJE4ZkVSeTxL/image.png?auth_key=1714012482-ehkJHPRVthJMTmABkoiLC8-0-8a8043b28438552e0b16b03711e02f87"></p>
+</li>
+<li><p>依赖导入</p>
+<p> pom.xml</p>
+</li>
+</ol>
+</li>
+</ol>
+<pre><code class="XML">&lt;dependencies&gt;
+  &lt;!-- mybatis依赖 --&gt;
+  &lt;dependency&gt;
+      &lt;groupId&gt;org.mybatis&lt;/groupId&gt;
+      &lt;artifactId&gt;mybatis&lt;/artifactId&gt;
+      &lt;version&gt;3.5.11&lt;/version&gt;
+  &lt;/dependency&gt;
+
+  &lt;!-- MySQL驱动 mybatis底层依赖jdbc驱动实现,本次不需要导入连接池,mybatis自带! --&gt;
+  &lt;dependency&gt;
+      &lt;groupId&gt;mysql&lt;/groupId&gt;
+      &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
+      &lt;version&gt;8.0.25&lt;/version&gt;
+  &lt;/dependency&gt;
+
+  &lt;!--junit5测试--&gt;
+  &lt;dependency&gt;
+      &lt;groupId&gt;org.junit.jupiter&lt;/groupId&gt;
+      &lt;artifactId&gt;junit-jupiter-api&lt;/artifactId&gt;
+      &lt;version&gt;5.3.1&lt;/version&gt;
+  &lt;/dependency&gt;
+&lt;/dependencies&gt;
+</code></pre>
+<pre><code>3. 实体类准备
+</code></pre>
+<pre><code class="Java">public class Employee &#123;
+
+    private Integer empId;
+
+    private String empName;
+
+    private Double empSalary;
+    
+    //getter | setter
+&#125;
+</code></pre>
+<ol start="3">
+<li><p>准备Mapper接口和MapperXML文件</p>
+<p> MyBatis 框架下，SQL语句编写位置发生改变，从原来的Java类，改成<strong>XML</strong>或者注解定义！</p>
+<p> 推荐在XML文件中编写SQL语句，让用户能更专注于 SQL 代码，不用关注其他的JDBC代码。</p>
+<p> 如果拿它跟具有相同功能的 JDBC 代码进行对比，你会立即发现省掉了将近 95% 的代码！！</p>
+<p> 一般编写SQL语句的文件命名：XxxMapper.xml  Xxx一般取表名！！</p>
+<p> Mybatis 中的 Mapper 接口相当于以前的 Dao。但是区别在于，Mapper 仅仅只是建接口即可，我们不需要提供实现类，具体的SQL写到对应的Mapper文件，该用法的思路如下图所示：</p>
+<p> <img src="https://secure2.wostatic.cn/static/bkCL19U4AA9SGMm4kuRXT3/image.png?auth_key=1714012482-emki4Gn9rWTmJVmgmEQfVo-0-af664ab48bad063bc17095c36e2f9f36"></p>
+<ol>
+<li><p>定义mapper接口</p>
+<p> 包：com.chenw.mapper</p>
+</li>
+</ol>
+</li>
+</ol>
+<pre><code class="Java">package com.chenw.mapper;
+
+import com.chenw.pojo.Employee;
+
+public interface EmployeeMapper &#123;
+    /*
+    * 根据id查询员工的数据
+    * */
+    Employee queryById(Integer id);
+
+    /*
+    * 通过id删除
+    * */
+    int deleteById(Integer id);
+&#125;
+</code></pre>
+<pre><code>2. 定义mapper xml
+
+    位置： resources/mappers/EmployeeMapper.xml
+</code></pre>
+<pre><code class="XML">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;
+&lt;!DOCTYPE mapper
+        PUBLIC &quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;
+        &quot;https://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;&gt;
+&lt;!-- namespace等于mapper接口类的全限定名,这样实现对应 --&gt;
+&lt;mapper namespace=&quot;com.chenw.mapper.EmployeeMapper&quot;&gt;
+
+    &lt;!-- 查询使用 select标签
+            id = 方法名
+            resultType = 返回值类型
+            标签内编写SQL语句
+            注意:Mapper接口里面方法不可以重载，因为mapper无法识别
+     --&gt;
+    &lt;select id=&quot;queryById&quot; resultType=&quot;com.chenw.pojo.Employee&quot;&gt;
+        &lt;!-- #&#123;id&#125;代表动态传入的参数,并且进行赋值!后面详细讲解 --&gt;
+        select emp_id empId,emp_name empName, emp_salary empSalary from
+        t_emp where emp_id = #&#123;id&#125;
+    &lt;/select&gt;
+    &lt;delete id=&quot;deleteById&quot; &gt;
+        delete from t_emp where emp_id=#&#123;id&#125;
+    &lt;/delete&gt;
+
+&lt;/mapper&gt;
+</code></pre>
+<pre><code>    **注意：**
+      - 方法名和SQL的id一致
+      - 方法返回值和resultType一致
+      - 方法的参数和SQL的参数一致
+      - 接口的全类名和映射配置文件的名称空间一致
+</code></pre>
+<ol start="4">
+<li><p>准备MyBatis配置文件</p>
+<p> mybatis框架配置文件： 数据库连接信息，性能配置，mapper.xml配置等！</p>
+<p> 习惯上命名为 mybatis-config.xml，这个文件名仅仅只是建议，并非强制要求。将来整合 Spring 之后，这个配置文件可以省略，所以大家操作时可以直接复制、粘贴。</p>
+</li>
+</ol>
+<pre><code class="XML">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;
+&lt;!DOCTYPE configuration
+        PUBLIC &quot;-//mybatis.org//DTD Config 3.0//EN&quot;
+        &quot;http://mybatis.org/dtd/mybatis-3-config.dtd&quot;&gt;
+&lt;configuration&gt;
+
+    &lt;!-- environments表示配置Mybatis的开发环境，可以配置多个环境，在众多具体环境中，使用default属性指定实际运行时使用的环境。default属性的取值是environment标签的id属性的值。 --&gt;
+    &lt;environments default=&quot;development&quot;&gt;
+        &lt;!-- environment表示配置Mybatis的一个具体的环境 --&gt;
+        &lt;environment id=&quot;development&quot;&gt;
+            &lt;!-- Mybatis的内置的事务管理器 --&gt;
+            &lt;transactionManager type=&quot;JDBC&quot;/&gt;
+            &lt;!-- 配置数据源 --&gt;
+            &lt;dataSource type=&quot;POOLED&quot;&gt;
+                &lt;!-- 建立数据库连接的具体信息 --&gt;
+                &lt;property name=&quot;driver&quot; value=&quot;com.mysql.cj.jdbc.Driver&quot;/&gt;
+                &lt;property name=&quot;url&quot; value=&quot;jdbc:mysql://localhost:3306/mybatis-example&quot;/&gt;
+                &lt;property name=&quot;username&quot; value=&quot;root&quot;/&gt;
+                &lt;property name=&quot;password&quot; value=&quot;root&quot;/&gt;
+            &lt;/dataSource&gt;
+        &lt;/environment&gt;
+    &lt;/environments&gt;
+
+    &lt;mappers&gt;
+        &lt;!-- Mapper注册：指定Mybatis映射文件的具体位置 --&gt;
+        &lt;!-- mapper标签：配置一个具体的Mapper映射文件 --&gt;
+        &lt;!-- resource属性：指定Mapper映射文件的实际存储位置，这里需要使用一个以类路径根目录为基准的相对路径 --&gt;
+        &lt;!--    对Maven工程的目录结构来说，resources目录下的内容会直接放入类路径，所以这里我们可以以resources目录为基准 --&gt;
+        &lt;mapper resource=&quot;mappers/EmployeeMapper.xml&quot;/&gt;
+    &lt;/mappers&gt;
+
+&lt;/configuration&gt;
+</code></pre>
+<ol start="5">
+<li>运行和测试</li>
+</ol>
+<pre><code class="Java">package com.chenw.test;
+
+import com.chenw.mapper.EmployeeMapper;
+import com.chenw.pojo.Employee;
+import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+import java.io.InputStream;
+
+public class MybatisTest &#123;
+    /*
+    * TODO:通过Mybatis的api进行方法的调用
+    * */
+    @Test
+    public void test_01() throws IOException &#123;
+        //1.读取外部的配置文件（mybatis-config.xml）
+        InputStream ips = Resources.getResourceAsStream(&quot;mybatis-config.xml&quot;);
+        //2.创建sqlSessionFactory
+        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(ips);
+        //3.根据sqlSessionFactory创建sqlSession(每次业务创建一个，用完释放掉)
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+        //4.获取接口的代理对象(代理技术) //调用代理对象的方法，就会找mapper接口的方法
+        EmployeeMapper mapper = sqlSession.getMapper(EmployeeMapper.class);
+        Employee employee = mapper.queryById(1);
+        System.out.println(employee);
+        //5.提交事务（非DQL）和释放资源,因为是查询语句不需要事务提交也可以
+        sqlSession.commit();
+        sqlSession.close();
+    &#125;
+&#125;
+</code></pre>
+<pre><code>说明：
+
+- SqlSession：代表Java程序和数据库之间的会话。（HttpSession是Java程序和浏览器之间的会话）
+- SqlSessionFactory：是“生产”SqlSession的“工厂”。
+- 工厂模式：如果创建某一个对象，使用的过程基本固定，那么我们就可以把创建这个对象的相关代码封装到一个“工厂类”中，以后都使用这个工厂类来“生产”我们需要的对象。
+</code></pre>
+<ol start="6">
+<li><p>SqlSession和HttpSession区别</p>
+<ul>
+<li>HttpSession：工作在Web服务器上，属于表述层。<ul>
+<li>代表浏览器和Web服务器之间的会话。</li>
+</ul>
+</li>
+<li>SqlSession：不依赖Web服务器，属于持久化层。<ul>
+<li>代表Java程序和数据库之间的会话。</li>
+</ul>
+</li>
+</ul>
+<p> <img src="https://secure2.wostatic.cn/static/xb7Pyrm8YMF3qK6c7Jr5R3/image.png?auth_key=1714012482-9mwAd4aP17ycQq2hcDhLZF-0-c93bdd1fe1e6c5a58d706fb7fb0dca31"></p>
+</li>
+</ol>
+<p><strong>Ibatis的原理</strong></p>
+<pre><code>之前的iBatis对数据库操作存在一些的问题
+ 但是不像Mybatis不要接口
+</code></pre>
+<p>配置文件</p>
+<pre><code class="xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;
+&lt;!DOCTYPE mapper
+        PUBLIC &quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;
+        &quot;https://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;&gt;
+&lt;!-- namespace等于mapper接口类的全限定名,这样实现对应 --&gt;
+&lt;!--使用Mybatis的老版本Ibatis的方法实现操作
+        1.不需要写接口
+        2.直接创建mapper.xml文件内部编写sql语句
+        3.namespace没有任何的要求，随意声明字符串就可以
+        4.在内部通过crud标签声明SQL语句即可
+
+--&gt;
+&lt;mapper namespace=&quot;chenw&quot;&gt;
+&lt;!----&gt;
+    &lt;select id=&quot;chenw&quot; resultType=&quot;com.chenw.pojo.Student&quot;&gt;
+        select * from student where sid = #&#123;id&#125;
+    &lt;/select&gt;
+&lt;/mapper&gt;
+</code></pre>
+<p>配置</p>
+<pre><code class="xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;
+&lt;!DOCTYPE configuration
+        PUBLIC &quot;-//mybatis.org//DTD Config 3.0//EN&quot;
+        &quot;http://mybatis.org/dtd/mybatis-3-config.dtd&quot;&gt;
+&lt;configuration&gt;
+
+    &lt;!-- environments表示配置Mybatis的开发环境，可以配置多个环境，在众多具体环境中，使用default属性指定实际运行时使用的环境。default属性的取值是environment标签的id属性的值。 --&gt;
+    &lt;environments default=&quot;development&quot;&gt;
+        &lt;!-- environment表示配置Mybatis的一个具体的环境 --&gt;
+        &lt;environment id=&quot;development&quot;&gt;
+            &lt;!-- Mybatis的内置的事务管理器 --&gt;
+            &lt;transactionManager type=&quot;JDBC&quot;/&gt;
+            &lt;!-- 配置数据源 --&gt;
+            &lt;dataSource type=&quot;POOLED&quot;&gt;
+                &lt;!-- 建立数据库连接的具体信息 --&gt;
+                &lt;property name=&quot;driver&quot; value=&quot;com.mysql.cj.jdbc.Driver&quot;/&gt;
+                &lt;property name=&quot;url&quot; value=&quot;jdbc:mysql://localhost:3306/mybatis-example&quot;/&gt;
+                &lt;property name=&quot;username&quot; value=&quot;root&quot;/&gt;
+                &lt;property name=&quot;password&quot; value=&quot;root&quot;/&gt;
+            &lt;/dataSource&gt;
+        &lt;/environment&gt;
+    &lt;/environments&gt;
+
+    &lt;mappers&gt;
+        &lt;!-- Mapper注册：指定Mybatis映射文件的具体位置 --&gt;
+        &lt;!-- mapper标签：配置一个具体的Mapper映射文件 --&gt;
+        &lt;!-- resource属性：指定Mapper映射文件的实际存储位置，这里需要使用一个以类路径根目录为基准的相对路径 --&gt;
+        &lt;!--    对Maven工程的目录结构来说，resources目录下的内容会直接放入类路径，所以这里我们可以以resources目录为基准 --&gt;
+        &lt;mapper resource=&quot;mappers/EmployeeMapper.xml&quot;/&gt;
+        &lt;mapper resource=&quot;mappers/StudentMapper.xml&quot;/&gt;
+    &lt;/mappers&gt;
+
+&lt;/configuration&gt;
+</code></pre>
+<pre><code class="java">在调用的时候
+        /*
+        * 直接使用sqlSesion提供的curd方法进行查询
+        *       1.里面的参数
+        *           第一个参数是配置文件的里的对应方法配置的id,可以使用命名空间+id 就是配置里面的
+        *               namespace+id
+        *           第二个参数是sql语句的传入的参数
+        * 原理就是查找对应的sql语句的标签 ，然后执行
+        * */
+        Student student =(Student) sqlSession.selectOne(&quot;chenw.chenw&quot;, 1);
+        System.out.println(student);
+        //5.提交事务（非DQL）和释放资源,因为是查询语句不需要事务提交也可以
+        sqlSession.commit();
+        sqlSession.close();
+</code></pre>
+<p><strong>Mybatis的基本使用</strong></p>
+<p><strong>向sql语句传参</strong></p>
+<p><strong>Mybatis的日志输出</strong></p>
+<p>配置文件</p>
+<pre><code class="xml">&lt;!-- environments表示配置Mybatis的开发环境，可以配置多个环境，在众多具体环境中，使用default属性指定实际运行时使用的环境。default属性的取值是environment标签的id属性的值。 --&gt;
+&lt;environments default=&quot;development&quot;&gt;
+    &lt;!-- environment表示配置Mybatis的一个具体的环境 --&gt;
+    &lt;environment id=&quot;development&quot;&gt;
+        &lt;!-- Mybatis的内置的事务管理器 --&gt;
+        &lt;transactionManager type=&quot;JDBC&quot;/&gt;
+        &lt;!-- 配置数据源 --&gt;
+        &lt;dataSource type=&quot;POOLED&quot;&gt;
+            &lt;!-- 建立数据库连接的具体信息 --&gt;
+            &lt;property name=&quot;driver&quot; value=&quot;com.mysql.cj.jdbc.Driver&quot;/&gt;
+            &lt;property name=&quot;url&quot; value=&quot;jdbc:mysql://localhost:3306/mybatis-example&quot;/&gt;
+            &lt;property name=&quot;username&quot; value=&quot;root&quot;/&gt;
+            &lt;property name=&quot;password&quot; value=&quot;root&quot;/&gt;
+        &lt;/dataSource&gt;
+    &lt;/environment&gt;
+    &lt;!--我们可以配置多个环境，最后只能生效一个--&gt;
+    &lt;environment id=&quot;test&quot;&gt;
+        &lt;!-- Mybatis的内置的事务管理器 --&gt;
+        &lt;transactionManager type=&quot;JDBC&quot;/&gt;
+        &lt;!-- 配置数据源 --&gt;
+        &lt;dataSource type=&quot;POOLED&quot;&gt;
+            &lt;!-- 建立数据库连接的具体信息 --&gt;
+            &lt;property name=&quot;driver&quot; value=&quot;com.mysql.cj.jdbc.Driver&quot;/&gt;
+            &lt;property name=&quot;url&quot; value=&quot;jdbc:mysql://localhost:3306/mybatis-example&quot;/&gt;
+            &lt;property name=&quot;username&quot; value=&quot;root&quot;/&gt;
+            &lt;property name=&quot;password&quot; value=&quot;root&quot;/&gt;
+        &lt;/dataSource&gt;
+    &lt;/environment&gt;
+&lt;/environments&gt;
+</code></pre>
+<pre><code>environments代表不同的环境，下面的environment是代表单个的环境，environments的default指定生效的环境
+transactionManager type=&quot;JDBC&quot; 代表使用JDCBC的事务管理器，如果MANAGED，这个配置相当于什么也没做，从不会提交或回滚一个连接
+dataSource type=&quot;POOLED&quot; 代表使用连接池，UNPOOLED代表每次查询都会打开关闭连接，是mybatis帮助我们维护一个池，下面就是配置连接池的配置，后面我们将使用druid的连接池，而不是用默认的
+</code></pre>
+<pre><code class="xml">            &lt;dataSource type=&quot;POOLED&quot;&gt;
+                &lt;!-- 建立数据库连接的具体信息 --&gt;
+                &lt;property name=&quot;driver&quot; value=&quot;com.mysql.cj.jdbc.Driver&quot;/&gt;
+                &lt;property name=&quot;url&quot; value=&quot;jdbc:mysql://localhost:3306/mybatis-example&quot;/&gt;
+                &lt;property name=&quot;username&quot; value=&quot;root&quot;/&gt;
+                &lt;property name=&quot;password&quot; value=&quot;root&quot;/&gt;
+            &lt;/dataSource&gt;
+</code></pre>
+<pre><code class="xml">    &lt;mappers&gt;
+        &lt;!-- Mapper注册：指定Mybatis映射文件的具体位置 --&gt;
+        &lt;!-- mapper标签：配置一个具体的Mapper映射文件 --&gt;
+        &lt;!-- resource属性：指定Mapper映射文件的实际存储位置，这里需要使用一个以类路径根目录为基准的相对路径 --&gt;
+        &lt;!--    对Maven工程的目录结构来说，resources目录下的内容会直接放入类路径，所以这里我们可以以resources目录为基准 --&gt;
+        &lt;mapper resource=&quot;mappers/EmployeeMapper.xml&quot;/&gt;
+        &lt;mapper resource=&quot;mappers/StudentMapper.xml&quot;/&gt;
+    &lt;/mappers&gt;
+</code></pre>
+<p><strong>配置日志输出的功能</strong></p>
+<h4 id="2-1-1-mybatis日志输出配置"><a href="#2-1-1-mybatis日志输出配置" class="headerlink" title="2.1.1 mybatis日志输出配置"></a>2.1.1 <strong>mybatis日志输出配置</strong></h4><p>  mybatis配置文件设计标签和顶层结构如下：</p>
+<ul>
+<li>configuration（配置）<ul>
+<li><a target="_blank" rel="noopener" href="https://mybatis.org/mybatis-3/zh/configuration.html#properties">properties（属性）</a></li>
+<li><a target="_blank" rel="noopener" href="https://mybatis.org/mybatis-3/zh/configuration.html#settings">settings（设置）</a></li>
+<li><a target="_blank" rel="noopener" href="https://mybatis.org/mybatis-3/zh/configuration.html#typeAliases">typeAliases（类型别名）</a></li>
+<li><a target="_blank" rel="noopener" href="https://mybatis.org/mybatis-3/zh/configuration.html#typeHandlers">typeHandlers（类型处理器）</a></li>
+<li><a target="_blank" rel="noopener" href="https://mybatis.org/mybatis-3/zh/configuration.html#objectFactory">objectFactory（对象工厂）</a></li>
+<li><a target="_blank" rel="noopener" href="https://mybatis.org/mybatis-3/zh/configuration.html#plugins">plugins（插件）</a></li>
+<li><a target="_blank" rel="noopener" href="https://mybatis.org/mybatis-3/zh/configuration.html#environments">environments（环境配置）</a><ul>
+<li>environment（环境变量）<ul>
+<li>transactionManager（事务管理器）</li>
+<li>dataSource（数据源）</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a target="_blank" rel="noopener" href="https://mybatis.org/mybatis-3/zh/configuration.html#databaseIdProvider">databaseIdProvider（数据库厂商标识）</a></li>
+<li><a target="_blank" rel="noopener" href="https://mybatis.org/mybatis-3/zh/configuration.html#mappers">mappers（映射器）</a></li>
+</ul>
+</li>
+</ul>
+<p>  我们可以在mybatis的配置文件使用<strong>settings标签</strong>设置，输出运过程SQL日志！</p>
+<p>  通过查看日志，我们可以判定#{} 和 ${}的输出效果！</p>
+<p>  settings设置项：</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240425123033598.png" alt="image-20240425123033598"></p>
+<p>  日志配置：</p>
+<pre><code class="XML">&lt;settings&gt;
+  &lt;!-- SLF4J 选择slf4j输出！开启日志输出使用system进行控制台进行输出 --&gt;
+  &lt;setting name=&quot;logImpl&quot; value=&quot;SLF4J&quot;/&gt;
+&lt;/settings&gt;
+</code></pre>
+<p>这样在输出的时候就会有日志</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240425123318244.png" alt="image-20240425123318244"></p>
+<p><strong>#{}和${}的区</strong>别</p>
+<pre><code class="xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;
+&lt;!DOCTYPE mapper
+        PUBLIC &quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;
+        &quot;https://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;&gt;
+&lt;mapper namespace=&quot;chenw.mapper.EmployeeMapper&quot;&gt;
+
+    &lt;!--
+        sql语句两种传值
+            #&#123;&#125;:占位符+赋值 ：先变成 emp_id = ？ 然后在赋值，防止注入攻击
+            $&#123;&#125;：直接字符串拼接  容易被sql攻击
+
+            但是#&#123;&#125;也是有缺点的，
+                #&#123;&#125;只能给值的位置赋值。不能赋值给sql语句的组成部分（表名，列名，sql关键字）
+                但是$&#123;&#125;是可以的
+    --&gt;
+    &lt;select id=&quot;queryById&quot; resultType=&quot;chenw.pojo.Employee&quot;&gt;
+        select emp_id as empId , emp_name as empName ,emp_salary as empSalary
+        from t_emp where emp_id = #&#123;id&#125;
+    &lt;/select&gt;
+&lt;/mapper&gt;
+</code></pre>
+<p><strong>数据输入</strong></p>
+<p><img src="https://api.wolai.com/v1/proxy/image?src=http://heavy_code_industry.gitee.io/code_heavy_industry/assets/img/img005.ebd8c6a3.png&spaceId=fqkGyHKKxSnzkhVZnoSxhC&userId=&image_process=resize,w_851" alt="img"></p>
+<p>这里数据输入具体是指上层方法（例如Service方法）调用Mapper接口时，数据传入的形式。</p>
+<ul>
+<li>简单类型：只包含一个值的数据类型（单值的）<ul>
+<li>基本数据类型：int、byte、short、double、……</li>
+<li>基本数据类型的包装类型：Integer、Character、Double、……</li>
+<li>字符串类型：String</li>
+</ul>
+</li>
+<li>复杂类型：包含多个值的数据类型（实体，map类型的等）<ul>
+<li>实体类类型：Employee、Department、……</li>
+<li>集合类型：List、Set、Map、……</li>
+<li>数组类型：int[]、String[]、……</li>
+<li>复合类型：List<Employee>、实体类中包含集合……</li>
+</ul>
+</li>
+</ul>
+<p><strong>单个简单类型型参数</strong></p>
+<pre><code class="java">/*
+*   根据id删除员工的信息
+*   */
+int deleteById(Integer id);
+
+
+/*
+*   根据工资查询员工信息
+* */
+
+List&lt;Employee&gt; queryBySalary(Double salary);
+</code></pre>
+<pre><code class="java">    &lt;!--
+        场景1，传入的是单个的简单的类型 key随便写 默认就是取这个值,一般情况下推荐使用参数的名字,这样更好的识别
+        场景2，传入的是实体类对象 #&#123;key&#125; key是属性名字
+    --&gt;
+    &lt;delete id=&quot;deleteById&quot;&gt;
+         delete from t_emp where emp_id = #&#123;id&#125;
+    &lt;/delete&gt;
+    &lt;select id=&quot;queryBySalary&quot; resultType=&quot;chenw.pojo.Employee&quot;&gt;
+        select emp_id as empId , emp_name as empName ,emp_salary as empSalary
+        from t_emp where emp_salary = #&#123;salary&#125;
+    &lt;/select&gt;
+</code></pre>
+<pre><code>
+</code></pre>
 
     </div>
     
