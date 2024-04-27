@@ -177,12 +177,12 @@
             
             <span class="tag">
                 
-                <a href="/tags/chenw/" style="color: #ff7d73">chenw</a>
+                <a href="/tags/chenw/" style="color: #00bcd4">chenw</a>
             </span>
             
             <span class="tag">
                 
-                <a href="/tags/SSM%E5%AD%A6%E4%B9%A0/" style="color: #00a596">SSM学习</a>
+                <a href="/tags/SSM%E5%AD%A6%E4%B9%A0/" style="color: #03a9f4">SSM学习</a>
             </span>
             
         </span>
@@ -7709,6 +7709,542 @@ public interface UserMapper &#123;
 
 &#125;
 </code></pre>
+<p><strong>SpringMVC框架：构建高效表述层框架</strong></p>
+<p><strong>简介和介绍</strong></p>
+<p><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-framework/reference/web/webmvc.html">https://docs.spring.io/spring-framework/reference/web/webmvc.html</a></p>
+<p>Spring Web MVC是基于Servlet API构建的原始Web框架，从一开始就包含在Spring Framework中。正式名称“Spring Web MVC”来自其源模块的名称（ <code>spring-webmvc</code> ），但它通常被称为“Spring MVC”。</p>
+<p>在控制层框架历经Strust、WebWork、Strust2等诸多产品的历代更迭之后，目前业界普遍选择了SpringMVC作为Java EE项目表述层开发的<strong>首选方案</strong>。之所以能做到这一点，是因为SpringMVC具备如下显著优势：</p>
+<ul>
+<li><strong>Spring 家族原生产品</strong>，与IOC容器等基础设施无缝对接</li>
+<li>表述层各细分领域需要解决的问题<strong>全方位覆盖</strong>，提供<strong>全面解决方案</strong></li>
+<li><strong>代码清新简洁</strong>，大幅度提升开发效率</li>
+<li>内部组件化程度高，可插拔式组件<strong>即插即用</strong>，想要什么功能配置相应组件即可</li>
+<li><strong>性能卓著</strong>，尤其适合现代大型、超大型互联网项目要求</li>
+</ul>
+<p>原生Servlet API开发代码片段</p>
+<pre><code class="Java">protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+                                                        throws ServletException, IOException &#123;  
+    String userName = request.getParameter(&quot;userName&quot;);
+    
+    System.out.println(&quot;userName=&quot;+userName);
+&#125;
+</code></pre>
+<p>基于SpringMVC开发代码片段</p>
+<pre><code class="Java">@RequestMapping(&quot;/user/login&quot;)
+public String login(@RequestParam(&quot;userName&quot;) String userName,Sting password)&#123;
+    
+    log.debug(&quot;userName=&quot;+userName);
+    //调用业务即可
+    
+    return &quot;result&quot;;
+&#125;
+</code></pre>
+<p><strong>主要的作用</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image.png"></p>
+<p>SSM框架构建起单体项目的技术栈需求！其中的SpringMVC负责表述层（控制层）实现简化！</p>
+<p>SpringMVC的作用主要覆盖的是表述层，例如：</p>
+<ul>
+<li>请求映射</li>
+<li>数据输入</li>
+<li>视图界面</li>
+<li>请求分发</li>
+<li>表单回显</li>
+<li>会话控制</li>
+<li>过滤拦截</li>
+<li>异步交互</li>
+<li>文件上传</li>
+<li>文件下载</li>
+<li>数据校验</li>
+<li>类型转换</li>
+<li>等等等</li>
+</ul>
+<p><strong>最终总结：</strong></p>
+<ol>
+<li>简化前端参数接收( 形参列表 )</li>
+<li>简化后端数据响应(返回值)</li>
+<li>以及其他……</li>
+</ol>
+<p><strong>核心组价和和调用流程理解</strong></p>
+<p>Spring MVC与许多其他Web框架一样，是围绕前端控制器模式设计的，其中中央 <code>Servlet</code>  <code>DispatcherServlet</code> 做整体请求处理调度！</p>
+<p>除了<code>DispatcherServlet</code>SpringMVC还会提供其他特殊的组件协作完成请求处理和响应呈现。</p>
+<p><strong>SpringMVC处理请求流程：</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image.png"></p>
+<p><strong>SpringMVC涉及组件理解：</strong></p>
+<ol>
+<li>DispatcherServlet :  SpringMVC提供，我们需要使用web.xml配置使其生效，它是整个流程处理的核心，所有请求都经过它的处理和分发！[ CEO ]</li>
+<li>HandlerMapping :  SpringMVC提供，我们需要进行IoC配置使其加入IoC容器方可生效，它内部缓存handler(controller方法)和handler访问路径数据，被DispatcherServlet调用，用于查找路径对应的handler！[秘书]</li>
+<li>HandlerAdapter : SpringMVC提供，我们需要进行IoC配置使其加入IoC容器方可生效，它可以处理请求参数和处理响应数据数据，每次DispatcherServlet都是通过handlerAdapter间接调用handler，他是handler和DispatcherServlet之间的适配器！[经理]</li>
+<li>Handler : handler又称处理器，他是Controller类内部的方法简称，是由我们自己定义，用来接收参数，向后调用业务，最终返回响应结果！[打工人]</li>
+<li>ViewResovler : SpringMVC提供，我们需要进行IoC配置使其加入IoC容器方可生效！视图解析器主要作用简化模版视图页面查找的，但是需要注意，前后端分离项目，后端只返回JSON数据，不返回页面，那就不需要视图解析器！所以，视图解析器，相对其他的组件不是必须的！[财务]</li>
+</ol>
+<p><strong>快速体验</strong></p>
+<p>简单的实现</p>
+<p>controller层</p>
+<pre><code class="java">package com.chenw.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+@Controller
+public class HelloController &#123;
+
+    //handlers
+
+    /**
+     * handler就是controller内部的具体方法
+     * @RequestMapping(&quot;/springmvc/hello&quot;) 就是用来向handlerMapping中注册的方法注解!
+     * @ResponseBody 代表向浏览器直接返回数据!不要找视图解析器
+     */
+    @RequestMapping(&quot;/springmvc/hello&quot;)
+    @ResponseBody
+    public String hello()&#123;
+        System.out.println(&quot;HelloController.hello&quot;);
+        return &quot;hello springmvc!!&quot;;
+    &#125;
+&#125;
+</code></pre>
+<p>配置MvcConfig</p>
+<pre><code class="java">package com.chenw.config;
+
+
+import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
+
+/*
+*   TODO:1.cotroller配置到ioc容器
+*          2，handlerMapping handlerAdapter加入到ioc容器
+* */
+@Configurable
+@ComponentScan(&quot;com.chenw.controller&quot;)
+public class MvcConfig &#123;
+    @Bean
+    public RequestMappingHandlerMapping requestMappingHandlerMapping()&#123;
+        return new RequestMappingHandlerMapping();
+    &#125;
+    @Bean
+    public RequestMappingHandlerAdapter requestMappingHandlerAdapter()&#123;
+        return new RequestMappingHandlerAdapter();
+        
+    &#125;
+&#125;
+</code></pre>
+<p>初始化配置文件 </p>
+<pre><code class="java">package com.chenw.config;
+
+import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
+
+/*
+*   可以被web项目加载，初始化ioc容器，会设置dispatcherServlet的地址
+* */
+public class SpringMvcInit extends AbstractAnnotationConfigDispatcherServletInitializer &#123;
+    @Override
+    protected Class&lt;?&gt;[] getRootConfigClasses() &#123;
+        return new Class[0];
+    &#125;
+
+    /*
+    *   用来设置项目的配置类
+    * */
+    @Override
+    protected Class&lt;?&gt;[] getServletConfigClasses() &#123;
+        return new Class[]&#123;MvcConfig.class&#125;;
+    &#125;
+    /*
+    * 用于配置springmvc内部自带的servlet的访问地址,因为要拦截所有的地址，所以使用/
+    * */
+    @Override
+    protected String[] getServletMappings() &#123;
+        return new String[]&#123;&quot;/&quot;&#125;;
+    &#125;
+&#125;
+</code></pre>
+<ol>
+<li><p>体验场景需求</p>
+<p> <img src="https://secure2.wostatic.cn/static/qgxZRg9rZ6DFA7t8guNqYn/image.png?auth_key=1714201059-6QXr2BHewFu35Zo2xJRnkj-0-ea3a869f91f76f81d9c2327eca2f31db"></p>
+</li>
+<li><p>配置分析</p>
+<ol>
+<li>DispatcherServlet，设置处理所有请求！</li>
+<li>HandlerMapping,HandlerAdapter,Handler需要加入到IoC容器，供DS调用！</li>
+<li>Handler自己声明（Controller）需要配置到HandlerMapping中供DS查找！</li>
+</ol>
+</li>
+<li><p>准备项目</p>
+<ol>
+<li><p>创建项目</p>
+<p> springmvc-base-quick</p>
+<p> 注意：需要转成maven&#x2F;web程序！！</p>
+</li>
+<li><p>导入依赖</p>
+</li>
+</ol>
+</li>
+</ol>
+<pre><code class="XML">&lt;properties&gt;
+    &lt;spring.version&gt;6.0.6&lt;/spring.version&gt;
+    &lt;servlet.api&gt;9.1.0&lt;/servlet.api&gt;
+    &lt;maven.compiler.source&gt;17&lt;/maven.compiler.source&gt;
+    &lt;maven.compiler.target&gt;17&lt;/maven.compiler.target&gt;
+    &lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
+&lt;/properties&gt;
+
+&lt;dependencies&gt;
+    &lt;!-- springioc相关依赖  --&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-context&lt;/artifactId&gt;
+        &lt;version&gt;$&#123;spring.version&#125;&lt;/version&gt;
+    &lt;/dependency&gt;
+
+    &lt;!-- web相关依赖  --&gt;
+    &lt;!-- 在 pom.xml 中引入 Jakarta EE Web API 的依赖 --&gt;
+    &lt;!--
+        在 Spring Web MVC 6 中，Servlet API 迁移到了 Jakarta EE API，因此在配置 DispatcherServlet 时需要使用
+         Jakarta EE 提供的相应类库和命名空间。错误信息 “‘org.springframework.web.servlet.DispatcherServlet’
+         is not assignable to ‘javax.servlet.Servlet,jakarta.servlet.Servlet’” 表明你使用了旧版本的
+         Servlet API，没有更新到 Jakarta EE 规范。
+    --&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;jakarta.platform&lt;/groupId&gt;
+        &lt;artifactId&gt;jakarta.jakartaee-web-api&lt;/artifactId&gt;
+        &lt;version&gt;$&#123;servlet.api&#125;&lt;/version&gt;
+        &lt;scope&gt;provided&lt;/scope&gt;
+    &lt;/dependency&gt;
+
+    &lt;!-- springwebmvc相关依赖  --&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-webmvc&lt;/artifactId&gt;
+        &lt;version&gt;$&#123;spring.version&#125;&lt;/version&gt;
+    &lt;/dependency&gt;
+
+&lt;/dependencies&gt;
+</code></pre>
+<ol start="4">
+<li>Controller声明</li>
+</ol>
+<pre><code class="Java">@Controller
+public class HelloController &#123;
+
+    //handlers
+
+    /**
+     * handler就是controller内部的具体方法
+     * @RequestMapping(&quot;/springmvc/hello&quot;) 就是用来向handlerMapping中注册的方法注解!
+     * @ResponseBody 代表向浏览器直接返回数据!
+     */
+    @RequestMapping(&quot;/springmvc/hello&quot;)
+    @ResponseBody
+    public String hello()&#123;
+        System.out.println(&quot;HelloController.hello&quot;);
+        return &quot;hello springmvc!!&quot;;
+    &#125;
+&#125;
+</code></pre>
+<ol start="5">
+<li><p>Spring MVC核心组件配置类</p>
+<blockquote>
+<p>声明springmvc涉及组件信息的配置类</p>
+</blockquote>
+</li>
+</ol>
+<pre><code class="Java">//TODO: SpringMVC对应组件的配置类 [声明SpringMVC需要的组件信息]
+
+//TODO: 导入handlerMapping和handlerAdapter的三种方式
+ //1.自动导入handlerMapping和handlerAdapter [推荐]
+ //2.可以不添加,springmvc会检查是否配置handlerMapping和handlerAdapter,没有配置默认加载
+ //3.使用@Bean方式配置handlerMapper和handlerAdapter
+@EnableWebMvc     
+@Configuration
+@ComponentScan(basePackages = &quot;com.atguigu.controller&quot;) //TODO: 进行controller扫
+//WebMvcConfigurer springMvc进行组件配置的规范,配置组件,提供各种方法! 前期可以实现
+public class SpringMvcConfig implements WebMvcConfigurer &#123;
+
+    @Bean
+    public HandlerMapping handlerMapping()&#123;
+        return new RequestMappingHandlerMapping();
+    &#125;
+
+    @Bean
+    public HandlerAdapter handlerAdapter()&#123;
+        return new RequestMappingHandlerAdapter();
+    &#125;
+    
+&#125;
+</code></pre>
+<ol start="6">
+<li><p>SpringMVC环境搭建</p>
+<blockquote>
+<p>对于使用基于 Java 的 Spring 配置的应用程序，建议这样做，如以下示例所示：</p>
+</blockquote>
+</li>
+</ol>
+<pre><code class="Java">//TODO: SpringMVC提供的接口,是替代web.xml的方案,更方便实现完全注解方式ssm处理!
+//TODO: Springmvc框架会自动检查当前类的实现类,会自动加载 getRootConfigClasses / getServletConfigClasses 提供的配置类
+//TODO: getServletMappings 返回的地址 设置DispatherServlet对应处理的地址
+public class MyWebAppInitializer extends AbstractAnnotationConfigDispatcherServletInitializer &#123;
+
+  /**
+   * 指定service / mapper层的配置类
+   */
+  @Override
+  protected Class&lt;?&gt;[] getRootConfigClasses() &#123;
+    return null;
+  &#125;
+
+  /**
+   * 指定springmvc的配置类
+   * @return
+   */
+  @Override
+  protected Class&lt;?&gt;[] getServletConfigClasses() &#123;
+    return new Class&lt;?&gt;[] &#123; SpringMvcConfig.class &#125;;
+  &#125;
+
+  /**
+   * 设置dispatcherServlet的处理路径!
+   * 一般情况下为 / 代表处理所有请求!
+   */
+  @Override
+  protected String[] getServletMappings() &#123;
+    return new String[] &#123; &quot;/&quot; &#125;;
+  &#125;
+&#125;
+</code></pre>
+<ol start="7">
+<li><p>启动测试</p>
+<p> 注意： tomcat应该是10+版本！方可支持 Jakarta EE API!</p>
+<p> <img src="https://secure2.wostatic.cn/static/iQSLu8VreeyFX913Ab3QQc/image.png?auth_key=1714201059-o2jkbdd7puKkNXZWcc1ab9-0-253af2820417e080c6e72b952ea38631"></p>
+</li>
+</ol>
+<p><strong>springMVC接收数据</strong></p>
+<p><strong>访问路径设置</strong></p>
+<p>  @RequestMapping注解的作用就是将请求的 URL 地址和处理请求的方式（handler方法）关联起来，建立映射关系。</p>
+<p>  SpringMVC 接收到指定的请求，就会来找到在映射关系中对应的方法来处理这个请求。</p>
+<ol>
+<li><p><strong>精准路径匹配</strong></p>
+<p> 在@RequestMapping注解指定 URL 地址时，不使用任何通配符，按照请求地址进行精确匹配。</p>
+</li>
+</ol>
+<pre><code class="Java">@Controller
+public class UserController &#123;
+
+    /**
+     * 精准设置访问地址 /user/login
+     */
+    @RequestMapping(value = &#123;&quot;/user/login&quot;&#125;)
+    @ResponseBody
+    public String login()&#123;
+        System.out.println(&quot;UserController.login&quot;);
+        return &quot;login success!!&quot;;
+    &#125;
+
+    /**
+     * 精准设置访问地址 /user/register
+     */
+    @RequestMapping(value = &#123;&quot;/user/register&quot;&#125;)
+    @ResponseBody
+    public String register()&#123;
+        System.out.println(&quot;UserController.register&quot;);
+        return &quot;register success!!&quot;;
+    &#125;
+    
+&#125;
+</code></pre>
+<ol start="2">
+<li><p><strong>模糊路径匹配</strong></p>
+<p> 在@RequestMapping注解指定 URL 地址时，通过使用通配符，匹配多个类似的地址。</p>
+</li>
+</ol>
+<pre><code class="Java">@Controller
+public class ProductController &#123;
+
+    /**
+     *  路径设置为 /product/*  
+     *    /* 为单层任意字符串  /product/a  /product/aaa 可以访问此handler  
+     *    /product/a/a 不可以
+     *  路径设置为 /product/** 
+     *   /** 为任意层任意字符串  /product/a  /product/aaa 可以访问此handler  
+     *   /product/a/a 也可以访问
+     */
+    @RequestMapping(&quot;/product/*&quot;)
+    @ResponseBody
+    public String show()&#123;
+        System.out.println(&quot;ProductController.show&quot;);
+        return &quot;product show!&quot;;
+    &#125;
+&#125;
+</code></pre>
+<pre><code class="text">单层匹配和多层匹配：
+  /*：只能匹配URL地址中的一层，如果想准确匹配两层，那么就写“/*/*”以此类推。
+  /**：可以匹配URL地址中的多层。
+其中所谓的一层或多层是指一个URL地址字符串被“/”划分出来的各个层次
+这个知识点虽然对于@RequestMapping注解来说实用性不大，但是将来配置拦截器的时候也遵循这个规则。
+</code></pre>
+<ol start="3">
+<li><p><strong>类和方法级别区别</strong></p>
+<p> <code>@RequestMapping</code> 注解可以用于类级别和方法级别，它们之间的区别如下：</p>
+<ol>
+<li>设置到类级别：<code>@RequestMapping</code> 注解可以设置在控制器类上，用于映射整个控制器的通用请求路径。这样，如果控制器中的多个方法都需要映射同一请求路径，就不需要在每个方法上都添加映射路径。</li>
+<li>设置到方法级别：<code>@RequestMapping</code> 注解也可以单独设置在控制器方法上，用于更细粒度地映射请求路径和处理方法。当多个方法处理同一个路径的不同操作时，可以使用方法级别的 <code>@RequestMapping</code> 注解进行更精细的映射。</li>
+</ol>
+</li>
+</ol>
+<pre><code class="Java">//1.标记到handler方法
+@RequestMapping(&quot;/user/login&quot;)
+@RequestMapping(&quot;/user/register&quot;)
+@RequestMapping(&quot;/user/logout&quot;)
+
+//2.优化标记类+handler方法
+//类上
+@RequestMapping(&quot;/user&quot;)
+//handler方法上
+@RequestMapping(&quot;/login&quot;)
+@RequestMapping(&quot;/register&quot;)
+@RequestMapping(&quot;/logout&quot;)
+</code></pre>
+<ol start="4">
+<li><p><strong>附带请求方式限制</strong></p>
+<p> HTTP 协议定义了八种请求方式，在 SpringMVC 中封装到了下面这个枚举类：</p>
+</li>
+</ol>
+<pre><code class="Java">public enum RequestMethod &#123;
+  GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS, TRACE
+&#125;
+</code></pre>
+<pre><code>  默认情况下：@RequestMapping(&quot;/logout&quot;) 任何请求方式都可以访问！
+
+  如果需要特定指定：
+</code></pre>
+<pre><code class="Java">@Controller
+public class UserController &#123;
+
+    /**
+     * 精准设置访问地址 /user/login
+     * method = RequestMethod.POST 可以指定单个或者多个请求方式!
+     * 注意:违背请求方式会出现405异常!
+     */
+    @RequestMapping(value = &#123;&quot;/user/login&quot;&#125; , method = RequestMethod.POST)
+    @ResponseBody
+    public String login()&#123;
+        System.out.println(&quot;UserController.login&quot;);
+        return &quot;login success!!&quot;;
+    &#125;
+
+    /**
+     * 精准设置访问地址 /user/register
+     */
+    @RequestMapping(value = &#123;&quot;/user/register&quot;&#125;,method = &#123;RequestMethod.POST,RequestMethod.GET&#125;)
+    @ResponseBody
+    public String register()&#123;
+        System.out.println(&quot;UserController.register&quot;);
+        return &quot;register success!!&quot;;
+    &#125;
+
+&#125;
+</code></pre>
+<pre><code>  注意：违背请求方式，会出现405异常！！！
+</code></pre>
+<ol start="5">
+<li><p><strong>进阶注解</strong></p>
+<p> 还有 <code>@RequestMapping</code> 的 HTTP 方法特定快捷方式变体：</p>
+<ul>
+<li><code>@GetMapping</code></li>
+<li><code>@PostMapping</code></li>
+<li><code>@PutMapping</code></li>
+<li><code>@DeleteMapping</code></li>
+<li><code>@PatchMapping</code></li>
+</ul>
+</li>
+</ol>
+<pre><code class="Java">@RequestMapping(value=&quot;/login&quot;,method=RequestMethod.GET)
+||
+@GetMapping(value=&quot;/login&quot;)
+</code></pre>
+<pre><code>  注意：进阶注解只能添加到handler方法上，无法添加到类上！
+</code></pre>
+<ol start="6">
+<li><p><strong>常见配置问题</strong></p>
+<p> 出现原因：多个 handler 方法映射了同一个地址，导致 SpringMVC 在接收到这个地址的请求时该找哪个 handler 方法处理。</p>
+<blockquote>
+<p>There is already ‘demo03MappingMethodHandler’ bean method com.atguigu.mvc.handler.Demo03MappingMethodHandler#empGet() <strong>mapped</strong>.</p>
+</blockquote>
+</li>
+</ol>
+<pre><code class="java">package com.chenw.requestmapping;
+
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+@Controller
+/*
+*   如果RequestMapping标记在类上面的话
+*   默认是路径的开头
+* */
+
+/*
+*   请求方式
+*       默认的情况 @RequestMapping主要地址正确，任何的请求方式都可以访问
+*       限制请求方式
+*           @RequestMapping(value = &quot;/login&quot;,method = RequestMethod.POST) //   /user/login 指定访问的方法为post
+*           如果没有按照规定的请求方式访问就会报405
+*           或者使用注解
+*           @GetMapping //get请求地址
+*           @PostMapping(&quot;/login&quot;)
+*
+* */
+@RequestMapping(&quot;user&quot;)
+public class UserController &#123;
+    //handler  - HandlerMapping指定访问的地址
+    //RequestMapping//作用注册地址 将handler注册到handlerMapping
+    /*
+    *   之前的@WebServlet(必须以斜线开头)
+    *   但是这个的@RequestMapping(用不用斜线开头也是可以的)
+    *   多个地址使用数组&#123;“1”，“2”&#125;
+    *   模糊匹配 /user/*
+    * */
+    @RequestMapping(value = &quot;/login&quot;,method = RequestMethod.POST) //   /user/login 指定访问的方法为post
+    public String login()&#123;
+        return null;
+    &#125;
+
+
+    @RequestMapping(&quot;/register&quot;)//  /user/register
+    public String register()&#123;
+        return null;
+    &#125;
+
+
+&#125;
+</code></pre>
+<p><strong>接收参数</strong></p>
+<p><strong>param 和 json参数比较</strong></p>
+<p>  在 HTTP 请求中，我们可以选择不同的参数类型，如 param 类型和 JSON 类型。下面对这两种参数类型进行区别和对比：</p>
+<ol>
+<li><p>参数编码：  </p>
+<p> param 类型的参数会被编码为 ASCII 码。例如，假设 <code>name=john doe</code>，则会被编码为 <code>name=john%20doe</code>。而 JSON 类型的参数会被编码为 UTF-8。</p>
+</li>
+<li><p>参数顺序：  </p>
+<p> param 类型的参数没有顺序限制。但是，JSON 类型的参数是有序的。JSON 采用键值对的形式进行传递，其中键值对是有序排列的。</p>
+</li>
+<li><p>数据类型：  </p>
+<p> param 类型的参数仅支持字符串类型、数值类型和布尔类型等简单数据类型。而 JSON 类型的参数则支持更复杂的数据类型，如数组、对象等。</p>
+</li>
+<li><p>嵌套性：  </p>
+<p> param 类型的参数不支持嵌套。但是，JSON 类型的参数支持嵌套，可以传递更为复杂的数据结构。</p>
+</li>
+<li><p>可读性：  </p>
+<p> param 类型的参数格式比 JSON 类型的参数更加简单、易读。但是，JSON 格式在传递嵌套数据结构时更加清晰易懂。</p>
+</li>
+</ol>
+<p>  总的来说，param 类型的参数适用于单一的数据传递，而 JSON 类型的参数则更适用于更复杂的数据结构传递。根据具体的业务需求，需要选择合适的参数类型。在实际开发中，常见的做法是：在 GET 请求中采用 param 类型的参数，而在 POST 请求中采用 JSON 类型的参数传递。</p>
 
     </div>
     
