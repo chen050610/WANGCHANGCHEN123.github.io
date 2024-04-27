@@ -177,7 +177,7 @@
             
             <span class="tag">
                 
-                <a href="/tags/chenw/" style="color: #03a9f4">chenw</a>
+                <a href="/tags/chenw/" style="color: #ff7d73">chenw</a>
             </span>
             
             <span class="tag">
@@ -2021,9 +2021,7 @@ public class XxxDao &#123;
 <td>该注解通常作用在控制层（如SpringMVC 的 Controller），用于将控制层的类标识为 Spring 中的 Bean，其功能与 @Component 相同。</td>
 </tr>
 </tbody></table>
-<p>​<br>​          通过查看源码我们得知，@Controller、@Service、@Repository这三个注解只是在@Component注解的基础上起了三个新的名字。<br>​<br>​          对于Spring使用IOC容器管理这些组件来说没有区别，也就是语法层面没有区别。所以@Controller、@Service、@Repository这三个注解只是给开发人员看的，让我们能够便于分辨组件的作用。<br>​<br>          注意：虽然它们本质上一样，但是为了代码的可读性、程序结构严谨！我们肯定不能随便胡乱标记。<br>      2. 使用注解标记</p>
-<pre><code>      普通组件
-</code></pre>
+<p>​<br>​          通过查看源码我们得知，@Controller、@Service、@Repository这三个注解只是在@Component注解的基础上起了三个新的名字。<br>​<br>​          对于Spring使用IOC容器管理这些组件来说没有区别，也就是语法层面没有区别。所以@Controller、@Service、@Repository这三个注解只是给开发人员看的，让我们能够便于分辨组件的作用。<br>​<br>​          注意：虽然它们本质上一样，但是为了代码的可读性、程序结构严谨！我们肯定不能随便胡乱标记。<br>​      2. 使用注解标记<br>​<br>​          普通组件</p>
 <pre><code class="Java">/**
  * projectName: com.atguigu.components
  *
@@ -5809,7 +5807,1907 @@ List&lt;Employee&gt; queryBySalary(Double salary);
         from t_emp where emp_salary = #&#123;salary&#125;
     &lt;/select&gt;
 </code></pre>
-<pre><code>
+<p><strong>零散的简单类型数据</strong></p>
+<p>  零散的多个简单类型参数，如果没有特殊处理，那么Mybatis无法识别自定义名称：</p>
+<p>  <img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image.png"></p>
+<p>  Mapper接口中抽象方法的声明</p>
+<pre><code class="Java">int updateEmployee(@Param(&quot;empId&quot;) Integer empId,@Param(&quot;empSalary&quot;) Double empSalary);
+</code></pre>
+<p>  SQL语句</p>
+<pre><code class="XML">&lt;update id=&quot;updateEmployee&quot;&gt;
+  update t_emp set emp_salary=#&#123;empSalary&#125; where emp_id=#&#123;empId&#125;
+&lt;/update&gt;
+</code></pre>
+<p>  对应关系</p>
+<p>  <img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/img007.976da128.png"></p>
+<p><strong>或者使用myBatis的默认机制</strong></p>
+<p>args args0 ….形参左到右依次对应,或者是param1.。。。这个方法是从1开始<br>例如</p>
+<pre><code class="java">
+    List&lt;Employee&gt; queryByNameAndSalary(String name, String salary)
+
+
+
+    &lt;select id=&quot;queryByNameAndSalary&quot; resultType=&quot;chenw.pojo.Employee&quot;&gt;
+            select emp_id as empId ,emp_name as empName ,emp_salary as empSalary
+            from t_emp where emp_name = #&#123;arg0&#125; and emp_salary=#&#123;arg1&#125;
+    &lt;/select&gt;
+</code></pre>
+<p><strong>Map类型参数</strong></p>
+<p>  Mapper接口中抽象方法的声明</p>
+<pre><code class="Java">int updateEmployeeByMap(Map&lt;String, Object&gt; paramMap);
+</code></pre>
+<p>  SQL语句</p>
+<pre><code class="XML">    &lt;!--
+        传入map指定key的值
+            map的key等于和传入实体类一样
+     --&gt;
+
+&lt;update id=&quot;updateEmployeeByMap&quot;&gt;
+
+  update t_emp set emp_salary=#&#123;empSalaryKey&#125; where emp_id=#&#123;empIdKey&#125;
+
+&lt;/update&gt;
+</code></pre>
+<p>  junit测试</p>
+<pre><code class="Java">private SqlSession session;
+//junit5会在每一个@Test方法前执行@BeforeEach方法
+@BeforeEach
+public void init() throws IOException &#123;
+    session = new SqlSessionFactoryBuilder()
+            .build(
+                    Resources.getResourceAsStream(&quot;mybatis-config.xml&quot;))
+            .openSession();
+&#125;
+
+@Test
+public void testUpdateEmpNameByMap() &#123;
+  EmployeeMapper mapper = session.getMapper(EmployeeMapper.class);
+  Map&lt;String, Object&gt; paramMap = new HashMap&lt;&gt;();
+  paramMap.put(&quot;empSalaryKey&quot;, 999.99);
+  paramMap.put(&quot;empIdKey&quot;, 5);
+  int result = mapper.updateEmployeeByMap(paramMap);
+  log.info(&quot;result = &quot; + result);
+&#125;
+
+//junit5会在每一个@Test方法后执行@@AfterEach方法
+@AfterEach
+public void clear() &#123;
+    session.commit();
+    session.close();
+&#125;
+</code></pre>
+<p>  <strong>对应关系</strong></p>
+<p>  #{}中写Map中的key</p>
+<p>  <strong>使用场景</strong></p>
+<p>  有很多零散的参数需要传递，但是没有对应的实体类类型可以使用。使用@Param注解一个一个传入又太麻烦了。所以都封装到Map中。</p>
+<p><strong>数据输出</strong></p>
+<p><strong>输出概述</strong></p>
+<p>  数据输出总体上有两种形式：</p>
+<ul>
+<li>增删改操作返回的受影响行数：直接使用 int 或 long 类型接收即可</li>
+<li>查询操作的查询结果</li>
+</ul>
+<p>  我们需要做的是，指定查询的输出数据类型即可！</p>
+<p>  并且插入场景下，实现主键数据回显示！</p>
+<p><strong>单个简单类型</strong></p>
+<p>  Mapper接口中的抽象方法</p>
+<pre><code class="Java">int selectEmpCount();
+</code></pre>
+<p>  SQL语句</p>
+<pre><code class="XML">&lt;select id=&quot;selectEmpCount&quot; resultType=&quot;int&quot;&gt;
+  select count(*) from t_emp
+&lt;/select&gt;
+</code></pre>
+<blockquote>
+<p>Mybatis 内部给常用的数据类型设定了很多别名。 以 int 类型为例，可以写的名称有：int、integer、Integer、java.lang.Integer、Int、INT、INTEGER 等等。</p>
+</blockquote>
+<p>  junit测试</p>
+<pre><code class="Java">@Test
+
+public void testEmpCount() &#123;
+
+  EmployeeMapper employeeMapper = session.getMapper(EmployeeMapper.class);
+
+  int count = employeeMapper.selectEmpCount();
+
+  log.info(&quot;count = &quot; + count);
+
+&#125;
+</code></pre>
+<p>  <strong>细节解释：</strong></p>
+<pre><code>select标签，通过resultType指定查询返回值类型！
+
+resultType = &quot;全限定符 ｜ 别名 ｜ 如果是返回集合类型，写范型类型即可&quot;
+</code></pre>
+<p>  别名问题：</p>
+<pre><code>类型别名可为 Java 类型设置一个缩写名字。 它仅用于 XML 配置，意在降低冗余的全限定类名书写。例如：
+</code></pre>
+<pre><code class="XML">&lt;typeAliases&gt;
+  &lt;typeAlias alias=&quot;Author&quot; type=&quot;domain.blog.Author&quot;/&gt;
+  &lt;typeAlias alias=&quot;Blog&quot; type=&quot;domain.blog.Blog&quot;/&gt;
+&lt;/typeAliases&gt;
+</code></pre>
+<pre><code>当这样配置时，`Blog` 可以用在任何使用 `domain.blog.Blog` 的地方。
+
+也可以指定一个包名，MyBatis 会在包名下面搜索需要的 Java Bean，比如：
+</code></pre>
+<pre><code class="XML">&lt;typeAliases&gt; 
+    &lt;package name=&quot;domain.blog&quot;/&gt; 
+&lt;/typeAliases&gt;
+</code></pre>
+<pre><code>每一个在包 `domain.blog` 中的 Java Bean，在没有注解的情况下，会使用 Bean 的首字母小写的非限定类名来作为它的别名。 比如 `domain.blog.Author` 的别名为 `author`；若有注解，则别名为其注解值。见下面的例子：
+</code></pre>
+<pre><code class="Java">@Alias(&quot;author&quot;)
+public class Author &#123;
+    ...
+&#125;
+</code></pre>
+<pre><code>下面是Mybatis为常见的 Java 类型内建的类型别名。它们都是不区分大小写的，注意，为了应对原始类型的命名重复，采取了特殊的命名风格。
+        一般基本数据类型的别名是前面加上_
+        包装类型的数据类型是第一个字母小写
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>别名</th>
+<th>映射的类型</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>_byte</td>
+<td>byte</td>
+</tr>
+<tr>
+<td>_char (since 3.5.10)</td>
+<td>char</td>
+</tr>
+<tr>
+<td>_character (since 3.5.10)</td>
+<td>char</td>
+</tr>
+<tr>
+<td>_long</td>
+<td>long</td>
+</tr>
+<tr>
+<td>_short</td>
+<td>short</td>
+</tr>
+<tr>
+<td>_int</td>
+<td>int</td>
+</tr>
+<tr>
+<td>_integer</td>
+<td>int</td>
+</tr>
+<tr>
+<td>_double</td>
+<td>double</td>
+</tr>
+<tr>
+<td>_float</td>
+<td>float</td>
+</tr>
+<tr>
+<td>_boolean</td>
+<td>boolean</td>
+</tr>
+<tr>
+<td>string</td>
+<td>String</td>
+</tr>
+<tr>
+<td>byte</td>
+<td>Byte</td>
+</tr>
+<tr>
+<td>char (since 3.5.10)</td>
+<td>Character</td>
+</tr>
+<tr>
+<td>character (since 3.5.10)</td>
+<td>Character</td>
+</tr>
+<tr>
+<td>long</td>
+<td>Long</td>
+</tr>
+<tr>
+<td>short</td>
+<td>Short</td>
+</tr>
+<tr>
+<td>int</td>
+<td>Integer</td>
+</tr>
+<tr>
+<td>integer</td>
+<td>Integer</td>
+</tr>
+<tr>
+<td>double</td>
+<td>Double</td>
+</tr>
+<tr>
+<td>float</td>
+<td>Float</td>
+</tr>
+<tr>
+<td>boolean</td>
+<td>Boolean</td>
+</tr>
+<tr>
+<td>date</td>
+<td>Date</td>
+</tr>
+<tr>
+<td>decimal</td>
+<td>BigDecimal</td>
+</tr>
+<tr>
+<td>bigdecimal</td>
+<td>BigDecimal</td>
+</tr>
+<tr>
+<td>biginteger</td>
+<td>BigInteger</td>
+</tr>
+<tr>
+<td>object</td>
+<td>Object</td>
+</tr>
+<tr>
+<td>object[]</td>
+<td>Object[]</td>
+</tr>
+<tr>
+<td>map</td>
+<td>Map</td>
+</tr>
+<tr>
+<td>hashmap</td>
+<td>HashMap</td>
+</tr>
+<tr>
+<td>list</td>
+<td>List</td>
+</tr>
+<tr>
+<td>arraylist</td>
+<td>ArrayList</td>
+</tr>
+<tr>
+<td>collection</td>
+<td>Collection</td>
+</tr>
+</tbody></table>
+<p><strong>设置数据库名称和实体类属性值的自动映射</strong></p>
+<pre><code>在数据库里面的都是 用_ 进行设置，但是在实体类使用驼峰命名
+    如果需要查询保存在实体类需要在sql语句里面使用as语句
+    更简单可以是使用映射
+    
+</code></pre>
+<pre><code>mapUnderscoreToCamelCase
+    是否开始驼峰命名自动映射，即从经典数据库列名A_CoLUMN映射到经典Java属性名aClumn
+</code></pre>
+<p><strong>返回Map类型</strong></p>
+<p>  适用于SQL查询返回的各个字段综合起来并不和任何一个现有的实体类对应，没法封装到实体类对象中。能够封装成实体类类型的，就不使用Map类型。</p>
+<p>  Mapper接口的抽象方法</p>
+<pre><code class="Java">Map&lt;String,Object&gt; selectEmpNameAndMaxSalary();
+</code></pre>
+<p>  SQL语句</p>
+<pre><code class="XML">&lt;!-- Map&lt;String,Object&gt; selectEmpNameAndMaxSalary(); --&gt;
+&lt;!-- 返回工资最高的员工的姓名和他的工资 --&gt;
+&lt;select id=&quot;selectEmpNameAndMaxSalary&quot; resultType=&quot;map&quot;&gt;
+  SELECT
+    emp_name 员工姓名,
+    emp_salary 员工工资,
+    (SELECT AVG(emp_salary) FROM t_emp) 部门平均工资
+  FROM t_emp WHERE emp_salary=(
+    SELECT MAX(emp_salary) FROM t_emp
+  )
+&lt;/select&gt;
+</code></pre>
+<p>  junit测试</p>
+<pre><code class="Java">@Test
+public void testQueryEmpNameAndSalary() &#123;
+
+  EmployeeMapper employeeMapper = session.getMapper(EmployeeMapper.class);
+
+  Map&lt;String, Object&gt; resultMap = employeeMapper.selectEmpNameAndMaxSalary();
+
+  Set&lt;Map.Entry&lt;String, Object&gt;&gt; entrySet = resultMap.entrySet();
+
+  for (Map.Entry&lt;String, Object&gt; entry : entrySet) &#123;
+
+    String key = entry.getKey();
+
+    Object value = entry.getValue();
+
+    log.info(key + &quot;=&quot; + value);
+
+  &#125;
+&#125;
+</code></pre>
+<p><strong>返回List类型</strong></p>
+<p>  查询结果返回多个实体类对象，希望把多个实体类对象放在List集合中返回。此时不需要任何特殊处理，在resultType属性中还是设置实体类类型即可。</p>
+<pre><code>如果是返回的类型的是集合,resultType里面的写的是泛型的类型，而不是string的类型
+</code></pre>
+<p>  Mapper接口中抽象方法</p>
+<pre><code class="Java">List&lt;Employee&gt; selectAll();
+</code></pre>
+<p>  SQL语句</p>
+<pre><code class="XML">&lt;!-- List&lt;Employee&gt; selectAll(); --&gt;
+&lt;select id=&quot;selectAll&quot; resultType=&quot;com.atguigu.mybatis.entity.Employee&quot;&gt;
+  select emp_id empId,emp_name empName,emp_salary empSalary
+  from t_emp
+&lt;/select&gt;
+</code></pre>
+<p>  junit测试</p>
+<pre><code class="Java">@Test
+public void testSelectAll() &#123;
+  EmployeeMapper employeeMapper = session.getMapper(EmployeeMapper.class);
+  List&lt;Employee&gt; employeeList = employeeMapper.selectAll();
+  for (Employee employee : employeeList) &#123;
+    log.info(&quot;employee = &quot; + employee);
+  &#125;
+&#125;
+</code></pre>
+<p><strong>返回主键值</strong></p>
+<pre><code>我们在执行DML语句回显操作的主键
+</code></pre>
+<ol>
+<li><p><strong>自增长类型主键</strong></p>
+<p> Mapper接口中的抽象方法</p>
+</li>
+</ol>
+<pre><code class="Java">int insertEmployee(Employee employee);
+</code></pre>
+<pre><code>SQL语句
+</code></pre>
+<pre><code class="XML">&lt;!-- int insertEmployee(Employee employee); --&gt;
+&lt;!-- useGeneratedKeys属性字面意思就是“使用生成的主键” --&gt;
+&lt;!-- keyProperty属性可以指定主键在实体类对象中对应的属性名，Mybatis会将拿到的主键值存入这个属性 --&gt;
+&lt;insert id=&quot;insertEmployee&quot; useGeneratedKeys=&quot;true&quot; keyProperty=&quot;empId&quot;&gt;
+  insert into t_emp(emp_name,emp_salary)
+  values(#&#123;empName&#125;,#&#123;empSalary&#125;)
+&lt;/insert&gt;
+</code></pre>
+<pre><code>junit测试
+</code></pre>
+<pre><code class="Java">@Test
+public void testSaveEmp() &#123;
+  EmployeeMapper employeeMapper = session.getMapper(EmployeeMapper.class);
+  Employee employee = new Employee();
+  employee.setEmpName(&quot;john&quot;);
+  employee.setEmpSalary(666.66);
+  employeeMapper.insertEmployee(employee);
+  log.info(&quot;employee.getEmpId() = &quot; + employee.getEmpId());
+&#125;
+</code></pre>
+<pre><code>注意
+
+Mybatis是将自增主键的值设置到实体类对象中，而不是以Mapper接口方法返回值的形式返回。
+</code></pre>
+<ol start="2">
+<li><p><strong>非自增长类型主键</strong></p>
+<p> 而对于不支持自增型主键的数据库（例如 Oracle）或者字符串类型主键，则可以使用 selectKey 子元素：selectKey 元素将会首先运行，id 会被设置，然后插入语句会被调用！</p>
+<p> 使用 <code>selectKey</code> 帮助插入UUID作为字符串类型主键示例：</p>
+</li>
+</ol>
+<pre><code class="XML">&lt;insert id=&quot;insertUser&quot; parameterType=&quot;User&quot;&gt;
+    &lt;selectKey keyProperty=&quot;id&quot; resultType=&quot;java.lang.String&quot;
+        order=&quot;BEFORE&quot;&gt;
+        SELECT UUID() as id
+    &lt;/selectKey&gt;
+    INSERT INTO user (id, username, password) 
+    VALUES (
+        #&#123;id&#125;,
+        #&#123;username&#125;,
+        #&#123;password&#125;
+    )
+&lt;/insert&gt;
+</code></pre>
+<p>在上例中，我们定义了一个 <code>insertUser</code> 的插入语句来将 <code>User</code> 对象插入到 <code>user</code> 表中。我们使用 <code>selectKey</code> 来查询 UUID 并设置到 <code>id</code> 字段中。</p>
+<p>通过 <code>keyProperty</code> 属性来指定查询到的 UUID 赋值给对象中的 <code>id</code> 属性，而 <code>resultType</code> 属性指定了 UUID 的类型为 <code>java.lang.String</code>。</p>
+<p>需要注意的是，我们将 <code>selectKey</code> 放在了插入语句的前面，这是因为 MySQL 在 <code>insert</code> 语句中只支持一个 <code>select</code> 子句，而 <code>selectKey</code> 中查询 UUID 的语句就是一个 <code>select</code> 子句，因此我们需要将其放在前面。</p>
+<p>最后，在将 <code>User</code> 对象插入到 <code>user</code> 表中时，我们直接使用对象中的 <code>id</code> 属性来插入主键值。</p>
+<p>使用这种方式，我们可以方便地插入 UUID 作为字符串类型主键。当然，还有其他插入方式可以使用，如使用Java代码生成UUID并在类中显式设置值等。需要根据具体应用场景和需求选择合适的插入方式。</p>
+<p>注意我们在执行DML的语句的时候</p>
+<p>在最后一定要,提交事务，因为Mybatis默认开启事务</p>
+<pre><code class="java">sqlSession.commit()
+</code></pre>
+<pre><code>sqlSessionFactory.openSession()创建sqlSession对象的时候，默认会开启事物
+</code></pre>
+<p>或者我们</p>
+<pre><code class="java">sqlSessionFactory.openSession(true)//这样就默认开启事物并且自动提交事物
+</code></pre>
+<p><strong>非自增长的主键再说一下</strong></p>
+<pre><code>如果我们的主键设置为字符串这样主键就自增不了，所以主键的值需要我们自己进行维护
+</code></pre>
+<p>没有的话，需要我们自己设置</p>
+<pre><code class="java">InputStream ips = Resources.getResourceAsStream(&quot;mybatis-config.xml&quot;);
+SqlSessionFactory build = new SqlSessionFactoryBuilder().build(ips);
+SqlSession sqlSession = build.openSession(true);
+TeacherMapper mapper = sqlSession.getMapper(TeacherMapper.class);
+Teacher teacher = new Teacher();
+teacher.settName(&quot;王昌晨&quot;);
+String replace = UUID.randomUUID().toString().replace(&quot;-&quot;, &quot;&quot;);
+teacher.settId(replace);
+int i = mapper.insertTeacher(teacher);
+System.out.println(&quot;i=&quot;+i);//i=1
+sqlSession.close();
+</code></pre>
+<p>在配置完以后</p>
+<pre><code class="xml">&lt;insert id=&quot;insertTeacher&quot;&gt;
+    &lt;!--插入之前，先指定生成一个sql语句，生成一个主键值--&gt;
+    &lt;!--
+        order代表是在sql语句之前执行还是之后执行
+        resultType返回值的类型
+        keyProperty = 给哪个值进行赋值
+        下面就相当于这样的代码
+                String replace = UUID.randomUUID().toString().replace(&quot;-&quot;, &quot;&quot;);
+                teacher.settId(replace);
+    --&gt;
+    &lt;selectKey order=&quot;BEFORE&quot; resultType=&quot;string&quot; keyProperty=&quot;tId&quot;&gt;
+        select replace(UUID(),&#39;-&#39;,&#39;&#39;);
+    &lt;/selectKey&gt;
+    insert into teacher (t_id,t_name) values (#&#123;tId&#125;,#&#123;tName&#125;);
+&lt;/insert&gt;
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240426233811068.png" alt="image-20240426233811068"></p>
+<p><strong>实体类属性和数据库字段的对应关系</strong></p>
+<ol>
+<li><p>别名对应</p>
+<p> 将字段的别名设置成和实体类属性一致。</p>
+</li>
+</ol>
+<pre><code class="XML">&lt;!-- 编写具体的SQL语句，使用id属性唯一的标记一条SQL语句 --&gt;
+&lt;!-- resultType属性：指定封装查询结果的Java实体类的全类名 --&gt;
+&lt;select id=&quot;selectEmployee&quot; resultType=&quot;com.atguigu.mybatis.entity.Employee&quot;&gt;
+
+  &lt;!-- Mybatis负责把SQL语句中的#&#123;&#125;部分替换成“?”占位符 --&gt;
+  &lt;!-- 给每一个字段设置一个别名，让别名和Java实体类中属性名一致 --&gt;
+  select emp_id empId,emp_name empName,emp_salary empSalary from t_emp where emp_id=#&#123;maomi&#125;
+
+&lt;/select&gt;
+</code></pre>
+<pre><code>&gt; 关于实体类属性的约定：
+</code></pre>
+<p>getXxx()方法、setXxx()方法把方法名中的get或set去掉，首字母小写。<br>2. 全局配置自动识别驼峰式命名规则</p>
+<pre><code>在Mybatis全局配置文件加入如下配置：
+</code></pre>
+<pre><code class="XML">&lt;!-- 使用settings对Mybatis全局进行设置 --&gt;
+&lt;settings&gt;
+
+  &lt;!-- 将xxx_xxx这样的列名自动映射到xxXxx这样驼峰式命名的属性名 --&gt;
+  &lt;setting name=&quot;mapUnderscoreToCamelCase&quot; value=&quot;true&quot;/&gt;
+
+&lt;/settings&gt;
+</code></pre>
+<pre><code>SQL语句中可以不使用别名
+</code></pre>
+<pre><code class="XML">&lt;!-- Employee selectEmployee(Integer empId); --&gt;
+&lt;select id=&quot;selectEmployee&quot; resultType=&quot;com.atguigu.mybatis.entity.Employee&quot;&gt;
+
+  select emp_id,emp_name,emp_salary from t_emp where emp_id=#&#123;empId&#125;
+
+&lt;/select&gt;
+</code></pre>
+<ol start="3">
+<li><p>使用resultMap</p>
+<p> 使用resultMap标签定义对应关系，再在后面的SQL语句中引用这个对应关系</p>
+</li>
+</ol>
+<pre><code class="XML">&lt;!-- 专门声明一个resultMap设定column到property之间的对应关系 --&gt;
+&lt;resultMap id=&quot;selectEmployeeByRMResultMap&quot; type=&quot;com.atguigu.mybatis.entity.Employee&quot;&gt;
+
+  &lt;!-- 使用id标签设置主键列和主键属性之间的对应关系 --&gt;
+  &lt;!-- column属性用于指定字段名；property属性用于指定Java实体类属性名 --&gt;
+  &lt;id column=&quot;emp_id&quot; property=&quot;empId&quot;/&gt;
+
+  &lt;!-- 使用result标签设置普通字段和Java实体类属性之间的关系 --&gt;
+  &lt;result column=&quot;emp_name&quot; property=&quot;empName&quot;/&gt;
+
+  &lt;result column=&quot;emp_salary&quot; property=&quot;empSalary&quot;/&gt;
+
+&lt;/resultMap&gt;
+
+&lt;!-- Employee selectEmployeeByRM(Integer empId); --&gt;
+&lt;select id=&quot;selectEmployeeByRM&quot; resultMap=&quot;selectEmployeeByRMResultMap&quot;&gt;
+
+  select emp_id,emp_name,emp_salary from t_emp where emp_id=#&#123;empId&#125;
+
+&lt;/select&gt;
+</code></pre>
+<pre><code class="xml">&lt;!--
+    别名和属性名字不一样的时候
+        方案1：别名 select t_id tId
+        方案2：开启驼峰映射
+        方案3：resultMap自定义映射
+        resultType会按照规则自动映射 按照 是否开启驼峰式映射，自己映射属性和别名：但是只能映射一层结构，
+        Order实体类                            -数据库列名
+            orderId                                 order_id
+            orderName                               order_name
+                orderItem还是一个实体类对象            item_id
+                    itemId这样深层次的无法映射
+    --&gt;
+&lt;!--
+        id标识，可以让下面的resultType进行引用
+        type，返回的值的类型 全限定符或者别名
+            id是主键的映射关系
+            result是普通列的映射关系
+--&gt;
+&lt;resultMap id=&quot;tMap&quot; type=&quot;com.chenw.pojo.Teacher&quot;&gt;
+    &lt;id column=&quot;t_id&quot; property=&quot;tId&quot;&gt;&lt;/id&gt;
+    &lt;result column=&quot;t_name&quot; property=&quot;tName&quot;&gt;&lt;/result&gt;
+&lt;/resultMap&gt;
+
+&lt;select id=&quot;queryById&quot; resultType=&quot;tMap&quot;&gt;
+    select * from teacher where t_id = #&#123;&#125;
+&lt;/select&gt;
+</code></pre>
+<p><strong>curd的练习</strong></p>
+<ol>
+<li><p>准备数据库数据</p>
+<p> 首先，我们需要准备一张名为 <code>user</code> 的表。该表包含字段 id（主键）、username、password。创建SQL如下：</p>
+</li>
+</ol>
+<pre><code class="SQL">CREATE TABLE `user` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `username` VARCHAR(50) NOT NULL,
+  `password` VARCHAR(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+</code></pre>
+<ol start="2">
+<li><p>实体类准备</p>
+<p> 接下来，我们需要定义一个实体类 <code>User</code>，来对应 user 表的一行数据。</p>
+</li>
+</ol>
+<pre><code class="SQL">@Data //lombok
+public class User &#123;
+  private Integer id;
+  private String username;
+  private String password;
+&#125;
+</code></pre>
+<ol start="3">
+<li><p>Mapper接口定义</p>
+<p> 定义一个 Mapper 接口 <code>UserMapper</code>，并在其中添加 user 表的增、删、改、查方法。</p>
+</li>
+</ol>
+<pre><code class="Java">public interface UserMapper &#123;
+  
+  int insert(User user);
+
+  int update(User user);
+
+  int delete(Integer id);
+
+  User selectById(Integer id);
+
+  List&lt;User&gt; selectAll();
+&#125;
+</code></pre>
+<ol start="4">
+<li><p>MapperXML编写</p>
+<p> 在 resources &#x2F;mappers目录下创建一个名为 <code>UserMapper.xml</code> 的 XML 文件，包含与 Mapper 接口中相同的五个 SQL 语句，并在其中，将查询结果映射到 <code>User</code> 实体中。</p>
+</li>
+</ol>
+<pre><code class="XML">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;
+&lt;!DOCTYPE mapper
+        PUBLIC &quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;
+        &quot;https://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;&gt;
+&lt;!-- namespace等于mapper接口类的全限定名,这样实现对应 --&gt;
+&lt;mapper namespace=&quot;com.atguigu.mapper.UserMapper&quot;&gt;
+  &lt;!-- 定义一个插入语句，并获取主键值 --&gt;
+  &lt;insert id=&quot;insert&quot; useGeneratedKeys=&quot;true&quot; keyProperty=&quot;id&quot;&gt;
+    INSERT INTO user(username, password)
+                VALUES(#&#123;username&#125;, #&#123;password&#125;)
+  &lt;/insert&gt;
+  
+  &lt;update id=&quot;update&quot;&gt;
+    UPDATE user SET username=#&#123;username&#125;, password=#&#123;password&#125;
+    WHERE id=#&#123;id&#125;
+  &lt;/update&gt;
+  
+  &lt;delete id=&quot;delete&quot;&gt;
+    DELETE FROM user WHERE id=#&#123;id&#125;
+  &lt;/delete&gt;
+  &lt;!-- resultType使用user别名，稍后需要配置！--&gt;
+  &lt;select id=&quot;selectById&quot; resultType=&quot;user&quot;&gt;
+    SELECT id, username, password FROM user WHERE id=#&#123;id&#125;
+  &lt;/select&gt;
+  
+  &lt;!-- resultType返回值类型为集合，所以只写范型即可！ --&gt;
+  &lt;select id=&quot;selectAll&quot; resultType=&quot;user&quot;&gt;
+    SELECT id, username, password FROM user
+  &lt;/select&gt;
+  
+&lt;/mapper&gt;
+</code></pre>
+<ol start="5">
+<li><p>MyBatis配置文件</p>
+<p> 位置：resources: mybatis-config.xml</p>
+</li>
+</ol>
+<pre><code class="XML">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;
+&lt;!DOCTYPE configuration
+        PUBLIC &quot;-//mybatis.org//DTD Config 3.0//EN&quot;
+        &quot;http://mybatis.org/dtd/mybatis-3-config.dtd&quot;&gt;
+&lt;configuration&gt;
+
+    &lt;settings&gt;
+        &lt;!-- 开启驼峰式映射--&gt;
+        &lt;setting name=&quot;mapUnderscoreToCamelCase&quot; value=&quot;true&quot;/&gt;
+        &lt;!-- 开启logback日志输出--&gt;
+        &lt;setting name=&quot;logImpl&quot; value=&quot;SLF4J&quot;/&gt;
+    &lt;/settings&gt;
+
+    &lt;typeAliases&gt;
+        &lt;!-- 给实体类起别名 --&gt;
+        &lt;package name=&quot;com.atguigu.pojo&quot;/&gt;
+    &lt;/typeAliases&gt;
+
+    &lt;!-- environments表示配置Mybatis的开发环境，可以配置多个环境，在众多具体环境中，使用default属性指定实际运行时使用的环境。default属性的取值是environment标签的id属性的值。 --&gt;
+    &lt;environments default=&quot;development&quot;&gt;
+        &lt;!-- environment表示配置Mybatis的一个具体的环境 --&gt;
+        &lt;environment id=&quot;development&quot;&gt;
+            &lt;!-- Mybatis的内置的事务管理器 --&gt;
+            &lt;transactionManager type=&quot;JDBC&quot;/&gt;
+            &lt;!-- 配置数据源 --&gt;
+            &lt;dataSource type=&quot;POOLED&quot;&gt;
+                &lt;!-- 建立数据库连接的具体信息 --&gt;
+                &lt;property name=&quot;driver&quot; value=&quot;com.mysql.cj.jdbc.Driver&quot;/&gt;
+                &lt;property name=&quot;url&quot; value=&quot;jdbc:mysql://localhost:3306/mybatis-example&quot;/&gt;
+                &lt;property name=&quot;username&quot; value=&quot;root&quot;/&gt;
+                &lt;property name=&quot;password&quot; value=&quot;root&quot;/&gt;
+            &lt;/dataSource&gt;
+        &lt;/environment&gt;
+    &lt;/environments&gt;
+
+    &lt;mappers&gt;
+        &lt;!-- Mapper注册：指定Mybatis映射文件的具体位置 --&gt;
+        &lt;!-- mapper标签：配置一个具体的Mapper映射文件 --&gt;
+        &lt;!-- resource属性：指定Mapper映射文件的实际存储位置，这里需要使用一个以类路径根目录为基准的相对路径 --&gt;
+        &lt;!--    对Maven工程的目录结构来说，resources目录下的内容会直接放入类路径，所以这里我们可以以resources目录为基准 --&gt;
+        &lt;mapper resource=&quot;mappers/UserMapper.xml&quot;/&gt;
+    &lt;/mappers&gt;
+
+&lt;/configuration&gt;
+</code></pre>
+<ol start="6">
+<li>效果测试</li>
+</ol>
+<pre><code class="Java">package com.atguigu.test;
+
+import com.atguigu.mapper.UserMapper;
+import com.atguigu.pojo.User;
+import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+import java.util.List;
+
+/**
+ * projectName: com.atguigu.test
+ */
+public class MyBatisTest &#123;
+
+    private SqlSession session;
+    // junit会在每一个@Test方法前执行@BeforeEach方法
+
+    @BeforeEach
+    public void init() throws IOException &#123;
+        session = new SqlSessionFactoryBuilder()
+                .build(
+                        Resources.getResourceAsStream(&quot;mybatis-config.xml&quot;))
+                .openSession();
+    &#125;
+
+    @Test
+    public void createTest() &#123;
+        User user = new User();
+        user.setUsername(&quot;admin&quot;);
+        user.setPassword(&quot;123456&quot;);
+        UserMapper userMapper = session.getMapper(UserMapper.class);
+        userMapper.insert(user);
+        System.out.println(user);
+    &#125;
+
+    @Test
+    public void updateTest() &#123;
+        UserMapper userMapper = session.getMapper(UserMapper.class);
+        User user = userMapper.selectById(1);
+        user.setUsername(&quot;root&quot;);
+        user.setPassword(&quot;111111&quot;);
+        userMapper.update(user);
+        user = userMapper.selectById(1);
+        System.out.println(user);
+    &#125;
+
+    @Test
+    public void deleteTest() &#123;
+        UserMapper userMapper = session.getMapper(UserMapper.class);
+        userMapper.delete(1);
+        User user = userMapper.selectById(1);
+        System.out.println(&quot;user = &quot; + user);
+    &#125;
+
+    @Test
+    public void selectByIdTest() &#123;
+        UserMapper userMapper = session.getMapper(UserMapper.class);
+        User user = userMapper.selectById(1);
+        System.out.println(&quot;user = &quot; + user);
+    &#125;
+
+    @Test
+    public void selectAllTest() &#123;
+        UserMapper userMapper = session.getMapper(UserMapper.class);
+        List&lt;User&gt; userList = userMapper.selectAll();
+        System.out.println(&quot;userList = &quot; + userList);
+    &#125;
+
+    // junit会在每一个@Test方法后执行@@AfterEach方法
+    @AfterEach
+    public void clear() &#123;
+        session.commit();
+        session.close();
+    &#125;
+&#125;
+</code></pre>
+<p><strong>mapperXML总结</strong></p>
+<p>MyBatis 的真正强大在于它的语句映射，这是它的魔力所在。由于它的异常强大，映射器的 XML 文件就显得相对简单。如果拿它跟具有相同功能的 JDBC 代码进行对比，你会立即发现省掉了将近 95% 的代码。MyBatis 致力于减少使用成本，让用户能更专注于 SQL 代码。</p>
+<p>SQL 映射文件只有很少的几个顶级元素（按照应被定义的顺序列出）：</p>
+<ul>
+<li><code>insert</code> – 映射插入语句。</li>
+<li><code>update</code> – 映射更新语句。</li>
+<li><code>delete</code> – 映射删除语句。</li>
+<li><code>select</code> – 映射查询语句。</li>
+</ul>
+<p><strong>select标签：</strong></p>
+<p>  MyBatis 在查询和结果映射做了相当多的改进。一个简单查询的 select 元素是非常简单：</p>
+<pre><code class="XML">&lt;select id=&quot;selectPerson&quot; 
+resultType=&quot;hashmap&quot; resultMap=&quot;自定义结构&quot;&gt; SELECT * FROM PERSON WHERE ID = #&#123;id&#125; &lt;/select&gt;
+</code></pre>
+<p>  这个语句名为 selectPerson，接受一个 int（或 Integer）类型的参数，并返回一个 HashMap 类型的对象，其中的键是列名，值便是结果行中的对应值。</p>
+<p>  注意参数符号：#{id}  ${key}</p>
+<p>  MyBatis 创建一个预处理语句（PreparedStatement）参数，在 JDBC 中，这样的一个参数在 SQL 中会由一个“?”来标识，并被传递到一个新的预处理语句中，就像这样：</p>
+<pre><code class="Java">// 近似的 JDBC 代码，非 MyBatis 代码...
+String selectPerson = &quot;SELECT * FROM PERSON WHERE ID=?&quot;;
+PreparedStatement ps = conn.prepareStatement(selectPerson);
+ps.setInt(1,id);
+</code></pre>
+<p>  select 元素允许你配置很多属性来配置每条语句的行为细节：</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>id</code></td>
+<td>在命名空间中唯一的标识符，可以被用来引用这条语句。</td>
+</tr>
+<tr>
+<td><code>resultType</code></td>
+<td>期望从这条语句中返回结果的类全限定名或别名。 注意，如果返回的是集合，那应该设置为集合包含的类型，而不是集合本身的类型。 resultType 和 resultMap 之间只能同时使用一个。</td>
+</tr>
+<tr>
+<td><code>resultMap</code></td>
+<td>对外部 resultMap 的命名引用。结果映射是 MyBatis 最强大的特性，如果你对其理解透彻，许多复杂的映射问题都能迎刃而解。 resultType 和 resultMap 之间只能同时使用一个。</td>
+</tr>
+<tr>
+<td><code>timeout</code></td>
+<td>这个设置是在抛出异常之前，驱动程序等待数据库返回请求结果的秒数。默认值为未设置（unset）（依赖数据库驱动）。</td>
+</tr>
+<tr>
+<td><code>statementType</code></td>
+<td>可选 STATEMENT，PREPARED 或 CALLABLE。这会让 MyBatis 分别使用 Statement，PreparedStatement 或 CallableStatement，默认值：PREPARED。</td>
+</tr>
+</tbody></table>
+<p><strong>insert, update 和 delete标签：</strong></p>
+<p>  数据变更语句 insert，update 和 delete 的实现非常接近：</p>
+<pre><code class="XML">&lt;insert
+  id=&quot;insertAuthor&quot;
+  statementType=&quot;PREPARED&quot;
+  keyProperty=&quot;&quot;
+  keyColumn=&quot;&quot;
+  useGeneratedKeys=&quot;&quot;
+  timeout=&quot;20&quot;&gt;
+
+&lt;update
+  id=&quot;updateAuthor&quot;
+  statementType=&quot;PREPARED&quot;
+  timeout=&quot;20&quot;&gt;
+
+&lt;delete
+  id=&quot;deleteAuthor&quot;
+  statementType=&quot;PREPARED&quot;
+  timeout=&quot;20&quot;&gt;
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>id</code></td>
+<td>在命名空间中唯一的标识符，可以被用来引用这条语句。</td>
+</tr>
+<tr>
+<td><code>timeout</code></td>
+<td>这个设置是在抛出异常之前，驱动程序等待数据库返回请求结果的秒数。默认值为未设置（unset）（依赖数据库驱动）。</td>
+</tr>
+<tr>
+<td><code>statementType</code></td>
+<td>可选 STATEMENT，PREPARED 或 CALLABLE。这会让 MyBatis 分别使用 Statement，PreparedStatement 或 CallableStatement，默认值：PREPARED。</td>
+</tr>
+<tr>
+<td><code>useGeneratedKeys</code></td>
+<td>（仅适用于 insert 和 update）这会令 MyBatis 使用 JDBC 的 getGeneratedKeys 方法来取出由数据库内部生成的主键（比如：像 MySQL 和 SQL Server 这样的关系型数据库管理系统的自动递增字段），默认值：false。</td>
+</tr>
+<tr>
+<td><code>keyProperty</code></td>
+<td>（仅适用于 insert 和 update）指定能够唯一识别对象的属性，MyBatis 会使用 getGeneratedKeys 的返回值或 insert 语句的 selectKey 子元素设置它的值，默认值：未设置（<code>unset</code>）。如果生成列不止一个，可以用逗号分隔多个属性名称。</td>
+</tr>
+<tr>
+<td><code>keyColumn</code></td>
+<td>（仅适用于 insert 和 update）设置生成键值在表中的列名，在某些数据库（像 PostgreSQL）中，当主键列不是表中的第一列的时候，是必须设置的。如果生成列不止一个，可以用逗号分隔多个属性名称。</td>
+</tr>
+</tbody></table>
+<p><strong>Mybatis的多表查询</strong></p>
+<p><strong>多表映射概念</strong></p>
+<ul>
+<li><p>对一 ： 夫妻一方对应另一方，订单对应用户都是对一关系</p>
+<p>  实体类设计：对一关系下，类中只要包含单个对方对象类型属性即可！</p>
+<p>  例如：</p>
+</li>
+</ul>
+<pre><code class="Java">public class Customer &#123;
+
+  private Integer customerId;
+  private String customerName;
+
+&#125;
+
+public class Order &#123;
+
+  private Integer orderId;
+  private String orderName;
+  private Customer customer;// 体现的是对一的关系
+
+&#125;  
+</code></pre>
+<ul>
+<li><p>对多: 用户对应的订单，讲师对应的学生或者学生对应的讲师都是对多关系：</p>
+<p>  实体类设计：对多关系下，类中只要包含对方类型集合属性即可！</p>
+</li>
+</ul>
+<pre><code class="Java">public class Customer &#123;
+
+  private Integer customerId;
+  private String customerName;
+  private List&lt;Order&gt; orderList;// 体现的是对多的关系
+&#125;
+
+public class Order &#123;
+
+  private Integer orderId;
+  private String orderName;
+  private Customer customer;// 体现的是对一的关系
+  
+&#125;
+
+//查询客户和客户对应的订单集合  不要管!
+</code></pre>
+<ol>
+<li><p><strong>实体类设计方案</strong></p>
+<p> 多表关系回顾：（双向查看）</p>
+<ul>
+<li><p>一对一</p>
+<p>  夫妻关系，人和身份证号</p>
+</li>
+<li><p>一对多| 多对一</p>
+<p>  用户和用户的订单，锁和钥匙</p>
+</li>
+<li><p>多对多</p>
+<p>  老师和学生，部门和员工</p>
+</li>
+</ul>
+<p> 实体类设计关系(查询)：（单向查看）</p>
+<ul>
+<li><p>对一 ： 夫妻一方对应另一方，订单对应用户都是对一关系</p>
+<p>  实体类设计：对一关系下，类中只要包含单个对方对象类型属性即可！</p>
+<p>  例如：</p>
+</li>
+</ul>
+</li>
+</ol>
+<pre><code class="Java">public class Customer &#123;
+
+  private Integer customerId;
+  private String customerName;
+
+&#125;
+
+public class Order &#123;
+
+  private Integer orderId;
+  private String orderName;
+  private Customer customer;// 体现的是对一的关系
+
+&#125;  
+</code></pre>
+<pre><code>- 对多: 用户对应的订单，讲师对应的学生或者学生对应的讲师都是对多关系：
+
+    实体类设计：对多关系下，类中只要包含对方类型集合属性即可！
+</code></pre>
+<pre><code class="Java">public class Customer &#123;
+
+  private Integer customerId;
+  private String customerName;
+  private List&lt;Order&gt; orderList;// 体现的是对多的关系
+&#125;
+
+public class Order &#123;
+
+  private Integer orderId;
+  private String orderName;
+  private Customer customer;// 体现的是对一的关系
+  
+&#125;
+
+//查询客户和客户对应的订单集合  不要管!
+</code></pre>
+<pre><code>多表结果实体类设计小技巧：
+
+  对一，属性中包含对方对象
+
+  对多，属性中包含对方对象集合
+
+  只有真实发生多表查询时，才需要设计和修改实体类，否则不提前设计和修改实体类！
+
+  无论多少张表联查，实体类设计都是两两考虑!
+
+  在查询映射的时候，只需要关注本次查询相关的属性！例如：查询订单和对应的客户，就不要关注客户中的订单集合！
+</code></pre>
+<ol start="2">
+<li><p><strong>多表映射案例准备</strong></p>
+<p> 数据库：</p>
+</li>
+</ol>
+<pre><code class="SQL">CREATE TABLE `t_customer` (`customer_id` INT NOT NULL AUTO_INCREMENT, `customer_name` CHAR(100), PRIMARY KEY (`customer_id`) );
+
+CREATE TABLE `t_order` ( `order_id` INT NOT NULL AUTO_INCREMENT, `order_name` CHAR(100), `customer_id` INT, PRIMARY KEY (`order_id`) ); 
+
+INSERT INTO `t_customer` (`customer_name`) VALUES (&#39;c01&#39;);
+
+INSERT INTO `t_order` (`order_name`, `customer_id`) VALUES (&#39;o1&#39;, &#39;1&#39;);
+INSERT INTO `t_order` (`order_name`, `customer_id`) VALUES (&#39;o2&#39;, &#39;1&#39;);
+INSERT INTO `t_order` (`order_name`, `customer_id`) VALUES (&#39;o3&#39;, &#39;1&#39;); 
+</code></pre>
+<pre><code>实际开发时，一般在开发过程中，不给数据库表设置外键约束。
+</code></pre>
+<p>原因是避免调试不方便。<br>一般是功能开发完成，再加外键约束检查是否有bug。</p>
+<p>​    </p>
+<pre><code>实体类设计：
+
+稍后会进行订单关联客户查询，也会进行客户关联订单查询，所以在这先练习设计
+</code></pre>
+<pre><code class="Java">@Data
+public class Customer &#123;
+
+  private Integer customerId;
+  private String customerName;
+  private List&lt;Order&gt; orderList;// 体现的是对多的关系
+  
+&#125;  
+
+@Data
+public class Order &#123;
+  private Integer orderId;
+  private String orderName;
+  private Customer customer;// 体现的是对一的关系
+  
+&#125;  
+</code></pre>
+<p><strong>对一映射</strong></p>
+<ol>
+<li><p>需求说明</p>
+<p> 根据ID查询订单，以及订单关联的用户的信息！</p>
+</li>
+<li><p>OrderMapper接口</p>
+</li>
+</ol>
+<pre><code class="Java">public interface OrderMapper &#123;
+  Order selectOrderWithCustomer(Integer orderId);
+&#125;
+</code></pre>
+<ol start="3">
+<li>OrderMapper.xml配置文件</li>
+</ol>
+<pre><code class="XML">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;
+&lt;!DOCTYPE mapper
+        PUBLIC &quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;
+        &quot;https://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;&gt;
+&lt;mapper namespace=&quot;com.chenw.mapper.OrderMapper&quot;&gt;
+
+    &lt;!--自定义映射关系，定义嵌套的对象的映射关系--&gt;
+    &lt;resultMap id=&quot;orderMap&quot; type=&quot;com.chenw.pojo.Order&quot;&gt;
+        &lt;id column=&quot;order_id&quot; property=&quot;orderId&quot;&gt;&lt;/id&gt;
+        &lt;result column=&quot;order_name&quot; property=&quot;orderName&quot;&gt;&lt;/result&gt;
+        &lt;result column=&quot;customer_id&quot;  property=&quot;customerId&quot;&gt;&lt;/result&gt;
+        &lt;!--给对象属性赋值--&gt;&lt;!--
+            property是赋值的对象的属性名字
+            javaType对象类型
+        --&gt;
+        &lt;association property=&quot;customer&quot; javaType=&quot;com.chenw.pojo.Customer&quot;&gt;
+            &lt;id column=&quot;customer_id&quot; property=&quot;customerId&quot;&gt;&lt;/id&gt;
+            &lt;result column=&quot;customer_name&quot; property=&quot;customerName&quot;&gt;&lt;/result&gt;
+        &lt;/association&gt;
+    &lt;/resultMap&gt;
+    &lt;select id=&quot;queryOrderById&quot; resultMap=&quot;orderMap&quot;&gt;
+        select * from t_order tor join t_customer tur on tor.customer_id = tur.customer_id where tor.order_id = #&#123;id&#125;
+    &lt;/select&gt;
+&lt;/mapper&gt;
+</code></pre>
+<p>customer的类</p>
+<pre><code class="java">package com.chenw.pojo;
+
+
+import lombok.Data;
+
+@Data
+public class Customer &#123;
+    private Integer customerId;
+    private String customerName;
+&#125;
+</code></pre>
+<p>order的类</p>
+<pre><code class="java">package com.chenw.pojo;
+
+
+import lombok.Data;
+
+@Data
+public class Order &#123;
+    private Integer orderId;
+    private String orderName;
+    private Integer customerId;
+    private Customer customer;
+&#125;
+</code></pre>
+<ol start="4">
+<li>Mybatis全局注册Mapper文件</li>
+</ol>
+<pre><code class="XML">&lt;!-- 注册Mapper配置文件：告诉Mybatis我们的Mapper配置文件的位置 --&gt;
+&lt;mappers&gt;
+
+  &lt;!-- 在mapper标签的resource属性中指定Mapper配置文件以“类路径根目录”为基准的相对路径 --&gt;
+  &lt;mapper resource=&quot;mappers/OrderMapper.xml&quot;/&gt;
+
+&lt;/mappers&gt;
+</code></pre>
+<ol start="5">
+<li>junit测试程序</li>
+</ol>
+<pre><code class="Java">@Slf4j
+public class MyBatisTest &#123;
+
+    private SqlSession session;
+    // junit会在每一个@Test方法前执行@BeforeEach方法
+
+    @BeforeEach
+    public void init() throws IOException &#123;
+        session = new SqlSessionFactoryBuilder()
+                .build(
+                        Resources.getResourceAsStream(&quot;mybatis-config.xml&quot;))
+                .openSession();
+    &#125;
+
+    @Test
+    public void testRelationshipToOne() &#123;
+    
+      OrderMapper orderMapper = session.getMapper(OrderMapper.class);
+      // 查询Order对象，检查是否同时查询了关联的Customer对象
+      Order order = orderMapper.selectOrderWithCustomer(2);
+      log.info(&quot;order = &quot; + order);
+    
+    &#125;
+
+    // junit会在每一个@Test方法后执行@@AfterEach方法
+    @AfterEach
+    public void clear() &#123;
+        session.commit();
+        session.close();
+    &#125;
+&#125;
+</code></pre>
+<ol start="6">
+<li><p>关键词</p>
+<p> 在“对一”关联关系中，我们的配置比较多，但是关键词就只有：<strong>association</strong>和<strong>javaType</strong></p>
+</li>
+</ol>
+<p><strong>对多映射</strong></p>
+<p>例如</p>
+<p>customer实体类</p>
+<pre><code class="java">package com.chenw.pojo;
+
+
+import lombok.Data;
+
+import java.util.List;
+
+@Data
+public class Customer &#123;
+    private Integer customerId;
+    private String customerName;
+    /*
+    *   一个客户多个订单
+    *   对多装集合
+    * */
+    private List&lt;Order&gt; orderList;
+&#125;
+</code></pre>
+<p>配置文件</p>
+<pre><code class="java">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;
+&lt;!DOCTYPE mapper
+        PUBLIC &quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;
+        &quot;https://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;&gt;
+&lt;mapper namespace=&quot;com.chenw.mapper.CustomerMapper&quot;&gt;
+    
+    &lt;resultMap id=&quot;customerMap&quot; type=&quot;com.chenw.pojo.Customer&quot;&gt;
+        &lt;id column=&quot;customer_id&quot; property=&quot;customerId&quot;&gt;&lt;/id&gt;
+        &lt;result column=&quot;customer_name&quot; property=&quot;customerName&quot;&gt;&lt;/result&gt;
+        &lt;!--
+            &lt;association property=   javaType    给对一的对象属性赋值
+        --&gt;
+        &lt;!--
+            给集合属性赋值
+            orderList 集合属性名
+            ofType 集合的泛型
+        --&gt;
+        &lt;collection property=&quot;orderList&quot; ofType=&quot;com.chenw.pojo.Order&quot;&gt;
+            &lt;id column=&quot;order_id&quot; property=&quot;orderId&quot;&gt;&lt;/id&gt;
+            &lt;result column=&quot;order_name&quot; property=&quot;orderName&quot;&gt;&lt;/result&gt;
+            &lt;result column=&quot;customer_id&quot; property=&quot;customerId&quot;&gt;&lt;/result&gt;
+        &lt;/collection&gt;
+    &lt;/resultMap&gt;
+    
+    &lt;select id=&quot;queryList&quot; resultMap=&quot;customerMap&quot;&gt;
+        select * from t_order tor join t_customer tur on tor.customer_id = tur.customer_id
+    &lt;/select&gt;
+&lt;/mapper&gt;
+</code></pre>
+<p>order实体类</p>
+<pre><code class="java">package com.chenw.pojo;
+
+
+import lombok.Data;
+
+@Data
+public class Order &#123;
+    private Integer orderId;
+    private String orderName;
+    private Integer customerId;
+    private Customer customer;
+&#125;
+</code></pre>
+<p>map接口</p>
+<pre><code class="java">public interface CustomerMapper &#123;
+    /*
+    *   TODO:查询所有客户信息以及客户对应的订单信息
+    * */
+
+    List&lt;Customer&gt; queryList();
+&#125;
+</code></pre>
+<p><strong>多表映射的总结</strong></p>
+<p><strong>多表映射的优化</strong></p>
+<table>
+<thead>
+<tr>
+<th>setting属性</th>
+<th>属性含义</th>
+<th>可选值</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>autoMappingBehavior</td>
+<td>指定 MyBatis 应如何自动映射列到字段或属性。 NONE 表示关闭自动映射；PARTIAL 只会自动映射没有定义嵌套结果映射的字段。 FULL 会自动映射任何复杂的结果集（无论是否嵌套）。</td>
+<td>NONE, PARTIAL, FULL</td>
+<td>PARTIAL</td>
+</tr>
+</tbody></table>
+<pre><code>默认的情况下
+    resultMap会自动映射单层的result标签【列名和属性名相同，或者开启驼峰式命名的映射】
+    嵌套的association | collection	 不会自动映射result的标签和列名和属性名
+</code></pre>
+<p>我们可以将autoMappingBehavior设置为full,进行多表resultMap映射的时候，可以省略符合列和属性命名映射规则（列名&#x3D;属性名，或者开启驼峰映射也可以自定映射）的result标签！</p>
+<p>修改mybati-sconfig.xml:</p>
+<pre><code class="XML">&lt;!--开启resultMap自动映射 --&gt;
+&lt;setting name=&quot;autoMappingBehavior&quot; value=&quot;FULL&quot;/&gt;
+&lt;setting name=&quot;mapUnderscoreToCamelCase&quot; value=&quot;true&quot;/&gt;
+</code></pre>
+<p>修改teacherMapper.xml</p>
+<pre><code class="XML">&lt;resultMap id=&quot;teacherMap&quot; type=&quot;teacher&quot;&gt;
+    &lt;id property=&quot;tId&quot; column=&quot;t_id&quot; /&gt;
+    &lt;!-- 开启自动映射,并且开启驼峰式支持!可以省略 result!--&gt;
+&lt;!--        &lt;result property=&quot;tName&quot; column=&quot;t_name&quot; /&gt;--&gt;
+    &lt;collection property=&quot;students&quot; ofType=&quot;student&quot; &gt;
+        &lt;id property=&quot;sId&quot; column=&quot;s_id&quot; /&gt;
+&lt;!--            &lt;result property=&quot;sName&quot; column=&quot;s_name&quot; /&gt;--&gt;
+    &lt;/collection&gt;
+&lt;/resultMap&gt;
+</code></pre>
+<p>总结</p>
+<table>
+<thead>
+<tr>
+<th>关联关系</th>
+<th>配置项关键词</th>
+<th>所在配置文件和具体位置</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>对一</td>
+<td>association标签&#x2F;javaType属性&#x2F;property属性</td>
+<td>Mapper配置文件中的resultMap标签内</td>
+</tr>
+<tr>
+<td>对多</td>
+<td>collection标签&#x2F;ofType属性&#x2F;property属性</td>
+<td>Mapper配置文件中的resultMap标签内</td>
+</tr>
+</tbody></table>
+<p><strong>动态sql语句</strong></p>
+<p><strong>动态语句需求和简介</strong></p>
+<p>  经常遇到很多按照很多查询条件进行查询的情况，比如智联招聘的职位搜索等。其中经常出现很多条件不取值的情况，在后台应该如何完成最终的SQL语句呢？</p>
+<p>  <img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image.png"></p>
+<p>  动态 SQL 是 MyBatis 的强大特性之一。如果你使用过 JDBC 或其它类似的框架，你应该能理解根据不同条件拼接 SQL 语句有多痛苦，例如拼接时要确保不能忘记添加必要的空格，还要注意去掉列表最后一个列名的逗号。利用动态 SQL，可以彻底摆脱这种痛苦。</p>
+<p>  使用动态 SQL 并非一件易事，但借助可用于任何 SQL 映射语句中的强大的动态 SQL 语言，MyBatis 显著地提升了这一特性的易用性。</p>
+<p>  如果你之前用过 JSTL 或任何基于类 XML 语言的文本处理器，你对动态 SQL 元素可能会感觉似曾相识。在 MyBatis 之前的版本中，需要花时间了解大量的元素。借助功能强大的基于 OGNL 的表达式，MyBatis 3 替换了之前的大部分元素，大大精简了元素种类，现在要学习的元素种类比原来的一半还要少。</p>
+<p><strong>if和where标签</strong></p>
+<p>  使用动态 SQL 最常见情景是根据条件包含 where  &#x2F; if 子句的一部分。比如：</p>
+<pre><code class="XML">&lt;!-- List&lt;Employee&gt; selectEmployeeByCondition(Employee employee); --&gt;
+&lt;select id=&quot;selectEmployeeByCondition&quot; resultType=&quot;employee&quot;&gt;
+    select emp_id,emp_name,emp_salary from t_emp
+    &lt;!-- where标签会自动去掉“标签体内前面多余的and/or” --&gt;
+    &lt;where&gt;
+        &lt;!-- 使用if标签，让我们可以有选择的加入SQL语句的片段。这个SQL语句片段是否要加入整个SQL语句，就看if标签判断的结果是否为true --&gt;
+        &lt;!-- 在if标签的test属性中，可以访问实体类的属性，不可以访问数据库表的字段 --&gt;
+        &lt;if test=&quot;empName != null&quot;&gt;
+            &lt;!-- 在if标签内部，需要访问接口的参数时还是正常写#&#123;&#125; --&gt;
+            or emp_name=#&#123;empName&#125;
+        &lt;/if&gt;
+        &lt;if test=&quot;empSalary &amp;gt; 2000&quot;&gt;
+            or emp_salary&gt;#&#123;empSalary&#125;
+        &lt;/if&gt;
+        &lt;!--
+         第一种情况：所有条件都满足 WHERE emp_name=? or emp_salary&gt;?
+         第二种情况：部分条件满足 WHERE emp_salary&gt;?
+         第三种情况：所有条件都不满足 没有where子句
+         --&gt;
+    &lt;/where&gt;
+&lt;/select&gt;
+</code></pre>
+<pre><code class="xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;
+&lt;!DOCTYPE mapper
+        PUBLIC &quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;
+        &quot;https://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;&gt;
+&lt;mapper namespace=&quot;com.chenw.mapper.EmployeeMapper&quot;&gt;
+
+    &lt;!--
+        现在有一个要求
+            List&lt;Employee&gt; query(@Param(&quot;name&quot;)String name,@Param(&quot;salary&quot;) Double salary);
+            如果参数传入我才有这个对应的sql语句，例如有name没有薪水 select * from t_emp where emp_name = #&#123;name
+            where
+            if 判断传入的参数，最终是否添加语句
+            test属性 内部进行比较运算，最终为true将标签内的sql语句进行拼接
+                                        false 不拼接标签内部的语句
+
+             问题，如果第一个不满足第二个满足怎么办
+             这杨拼接起来的变成
+                select * from t_emp where and emp_salary = #&#123;salary&#125;
+             还有都不满足
+                select * from t_emp where
+              where标签就可以解决这个问题
+                1.自动添加where关键字 where内部有一个任何的一个的if满足 ，自动添加where关键字，不满足去掉where
+                2.自动去掉多余的and 和 or 关键字
+    --&gt;
+    &lt;select id=&quot;query&quot; resultType=&quot;com.chenw.pojo.Employee&quot;&gt;
+        select * from t_emp
+        &lt;where&gt;
+            &lt;if test=&quot;name!=null&quot;&gt;
+                emp_name = #&#123;name&#125;
+            &lt;/if&gt;
+            &lt;if test=&quot;salary != null&quot;&gt;
+                and emp_salary = #&#123;salary&#125;
+            &lt;/if&gt;
+        &lt;/where&gt;
+
+    &lt;/select&gt;
+&lt;/mapper&gt;
+</code></pre>
+<p>测试</p>
+<pre><code class="java">package com.chenw.test;
+
+import com.chenw.mapper.EmployeeMapper;
+import com.chenw.pojo.Employee;
+import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+import java.util.List;
+
+public class MybatisTest &#123;
+    private SqlSession sqlSession;
+    @BeforeEach
+    public void init() throws IOException &#123;
+        sqlSession  = new SqlSessionFactoryBuilder().build(Resources.getResourceAsStream(&quot;mybatis-config.xml&quot;)).openSession(true);
+    &#125;
+
+    @Test
+    public void test()&#123;
+        EmployeeMapper mapper = sqlSession.getMapper(EmployeeMapper.class);
+        List&lt;Employee&gt; tom = mapper.query(null, 200.33);
+        System.out.println(tom);
+    &#125;
+
+
+    @AfterEach
+    public  void clean()&#123;
+        sqlSession.close();
+    &#125;
+&#125;
+</code></pre>
+<p>结果</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240427110444339.png" alt="image-20240427110444339"></p>
+<p><strong>set关键字</strong></p>
+<pre><code class="XML">&lt;!-- void updateEmployeeDynamic(Employee employee) --&gt;
+&lt;update id=&quot;updateEmployeeDynamic&quot;&gt;
+    update t_emp
+    &lt;!-- set emp_name=#&#123;empName&#125;,emp_salary=#&#123;empSalary&#125; --&gt;
+    &lt;!-- 使用set标签动态管理set子句，并且动态去掉两端多余的逗号 --&gt;
+    &lt;set&gt;
+        &lt;if test=&quot;empName != null&quot;&gt;
+            emp_name=#&#123;empName&#125;,
+        &lt;/if&gt;
+        &lt;if test=&quot;empSalary &amp;lt; 3000&quot;&gt;
+            emp_salary=#&#123;empSalary&#125;,
+        &lt;/if&gt;
+    &lt;/set&gt;
+    where emp_id=#&#123;empId&#125;
+    &lt;!--
+         第一种情况：所有条件都满足 SET emp_name=?, emp_salary=?
+         第二种情况：部分条件满足 SET emp_salary=?
+         第三种情况：所有条件都不满足 update t_emp where emp_id=?
+            没有set子句的update语句会导致SQL语法错误
+     --&gt;
+&lt;/update&gt;
+</code></pre>
+<pre><code class="xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;
+&lt;!DOCTYPE mapper
+        PUBLIC &quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;
+        &quot;https://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;&gt;
+&lt;mapper namespace=&quot;com.chenw.mapper.EmployeeMapper&quot;&gt;
+
+    &lt;!--
+        现在有一个要求
+            List&lt;Employee&gt; query(@Param(&quot;name&quot;)String name,@Param(&quot;salary&quot;) Double salary);
+            如果参数传入我才有这个对应的sql语句，例如有name没有薪水 select * from t_emp where emp_name = #&#123;name
+            where
+            if 判断传入的参数，最终是否添加语句
+            test属性 内部进行比较运算，最终为true将标签内的sql语句进行拼接
+                                        false 不拼接标签内部的语句
+
+             问题，如果第一个不满足第二个满足怎么办
+             这杨拼接起来的变成
+                select * from t_emp where and emp_salary = #&#123;salary&#125;
+             还有都不满足
+                select * from t_emp where
+              where标签就可以解决这个问题
+                1.自动添加where关键字 where内部有一个任何的一个的if满足 ，自动添加where关键字，不满足去掉where
+                2.自动去掉多余的and 和 or 关键字
+    --&gt;
+    &lt;select id=&quot;query&quot; resultType=&quot;com.chenw.pojo.Employee&quot;&gt;
+        select * from t_emp
+        &lt;where&gt;
+            &lt;if test=&quot;name!=null&quot;&gt;
+                emp_name = #&#123;name&#125;
+            &lt;/if&gt;
+            &lt;if test=&quot;salary != null&quot;&gt;
+                and emp_salary = #&#123;salary&#125;
+            &lt;/if&gt;
+        &lt;/where&gt;
+
+    &lt;/select&gt;
+
+
+    &lt;!--
+        如果还是使用if的话              update t_emp set
+                                    &lt;if test=&quot;empName!=null&quot;&gt;
+                                            emp_name = #&#123;empName&#125; ,
+                                    &lt;/if&gt;
+                                    &lt;if test=&quot;empSalary!=null&quot;&gt;
+                                            emp_salary = #&#123;empSalary&#125;
+                                     &lt;/if&gt;
+                                     where  emp_id = #&#123;empId&#125;
+
+                                     出现的问题
+                                     第一个满足，第二个不满足的话 多了一个,
+                                     都不满足 语法错误
+                                     解决使用set标签
+                                        作用
+                                            1.自动去掉多余的,多余的逗号
+                                            2.自动添加set关键字
+                                            但是不能解决最后一个问题，所以必须至少传一个值
+
+
+    --&gt;
+    &lt;update id=&quot;update&quot;&gt;
+        update t_emp
+        &lt;set&gt;
+            &lt;if test=&quot;empName!=null&quot;&gt;
+                emp_name = #&#123;empName&#125; ,
+            &lt;/if&gt;
+            &lt;if test=&quot;empSalary!=null&quot;&gt;
+                emp_salary = #&#123;empSalary&#125;
+            &lt;/if&gt;
+            where  emp_id = #&#123;empId&#125;
+        &lt;/set&gt;
+    &lt;/update&gt;
+&lt;/mapper&gt;
+</code></pre>
+<p><strong>trim标签</strong></p>
+<p>使用trim标签控制条件部分两端是否包含某些字符</p>
+<ul>
+<li>prefix属性：指定要动态添加的前缀</li>
+<li>suffix属性：指定要动态添加的后缀</li>
+<li>prefixOverrides属性：指定要动态去掉的前缀，使用“|”分隔有可能的多个值</li>
+<li>suffixOverrides属性：指定要动态去掉的后缀，使用“|”分隔有可能的多个值</li>
+</ul>
+<pre><code class="XML">&lt;!-- List&lt;Employee&gt; selectEmployeeByConditionByTrim(Employee employee) --&gt;
+&lt;select id=&quot;selectEmployeeByConditionByTrim&quot; resultType=&quot;com.atguigu.mybatis.entity.Employee&quot;&gt;
+    select emp_id,emp_name,emp_age,emp_salary,emp_gender
+    from t_emp
+    
+    &lt;!-- prefix属性指定要动态添加的前缀 --&gt;
+    &lt;!-- suffix属性指定要动态添加的后缀 --&gt;
+    &lt;!-- prefixOverrides属性指定要动态去掉的前缀，使用“|”分隔有可能的多个值 --&gt;
+    &lt;!-- suffixOverrides属性指定要动态去掉的后缀，使用“|”分隔有可能的多个值 --&gt;
+    &lt;!-- 当前例子用where标签实现更简洁，但是trim标签更灵活，可以用在任何有需要的地方 --&gt;
+    &lt;trim prefix=&quot;where&quot; suffixOverrides=&quot;and|or&quot;&gt;
+        &lt;if test=&quot;empName != null&quot;&gt;
+            emp_name=#&#123;empName&#125; and
+        &lt;/if&gt;
+        &lt;if test=&quot;empSalary &amp;gt; 3000&quot;&gt;
+            emp_salary&gt;#&#123;empSalary&#125; and
+        &lt;/if&gt;
+        &lt;if test=&quot;empAge &amp;lt;= 20&quot;&gt;
+            emp_age=#&#123;empAge&#125; or
+        &lt;/if&gt;
+        &lt;if test=&quot;empGender==&#39;male&#39;&quot;&gt;
+            emp_gender=#&#123;empGender&#125;
+        &lt;/if&gt;
+    &lt;/trim&gt;
+&lt;/select&gt;
+</code></pre>
+<p><strong>choose&#x2F;when&#x2F;otherwise标签</strong></p>
+<p>  在多个分支条件中，仅执行一个。</p>
+<ul>
+<li>从上到下依次执行条件判断</li>
+<li>遇到的第一个满足条件的分支会被采纳</li>
+<li>被采纳分支后面的分支都将不被考虑</li>
+<li>如果所有的when分支都不满足，那么就执行otherwise分支</li>
+</ul>
+<pre><code class="XML">&lt;!-- List&lt;Employee&gt; selectEmployeeByConditionByChoose(Employee employee) --&gt;
+&lt;select id=&quot;selectEmployeeByConditionByChoose&quot; resultType=&quot;com.atguigu.mybatis.entity.Employee&quot;&gt;
+    select emp_id,emp_name,emp_salary from t_emp
+    where
+    &lt;choose&gt;
+        &lt;when test=&quot;empName != null&quot;&gt;emp_name=#&#123;empName&#125;&lt;/when&gt;
+        &lt;when test=&quot;empSalary &amp;lt; 3000&quot;&gt;emp_salary &amp;lt; 3000&lt;/when&gt;
+        &lt;otherwise&gt;1=1&lt;/otherwise&gt;
+    &lt;/choose&gt;
+    
+    &lt;!--
+     第一种情况：第一个when满足条件 where emp_name=?
+     第二种情况：第二个when满足条件 where emp_salary &lt; 3000
+     第三种情况：两个when都不满足 where 1=1 执行了otherwise
+     --&gt;
+&lt;/select&gt;
+</code></pre>
+<p><strong>forEach标签</strong></p>
+<p><strong>基本用法</strong></p>
+<p>用批量插入举例</p>
+<pre><code class="XML">&lt;!--
+    collection属性：要遍历的集合
+    item属性：遍历集合的过程中能得到每一个具体对象，在item属性中设置一个名字，将来通过这个名字引用遍历出来的对象
+    separator属性：指定当foreach标签的标签体重复拼接字符串时，各个标签体字符串之间的分隔符
+    open属性：指定整个循环把字符串拼好后，字符串整体的前面要添加的字符串
+    close属性：指定整个循环把字符串拼好后，字符串整体的后面要添加的字符串
+    index属性：这里起一个名字，便于后面引用
+        遍历List集合，这里能够得到List集合的索引值
+        遍历Map集合，这里能够得到Map集合的key
+ --&gt;
+&lt;foreach collection=&quot;empList&quot; item=&quot;emp&quot; separator=&quot;,&quot; open=&quot;values&quot; index=&quot;myIndex&quot;&gt;
+    &lt;!-- 在foreach标签内部如果需要引用遍历得到的具体的一个对象，需要使用item属性声明的名称 --&gt;
+    (#&#123;emp.empName&#125;,#&#123;myIndex&#125;,#&#123;emp.empSalary&#125;,#&#123;emp.empGender&#125;)
+&lt;/foreach&gt;
+</code></pre>
+<p><strong>批量更新时需要注意</strong></p>
+<p>上面批量插入的例子本质上是一条SQL语句，而实现批量更新则需要多条SQL语句拼起来，用分号分开。也就是一次性发送多条SQL语句让数据库执行。此时需要在数据库连接信息的URL地址中设置：</p>
+<pre><code class=".properties">atguigu.dev.url=jdbc:mysql:///mybatis-example?allowMultiQueries=true
+</code></pre>
+<p>对应的foreach标签如下：</p>
+<pre><code class="XML">&lt;!-- int updateEmployeeBatch(@Param(&quot;empList&quot;) List&lt;Employee&gt; empList) --&gt;
+&lt;update id=&quot;updateEmployeeBatch&quot;&gt;
+    &lt;foreach collection=&quot;empList&quot; item=&quot;emp&quot; separator=&quot;;&quot;&gt;
+        update t_emp set emp_name=#&#123;emp.empName&#125; where emp_id=#&#123;emp.empId&#125;
+    &lt;/foreach&gt;
+&lt;/update&gt;
+</code></pre>
+<p><strong>关于foreach标签的collection属性</strong></p>
+<p>如果没有给接口中List类型的参数使用@Param注解指定一个具体的名字，那么在collection属性中默认可以使用collection或list来引用这个list集合。这一点可以通过异常信息看出来：</p>
+<pre><code class="XML">Parameter &#39;empList&#39; not found. Available parameters are [arg0, collection, list]
+</code></pre>
+<p>在实际开发中，为了避免隐晦的表达造成一定的误会，建议使用@Param注解明确声明变量的名称，然后在foreach标签的collection属性中按照@Param注解指定的名称来引用传入的参数。</p>
+<p>foreach标签的基本使用</p>
+<pre><code class="java">接口
+    /*
+    *           根据id进行批量查询
+    * */
+
+    List&lt;Employee&gt; queryBatch(@Param(&quot;ids&quot;) List&lt;Integer&gt; ids);
+</code></pre>
+<p>配置文件</p>
+<pre><code class="xml">    &lt;select id=&quot;queryBatch&quot; resultType=&quot;com.chenw.pojo.Employee&quot;&gt;
+        select  * from t_emp where emp_id in
+        &lt;!--
+            collection便利的集合，需要写刚才使用@Param指定的别名,或者使用arg0
+            open 遍历之前需要添加的字符串
+            close 结束之前添加的字符串
+            separator每次遍历的分隔符号
+            item 获取每一个便利项目的
+        --&gt;
+        &lt;foreach collection=&quot;ids&quot; open=&quot;(&quot; separator=&quot;,&quot; close=&quot;)&quot; item=&quot;id&quot;&gt;
+            #&#123;id&#125;
+        &lt;/foreach&gt;
+    &lt;/select&gt;
+&lt;!--    上面就变成下面的这样，如果ids集合的值为&#123;1,2,3&#125;
+        select  * from t_emp where emp_id in (1,,2,3)
+        这样实现遍历的效果
+    --&gt;
+</code></pre>
+<p>例如</p>
+<pre><code class="java">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;
+&lt;!DOCTYPE mapper
+        PUBLIC &quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;
+        &quot;https://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;&gt;
+&lt;mapper namespace=&quot;com.chenw.mapper.EmployeeMapper&quot;&gt;
+
+    &lt;!--
+        现在有一个要求
+            List&lt;Employee&gt; query(@Param(&quot;name&quot;)String name,@Param(&quot;salary&quot;) Double salary);
+            如果参数传入我才有这个对应的sql语句，例如有name没有薪水 select * from t_emp where emp_name = #&#123;name
+            where
+            if 判断传入的参数，最终是否添加语句
+            test属性 内部进行比较运算，最终为true将标签内的sql语句进行拼接
+                                        false 不拼接标签内部的语句
+
+             问题，如果第一个不满足第二个满足怎么办
+             这杨拼接起来的变成
+                select * from t_emp where and emp_salary = #&#123;salary&#125;
+             还有都不满足
+                select * from t_emp where
+              where标签就可以解决这个问题
+                1.自动添加where关键字 where内部有一个任何的一个的if满足 ，自动添加where关键字，不满足去掉where
+                2.自动去掉多余的and 和 or 关键字
+    --&gt;
+    &lt;select id=&quot;query&quot; resultType=&quot;com.chenw.pojo.Employee&quot;&gt;
+        select * from t_emp
+        &lt;where&gt;
+            &lt;if test=&quot;name!=null&quot;&gt;
+                emp_name = #&#123;name&#125;
+            &lt;/if&gt;
+            &lt;if test=&quot;salary != null&quot;&gt;
+                and emp_salary = #&#123;salary&#125;
+            &lt;/if&gt;
+        &lt;/where&gt;
+
+    &lt;/select&gt;
+
+
+    &lt;!--
+        如果还是使用if的话              update t_emp set
+                                    &lt;if test=&quot;empName!=null&quot;&gt;
+                                            emp_name = #&#123;empName&#125; ,
+                                    &lt;/if&gt;
+                                    &lt;if test=&quot;empSalary!=null&quot;&gt;
+                                            emp_salary = #&#123;empSalary&#125;
+                                     &lt;/if&gt;
+                                     where  emp_id = #&#123;empId&#125;
+
+                                     出现的问题
+                                     第一个满足，第二个不满足的话 多了一个,
+                                     都不满足 语法错误
+                                     解决使用set标签
+                                        作用
+                                            1.自动去掉多余的,多余的逗号
+                                            2.自动添加set关键字
+                                            但是不能解决最后一个问题，所以必须至少传一个值
+
+
+    --&gt;
+    &lt;update id=&quot;update&quot;&gt;
+        update t_emp
+        &lt;set&gt;
+            &lt;if test=&quot;empName!=null&quot;&gt;
+                emp_name = #&#123;empName&#125; ,
+            &lt;/if&gt;
+            &lt;if test=&quot;empSalary!=null&quot;&gt;
+                emp_salary = #&#123;empSalary&#125;
+            &lt;/if&gt;
+            where  emp_id = #&#123;empId&#125;
+        &lt;/set&gt;
+    &lt;/update&gt;
+
+    &lt;select id=&quot;queryBatch&quot; resultType=&quot;com.chenw.pojo.Employee&quot;&gt;
+        select  * from t_emp where emp_id in
+        &lt;!--
+            collection便利的集合，需要写刚才使用@Param指定的别名,或者使用arg0
+            open 遍历之前需要添加的字符串
+            close 结束之前添加的字符串
+            separator每次遍历的分隔符号
+            item 获取每一个便利项目的
+        --&gt;
+        &lt;foreach collection=&quot;ids&quot; open=&quot;(&quot; separator=&quot;,&quot; close=&quot;)&quot; item=&quot;id&quot;&gt;
+            #&#123;id&#125;
+        &lt;/foreach&gt;
+    &lt;/select&gt;
+&lt;!--    上面就变成下面的这样，如果ids集合的值为&#123;1,2,3&#125;
+        select  * from t_emp where emp_id in (1,,2,3)
+        这样实现遍历的效果
+    --&gt;
+
+    &lt;delete id=&quot;deleteBatch&quot;&gt;
+        delete from t_emp where emp_id in
+        &lt;foreach collection=&quot;ids&quot; open=&quot;(&quot; separator=&quot;,&quot; close=&quot;)&quot; item=&quot;id&quot;&gt;
+            #&#123;id&#125;
+        &lt;/foreach&gt;
+    &lt;/delete&gt;
+
+    &lt;!--
+
+        批量的插入
+    --&gt;
+    &lt;insert id=&quot;insertBatch&quot; &gt;
+        insert into t_emp (emp_name,emp_salary) values (),(),()
+        &lt;foreach collection=&quot;list&quot;  separator=&quot;,&quot; item=&quot;employee&quot;&gt;
+            (#&#123;employee.empName&#125;,#&#123;employee.empSalary&#125;)
+        &lt;/foreach&gt;
+    &lt;/insert&gt;
+    &lt;!--
+        批量的更新
+        进行整体的遍历
+        如果一个标签设置多个语句，需要设置允许指定多个语句
+        在配置文件的url里面记性指定
+        jdbc:mysql://localhost:3306/mybatis-example?allowMultiQueries=true
+    --&gt;
+    &lt;update id=&quot;updateBatch&quot;&gt;
+        &lt;foreach collection=&quot;list&quot;  item=&quot;employee&quot;&gt;
+            update t_emp set emp_name = #&#123;employee.empName&#125; , emp_salary = #&#123;employee.empSalary&#125;
+            where emp_id = #&#123;employee.empId&#125;;
+        &lt;/foreach&gt;
+    &lt;/update&gt;
+&lt;/mapper&gt;
+</code></pre>
+<p><strong>sql片段</strong></p>
+<p>  <strong>抽取重复的SQL片段</strong></p>
+<pre><code class="XML">&lt;!-- 使用sql标签抽取重复出现的SQL片段 --&gt;
+&lt;sql id=&quot;mySelectSql&quot;&gt;
+    select emp_id,emp_name,emp_age,emp_salary,emp_gender from t_emp
+&lt;/sql&gt;
+</code></pre>
+<p>  引用已抽取的SQL片段</p>
+<pre><code class="XML">&lt;!-- 使用include标签引用声明的SQL片段 --&gt;
+&lt;include refid=&quot;mySelectSql&quot;/&gt;
+</code></pre>
+<p><strong>MyBatis的高级扩展</strong></p>
+<h3 id="5-1-Mapper批量映射优化"><a href="#5-1-Mapper批量映射优化" class="headerlink" title="5.1 Mapper批量映射优化"></a>5.1 Mapper批量映射优化</h3><ol>
+<li><p>需求</p>
+<p> Mapper 配置文件很多时，在全局配置文件中一个一个注册太麻烦，希望有一个办法能够一劳永逸。</p>
+</li>
+<li><p>配置方式</p>
+<p> Mybatis 允许在指定 Mapper 映射文件时，只指定其所在的包</p>
+</li>
+</ol>
+<pre><code class="XML">&lt;mappers&gt;
+    &lt;package name=&quot;com.atguigu.mapper&quot;/&gt;
+&lt;/mappers&gt;
+</code></pre>
+<pre><code>  此时这个包下的所有 Mapper 配置文件将被自动加载、注册，比较方便。
+</code></pre>
+<ol start="3">
+<li>资源创建要求</li>
+</ol>
+<ul>
+<li>Mapper 接口和 Mapper 配置文件名称一致<ul>
+<li>Mapper 接口：EmployeeMapper.java</li>
+<li>Mapper 配置文件：EmployeeMapper.xml</li>
+</ul>
+</li>
+<li>Mapper 配置文件放在 Mapper 接口所在的包内<ul>
+<li><p>可以将mapperxml文件放在mapper接口所在的包！</p>
+</li>
+<li><p>可以在sources下创建mapper接口包一致的文件夹结构存放mapperxml文件</p>
+<p>  <img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image.png"></p>
+<p>  <img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image.png"></p>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>插件机制和分页插件PageHelper</strong></p>
+<p><strong>插件机制和PageHelper插件介绍</strong></p>
+<p>  MyBatis 对插件进行了标准化的设计，并提供了一套可扩展的插件机制。插件可以在用于语句执行过程中进行拦截，并允许通过自定义处理程序来拦截和修改 SQL 语句、映射语句的结果等。</p>
+<p>  具体来说，MyBatis 的插件机制包括以下三个组件：</p>
+<ol>
+<li><code>Interceptor</code>（拦截器）：定义一个拦截方法 <code>intercept</code>，该方法在执行 SQL 语句、执行查询、查询结果的映射时会被调用。</li>
+<li><code>Invocation</code>（调用）：实际上是对被拦截的方法的封装，封装了 <code>Object target</code>、<code>Method method</code> 和 <code>Object[] args</code> 这三个字段。</li>
+<li><code>InterceptorChain</code>（拦截器链）：对所有的拦截器进行管理，包括将所有的 Interceptor 链接成一条链，并在执行 SQL 语句时按顺序调用。</li>
+</ol>
+<p>  插件的开发非常简单，只需要实现 Interceptor 接口，并使用注解 <code>@Intercepts</code> 来标注需要拦截的对象和方法，然后在 MyBatis 的配置文件中添加插件即可。</p>
+<p>  PageHelper 是 MyBatis 中比较著名的分页插件，它提供了多种分页方式（例如 MySQL 和 Oracle 分页方式），支持多种数据库，并且使用非常简单。下面就介绍一下 PageHelper 的使用方式。</p>
+<p>  <a target="_blank" rel="noopener" href="https://github.com/pagehelper/Mybatis-PageHelper/blob/master/wikis/zh/HowToUse.md#%E5%A6%82%E4%BD%95%E9%85%8D%E7%BD%AE%E6%95%B0%E6%8D%AE%E5%BA%93%E6%96%B9%E8%A8%80">https://github.com/pagehelper/Mybatis-PageHelper/blob/master/wikis/zh/HowToUse.md#如何配置数据库方言</a></p>
+<p><strong>分页插件的使用</strong></p>
+<ol>
+<li>pom.xml引入依赖</li>
+</ol>
+<pre><code class="XML">&lt;dependency&gt;
+    &lt;groupId&gt;com.github.pagehelper&lt;/groupId&gt;
+    &lt;artifactId&gt;pagehelper&lt;/artifactId&gt;
+    &lt;version&gt;5.1.11&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+<ol start="2">
+<li><p>mybatis-config.xml配置分页插件</p>
+<p> 在 MyBatis 的配置文件中添加 PageHelper 的插件：</p>
+</li>
+</ol>
+<pre><code class="XML">&lt;plugins&gt;
+    &lt;plugin interceptor=&quot;com.github.pagehelper.PageInterceptor&quot;&gt;
+        &lt;property name=&quot;helperDialect&quot; value=&quot;mysql&quot;/&gt;
+    &lt;/plugin&gt;
+&lt;/plugins&gt;
+</code></pre>
+<pre><code>其中，`com.github.pagehelper.PageInterceptor` 是 PageHelper 插件的名称，`dialect` 属性用于指定数据库类型（支持多种数据库）
+</code></pre>
+<ol start="3">
+<li><p>页插件使用</p>
+<p> 在查询方法中使用分页：</p>
+</li>
+</ol>
+<pre><code class="Java">@Test
+public void testTeacherRelationshipToMulti() &#123;
+
+    TeacherMapper teacherMapper = session.getMapper(TeacherMapper.class);
+
+    PageHelper.startPage(1,2);
+    // 查询Customer对象同时将关联的Order集合查询出来
+    List&lt;Teacher&gt; allTeachers = teacherMapper.findAllTeachers();
+//
+    PageInfo&lt;Teacher&gt; pageInfo = new PageInfo&lt;&gt;(allTeachers);
+
+    System.out.println(&quot;pageInfo = &quot; + pageInfo);
+    long total = pageInfo.getTotal(); // 获取总记录数
+    System.out.println(&quot;total = &quot; + total);
+    int pages = pageInfo.getPages();  // 获取总页数
+    System.out.println(&quot;pages = &quot; + pages);
+    int pageNum = pageInfo.getPageNum(); // 获取当前页码
+    System.out.println(&quot;pageNum = &quot; + pageNum);
+    int pageSize = pageInfo.getPageSize(); // 获取每页显示记录数
+    System.out.println(&quot;pageSize = &quot; + pageSize);
+    List&lt;Teacher&gt; teachers = pageInfo.getList(); //获取查询页的数据集合
+    System.out.println(&quot;teachers = &quot; + teachers);
+    teachers.forEach(System.out::println);
+
+&#125;
+</code></pre>
+<p> <strong>逆向工程和MybatisX插件</strong></p>
+<p><strong>ORM思维介绍</strong></p>
+<p>  ORM（Object-Relational Mapping，对象-关系映射）是一种将数据库和面向对象编程语言中的对象之间进行转换的技术。它将对象和关系数据库的概念进行映射，最后我们就可以通过方法调用进行数据库操作!!</p>
+<p>  最终: <strong>让我们可以使用面向对象思维进行数据库操作！！！</strong></p>
+<p>  <strong>ORM 框架通常有半自动和全自动两种方式。</strong></p>
+<ul>
+<li>半自动 ORM 通常需要程序员手动编写 SQL 语句或者配置文件，将实体类和数据表进行映射，还需要手动将查询的结果集转换成实体对象。</li>
+<li>全自动 ORM 则是将实体类和数据表进行自动映射，使用 API 进行数据库操作时，ORM 框架会自动执行 SQL 语句并将查询结果转换成实体对象，程序员无需再手动编写 SQL 语句和转换代码。</li>
+</ul>
+<p>  <strong>下面是半自动和全自动 ORM 框架的区别：</strong></p>
+<ol>
+<li>映射方式：半自动 ORM 框架需要程序员手动指定实体类和数据表之间的映射关系，通常使用 XML 文件或注解方式来指定；全自动 ORM 框架则可以自动进行实体类和数据表的映射，无需手动干预。</li>
+<li>查询方式：半自动 ORM 框架通常需要程序员手动编写 SQL 语句并将查询结果集转换成实体对象；全自动 ORM 框架可以自动组装 SQL 语句、执行查询操作，并将查询结果转换成实体对象。</li>
+<li>性能：由于半自动 ORM 框架需要手动编写 SQL 语句，因此程序员必须对 SQL 语句和数据库的底层知识有一定的了解，才能编写高效的 SQL 语句；而全自动 ORM 框架通过自动优化生成的 SQL 语句来提高性能，程序员无需进行优化。</li>
+<li>学习成本：半自动 ORM 框架需要程序员手动编写 SQL 语句和映射配置，要求程序员具备较高的数据库和 SQL 知识；全自动 ORM 框架可以自动生成 SQL 语句和映射配置，程序员无需了解过多的数据库和 SQL 知识。</li>
+</ol>
+<p>  常见的半自动 ORM 框架包括 MyBatis 等；常见的全自动 ORM 框架包括 Hibernate、Spring Data JPA、MyBatis-Plus 等。</p>
+<p><strong>逆向工程</strong></p>
+<pre><code>  MyBatis 的逆向工程是一种自动化生成持久层代码和映射文件的工具，它可以根据数据库表结构和设置的参数生成对应的实体类、Mapper.xml 文件、Mapper 接口等代码文件，简化了开发者手动生成的过程。逆向工程使开发者可以快速地构建起 DAO 层，并快速上手进行业务开发。
+</code></pre>
+<p>   MyBatis 的逆向工程有两种方式：通过 MyBatis Generator 插件实现和通过 Maven 插件实现。无论是哪种方式，逆向工程一般需要指定一些配置参数，例如数据库连接 URL、用户名、密码、要生成的表名、生成的文件路径等等。<br>   总的来说，MyBatis 的逆向工程为程序员提供了一种方便快捷的方式，能够快速地生成持久层代码和映射文件，是半自动 ORM 思维像全自动发展的过程，提高程序员的开发效率。</p>
+<p>  <strong>注意：逆向工程只能生成单表crud的操作，多表查询依然需要我们自己编写！</strong></p>
+<p><strong>逆向工程插件MyBatisX使用</strong></p>
+<pre><code> MyBatisX 是一个 MyBatis 的代码生成插件，可以通过简单的配置和操作快速生成 MyBatis Mapper、pojo 类和 Mapper.xml 文件。下面是使用 MyBatisX 插件实现逆向工程的步骤：
+</code></pre>
+<ol>
+<li><p>安装插件：</p>
+<p> 在 IntelliJ IDEA 中打开插件市场，搜索 MyBatisX 并安装。</p>
+</li>
+<li><p>使用 IntelliJ IDEA连接数据库</p>
+<ul>
+<li><p>连接数据库</p>
+<p>  <img src="https://secure2.wostatic.cn/static/suwzNwsHMPdWwco8fMRTai/image.png?auth_key=1714194294-vsXaRtoFCYY2ni4Ya8SZdt-0-c246044602e8632f3a718fdb1a48ade6"></p>
+</li>
+<li><p>填写信息</p>
+<p>  <img src="https://secure2.wostatic.cn/static/qEua8K6S4s7wFd9YZ4Xbcm/image.png?auth_key=1714194294-kYMHwHW6SF6jxmAQj5MW1m-0-3b80b3a83bb026e560048aba7e2af2f4"></p>
+</li>
+<li><p>展示库表</p>
+<p>  <img src="https://secure2.wostatic.cn/static/kUoGo2UYu5JNLf3BnxZWXL/image.png?auth_key=1714194294-qzjPGhJG5tB3vtQ4bDDnA3-0-36f0fa0b2b44a669cdb729fd1c9e9171"></p>
+</li>
+<li><p>逆向工程使用</p>
+<p>  <img src="https://secure2.wostatic.cn/static/s6LMYQtxCLAQ86ScJS5Kam/image.png?auth_key=1714194294-m1KJ2goYR1ZYA4AVUL2rzG-0-e450f4f3dbceed41734de6e9c9f65e3f"></p>
+<p>  <img src="https://secure2.wostatic.cn/static/nt2dnyzG5K9NkQBpb1BJ2E/image.png?auth_key=1714194294-hqfsmCQNJxj2azZUTrQTKP-0-e9fd433e20a7856fea35193da92676c1"></p>
+<p>  <img src="https://secure2.wostatic.cn/static/5x6sMk4hWDScuAifL2HuJX/image.png?auth_key=1714194294-5BwYAce3YtzUCRT7CcGrhZ-0-68241163a5807411ab6d0d1e626b4f73"></p>
+</li>
+</ul>
+</li>
+<li><p>查看生成结果</p>
+<p> <img src="https://secure2.wostatic.cn/static/59Kv1MuiUawH6qVWQSV1Z1/image.png?auth_key=1714194294-7aEYj6ouFkj2prtzWJ9Y1B-0-2ed1217fb7a9bfa0d0cfba1449b52135"></p>
+</li>
+<li><p>逆向工程案例使用</p>
+<p> 正常使用即可，自动生成单表的crud方法！</p>
+</li>
+</ol>
+<pre><code class="Java">package com.atguigu.mapper;
+
+import com.atguigu.pojo.User;
+
+/**
+* @author Jackiechan
+* @description 针对表【user】的数据库操作Mapper
+* @createDate 2023-06-02 16:55:32
+* @Entity com.atguigu.pojo.User
+*/
+public interface UserMapper &#123;
+
+    int deleteByPrimaryKey(Long id);
+
+    int insert(User record);
+
+    int insertSelective(User record);
+
+    User selectByPrimaryKey(Long id);
+
+    int updateByPrimaryKeySelective(User record);
+
+    int updateByPrimaryKey(User record);
+
+&#125;
 </code></pre>
 
     </div>
