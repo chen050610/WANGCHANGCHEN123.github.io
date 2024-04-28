@@ -177,12 +177,12 @@
             
             <span class="tag">
                 
-                <a href="/tags/chenw/" style="color: #ff7d73">chenw</a>
+                <a href="/tags/chenw/" style="color: #00bcd4">chenw</a>
             </span>
             
             <span class="tag">
                 
-                <a href="/tags/SSM%E5%AD%A6%E4%B9%A0/" style="color: #00a596">SSM学习</a>
+                <a href="/tags/SSM%E5%AD%A6%E4%B9%A0/" style="color: #ffa2c4">SSM学习</a>
             </span>
             
         </span>
@@ -8956,7 +8956,11 @@ public String jumpJsp(Model model)&#123;
 </code></pre>
 <p><strong>转发和重定向</strong></p>
 <p>在 Spring MVC 中，Handler 方法返回值来实现快速转发，可以使用 <code>redirect</code> 或者 <code>forward</code> 关键字来实现重定向。</p>
-<pre><code class="Java">@RequestMapping(&quot;/redirect-demo&quot;)
+<pre><code class="Java">/**
+    转发和重定向返回的是String，而且前面需要加上redirect或者forward，如果不加的话，默认就会取找世图资源了，后面加上路径，不能添加@ResponseBody注解
+**/
+
+@RequestMapping(&quot;/redirect-demo&quot;)
 public String redirectDemo() &#123;
     // 重定向到 /demo 路径 
     return &quot;redirect:/demo&quot;;
@@ -8977,6 +8981,894 @@ public String forwardDemo() &#123;
 <li>关键字: &#x2F;路径</li>
 <li>注意：如果是项目下的资源，转发和重定向都一样都是项目下路径！都不需要添加项目根路径！</li>
 </ul>
+<pre><code>注意点
+之前不使用springMvc 
+    转发是项目下的资源跳转，路径：项目下的地址  /jsp/index  忽略应用的上下文
+    重定向是项目下的资源也可以是项目意意外的地址 重定向的属于二次请求 路径：项目下的地址
+    需要写全地址  applicationContext
+使用springmvc不需要使用全地址
+</code></pre>
+<p>基本的使用</p>
+<pre><code class="java">package com.chenw.jsp;
+
+
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+@RequestMapping(&quot;jsp&quot;)
+public class JspController &#123;
+    /*
+    *   TODO:快速的查找的方法
+    *       1.方法的返回值是字符串的类型
+    *       2.不能添加@ResponseBody注解，因为这个注解的作用，就是直接将字符串返回给浏览器，不走视图，不走解析器
+    *       3.返回值 对应的中间的视图名称即可
+    *
+    * */
+    @GetMapping(&quot;index&quot;)
+    public String index(HttpServletRequest request)&#123;
+        request.setAttribute(&quot;data&quot;,&quot;hello!jsp!!!&quot;);
+        System.out.println(&quot;JspController.index&quot;);
+        return &quot;index&quot;;
+    &#125;
+    /*
+    *   方法的返回值是String
+    * */
+    @GetMapping(&quot;forward&quot;)
+    public String forward()&#123;
+        return &quot;forward:/jsp/index&quot;;
+    &#125;
+    @GetMapping(&quot;redirect&quot;)
+    public String redirect()&#123;
+        return &quot;redirect:/jsp/index&quot;;
+    &#125;
+    @GetMapping(&quot;baidu&quot;)
+    public String baidu()&#123;
+        return &quot;redirect:http://www.baidu.com&quot;;
+    &#125;
+
+&#125;
+</code></pre>
+<p><strong>返回Json数据</strong></p>
+<p>配置</p>
+<pre><code>之前在接收json数据配置过
+</code></pre>
+<p>导入jackson依赖</p>
+<pre><code class="XML">&lt;dependency&gt;
+    &lt;groupId&gt;com.fasterxml.jackson.core&lt;/groupId&gt;
+    &lt;artifactId&gt;jackson-databind&lt;/artifactId&gt;
+    &lt;version&gt;2.15.0&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+<p>添加json数据转化器</p>
+<p>@EnableWebMvc </p>
+<pre><code class="Java">//TODO: SpringMVC对应组件的配置类 [声明SpringMVC需要的组件信息]
+
+//TODO: 导入handlerMapping和handlerAdapter的三种方式
+ //1.自动导入handlerMapping和handlerAdapter [推荐]
+ //2.可以不添加,springmvc会检查是否配置handlerMapping和handlerAdapter,没有配置默认加载
+ //3.使用@Bean方式配置handlerMapper和handlerAdapter
+@EnableWebMvc  //json数据处理,必须使用此注解,因为他会加入json处理器
+@Configuration
+@ComponentScan(basePackages = &quot;com.atguigu.controller&quot;) //TODO: 进行controller扫描
+
+//WebMvcConfigurer springMvc进行组件配置的规范,配置组件,提供各种方法! 前期可以实现
+public class SpringMvcConfig implements WebMvcConfigurer &#123;
+
+
+&#125;				
+</code></pre>
+<p><strong>@Response注解</strong></p>
+<ol>
+<li><p>方法上使用@ResponseBody</p>
+<p> 可以在方法上使用 <code>@ResponseBody</code>注解，用于将方法返回的对象序列化为 JSON 或 XML 格式的数据，并发送给客户端。在前后端分离的项目中使用！</p>
+<p> 测试方法：</p>
+</li>
+</ol>
+<pre><code class="Java">@GetMapping(&quot;/accounts/&#123;id&#125;&quot;)
+@ResponseBody
+public Object handle() &#123;
+  // ...
+  return obj;
+&#125;
+</code></pre>
+<p>具体来说，<code>@ResponseBody</code> 注解可以用来标识方法或者方法返回值，表示方法的返回值是要直接返回给客户端的数据，而不是由视图解析器来解析并渲染生成响应体（viewResolver没用）。</p>
+<pre><code>测试方法：
+</code></pre>
+<pre><code class="Java">@RequestMapping(value = &quot;/user/detail&quot;, method = RequestMethod.POST)
+@ResponseBody
+public User getUser(@RequestBody User userParam) &#123;
+    System.out.println(&quot;userParam = &quot; + userParam);
+    User user = new User();
+    user.setAge(18);
+    user.setName(&quot;John&quot;);
+    //返回的对象,会使用jackson的序列化工具,转成json返回给前端!
+    return user;
+&#125;
+</code></pre>
+<pre><code>返回结果：
+
+![](https://secure2.wostatic.cn/static/b8AAMNoaVABerV8BGsqNTo/image.png?auth_key=1714293548-6k9TUB2ZVUo8ro9rupLWJa-0-43c7e6adc109677eec8040dd15a3a63c)
+</code></pre>
+<ol start="2">
+<li><p>类上使用@ResponseBody</p>
+<p> 如果类中每个方法上都标记了 @ResponseBody 注解，那么这些注解就可以提取到类上。</p>
+</li>
+</ol>
+<pre><code class="Java">@ResponseBody  //responseBody可以添加到类上,代表默认类中的所有方法都生效!
+@Controller
+@RequestMapping(&quot;param&quot;)
+public class ParamController &#123;
+</code></pre>
+<p>例如</p>
+<pre><code class="java">@EnableWebMvc
+@Configuration
+@ComponentScan(&quot;com.chenw&quot;)
+public class MvcConfig implements WebMvcConfigurer &#123;
+    /*
+    *   配置视图解析器，指定前后缀
+    * */
+
+    @Override
+    public void configureViewResolvers(ViewResolverRegistry registry) &#123;
+        //registry可以快速的添加视图解析器
+        registry.jsp(&quot;/WEB-INF/views/&quot;,&quot;.jsp&quot;);
+        //handler寻找这个视图的话，就会直接寻找这个
+    &#125;
+
+&#125;
+</code></pre>
+<pre><code class="java">package com.chenw.json;
+
+import com.chenw.pojo.User;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Controller
+@RequestMapping(&quot;json&quot;)
+public class JsonController &#123;
+
+    @ResponseBody
+    @GetMapping(&quot;data&quot;)
+    public User data()&#123;
+        User user = new User();
+        user.setName(&quot;二狗子&quot;);
+        user.setAge(19);
+        return user;
+        /*
+        *  user在handlerAdapter里面解析成json格式的数据，因为我们之前已经导入json的依赖，而且使用注解@EnableWebMvc启用这个依赖了
+        * 还需要加上@ResponseBody的注解
+        * */
+    &#125;
+    /*
+    *   如果返回的是列表的形式
+    * */
+    @ResponseBody
+    @GetMapping(&quot;data1&quot;)
+    public List&lt;User&gt; data1()&#123;
+        User user = new User();
+        user.setName(&quot;二狗子&quot;);
+        user.setAge(19);
+        ArrayList&lt;User&gt; users = new ArrayList&lt;&gt;();
+        users.add(user);
+        return users;
+        /*
+         *  user在handlerAdapter里面解析成json格式的数据，因为我们之前已经导入json的依赖，而且使用注解@EnableWebMvc启用这个依赖了
+         * 还需要加上@ResponseBody的注解
+         * */
+    &#125;
+</code></pre>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240428165402790.png" alt="image-20240428165402790"></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240428165419968.png" alt="image-20240428165419968"></p>
+<pre><code> @ResponseBody的注解直接加在类上也是可以的，这样每一个的都会
+</code></pre>
+<p>可以进行替代</p>
+<pre><code class="java">@RestController = @Response + @Controller
+</code></pre>
+<pre><code>@Response注解 数据直接放入响应体返回，也不会走视图解析器
+    快速查找视图，转发和重定向的语法都不生效了 
+</code></pre>
+<p><strong>@RestController注解</strong></p>
+<p>  类上的 @ResponseBody 注解可以和 @Controller 注解合并为 @RestController 注解。所以使用了 @RestController 注解就相当于给类中的每个方法都加了 @ResponseBody 注解。</p>
+<p>  RestController源码:</p>
+<pre><code class="Java">@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Controller
+@ResponseBody
+public @interface RestController &#123;
+ 
+  /**
+   * The value may indicate a suggestion for a logical component name,
+   * to be turned into a Spring bean in case of an autodetected component.
+   * @return the suggested component name, if any (or empty String otherwise)
+   * @since 4.0.1
+   */
+  @AliasFor(annotation = Controller.class)
+  String value() default &quot;&quot;;
+ 
+&#125;
+</code></pre>
+<p><strong>返回静态资源</strong></p>
+<p><strong>静态资源概念</strong></p>
+<p>资源本身已经是可以直接拿到浏览器上使用的程度了，<strong>不需要在服务器端做任何运算、处理</strong>。典型的静态资源包括：</p>
+<ul>
+<li>纯HTML文件</li>
+<li>图片</li>
+<li>CSS文件</li>
+<li>JavaScript文件</li>
+<li>……</li>
+</ul>
+<ol>
+<li><strong>静态资源访问和问题解决</strong><ul>
+<li><p>web应用加入静态资源</p>
+<p>  <img src="https://secure2.wostatic.cn/static/2ADk35v3kBWvGQSwL99Z3S/image.png?auth_key=1714294816-cgnjvQFkbgxPt12bSyi1vW-0-cf2053f36a4df9b73b029b51cea78d44"></p>
+</li>
+<li><p>手动构建确保编译</p>
+<p>  <img src="https://secure2.wostatic.cn/static/gBRmLxNhoWEd4o2eC2xamA/image.png?auth_key=1714294816-ezboJMBpzgs7oH9KPJtwNF-0-e696910c1395093732a5aa3fdfee1648"></p>
+<p>  <img src="https://secure2.wostatic.cn/static/rKa2VeGDteC7Xk18LTZGWu/image.png?auth_key=1714294815-5Q2MM8Z7LA49USSkqCMBEG-0-704daaf1ed30a02fb24a7f6bd2e77332"></p>
+<p>  <img src="https://secure2.wostatic.cn/static/jmvurwN5HSB44eVFPaNJa4/image.png?auth_key=1714294815-nrQ9YdfFaofoRUh17m9rDN-0-b73fe128520ab3dfbe330eae92e8f012"></p>
+</li>
+<li><p>访问静态资源</p>
+<p>  <img src="https://secure2.wostatic.cn/static/2Ux86Et6qs3TsDkEg1NQTn/image.png?auth_key=1714294815-hdtCvvLiXnVoF6iTq6FAkU-0-10aac9b9273f2b9713fcb73a74cfc8f0"></p>
+</li>
+<li><p>问题分析</p>
+<ul>
+<li>DispatcherServlet 的 url-pattern 配置的是“&#x2F;”</li>
+<li>url-pattern 配置“&#x2F;”表示整个 Web 应用范围内所有请求都由 SpringMVC 来处理</li>
+<li>对 SpringMVC 来说，必须有对应的 @RequestMapping 才能找到处理请求的方法</li>
+<li>现在 images&#x2F;mi.jpg 请求没有对应的 @RequestMapping 所以返回 404</li>
+</ul>
+</li>
+<li><p>问题解决</p>
+<p>  在 SpringMVC 配置配置类：</p>
+</li>
+</ul>
+</li>
+</ol>
+<pre><code class="Java">@EnableWebMvc  //json数据处理,必须使用此注解,因为他会加入json处理器
+@Configuration
+@ComponentScan(basePackages = &quot;com.atguigu.controller&quot;) //TODO: 进行controller扫描
+//WebMvcConfigurer springMvc进行组件配置的规范,配置组件,提供各种方法! 前期可以实现
+public class SpringMvcConfig implements WebMvcConfigurer &#123;
+
+    //配置jsp对应的视图解析器
+    @Override
+    public void configureViewResolvers(ViewResolverRegistry registry) &#123;
+        //快速配置jsp模板语言对应的
+        registry.jsp(&quot;/WEB-INF/views/&quot;,&quot;.jsp&quot;);
+    &#125;
+    
+    //开启静态资源处理 &lt;mvc:default-servlet-handler/&gt;
+    @Override
+    public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) &#123;
+        configurer.enable();
+    &#125;
+&#125;
+</code></pre>
+<pre><code>这样配置以后就实现了
+    说一下为什么之前访问不到
+        因为我们配置    protected String[] getServletMappings() &#123;
+        return new String[]&#123;&quot;/&quot;&#125;;
+    &#125;
+       这样我们请求都会先去mapping查找有无对应的映射，没有的就返回404，所以这样就会导致，直接访问敬他资源失效，但是我们这样配置以后就开启了
+</code></pre>
+<pre><code class="XML">@EnableWebMvc  //json数据处理,必须使用此注解,因为他会加入json处理器
+</code></pre>
+<p><strong>RESTFul风格设计和实战</strong></p>
+<p><strong>概述</strong></p>
+<pre><code>Http协议的标准使用方案和风格
+    教你怎么设计路径
+    教你如何设置参数传递
+    教你如何选择请求方式	
+</code></pre>
+<p><strong>简介</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image.png"></p>
+<p>RESTful（Representational State Transfer）是一种软件架构风格，用于设计网络应用程序和服务之间的通信。它是一种基于标准 HTTP 方法的简单和轻量级的通信协议，广泛应用于现代的Web服务开发。</p>
+<p>通过遵循 RESTful 架构的设计原则，可以构建出易于理解、可扩展、松耦合和可重用的 Web 服务。RESTful API 的特点是简单、清晰，并且易于使用和理解，它们使用标准的 HTTP 方法和状态码进行通信，不需要额外的协议和中间件。</p>
+<p>总而言之，RESTful 是一种基于 HTTP 和标准化的设计原则的软件架构风格，用于设计和实现可靠、可扩展和易于集成的 Web 服务和应用程序！</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image.png"></p>
+<p>学习RESTful设计原则可以帮助我们更好去设计HTTP协议的API接口！！</p>
+<p><strong>分隔特点</strong></p>
+<ol>
+<li>每一个URI代表1种资源（URI 是名词）；</li>
+<li>客户端使用GET、POST、PUT、DELETE 4个表示操作方式的动词对服务端资源进行操作：GET用来获取资源，POST用来新建资源（也可以用于更新资源），PUT用来更新资源，DELETE用来删除资源；</li>
+<li>资源的表现形式是XML或者<strong>JSON</strong>；</li>
+<li>客户端与服务端之间的交互在请求之间是无状态的，从客户端到服务端的每个请求都必须包含理解请求所必需的信息。</li>
+</ol>
+<p><strong>RESTFul的风格特点</strong></p>
+<ol>
+<li><p><strong>HTTP协议请求方式要求</strong></p>
+<p> REST 风格主张在项目设计、开发过程中，具体的操作符合<strong>HTTP协议定义的请求方式的语义</strong>。</p>
+</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>请求方式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>查询操作</td>
+<td>GET</td>
+</tr>
+<tr>
+<td>保存操作</td>
+<td>POST</td>
+</tr>
+<tr>
+<td>删除操作</td>
+<td>DELETE</td>
+</tr>
+<tr>
+<td>更新操作</td>
+<td>PUT</td>
+</tr>
+</tbody></table>
+<ol start="2">
+<li><p><strong>URL路径风格要求</strong></p>
+<p> REST风格下每个资源都应该有一个唯一的标识符，例如一个 URI（统一资源标识符）或者一个 URL（统一资源定位符）。资源的标识符应该能明确地说明该资源的信息，同时也应该是可被理解和解释的！</p>
+<p> 使用URL+请求方式确定具体的动作，他也是一种标准的HTTP协议请求！</p>
+</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>传统风格</th>
+<th>REST 风格</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>保存</td>
+<td>&#x2F;CRUD&#x2F;saveEmp</td>
+<td>URL 地址：&#x2F;CRUD&#x2F;emp 请求方式：POST</td>
+</tr>
+<tr>
+<td>删除</td>
+<td>&#x2F;CRUD&#x2F;removeEmp?empId&#x3D;2</td>
+<td>URL 地址：&#x2F;CRUD&#x2F;emp&#x2F;2 请求方式：DELETE</td>
+</tr>
+<tr>
+<td>更新</td>
+<td>&#x2F;CRUD&#x2F;updateEmp</td>
+<td>URL 地址：&#x2F;CRUD&#x2F; 请求方式：PUT</td>
+</tr>
+<tr>
+<td>查询</td>
+<td>&#x2F;CRUD&#x2F;editEmp?empId&#x3D;2</td>
+<td>URL 地址：&#x2F;CRUD&#x2F;emp&#x2F;2 请求方式：GET</td>
+</tr>
+</tbody></table>
+<ul>
+<li><p>总结</p>
+<p>  根据接口的具体动作，选择具体的HTTP协议请求方式</p>
+<p>  路径设计从原来携带动标识，改成名词，对应资源的唯一标识即可！</p>
+</li>
+</ul>
+<p><strong>好处</strong></p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240428181824162.png" alt="image-20240428181824162"></p>
+<ol>
+<li><p>含蓄，安全</p>
+<p> 使用问号键值对的方式给服务器传递数据太明显，容易被人利用来对系统进行破坏。使用 REST 风格携带数据不再需要明显的暴露数据的名称。</p>
+</li>
+<li><p>风格统一</p>
+<p> URL 地址整体格式统一，从前到后始终都使用斜杠划分各个单词，用简单一致的格式表达语义。</p>
+</li>
+<li><p>无状态</p>
+<p> 在调用一个接口（访问、操作资源）的时候，可以不用考虑上下文，不用考虑当前状态，极大的降低了系统设计的复杂度。</p>
+</li>
+<li><p>严谨，规范</p>
+<p> 严格按照 HTTP1.1 协议中定义的请求方式本身的语义进行操作。</p>
+</li>
+<li><p>简洁，优雅</p>
+<p> 过去做增删改查操作需要设计4个不同的URL，现在一个就够了。</p>
+</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>传统风格</th>
+<th>REST 风格</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>保存</td>
+<td>&#x2F;CRUD&#x2F;saveEmp</td>
+<td>URL 地址：&#x2F;CRUD&#x2F;emp 请求方式：POST</td>
+</tr>
+<tr>
+<td>删除</td>
+<td>&#x2F;CRUD&#x2F;removeEmp?empId&#x3D;2</td>
+<td>URL 地址：&#x2F;CRUD&#x2F;emp&#x2F;2 请求方式：DELETE</td>
+</tr>
+<tr>
+<td>更新</td>
+<td>&#x2F;CRUD&#x2F;updateEmp</td>
+<td>URL 地址：&#x2F;CRUD&#x2F;emp 请求方式：PUT</td>
+</tr>
+<tr>
+<td>查询</td>
+<td>&#x2F;CRUD&#x2F;editEmp?empId&#x3D;2</td>
+<td>URL 地址：&#x2F;CRUD&#x2F;emp&#x2F;2 请求方式：GET</td>
+</tr>
+</tbody></table>
+<ol start="6">
+<li><p>丰富的语义</p>
+<p> 通过 URL 地址就可以知道资源之间的关系。它能够把一句话中的很多单词用斜杠连起来，反过来说就是可以在 URL 地址中用一句话来充分表达语义。</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="http://localhost:8080/shop">http://localhost:8080/shop</a> <a target="_blank" rel="noopener" href="http://localhost:8080/shop/product">http://localhost:8080/shop/product</a> <a target="_blank" rel="noopener" href="http://localhost:8080/shop/product/cellPhone">http://localhost:8080/shop/product/cellPhone</a> <a target="_blank" rel="noopener" href="http://localhost:8080/shop/product/cellPhone/iPhone">http://localhost:8080/shop/product/cellPhone/iPhone</a></p>
+</blockquote>
+</li>
+</ol>
+<p><strong>RESTFul风格实战</strong></p>
+<ul>
+<li>数据结构： User {id 唯一标识,name 用户名，age 用户年龄}</li>
+<li>功能分析<ul>
+<li>用户数据分页展示功能（条件：page 页数 默认1，size 每页数量 默认 10）</li>
+<li>保存用户功能</li>
+<li>根据用户id查询用户详情功能</li>
+<li>根据用户id更新用户数据功能</li>
+<li>根据用户id删除用户数据功能</li>
+<li>多条件模糊查询用户功能（条件：keyword 模糊关键字，page 页数 默认1，size 每页数量 默认 10）</li>
+</ul>
+</li>
+</ul>
+<ol>
+<li><strong>接口设计</strong></li>
+</ol>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>功能</td>
+<td>接口和请求方式</td>
+<td>请求参数</td>
+<td>返回值</td>
+</tr>
+<tr>
+<td>分页查询</td>
+<td>GET  &#x2F;user</td>
+<td>page&#x3D;1&amp;size&#x3D;10</td>
+<td>{ 响应数据 }</td>
+</tr>
+<tr>
+<td>用户添加</td>
+<td>POST &#x2F;user</td>
+<td>{ user 数据 }</td>
+<td>{响应数据}</td>
+</tr>
+<tr>
+<td>用户详情</td>
+<td>GET &#x2F;user&#x2F;1</td>
+<td>路径参数</td>
+<td>{响应数据}</td>
+</tr>
+<tr>
+<td>用户更新</td>
+<td>PUT &#x2F;user</td>
+<td>{ user 更新数据}</td>
+<td>{响应数据}</td>
+</tr>
+<tr>
+<td>用户删除</td>
+<td>DELETE &#x2F;user&#x2F;1</td>
+<td>路径参数</td>
+<td>{响应数据}</td>
+</tr>
+<tr>
+<td>条件模糊</td>
+<td>GET &#x2F;user&#x2F;search</td>
+<td>page&#x3D;1&amp;size&#x3D;10&amp;keywork&#x3D;关键字</td>
+<td>{响应数据}</td>
+</tr>
+</tbody></table>
+<ol start="2">
+<li><p><strong>问题讨论</strong></p>
+<p> 为什么查询用户详情，就使用路径传递参数，多条件模糊查询，就使用请求参数传递？</p>
+<p> 误区：restful风格下，不是所有请求参数都是路径传递！可以使用其他方式传递！</p>
+<p> 在 RESTful API 的设计中，路径和请求参数和请求体都是用来向服务器传递信息的方式。</p>
+<ul>
+<li>对于查询用户详情，使用路径传递参数是因为这是一个单一资源的查询，即查询一条用户记录。使用路径参数可以明确指定所请求的资源，便于服务器定位并返回对应的资源，也符合 RESTful 风格的要求。</li>
+<li>而对于多条件模糊查询，使用请求参数传递参数是因为这是一个资源集合的查询，即查询多条用户记录。使用请求参数可以通过组合不同参数来限制查询结果，路径参数的组合和排列可能会很多，不如使用请求参数更加灵活和简洁。</li>
+</ul>
+<p> 此外，还有一些通用的原则可以遵循：</p>
+<ul>
+<li>路径参数应该用于指定资源的唯一标识或者 ID，而请求参数应该用于指定查询条件或者操作参数。</li>
+<li>请求参数应该限制在 10 个以内，过多的请求参数可能导致接口难以维护和使用。</li>
+<li>对于敏感信息，最好使用 POST 和请求体来传递参数。</li>
+</ul>
+</li>
+</ol>
+<p><strong>springMVC其他扩展</strong></p>
+<p><strong>全局的异常处理</strong></p>
+<p><strong>处理的两种方式</strong></p>
+<p>开发过程中是不可避免地会出现各种异常情况的，例如网络连接异常、数据格式异常、空指针异常等等。异常的出现可能导致程序的运行出现问题，甚至直接导致程序崩溃。因此，在开发过程中，合理处理异常、避免异常产生、以及对异常进行有效的调试是非常重要的。</p>
+<p>对于异常的处理，一般分为两种方式：</p>
+<ul>
+<li>编程式异常处理：是指在代码中显式地编写处理异常的逻辑。它通常涉及到对异常类型的检测及其处理，例如使用 try-catch 块来捕获异常，然后在 catch 块中编写特定的处理代码，或者在 finally 块中执行一些清理操作。在编程式异常处理中，开发人员需要显式地进行异常处理，异常处理代码混杂在业务代码中，导致代码可读性较差。</li>
+<li>声明式异常处理：则是将异常处理的逻辑从具体的业务逻辑中分离出来，通过配置等方式进行统一的管理和处理。在声明式异常处理中，开发人员只需要为方法或类标注相应的注解（如 <code>@Throws</code> 或 <code>@ExceptionHandler</code>），就可以处理特定类型的异常。相较于编程式异常处理，声明式异常处理可以使代码更加简洁、易于维护和扩展。</li>
+</ul>
+<p>站在宏观角度来看待声明式事务处理：</p>
+<p>  整个项目从架构这个层面设计的异常处理的统一机制和规范。</p>
+<p>  一个项目中会包含很多个模块，各个模块需要分工完成。如果张三负责的模块按照 A 方案处理异常，李四负责的模块按照 B 方案处理异常……各个模块处理异常的思路、代码、命名细节都不一样，那么就会让整个项目非常混乱。</p>
+<p>  使用声明式异常处理，可以统一项目处理异常思路，项目更加清晰明了！</p>
+<p><strong>基于注解异常处理</strong></p>
+<ol>
+<li><p>声明异常处理控制器类</p>
+<p> 异常处理控制类，统一定义异常处理handler方法！</p>
+</li>
+</ol>
+<pre><code class="Java">/**
+ * projectName: com.atguigu.execptionhandler
+ * 
+ * description: 全局异常处理器,内部可以定义异常处理Handler!
+ */
+
+/**
+ * @RestControllerAdvice = @ControllerAdvice + @ResponseBody
+ * @ControllerAdvice 代表当前类的异常处理controller! 
+ */
+@RestControllerAdvice
+public class GlobalExceptionHandler &#123;
+
+  
+&#125;
+</code></pre>
+<ol start="2">
+<li><p>声明异常处理hander方法</p>
+<p> 异常处理handler方法和普通的handler方法参数接收和响应都一致！</p>
+<p> 只不过异常处理handler方法要映射异常，发生对应的异常会调用！</p>
+<p> 普通的handler方法要使用@RequestMapping注解映射路径，发生对应的路径调用！</p>
+</li>
+</ol>
+<pre><code class="Java">/**
+ * 异常处理handler 
+ * @ExceptionHandler(HttpMessageNotReadableException.class) 
+ * 该注解标记异常处理Handler,并且指定发生异常调用该方法!
+ * 
+ * 
+ * @param e 获取异常对象!
+ * @return 返回handler处理结果!
+ */
+@ExceptionHandler(HttpMessageNotReadableException.class)
+public Object handlerJsonDateException(HttpMessageNotReadableException e)&#123;
+    
+    return null;
+&#125;
+
+/**
+ * 当发生空指针异常会触发此方法!
+ * @param e
+ * @return
+ */
+@ExceptionHandler(NullPointerException.class)
+public Object handlerNullException(NullPointerException e)&#123;
+
+    return null;
+&#125;
+
+/**
+ * 所有异常都会触发此方法!但是如果有具体的异常处理Handler! 
+ * 具体异常处理Handler优先级更高!
+ * 例如: 发生NullPointerException异常!
+ *       会触发handlerNullException方法,不会触发handlerException方法!
+ * @param e
+ * @return
+ */
+@ExceptionHandler(Exception.class)
+public Object handlerException(Exception e)&#123;
+
+    return null;
+&#125;
+</code></pre>
+<ol start="3">
+<li><p>配置文件扫描控制器类配置</p>
+<p> 确保异常处理控制类被扫描</p>
+</li>
+</ol>
+<pre><code class="Java"> &lt;!-- 扫描controller对应的包,将handler加入到ioc--&gt;
+ @ComponentScan(basePackages = &#123;&quot;com.atguigu.controller&quot;,
+ &quot;com.atguigu.exceptionhandler&quot;&#125;
+</code></pre>
+<p><strong>拦截器</strong></p>
+<p>拦截器和过滤器解决问题</p>
+<ul>
+<li><p>生活中</p>
+<p>  为了提高乘车效率，在乘客进入站台前统一检票</p>
+<p>  <img src="https://secure2.wostatic.cn/static/qnwL468SbgHHucUQqmYxPV/img008.png?auth_key=1714301051-6hZ6VdakZ8pmrxMWPqMBVP-0-350e467bc3e8d1d28368caefb6c7b673"></p>
+</li>
+<li><p>程序中</p>
+<p>  在程序中，使用拦截器在请求到达具体 handler 方法前，统一执行检测</p>
+<p>  <img src="https://secure2.wostatic.cn/static/eBwRN4iKLw9e9DHpVGP4WX/img009.png?auth_key=1714301052-4Ep4oNZgDZ47TS1gj8Vf5Y-0-fc2699c9bf4f22858320409f63b54057"></p>
+</li>
+</ul>
+<p>拦截器 Springmvc VS 过滤器 javaWeb：</p>
+<ul>
+<li>相似点<ul>
+<li>拦截：必须先把请求拦住，才能执行后续操作</li>
+<li>过滤：拦截器或过滤器存在的意义就是对请求进行统一处理</li>
+<li>放行：对请求执行了必要操作后，放请求过去，让它访问原本想要访问的资源</li>
+</ul>
+</li>
+<li>不同点<ul>
+<li>工作平台不同<ul>
+<li>过滤器工作在 Servlet 容器中</li>
+<li>拦截器工作在 SpringMVC 的基础上</li>
+</ul>
+</li>
+<li>拦截的范围<ul>
+<li>过滤器：能够拦截到的最大范围是整个 Web 应用</li>
+<li>拦截器：能够拦截到的最大范围是整个 SpringMVC 负责的请求</li>
+</ul>
+</li>
+<li>IOC 容器支持<ul>
+<li>过滤器：想得到 IOC 容器需要调用专门的工具方法，是间接的</li>
+<li>拦截器：它自己就在 IOC 容器中，所以可以直接从 IOC 容器中装配组件，也就是可以直接得到 IOC 容器的支持</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>选择：</p>
+<p>  功能需要如果用 SpringMVC 的拦截器能够实现，就不使用过滤器。</p>
+<p>  <img src="https://secure-bigfile.wostatic.cn/static/prqG4dtu3rDWj7VwX4WgsW/image.png?auth_key=1714301052-6wVrFp3rjgjG6eT6wmBbBp-0-3ca7d148833de298b8b38fd996d55ac8"></p>
+<p>应用</p>
+<ol>
+<li>创建拦截器类</li>
+</ol>
+<pre><code class="Java">public class Process01Interceptor implements HandlerInterceptor &#123;
+
+    // if( ! preHandler())&#123;return;&#125;
+    // 在处理请求的目标 handler 方法前执行
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception &#123;
+        System.out.println(&quot;request = &quot; + request + &quot;, response = &quot; + response + &quot;, handler = &quot; + handler);
+        System.out.println(&quot;Process01Interceptor.preHandle&quot;);
+         
+        // 返回true：放行
+        // 返回false：不放行
+        return true;
+    &#125;
+ 
+    // 在目标 handler 方法之后，handler报错不执行!
+    @Override
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception &#123;
+        System.out.println(&quot;request = &quot; + request + &quot;, response = &quot; + response + &quot;, handler = &quot; + handler + &quot;, modelAndView = &quot; + modelAndView);
+        System.out.println(&quot;Process01Interceptor.postHandle&quot;);
+    &#125;
+ 
+    // 渲染视图之后执行(最后),一定执行!
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception &#123;
+        System.out.println(&quot;request = &quot; + request + &quot;, response = &quot; + response + &quot;, handler = &quot; + handler + &quot;, ex = &quot; + ex);
+        System.out.println(&quot;Process01Interceptor.afterCompletion&quot;);
+    &#125;
+&#125;
+</code></pre>
+<p>拦截器方法拦截过程</p>
+<p><img src="https://secure2.wostatic.cn/static/9W6TF7dUwqdv2qi4KHAkAr/image.png?auth_key=1714301083-tnpmoC8yP14R5m3RTf7Bg3-0-2283a3656d41d59087a8f2a9ee9bc8fc"></p>
+<ol start="2">
+<li>修改配置类添加拦截器</li>
+</ol>
+<pre><code class="Java">@EnableWebMvc  //json数据处理,必须使用此注解,因为他会加入json处理器
+@Configuration
+@ComponentScan(basePackages = &#123;&quot;com.atguigu.controller&quot;,&quot;com.atguigu.exceptionhandler&quot;&#125;) //TODO: 进行controller扫描
+//WebMvcConfigurer springMvc进行组件配置的规范,配置组件,提供各种方法! 前期可以实现
+public class SpringMvcConfig implements WebMvcConfigurer &#123;
+
+    //配置jsp对应的视图解析器
+    @Override
+    public void configureViewResolvers(ViewResolverRegistry registry) &#123;
+        //快速配置jsp模板语言对应的
+        registry.jsp(&quot;/WEB-INF/views/&quot;,&quot;.jsp&quot;);
+    &#125;
+
+    //开启静态资源处理 &lt;mvc:default-servlet-handler/&gt;
+    @Override
+    public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) &#123;
+        configurer.enable();
+    &#125;
+
+    //添加拦截器
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) &#123; 
+        //将拦截器添加到Springmvc环境,默认拦截所有Springmvc分发的请求
+        registry.addInterceptor(new Process01Interceptor());
+    &#125;
+&#125;
+
+</code></pre>
+<ol start="3">
+<li>配置详解<ol>
+<li>默认拦截全部</li>
+</ol>
+</li>
+</ol>
+<pre><code class="Java">@Override
+public void addInterceptors(InterceptorRegistry registry) &#123;
+    //将拦截器添加到Springmvc环境,默认拦截所有Springmvc分发的请求
+    registry.addInterceptor(new Process01Interceptor());
+&#125;
+</code></pre>
+<pre><code>2. 精准配置
+</code></pre>
+<pre><code class="Java">@Override
+public void addInterceptors(InterceptorRegistry registry) &#123;
+    
+    //将拦截器添加到Springmvc环境,默认拦截所有Springmvc分发的请求
+    registry.addInterceptor(new Process01Interceptor());
+    
+    //精准匹配,设置拦截器处理指定请求 路径可以设置一个或者多个,为项目下路径即可
+    //addPathPatterns(&quot;/common/request/one&quot;) 添加拦截路径
+    //也支持 /* 和 /** 模糊路径。 * 任意一层字符串 ** 任意层 任意字符串
+    registry.addInterceptor(new Process01Interceptor()).addPathPatterns(&quot;/common/request/one&quot;,&quot;/common/request/tow&quot;);
+&#125;
+</code></pre>
+<pre><code>3. 排除配置
+</code></pre>
+<pre><code class="Java">//添加拦截器
+@Override
+public void addInterceptors(InterceptorRegistry registry) &#123;
+    
+    //将拦截器添加到Springmvc环境,默认拦截所有Springmvc分发的请求
+    registry.addInterceptor(new Process01Interceptor());
+    
+    //精准匹配,设置拦截器处理指定请求 路径可以设置一个或者多个,为项目下路径即可
+    //addPathPatterns(&quot;/common/request/one&quot;) 添加拦截路径
+    registry.addInterceptor(new Process01Interceptor()).addPathPatterns(&quot;/common/request/one&quot;,&quot;/common/request/tow&quot;);
+    
+    
+    //排除匹配,排除应该在匹配的范围内排除
+    //addPathPatterns(&quot;/common/request/one&quot;) 添加拦截路径
+    //excludePathPatterns(&quot;/common/request/tow&quot;); 排除路径,排除应该在拦截的范围内
+    registry.addInterceptor(new Process01Interceptor())
+            .addPathPatterns(&quot;/common/request/one&quot;,&quot;/common/request/tow&quot;)
+            .excludePathPatterns(&quot;/common/request/tow&quot;);
+&#125;
+</code></pre>
+<ol start="4">
+<li>多个拦截器执行顺序<ol>
+<li>preHandle() 方法：SpringMVC 会把所有拦截器收集到一起，然后按照配置顺序调用各个 preHandle() 方法。</li>
+<li>postHandle() 方法：SpringMVC 会把所有拦截器收集到一起，然后按照配置相反的顺序调用各个 postHandle() 方法。</li>
+<li>afterCompletion() 方法：SpringMVC 会把所有拦截器收集到一起，然后按照配置相反的顺序调用各个 afterCompletion() 方法。</li>
+</ol>
+</li>
+</ol>
+<pre><code>注意拦截器和JavaWeb的过滤器的作用位置不一样
+    拦截器作用在请求到达Dispatcher Servlet以后的handlerAdapter处理的阶段
+    过滤器的生效的位置是请求到达Dispatcher Servlet之前
+</code></pre>
+<p><img src="https://secure-bigfile.wostatic.cn/static/prqG4dtu3rDWj7VwX4WgsW/image.png?auth_key=1714301052-6wVrFp3rjgjG6eT6wmBbBp-0-3ca7d148833de298b8b38fd996d55ac8"></p>
+<p><strong>拦截器的基本使用</strong></p>
+<p>写一个拦截器类，继承HandlerInterceptor</p>
+<pre><code class="java">package com.chenw.interceptor;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
+
+public class MyInterceptor implements HandlerInterceptor &#123;
+    @Override
+    /**
+    * @Description   在执行handler方法之前调用的拦截的方法， 例如编码格式设置，登录保护 ，权限处理
+    * @param [request, response, handler]
+    * @return boolean true就会房型 false就不会放行
+    * @Author 王昌晨
+    * @Date 2024/4/28
+    */
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception &#123;
+        return true;
+    &#125;
+    /**
+    * @Description   当handler处理完毕以后执行的方法，没有拦截的机制，对结果
+    * @param [request, response, handler, modelAndView]  modelAndView返回的视图和共享域数据对象
+    * @return void
+    * @Author 王昌晨
+    * @Date 2024/4/28
+    */
+    
+    @Override
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception &#123;
+        HandlerInterceptor.super.postHandle(request, response, handler, modelAndView);
+    &#125;
+
+    /**
+    * @Description  整体的处理完毕以后
+    * @param [request, response, handler, ex] ex是异常的对象
+    * @return void
+    * @Author 王昌晨
+    * @Date 2024/4/28
+    */
+    
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception &#123;
+        HandlerInterceptor.super.afterCompletion(request, response, handler, ex);
+    &#125;
+&#125;
+</code></pre>
+<p>在配置累里面注射拦截器</p>
+<pre><code class="java">package com.chenw.config;
+
+
+import com.chenw.interceptor.MyInterceptor;
+import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+@EnableWebMvc
+@Configuration
+@ComponentScan(&quot;com.chenw&quot;)
+public class MvcConfig implements WebMvcConfigurer &#123;
+    /*
+    *   配置视图解析器，指定前后缀
+    * */
+
+    @Override
+    public void configureViewResolvers(ViewResolverRegistry registry) &#123;
+        //registry可以快速的添加视图解析器
+        registry.jsp(&quot;/WEB-INF/views/&quot;,&quot;.jsp&quot;);
+        //handler寻找这个视图的话，就会直接寻找这个
+    &#125;
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) &#123;
+        //配置方案1：拦截全部的请求
+        registry.addInterceptor(new MyInterceptor());
+    &#125;
+&#125;
+</code></pre>
+<pre><code>这样的全部的请求都会被拦截
+</code></pre>
+<p>指定的拦截</p>
+<pre><code class="java">//配置方案1：拦截全部的请求
+registry.addInterceptor(new MyInterceptor());
+//配置方案2：指定的地址拦截
+registry.addInterceptor(new MyInterceptor())
+        .addPathPatterns(&quot;/user/data&quot;);
+</code></pre>
+<p>模糊的拦截</p>
+<pre><code class="java">//配置方案2：指定的地址拦截
+*任意一层字符串
+**任意多层字符串
+registry.addInterceptor(new MyInterceptor())
+        .addPathPatterns(&quot;/user/**&quot;);
+</code></pre>
+<p>排除拦截</p>
+<pre><code class="java">        registry.addInterceptor(new MyInterceptor())
+                .addPathPatterns(&quot;/user/*&quot;)
+                .excludePathPatterns(&quot;/user/data&quot;);//除了data的全部都拦截
+</code></pre>
+<p><strong>多个拦截器的执行顺序</strong></p>
+<pre><code class="java">      registry.addInterceptor(new MyInterceptor())
+      registry.addInterceptor(new MyInterceptor1())
+</code></pre>
+<pre><code>和之前的过滤器差不多
+    先声明的请求先进来，但是响应后出来
+</code></pre>
+<p><strong>参数校验</strong></p>
+<pre><code>
+</code></pre>
 
     </div>
     
