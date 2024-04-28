@@ -177,12 +177,12 @@
             
             <span class="tag">
                 
-                <a href="/tags/chenw/" style="color: #00bcd4">chenw</a>
+                <a href="/tags/chenw/" style="color: #ff7d73">chenw</a>
             </span>
             
             <span class="tag">
                 
-                <a href="/tags/SSM%E5%AD%A6%E4%B9%A0/" style="color: #ff7d73">SSM学习</a>
+                <a href="/tags/SSM%E5%AD%A6%E4%B9%A0/" style="color: #00a596">SSM学习</a>
             </span>
             
         </span>
@@ -8711,6 +8711,272 @@ public class ApiController &#123;
     
 &#125;
 </code></pre>
+<p><strong>共享域对象的操作</strong></p>
+<p><strong>属性（共享）域作用回顾</strong></p>
+<p>  在 JavaWeb 中，共享域指的是在 Servlet 中存储数据，以便在同一 Web 应用程序的多个组件中进行共享和访问。常见的共享域有四种：<code>ServletContext</code>、<code>HttpSession</code>、<code>HttpServletRequest</code>、<code>PageContext</code>。</p>
+<ol>
+<li><code>ServletContext</code> 共享域：<code>ServletContext</code> 对象可以在整个 Web 应用程序中共享数据，是最大的共享域。一般可以用于保存整个 Web 应用程序的全局配置信息，以及所有用户都共享的数据。在 <code>ServletContext</code> 中保存的数据是线程安全的。</li>
+<li><code>HttpSession</code> 共享域：<code>HttpSession</code> 对象可以在同一用户发出的多个请求之间共享数据，但只能在同一个会话中使用。比如，可以将用户登录状态保存在 <code>HttpSession</code> 中，让用户在多个页面间保持登录状态。</li>
+<li><code>HttpServletRequest</code> 共享域：<code>HttpServletRequest</code> 对象可以在同一个请求的多个处理器方法之间共享数据。比如，可以将请求的参数和属性存储在 <code>HttpServletRequest</code> 中，让处理器方法之间可以访问这些数据。</li>
+<li><code>PageContext</code> 共享域：<code>PageContext</code> 对象是在 JSP 页面Servlet 创建时自动创建的。它可以在 JSP 的各个作用域中共享数据，包括<code>pageScope</code>、<code>requestScope</code>、<code>sessionScope</code>、<code>applicationScope</code> 等作用域。</li>
+</ol>
+<p>  共享域的作用是提供了方便实用的方式在同一 Web 应用程序的多个组件之间传递数据，并且可以将数据保存在不同的共享域中，根据需要进行选择和使用。</p>
+<p>  <img src="https://secure2.wostatic.cn/static/wusZjB7KSU7gHUfXMpja5u/img010.png?auth_key=1714287656-tHTtGhxS34ABWTZwQqXuPM-0-8ebf3b46e3d868ae89460c32e070c48c"></p>
+<p>springMvc为几个共享域提供几种操作方式</p>
+<p><strong>Request级别属性（共享）域</strong></p>
+<ol>
+<li>使用 Model 类型的形参</li>
+</ol>
+<pre><code class="Java">@RequestMapping(&quot;/attr/request/model&quot;)
+@ResponseBody
+public String testAttrRequestModel(
+    
+        // 在形参位置声明Model类型变量，用于存储模型数据
+        Model model) &#123;
+    
+    // 我们将数据存入模型，SpringMVC 会帮我们把模型数据存入请求域
+    // 存入请求域这个动作也被称为暴露到请求域
+    model.addAttribute(&quot;requestScopeMessageModel&quot;,&quot;i am very happy[model]&quot;);
+    
+    return &quot;target&quot;;
+&#125;
+</code></pre>
+<ol start="2">
+<li>使用 ModelMap 类型的形参</li>
+</ol>
+<pre><code class="Java">@RequestMapping(&quot;/attr/request/model/map&quot;)
+@ResponseBody
+public String testAttrRequestModelMap(
+    
+        // 在形参位置声明ModelMap类型变量，用于存储模型数据
+        ModelMap modelMap) &#123;
+    
+    // 我们将数据存入模型，SpringMVC 会帮我们把模型数据存入请求域
+    // 存入请求域这个动作也被称为暴露到请求域
+    modelMap.addAttribute(&quot;requestScopeMessageModelMap&quot;,&quot;i am very happy[model map]&quot;);
+    
+    return &quot;target&quot;;
+&#125;
+</code></pre>
+<ol start="3">
+<li>使用 Map 类型的形参</li>
+</ol>
+<pre><code class="Java">@RequestMapping(&quot;/attr/request/map&quot;)
+@ResponseBody
+public String testAttrRequestMap(
+    
+        // 在形参位置声明Map类型变量，用于存储模型数据
+        Map&lt;String, Object&gt; map) &#123;
+    
+    // 我们将数据存入模型，SpringMVC 会帮我们把模型数据存入请求域
+    // 存入请求域这个动作也被称为暴露到请求域
+    map.put(&quot;requestScopeMessageMap&quot;, &quot;i am very happy[map]&quot;);
+    
+    return &quot;target&quot;;
+&#125;
+</code></pre>
+<ol start="4">
+<li>使用原生 request 对象</li>
+</ol>
+<pre><code class="Java">@RequestMapping(&quot;/attr/request/original&quot;)
+@ResponseBody
+public String testAttrOriginalRequest(
+    
+        // 拿到原生对象，就可以调用原生方法执行各种操作
+        HttpServletRequest request) &#123;
+    
+    request.setAttribute(&quot;requestScopeMessageOriginal&quot;, &quot;i am very happy[original]&quot;);
+    
+    return &quot;target&quot;;
+&#125;
+</code></pre>
+<ol start="5">
+<li>使用 ModelAndView 对象</li>
+</ol>
+<pre><code class="Java">@RequestMapping(&quot;/attr/request/mav&quot;)
+public ModelAndView testAttrByModelAndView() &#123;
+    
+    // 1.创建ModelAndView对象
+    ModelAndView modelAndView = new ModelAndView();
+    // 2.存入模型数据
+    modelAndView.addObject(&quot;requestScopeMessageMAV&quot;, &quot;i am very happy[mav]&quot;);
+    // 3.设置视图名称
+    modelAndView.setViewName(&quot;target&quot;);
+    
+    return modelAndView;
+&#125;
+</code></pre>
+<p><strong>Session级别属性（共享）域</strong></p>
+<pre><code class="Java">@RequestMapping(&quot;/attr/session&quot;)
+@ResponseBody
+public String testAttrSession(HttpSession session) &#123;
+    //直接对session对象操作,即对会话范围操作!
+    return &quot;target&quot;;
+&#125;
+</code></pre>
+<p><strong>Application级别属性（共享）域</strong></p>
+<p>  解释：springmvc会在初始化容器的时候，讲servletContext对象存储到ioc容器中！</p>
+<pre><code class="Java">@Autowired
+private ServletContext servletContext;
+
+@RequestMapping(&quot;/attr/application&quot;)
+@ResponseBody
+public String attrApplication() &#123;
+    
+    servletContext.setAttribute(&quot;appScopeMsg&quot;, &quot;i am hungry...&quot;);
+    
+    return &quot;target&quot;;
+&#125;
+</code></pre>
+<p><strong>SpringMVC接收数据</strong></p>
+<p><strong>handler方法解析</strong></p>
+<p>理解handler方法的作用和组成：</p>
+<pre><code class="Java">/**
+ * TODO: 一个controller的方法是控制层的一个处理器,我们称为handler
+ * TODO: handler需要使用@RequestMapping/@GetMapping系列,声明路径,在HandlerMapping中注册,供DS查找!
+ * TODO: handler作用总结:
+ *       1.接收请求参数(param,json,pathVariable,共享域等) 
+ *       2.调用业务逻辑 
+ *       3.响应前端数据(页面（不讲解模版页面跳转）,json,转发和重定向等)
+ * TODO: handler如何处理呢
+ *       1.接收参数: handler(形参列表: 主要的作用就是用来接收参数)
+ *       2.调用业务: &#123; 方法体  可以向后调用业务方法 service.xx() &#125;
+ *       3.响应数据: return 返回结果,可以快速响应前端数据
+ */
+@GetMapping
+public Object handler(简化请求参数接收)&#123;
+    调用业务方法
+    返回的结果 （页面跳转，返回数据（json））
+    return 简化响应前端数据;
+&#125;
+</code></pre>
+<p>总结： 请求数据接收，我们都是通过handler的形参列表</p>
+<pre><code>         前端数据响应，我们都是通过handler的return关键字快速处理！
+
+      springmvc简化了参数接收和响应！
+</code></pre>
+<p><strong>页面的跳转的控制</strong></p>
+<p><strong>快速返回模板视图</strong></p>
+<p>混合开发模式和前后端分离的模式</p>
+<p><img src="https://hututu345.oss-cn-beijing.aliyuncs.com/typora/image-20240428153649207.png" alt="image-20240428153649207"></p>
+<ol>
+<li><p>开发模式回顾</p>
+<p> 在 Web 开发中，有两种主要的开发模式：前后端分离和混合开发。</p>
+<p> 前后端分离模式：[重点]</p>
+<p>   指将前端的界面和后端的业务逻辑通过接口分离开发的一种方式。开发人员使用不同的技术栈和框架，前端开发人员主要负责页面的呈现和用户交互，后端开发人员主要负责业务逻辑和数据存储。前后端通信通过 API 接口完成，数据格式一般使用 JSON 或 XML。前后端分离模式可以提高开发效率，同时也有助于代码重用和维护。</p>
+<p> 混合开发模式：</p>
+<p>   指将前端和后端的代码集成在同一个项目中，共享相同的技术栈和框架。这种模式在小型项目中比较常见，可以减少学习成本和部署难度。但是，在大型项目中，这种模式会导致代码耦合性很高，维护和升级难度较大。</p>
+<p>   对于混合开发，我们就需要使用动态页面技术，动态展示Java的共享域数据！！</p>
+</li>
+<li><p>jsp技术了解</p>
+<p> JSP（JavaServer Pages）是一种动态网页开发技术，它是由 Sun 公司提出的一种基于 Java 技术的 Web 页面制作技术，可以在 HTML 文件中嵌入 Java 代码，使得生成动态内容的编写更加简单。</p>
+<p> JSP 最主要的作用是生成动态页面。它允许将 Java 代码嵌入到 HTML 页面中，以便使用 Java 进行数据库查询、处理表单数据和生成 HTML 等动态内容。另外，JSP 还可以与 Servlet 结合使用，实现更加复杂的 Web 应用程序开发。</p>
+<p> JSP 的主要特点包括：</p>
+<ol>
+<li>简单：JSP 通过将 Java 代码嵌入到 HTML 页面中，使得生成动态内容的编写更加简单。</li>
+<li>高效：JSP 首次运行时会被转换为 Servlet，然后编译为字节码，从而可以启用 Just-in-Time（JIT）编译器，实现更高效的运行。</li>
+<li>多样化：JSP 支持多种标准标签库，包括 JSTL（JavaServer Pages 标准标签库）、EL（表达式语言）等，可以帮助开发人员更加方便的处理常见的 Web 开发需求。</li>
+</ol>
+<p> 总之，JSP 是一种简单高效、多样化的动态网页开发技术，它可以方便地生成动态页面和与 Servlet 结合使用，是 Java Web 开发中常用的技术之一。</p>
+</li>
+<li><p>准备jsp页面和依赖</p>
+<p> pom.xml依赖</p>
+</li>
+</ol>
+<pre><code class="XML">&lt;!-- jsp需要依赖! jstl--&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;jakarta.servlet.jsp.jstl&lt;/groupId&gt;
+    &lt;artifactId&gt;jakarta.servlet.jsp.jstl-api&lt;/artifactId&gt;
+    &lt;version&gt;3.0.0&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+<pre><code>jsp页面创建
+
+建议位置：/WEB-INF/下，避免外部直接访问！
+
+位置：/WEB-INF/views/home.jsp
+</code></pre>
+<pre><code class="Java">&lt;%@ page contentType=&quot;text/html;charset=UTF-8&quot; language=&quot;java&quot; %&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;Title&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+        &lt;!-- 可以获取共享域的数据,动态展示! jsp== 后台vue --&gt;
+        $&#123;msg&#125;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<ol start="4">
+<li>快速响应模版页面<ol>
+<li>配置jsp视图解析器</li>
+</ol>
+</li>
+</ol>
+<pre><code class="Java">@EnableWebMvc  //json数据处理,必须使用此注解,因为他会加入json处理器
+@Configuration
+@ComponentScan(basePackages = &quot;com.atguigu.controller&quot;) //TODO: 进行controller扫描
+
+//WebMvcConfigurer springMvc进行组件配置的规范,配置组件,提供各种方法! 前期可以实现
+public class SpringMvcConfig implements WebMvcConfigurer &#123;
+
+    //配置jsp对应的视图解析器
+    @Override
+    public void configureViewResolvers(ViewResolverRegistry registry) &#123;
+        //快速配置jsp模板语言对应的
+        registry.jsp(&quot;/WEB-INF/views/&quot;,&quot;.jsp&quot;);
+    &#125;
+&#125;
+</code></pre>
+<pre><code>2. handler返回视图
+</code></pre>
+<pre><code class="Java">/**
+ *  跳转到提交文件页面  /save/jump
+ *  
+ *  如果要返回jsp页面!
+ *     1.方法返回值改成字符串类型
+ *     2.返回逻辑视图名即可    
+ *         &lt;property name=&quot;prefix&quot; value=&quot;/WEB-INF/views/&quot;/&gt;
+ *            + 逻辑视图名 +
+ *         &lt;property name=&quot;suffix&quot; value=&quot;.jsp&quot;/&gt;
+ */
+    /*
+    *   TODO:快速的查找的方法
+    *       1.方法的返回值是字符串的类型
+    *       2.不能添加@ResponseBody注解，因为这个注解的作用，就是直接将字符串返回给浏览器，不走视图，不走解析器
+    *       3.返回值 对应的中间的视图名称即可
+    *
+    * */
+@GetMapping(&quot;jump&quot;)
+public String jumpJsp(Model model)&#123;
+    System.out.println(&quot;FileController.jumpJsp&quot;);
+    model.addAttribute(&quot;msg&quot;,&quot;request data!!&quot;);
+    return &quot;home&quot;;
+&#125;
+</code></pre>
+<p><strong>转发和重定向</strong></p>
+<p>在 Spring MVC 中，Handler 方法返回值来实现快速转发，可以使用 <code>redirect</code> 或者 <code>forward</code> 关键字来实现重定向。</p>
+<pre><code class="Java">@RequestMapping(&quot;/redirect-demo&quot;)
+public String redirectDemo() &#123;
+    // 重定向到 /demo 路径 
+    return &quot;redirect:/demo&quot;;
+&#125;
+
+@RequestMapping(&quot;/forward-demo&quot;)
+public String forwardDemo() &#123;
+    // 转发到 /demo 路径
+    return &quot;forward:/demo&quot;;
+&#125;
+
+//注意： 转发和重定向到项目下资源路径都是相同，都不需要添加项目根路径！填写项目下路径即可！
+</code></pre>
+<p>总结：</p>
+<ul>
+<li>将方法的返回值，设置String类型</li>
+<li>转发使用forward关键字，重定向使用redirect关键字</li>
+<li>关键字: &#x2F;路径</li>
+<li>注意：如果是项目下的资源，转发和重定向都一样都是项目下路径！都不需要添加项目根路径！</li>
+</ul>
 
     </div>
     
